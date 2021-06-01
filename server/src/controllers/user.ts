@@ -53,14 +53,20 @@ const login = async (req: Request, res: Response) => {
 
   try {
     const userDataValues = user[0]?.dataValues;
-    const { id, email, role, firstName, lastName } = userDataValues;
+    const { id, email, role, firstName, lastName, blocked, approved } =
+      userDataValues;
+
+    if (blocked) {
+      return res.send_forbidden("Access restricted!");
+    }
+
     const passwordsMatch = await bcrypt.compare(
       password,
       userDataValues.password
     );
     if (passwordsMatch) {
       const token = jwt.sign(
-        { id, email, role, firstName, lastName },
+        { id, email, role, firstName, lastName, blocked, approved },
         // @ts-ignore
         process.env.JWT_SECRET,
         { expiresIn: process.env.JWT_EXP }

@@ -69,14 +69,32 @@ const SignInPage: FunctionComponent = () => {
               const decodedToken: DecodedToken = jwt_decode(
                 response.data.token
               );
-              const { exp, id, email, role, firstName, lastName } =
-                decodedToken;
+              const {
+                exp,
+                id,
+                email,
+                role,
+                firstName,
+                lastName,
+                blocked,
+                approved,
+              } = decodedToken;
               if (
                 signIn({
                   token: response.data.token,
                   expiresIn: exp,
                   tokenType: "Bearer",
-                  authState: { user: { id, role, email, firstName, lastName } },
+                  authState: {
+                    user: {
+                      id,
+                      role,
+                      email,
+                      firstName,
+                      lastName,
+                      blocked,
+                      approved,
+                    },
+                  },
                 })
               ) {
                 history.push("/");

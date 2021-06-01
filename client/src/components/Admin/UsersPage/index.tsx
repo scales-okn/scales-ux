@@ -4,9 +4,14 @@ import {
   DataGrid,
   GridColDef,
   GridValueGetterParams,
+  GridCellParams,
 } from "@material-ui/data-grid";
+import Button from "@material-ui/core/Button";
 import PageLayout from "../../PageLayout";
 import NotAuthorized from "../../NotAuthorized";
+import FormControlLabel from "@material-ui/core/FormControlLabel";
+import Switch from "@material-ui/core/Switch";
+import UserFieldToggle from "./UserFieldToggle";
 
 const columns: GridColDef[] = [
   { field: "id", headerName: "ID", width: 100 },
@@ -27,8 +32,30 @@ const columns: GridColDef[] = [
   { field: "updatedAt", headerName: "Updated At", width: 200 },
   { field: "email", headerName: "Email", width: 150 },
   { field: "role", headerName: "Role", width: 140 },
-  { field: "approved", headerName: "Approved", width: 140 },
-  { field: "blocked", headerName: "Blocked", width: 140 },
+  {
+    field: "approved",
+    headerName: "Approved",
+    width: 140,
+    renderCell: (params: GridCellParams) => (
+      <UserFieldToggle
+        userId={params.row.id}
+        fieldName="approved"
+        value={params.row.approved}
+      />
+    ),
+  },
+  {
+    field: "blocked",
+    headerName: "Blocked",
+    width: 140,
+    renderCell: (params: GridCellParams) => (
+      <UserFieldToggle
+        userId={params.row.id}
+        fieldName="blocked"
+        value={params.row.blocked}
+      />
+    ),
+  },
 ];
 
 const AdminUsersPages: FunctionComponent = () => {
@@ -36,8 +63,6 @@ const AdminUsersPages: FunctionComponent = () => {
   const authHeader = useAuthHeader();
   const isAdmin = auth()?.user?.role === "admin";
   const [rows, setRows] = useState([]);
-
-  console.log(auth(), authHeader());
 
   useEffect(() => {
     fetch(`${process.env.REACT_APP_BFF_API_ENDPOINT_URL}/users`, {
@@ -63,7 +88,7 @@ const AdminUsersPages: FunctionComponent = () => {
             rows={rows}
             columns={columns}
             pageSize={5}
-            checkboxSelection
+            checkboxSelection={false}
           />
         </div>
       )}

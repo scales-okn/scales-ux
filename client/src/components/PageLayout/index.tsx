@@ -53,6 +53,7 @@ const PageLayout: FunctionComponent<Props> = (props) => {
 
   const handleDrawerClose = () => {
     setOpenDrawer(false);
+    setOpenAdminSubmenu(false);
   };
 
   const handleMenu = (event: React.MouseEvent<HTMLElement>) => {

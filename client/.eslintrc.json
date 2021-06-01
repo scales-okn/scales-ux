@@ -11,7 +11,8 @@
     "@typescript-eslint/ban-ts-comment": "off",
     "prettier/prettier": [
       "warn"
-    ]
+    ],
+    "react/display-name": "off"
   },
   "extends": [
     "react-app",
@@ -24,7 +25,11 @@
   ],
   "parser": "@typescript-eslint/parser",
   "root": true,
-  "plugins": ["react", "@typescript-eslint", "prettier"],
+  "plugins": [
+    "react",
+    "@typescript-eslint",
+    "prettier"
+  ],
   "parserOptions": {
     "ecmaVersion": 11,
     "ecmaFeatures": {
