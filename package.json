@@ -26,9 +26,5 @@
     "commitizen": {
       "path": "./node_modules/cz-conventional-changelog"
     }
-  },
-  "dependencies": {
-    "jsendie": "0.0.2",
-    "yup": "^0.32.9"
   }
 }
