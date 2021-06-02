@@ -33,6 +33,8 @@ export interface DecodedToken {
   email: string;
   firstName: string;
   lastName: string;
+  blocked: boolean;
+  approved: boolean;
 }
 
 export const UserSignInValidationSchema = yup.object({
