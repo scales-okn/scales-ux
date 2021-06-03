@@ -7,8 +7,9 @@ export const grants = {
     users: {
       "create:any": ["*"],
       "read:any": ["*"],
-      "update:any": ["*"],
       "delete:any": ["*"],
+      "update:any": ["*"],
+      "update:own": ["*", "!blocked"],
     },
   },
   user: {
@@ -20,5 +21,7 @@ export const grants = {
 };
 
 export const ac = new AccessControl(grants);
+
+ac.lock();
 
 export const accessControlMiddleware = new AccessControlMiddleware(ac);

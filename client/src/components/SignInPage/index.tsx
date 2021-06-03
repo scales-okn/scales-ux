@@ -19,6 +19,7 @@ import {
 import Copyright from "../Copyright";
 import Logo from "../Logo";
 import useStyles from "./styles";
+import { useSnackbar } from "notistack";
 
 export interface UserSignInFields {
   email: string;
@@ -49,6 +50,7 @@ const SignInPage: FunctionComponent = () => {
   const history = useHistory();
   const classes = useStyles();
   const signIn = useSignIn();
+  const { enqueueSnackbar } = useSnackbar();
 
   const formik = useFormik({
     initialValues: {
@@ -56,7 +58,7 @@ const SignInPage: FunctionComponent = () => {
       password: "",
     },
     validationSchema: UserSignInValidationSchema,
-    onSubmit: (values: UserSignInFields) => {
+    onSubmit: (values: UserSignInFields, { setErrors }) => {
       fetch(`${process.env.REACT_APP_BFF_API_ENDPOINT_URL}/users/login`, {
         method: "POST",
         headers: {
@@ -67,41 +69,72 @@ const SignInPage: FunctionComponent = () => {
         .then((response) => response.json())
         .then((response) => {
           try {
-            if (response.code === 200) {
-              const decodedToken: DecodedToken = jwt_decode(
-                response.data.token
-              );
-              const {
-                exp,
-                id,
-                email,
-                role,
-                firstName,
-                lastName,
-                blocked,
-                approved,
-              } = decodedToken;
-              if (
-                signIn({
-                  token: response.data.token,
-                  expiresIn: exp,
-                  tokenType: "Bearer",
-                  authState: {
-                    user: {
-                      id,
-                      role,
-                      email,
-                      firstName,
-                      lastName,
-                      blocked,
-                      approved,
+            switch (response.code) {
+              case 200: {
+                const decodedToken: DecodedToken = jwt_decode(
+                  response.data.token
+                );
+                const {
+                  exp,
+                  id,
+                  email,
+                  role,
+                  firstName,
+                  lastName,
+                  blocked,
+                  approved,
+                } = decodedToken;
+                if (
+                  signIn({
+                    token: response.data.token,
+                    expiresIn: exp,
+                    tokenType: "Bearer",
+                    authState: {
+                      user: {
+                        id,
+                        role,
+                        email,
+                        firstName,
+                        lastName,
+                        blocked,
+                        approved,
+                      },
                     },
+                  })
+                ) {
+                  enqueueSnackbar(response.message, {
+                    variant: "success",
+                    anchorOrigin: {
+                      vertical: "top",
+                      horizontal: "center",
+                    },
+                  });
+
+                  history.push("/");
+                } else {
+                  console.log("JWT Failed!");
+                }
+                break;
+              }
+              case 403: {
+                enqueueSnackbar(response.message, {
+                  variant: "warning",
+                  anchorOrigin: {
+                    vertical: "top",
+                    horizontal: "center",
                   },
-                })
-              ) {
-                history.push("/");
-              } else {
-                console.log("JWT Failed!");
+                });
+                break;
+              }
+              default: {
+                enqueueSnackbar("Something went wrong. Please try again.", {
+                  variant: "error",
+                  anchorOrigin: {
+                    vertical: "top",
+                    horizontal: "center",
+                  },
+                });
+                break;
               }
             }
           } catch (error) {

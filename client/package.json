@@ -17,6 +17,7 @@
     "formik": "^2.2.8",
     "history": "^5.0.0",
     "jwt-decode": "^3.1.2",
+    "notistack": "^1.0.9",
     "prop-types": "^15.7.2",
     "react": "^17.0.2",
     "react-auth-kit": "^1.4.10-0",

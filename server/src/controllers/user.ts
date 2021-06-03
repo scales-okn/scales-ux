@@ -26,6 +26,7 @@ const create = async (req: Request, res: Response) => {
       lastName,
       email,
       password: hash,
+      role: "admin",
     });
 
     return res.send_ok("User created succesfully!", { user });
@@ -48,13 +49,13 @@ const login = async (req: Request, res: Response) => {
 
   // Check if user exists
   if (!user.length) {
-    return res.send_notFound("User not found!");
+    console.log("User not found!", { email, password });
+    return res.send_notFound("Something went wrong. Please try again.");
   }
 
   try {
     const userDataValues = user[0]?.dataValues;
-    const { id, email, role, firstName, lastName, blocked, approved } =
-      userDataValues;
+    const { id, role, firstName, lastName, blocked, approved } = userDataValues;
 
     if (blocked) {
       return res.send_forbidden("Access restricted!");

@@ -20,6 +20,7 @@ import useStyles from "./styles";
 import Logo from "../Logo";
 import Copyright from "../Copyright";
 import { UserSignInFields, UserSignInValidationSchema } from "../SignInPage";
+import { useSnackbar } from "notistack";
 
 interface UserSignUpFields extends UserSignInFields {
   firstName: string;
@@ -48,6 +49,7 @@ const UserSignUpValidationSchema = UserSignInValidationSchema.concat(
 const SignUpPage: FunctionComponent = () => {
   const classes = useStyles();
   const history = useHistory();
+  const { enqueueSnackbar } = useSnackbar();
 
   const formik = useFormik({
     initialValues: {
@@ -69,10 +71,31 @@ const SignUpPage: FunctionComponent = () => {
         .then((response) => response.json())
         .then((response) => {
           try {
-            if (response.code === 200) {
-              history.push("/sign-in");
-            } else {
-              setErrors(response.errors);
+            switch (response.code) {
+              case 200: {
+                enqueueSnackbar(response.message, {
+                  variant: "success",
+                  anchorOrigin: {
+                    vertical: "top",
+                    horizontal: "center",
+                  },
+                });
+                history.push("/sign-in");
+                break;
+              }
+              default: {
+                if (response.errors) {
+                  setErrors(response.errors);
+                }
+                enqueueSnackbar(response.message, {
+                  variant: "warning",
+                  anchorOrigin: {
+                    vertical: "top",
+                    horizontal: "center",
+                  },
+                });
+                break;
+              }
             }
           } catch (error) {
             console.log(error);

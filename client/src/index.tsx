@@ -5,9 +5,8 @@ import store from "./store";
 import { Provider } from "react-redux";
 import reportWebVitals from "./reportWebVitals";
 import { createMuiTheme } from "@material-ui/core/styles";
-import purple from "@material-ui/core/colors/purple";
-import green from "@material-ui/core/colors/green";
 import { ThemeProvider } from "@material-ui/core/styles";
+import { SnackbarProvider } from "notistack";
 
 const theme = createMuiTheme({
   palette: {
@@ -27,7 +26,9 @@ const theme = createMuiTheme({
 ReactDOM.render(
   <Provider store={store}>
     <ThemeProvider theme={theme}>
-      <App />
+      <SnackbarProvider>
+        <App />
+      </SnackbarProvider>
     </ThemeProvider>
   </Provider>,
   document.getElementById("root")
