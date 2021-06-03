@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.3.0](https://github.com/nu-c3lab/satyrn-ux/compare/v1.2.1...v1.3.0) (2021-06-03)
+
+
+### Features
+
+* **snackbar:** [UI] Added Snackbar ([fcda144](https://github.com/nu-c3lab/satyrn-ux/commit/fcda1449578ffa0c463b7a7fc643100150468ae0))
+
 ### [1.2.1](https://github.com/nu-c3lab/satyrn-ux/compare/v1.2.0...v1.2.1) (2021-06-02)
 
 ## [1.2.0](https://github.com/nu-c3lab/satyrn-ux/compare/v1.1.0...v1.2.0) (2021-06-01)
