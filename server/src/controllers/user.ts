@@ -2,6 +2,7 @@ import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 import { Request, Response } from "express";
 import database from "../database";
+import mailTransport from "../services/mail";
 
 // Resources validations are made with validateResources middleware and validations schemas
 // server/middlewares/validateResources.ts
@@ -28,6 +29,21 @@ const create = async (req: Request, res: Response) => {
       password: hash,
       role: "admin",
     });
+
+    try {
+      mailTransport.sendMail(
+        {
+          from: process.env.SENDGRID_FROM_SENDER,
+          to: `${firstName} ${lastName} <${email}>`,
+          subject: "Welcome to Satyrn!",
+          html: "<h1>Hello world!</h1>",
+        },
+        //@ts-ignore
+        (error, info) => console.log(error, info)
+      );
+    } catch (error) {
+      console.log(error);
+    }
 
     return res.send_ok("User created succesfully!", { user });
   } catch (err) {
