@@ -7,6 +7,7 @@ import {
   findById,
   update,
   deleteUser,
+  verifyEmail,
 } from "../controllers/user";
 import validateResource from "../middlewares/validateResources";
 import {
@@ -83,5 +84,8 @@ router.delete(
   }),
   deleteUser
 );
+
+// Email Verify
+router.post("/verify/email", verifyEmail);
 
 export default router;

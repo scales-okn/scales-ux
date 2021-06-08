@@ -23,7 +23,7 @@ const validateResource =
           return accumulator;
         }, {});
         console.log(error);
-        return res.send_badRequest("", errors);
+        return res.send_badRequest("Field errors!", errors);
       }
     };
 

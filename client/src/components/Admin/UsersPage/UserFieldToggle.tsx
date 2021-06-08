@@ -35,7 +35,7 @@ const UserFieldToggle: FunctionComponent<Props> = ({
         .then((response) => {
           try {
             if (response?.code === 200) {
-              setChecked(response.data.user[0][fieldName]);
+              setChecked(response.data.user[fieldName]);
             }
           } catch (error) {
             console.log(error);

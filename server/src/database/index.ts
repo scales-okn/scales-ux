@@ -1,6 +1,8 @@
+//@ts-nocheck
 import Sequelize, { DataTypes } from "sequelize";
+import randomString from "randomstring";
+import mailTransport from "../services/mail";
 
-// @ts-ignore
 export const sequelize = new Sequelize(
   process.env.DB_NAME,
   process.env.DB_USERNAME,
@@ -42,6 +44,13 @@ const User = sequelize.define("User", {
     allowNull: false,
     unique: true,
   },
+  usage: DataTypes.STRING,
+  emailVerificationCode: DataTypes.STRING,
+  emailIsVerified: {
+    type: DataTypes.BOOLEAN,
+    allowNull: false,
+    defaultValue: false,
+  },
   password: {
     type: DataTypes.STRING,
     allowNull: false,
@@ -51,6 +60,32 @@ const User = sequelize.define("User", {
     allowNull: false,
     defaultValue: "user",
   },
+});
+
+User.addHook("afterCreate", "verifyEmail", async (user) => {
+  try {
+    const emailVerificationCode = randomString.generate({
+      length: 64,
+    });
+    user.emailVerificationCode = emailVerificationCode;
+    await user.save();
+    const { firstName, lastName, email } = user;
+    mailTransport.sendMail(
+      {
+        from: process.env.SENDGRID_FROM_SENDER,
+        to: `${firstName} ${lastName} <${email}>`,
+        subject: "Please confirm your Email account!",
+        html: `Hello, <br> 
+        Please Click on the link to verify your email. <br>
+        <a href="${process.env.CLIENT_URL}/verify/email/${emailVerificationCode}">Click here to verify</a>`,
+      },
+      (error, info) => console.log(error, info)
+    );
+  } catch (error) {
+    console.log(error);
+  }
+
+  user.save((error) => console.log(error));
 });
 
 // Notebook Model

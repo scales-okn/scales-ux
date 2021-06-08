@@ -3,10 +3,10 @@ import { NextFunction, Request, Response } from "express";
 
 const checkAuth = (req: Request, res: Response, next: NextFunction) => {
   try {
-    passport.authenticate("jwt", { session: false }, (err, user, info) => {
-      if (err) {
-        console.log(err);
-        return next(err);
+    passport.authenticate("jwt", { session: false }, (error, user, info) => {
+      if (error) {
+        console.log(error);
+        return next(error);
       }
       if (!user) {
         return res.send_unauthorized("Unauthorized");
@@ -15,8 +15,8 @@ const checkAuth = (req: Request, res: Response, next: NextFunction) => {
         next();
       }
     })(req, res, next);
-  } catch (err) {
-    console.log(err);
+  } catch (error) {
+    console.log(error);
   }
 };
 

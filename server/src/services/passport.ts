@@ -8,19 +8,17 @@ export const jwtLogin = new JwtStrategy(
   },
   async (jwt_payload, done) => {
     try {
-      const results = await database.models.User.findAll({
+      const result = await database.models.User.findOne({
         where: { id: jwt_payload.id },
       });
-      if (results.length) {
-        // const { id, role, blocked, approved } = results[0].dataValues;
-        const user = results[0].dataValues;
-        console.log(user);
+      if (result) {
+        const user = result.dataValues;
         return done(null, user);
       }
 
       return done(null, false);
-    } catch (err) {
-      console.log(err);
+    } catch (error) {
+      console.log(error);
     }
   }
 );

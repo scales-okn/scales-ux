@@ -8,6 +8,7 @@ import SignInPage from "../SignInPage";
 import SignUpPage from "../SignUpPage";
 import ProfilePage from "../ProfilePage";
 import NotebooksPage from "../NotebooksPage";
+import EmailVerificationPage from "../EmailVerificationPage";
 import useStyles from "./styles";
 
 const App: FunctionComponent = () => {
@@ -61,6 +62,10 @@ const App: FunctionComponent = () => {
             />
             <Route path="/sign-in" component={SignInPage} />
             <Route path="/sign-up" component={SignUpPage} />
+            <Route
+              path="/verify/email/:code"
+              component={EmailVerificationPage}
+            />
             <Route component={() => <Redirect to="/" />} />
           </Switch>
         </BrowserRouter>
