@@ -5,9 +5,9 @@ export const createUserValidationSchema = yup.object({
   lastName: yup.string().required(),
   email: yup.string().email().required(),
   usage: yup
-  .string()
-  .max(255, "Must be maximum 255 characters.")
-  .required("Usage Field is required"),
+    .string()
+    .max(255, "Must be maximum 255 characters.")
+    .required("Usage Field is required"),
   password: yup
     .string()
     .matches(

@@ -1,8 +1,7 @@
+// @ts-nocheck
 import express from "express";
 import redis from "redis";
-// @ts-ignore
 import requestProxy from "express-request-proxy";
-// @ts-ignore
 import redisStreams from "redis-streams";
 
 const enhancedRedis = redisStreams(redis);

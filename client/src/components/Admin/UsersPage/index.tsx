@@ -13,8 +13,6 @@ import UserFieldToggle from "./UserFieldToggle";
 
 const columns: GridColDef[] = [
   { field: "id", headerName: "ID", width: 100 },
-  // { field: "firstName", headerName: "First name", width: 150 },
-  // { field: "lastName", headerName: "Last name", width: 150 },
   {
     field: "fullName",
     headerName: "Full name",

@@ -1,5 +1,5 @@
 import React, { FunctionComponent, useState, ChangeEvent } from "react";
-import { useAuthHeader, useAuthUser } from "react-auth-kit";
+import { useAuthHeader } from "react-auth-kit";
 import FormGroup from "@material-ui/core/FormGroup";
 import FormControlLabel from "@material-ui/core/FormControlLabel";
 import Switch from "@material-ui/core/Switch";

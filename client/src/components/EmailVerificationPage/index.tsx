@@ -5,25 +5,25 @@ import PageLayout from "../PageLayout";
 import { useSnackbar } from "notistack";
 
 interface ParamTypes {
-  code: string;
+  token: string;
 }
 
 const EmailVerificationPage: FunctionComponent = () => {
-  const { code } = useParams<ParamTypes>();
+  const { token } = useParams<ParamTypes>();
   const history = useHistory();
   const { enqueueSnackbar } = useSnackbar();
 
   useEffect(() => {
-    if (code) {
+    if (token) {
       fetch(
-        `${process.env.REACT_APP_BFF_API_ENDPOINT_URL}/users/verify/email`,
+        `${process.env.REACT_APP_BFF_API_ENDPOINT_URL}/users/verify-email`,
         {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
           },
           body: JSON.stringify({
-            code,
+            token,
           }),
         }
       )
@@ -59,7 +59,7 @@ const EmailVerificationPage: FunctionComponent = () => {
           }
         });
     }
-  }, [code]);
+  }, [token]);
 
   return null;
 };

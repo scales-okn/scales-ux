@@ -8,6 +8,8 @@ import {
   update,
   deleteUser,
   verifyEmail,
+  forgotPassword,
+  resetPassword,
 } from "../controllers/user";
 import validateResource from "../middlewares/validateResources";
 import {
@@ -86,6 +88,10 @@ router.delete(
 );
 
 // Email Verify
-router.post("/verify/email", verifyEmail);
+router.post("/verify-email", verifyEmail);
+
+// Password
+router.post("/password/forgot", forgotPassword);
+router.post("/password/reset", resetPassword);
 
 export default router;

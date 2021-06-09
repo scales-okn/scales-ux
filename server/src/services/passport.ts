@@ -1,5 +1,5 @@
 import { ExtractJwt, Strategy as JwtStrategy } from "passport-jwt";
-import database from "../database";
+import { sequelize } from "../database";
 
 export const jwtLogin = new JwtStrategy(
   {
@@ -8,7 +8,7 @@ export const jwtLogin = new JwtStrategy(
   },
   async (jwt_payload, done) => {
     try {
-      const result = await database.models.User.findOne({
+      const result = await sequelize.models.User.findOne({
         where: { id: jwt_payload.id },
       });
       if (result) {
