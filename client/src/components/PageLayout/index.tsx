@@ -93,15 +93,17 @@ const PageLayout: FunctionComponent<Props> = (props) => {
           <Typography variant="h6" noWrap className={classes.title}>
             Satyrn UX
           </Typography>
-          <IconButton
-            aria-label="account of current user"
-            aria-controls="menu-appbar"
-            aria-haspopup="true"
-            onClick={handleMenu}
-            color="inherit"
-          >
-            <AccountCircle />
-          </IconButton>
+          {auth() && (
+            <IconButton
+              aria-label="account of current user"
+              aria-controls="menu-appbar"
+              aria-haspopup="true"
+              onClick={handleMenu}
+              color="inherit"
+            >
+              <AccountCircle />
+            </IconButton>
+          )}
           <Menu
             id="menu-appbar"
             anchorEl={anchorEl}

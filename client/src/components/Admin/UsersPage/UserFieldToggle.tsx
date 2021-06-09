@@ -1,5 +1,5 @@
 import React, { FunctionComponent, useState, ChangeEvent } from "react";
-import { useAuthHeader, useAuthUser } from "react-auth-kit";
+import { useAuthHeader } from "react-auth-kit";
 import FormGroup from "@material-ui/core/FormGroup";
 import FormControlLabel from "@material-ui/core/FormControlLabel";
 import Switch from "@material-ui/core/Switch";
@@ -35,7 +35,7 @@ const UserFieldToggle: FunctionComponent<Props> = ({
         .then((response) => {
           try {
             if (response?.code === 200) {
-              setChecked(response.data.user[0][fieldName]);
+              setChecked(response.data.user[fieldName]);
             }
           } catch (error) {
             console.log(error);

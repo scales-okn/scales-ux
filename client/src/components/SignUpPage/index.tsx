@@ -13,6 +13,7 @@ import {
   Grid,
   Link,
   TextField,
+  TextareaAutosize,
   Typography,
   FormHelperText,
 } from "@material-ui/core";
@@ -25,6 +26,7 @@ import { useSnackbar } from "notistack";
 interface UserSignUpFields extends UserSignInFields {
   firstName: string;
   lastName: string;
+  usage: string;
   tos: boolean;
 }
 
@@ -32,6 +34,10 @@ const UserSignUpValidationSchema = UserSignInValidationSchema.concat(
   yup.object({
     firstName: yup.string().required("First Name is required"),
     lastName: yup.string().required("Last Name is required"),
+    usage: yup
+      .string()
+      .max(255, "Must be maximum 255 characters.")
+      .required("Usage Field is required"),
     password: yup
       .string()
       .required()
@@ -57,6 +63,7 @@ const SignUpPage: FunctionComponent = () => {
       lastName: "",
       email: "",
       password: "",
+      usage: "",
       tos: false,
     },
     validationSchema: UserSignUpValidationSchema,
@@ -184,6 +191,23 @@ const SignUpPage: FunctionComponent = () => {
                   formik.touched.password && Boolean(formik.errors.password)
                 }
                 helperText={formik.touched.password && formik.errors.password}
+              />
+            </Grid>
+            <Grid item xs={12}>
+              <TextField
+                multiline
+                rows={1}
+                rowsMax={4}
+                variant="outlined"
+                required
+                fullWidth
+                id="usage"
+                label="Account Usage"
+                name="usage"
+                value={formik.values.usage}
+                onChange={formik.handleChange}
+                error={formik.touched.usage && Boolean(formik.errors.usage)}
+                helperText={formik.touched.usage && formik.errors.usage}
               />
             </Grid>
             <Grid item xs={12}>

@@ -6,17 +6,13 @@ import {
   GridValueGetterParams,
   GridCellParams,
 } from "@material-ui/data-grid";
-import Button from "@material-ui/core/Button";
+import { Tooltip, Typography } from "@material-ui/core";
 import PageLayout from "../../PageLayout";
 import NotAuthorized from "../../NotAuthorized";
-import FormControlLabel from "@material-ui/core/FormControlLabel";
-import Switch from "@material-ui/core/Switch";
 import UserFieldToggle from "./UserFieldToggle";
 
 const columns: GridColDef[] = [
   { field: "id", headerName: "ID", width: 100 },
-  { field: "firstName", headerName: "First name", width: 150 },
-  { field: "lastName", headerName: "Last name", width: 150 },
   {
     field: "fullName",
     headerName: "Full name",
@@ -30,8 +26,20 @@ const columns: GridColDef[] = [
   },
   { field: "createdAt", headerName: "Created At", width: 200 },
   { field: "updatedAt", headerName: "Updated At", width: 200 },
-  { field: "email", headerName: "Email", width: 150 },
+  { field: "email", headerName: "Email", width: 210 },
   { field: "role", headerName: "Role", width: 140 },
+  {
+    field: "usage",
+    headerName: "Usage",
+    width: 300,
+    renderCell: (params: GridCellParams) => (
+      <Tooltip title={params.row.usage}>
+        <Typography noWrap variant="body2">
+          {params.row.usage}
+        </Typography>
+      </Tooltip>
+    ),
+  },
   {
     field: "approved",
     headerName: "Approved",
