@@ -1,6 +1,25 @@
 # satyrn-ux
 The frontend repo for public-facing version of Satyrn's UX
 
+## Server
+### Create a file callend .env in ./sever/.env
+### Copy and complete the .env.example variables
+### Start
+```
+cd server 
+npm install
+npm run start
+```
+
+## Client
+### Create a file callend .env in ./client/.env
+### Copy and complete the .env.example variables
+### Start
+```
+cd client 
+npm install
+npm run start
+```
 
 ## API Spec v0.1 (Ported from satyrn-platform for reference)
 

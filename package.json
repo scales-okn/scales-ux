@@ -1,0 +1,30 @@
+{
+  "name": "satyrn-ux",
+  "version": "1.4.0",
+  "private": true,
+  "description": "BFF + Frontend",
+  "license": "C3 License",
+  "scripts": {
+    "commit": "git-cz",
+    "release": "standard-version"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/nu-c3lab/satyrn-ux.git"
+  },
+  "author": "adrian.staniloiu@gmail.com",
+  "bugs": {
+    "url": "https://github.com/nu-c3lab/satyrn-ux/issues"
+  },
+  "homepage": "https://github.com/nu-c3lab/satyrn-ux#readme",
+  "devDependencies": {
+    "commitizen": "^4.2.4",
+    "cz-conventional-changelog": "^3.3.0",
+    "standard-version": "^9.3.0"
+  },
+  "config": {
+    "commitizen": {
+      "path": "./node_modules/cz-conventional-changelog"
+    }
+  }
+}
