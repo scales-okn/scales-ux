@@ -2,6 +2,15 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.4.0](https://github.com/nu-c3lab/satyrn-ux/compare/v1.3.0...v1.4.0) (2021-06-09)
+
+
+### Features
+
+* **mail:** implement Mail Service ([7e23b06](https://github.com/nu-c3lab/satyrn-ux/commit/7e23b0688a7b17423b2808a3684ef3e5b3b82a93))
+* **mail and user email verification:** mail and User Email Verification ([51e3df0](https://github.com/nu-c3lab/satyrn-ux/commit/51e3df042d3b1603ce10b53936ee03034e8e6ae1))
+* **users forgot, reset password, approved:** users Forgot, Reset Password, Approved ([fbab467](https://github.com/nu-c3lab/satyrn-ux/commit/fbab467a9b8bb14f924cfc14adc791696fe1a3da))
+
 ## [1.3.0](https://github.com/nu-c3lab/satyrn-ux/compare/v1.2.1...v1.3.0) (2021-06-03)
 
 
