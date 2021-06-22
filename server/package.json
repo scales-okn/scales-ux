@@ -22,6 +22,7 @@
     "redis-streams": "^1.1.0",
     "responser": "^2.5.2",
     "sequelize": "^6.6.2",
+    "sequelize-paper-trail": "^3.0.1",
     "yup": "^0.32.9"
   },
   "devDependencies": {

@@ -42,6 +42,10 @@ database.initialize().then(async () => {
     const userRoutes = await import("./routes/user");
     app.use("/api/users", userRoutes.default);
 
+    // Notebook Routes
+    const notebookRoutes = await import("./routes/notebook");
+    app.use("/api/notebooks", notebookRoutes.default);
+
     // Serve React App
     app.use(express.static(path.join(__dirname, "../client/build")));
 

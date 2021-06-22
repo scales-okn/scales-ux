@@ -1,53 +1,46 @@
-import passport from "passport";
 import express from "express";
 import {
   create,
-  findAllUsers,
-  login,
+  findAll,
   findById,
   update,
-  deleteUser,
-  verifyEmail,
-  forgotPassword,
-  resetPassword,
-} from "../controllers/user";
+  deleteNotebook,
+} from "../controllers/notebook";
 import validateResource from "../middlewares/validateResources";
-import {
-  createUserValidationSchema,
-  loginUserValidationSchema,
-} from "../validation/user";
+import { createNotebookValidationSchema } from "../validation/notebook";
 import checkAuth from "../middlewares/checkAuth";
 import { accessControlMiddleware } from "../services/accesscontrol";
 
 const router = express.Router();
 
-// Create a new User
-router.post("/create", validateResource(createUserValidationSchema), create);
+// Create a new Notebook
+router.post(
+  "/create",
+  validateResource(createNotebookValidationSchema),
+  create
+);
 
-// User login
-router.post("/login", validateResource(loginUserValidationSchema), login);
-
-// Retrieve all User
+// Retrieve all Notebooks
 router.get(
   "/",
   checkAuth,
   accessControlMiddleware.check({
-    resource: "users",
+    resource: "notebooks",
     action: "read",
     operands: [
       { source: "user", key: "id" }, // means req.user.id
       null,
     ],
   }),
-  findAllUsers
+  findAll
 );
 
-// Retrieve User by id
+// Retrieve Notebook by Id
 router.get(
-  "/:userId",
+  "/:notebookId",
   checkAuth,
   accessControlMiddleware.check({
-    resource: "users",
+    resource: "notebooks",
     action: "read",
     operands: [
       { source: "user", key: "id" }, // means req.user.id
@@ -57,12 +50,12 @@ router.get(
   findById
 );
 
-// Update a User with id
+// Update a Notebook
 router.put(
   "/:userId",
   checkAuth,
   accessControlMiddleware.check({
-    resource: "users",
+    resource: "notebooks",
     action: "update",
     operands: [
       { source: "user", key: "id" }, // means req.user.id
@@ -72,26 +65,19 @@ router.put(
   update
 );
 
-// Delete a User
+// Delete a Notebook
 router.delete(
-  "/:userId",
+  "/:notebookId",
   checkAuth,
   accessControlMiddleware.check({
-    resource: "users",
+    resource: "notebooks",
     action: "delete",
     operands: [
       { source: "user", key: "id" }, // means req.user.id
       null,
     ],
   }),
-  deleteUser
+  deleteNotebook
 );
-
-// Email Verify
-router.post("/verify-email", verifyEmail);
-
-// Password
-router.post("/password/forgot", forgotPassword);
-router.post("/password/reset", resetPassword);
 
 export default router;

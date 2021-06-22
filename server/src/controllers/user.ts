@@ -39,7 +39,7 @@ export const create = async (req: Request, res: Response) => {
   }
 };
 
-// Login User
+// User Login
 export const login = async (req: Request, res: Response) => {
   try {
     const { email, password } = req.body;
@@ -107,7 +107,7 @@ export const login = async (req: Request, res: Response) => {
   }
 };
 
-// Fetch all Users
+// Find all User(s)
 export const findAllUsers = async (req: Request, res: Response) => {
   try {
     const users = await sequelize.models.User.findAll({
@@ -123,7 +123,7 @@ export const findAllUsers = async (req: Request, res: Response) => {
   }
 };
 
-// Fetch User by userId
+// Find User by userId
 export const findById = async (req: Request, res: Response) => {
   try {
     const id = req.params.userId;
@@ -140,7 +140,7 @@ export const findById = async (req: Request, res: Response) => {
   }
 };
 
-// Update a User
+// Update an User
 export const update = async (req: Request, res: Response) => {
   try {
     const id = req.params.userId;
@@ -150,8 +150,15 @@ export const update = async (req: Request, res: Response) => {
       const hash = await bcrypt.hash(payload.password, salt);
       payload.password = hash;
     }
+    // Inject req for saveLog
+    // @ts-ignore
+    sequelize.models.User.beforeUpdate((model) => {
+      model.req = req;
+    });
+
     const result = await sequelize.models.User.update(payload, {
       where: { id },
+      individualHooks: true,
     });
 
     if (!result.length) {
@@ -183,6 +190,7 @@ export const deleteUser = async (req: Request, res: Response) => {
   }
 };
 
+// Email Verify
 export const verifyEmail = async (req: Request, res: Response) => {
   try {
     //@ts-ignore
@@ -225,6 +233,7 @@ export const verifyEmail = async (req: Request, res: Response) => {
   }
 };
 
+// Forgot Password
 export const forgotPassword = async (req: Request, res: Response) => {
   try {
     const user = await sequelize.models.User.findOne({
@@ -269,7 +278,6 @@ export const resetPassword = async (req: Request, res: Response) => {
     const user = await sequelize.models.User.findOne({
       where: { passwordResetToken: token },
     });
-    console.log(user);
 
     if (user) {
       //@ts-ignore

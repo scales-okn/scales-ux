@@ -1,5 +1,5 @@
+// @ts-nocheck
 import { AccessControl } from "accesscontrol";
-// @ts-ignore
 import AccessControlMiddleware from "accesscontrol-middleware";
 
 export const grants = {
@@ -11,11 +11,22 @@ export const grants = {
       "update:any": ["*"],
       "update:own": ["*", "!blocked"],
     },
+    notebooks: {
+      "create:any": ["*"],
+      "read:any": ["*"],
+      "delete:any": ["*"],
+      "update:any": ["*"],
+      "update:own": ["*"],
+    },
   },
   user: {
     users: {
       "read:own": ["*"],
       "update:own": ["*", "!role"],
+    },
+    notebooks: {
+      "read:own": ["*"],
+      "update:own": ["*"],
     },
   },
 };
