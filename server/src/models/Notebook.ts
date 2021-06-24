@@ -1,6 +1,8 @@
 // @ts-nocheck
 import { DataTypes } from "sequelize";
 
+export const notebookVisibilityValues = ["public", "private"];
+
 export default (sequelize, options) => {
   const Notebook = sequelize.define(
     "Notebook",
@@ -10,18 +12,15 @@ export default (sequelize, options) => {
         allowNull: false,
       },
       userId: DataTypes.INTEGER,
-      collaborators: {
+      collaborators: { // Users in array can write;
         defaultValue: [],
         type: DataTypes.ARRAY(DataTypes.INTEGER),
       },
       contents: DataTypes.JSON,
-      rings: {
-        type: DataTypes.ARRAY(DataTypes.INTEGER),
-        defaultValue: [],
-      },
       visibility: {
-        type: DataTypes.STRING || DataTypes.ARRAY(DataTypes.INTEGER),
-        defaultValue: "public", // "private"
+        type: DataTypes.ENUM,
+        values: notebookVisibilityValues,
+        default: "private",
       },
       parent: {
         type: DataTypes.INTEGER,
@@ -36,7 +35,6 @@ export default (sequelize, options) => {
   );
 
   Notebook.associate = function (models) {
-    models.Notebook.belongsTo(models.User, { foreignKey: "id", as: "owner" });
     models.Notebook.hasMany(models.Ring, {
       foreignKey: "notebookId",
       as: "rings",

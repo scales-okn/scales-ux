@@ -1,10 +1,20 @@
 // @ts-nocheck
 import { DataTypes } from "sequelize";
 
+export const ringVisibilityValues = ["public", "private"];
+
 export default (sequelize, options) => {
   const Ring = sequelize.define(
     "Ring",
     {
+      userId: {
+        type: DataTypes.INTEGER,
+        allowNull: false,
+      },
+      notebookId: {
+        type: DataTypes.INTEGER,
+        allowNull: false,
+      },
       contents: DataTypes.JSON,
       sourceType: {
         type: DataTypes.STRING,
@@ -15,22 +25,16 @@ export default (sequelize, options) => {
         type: DataTypes.STRING,
         allowNull: false,
       },
-      description: {
-        type: DataTypes.STRING,
-        allowNull: false,
-      },
+      description: DataTypes.STRING,
       visibility: {
-        type: DataTypes.STRING,
-        allowNull: false,
+        type: DataTypes.ENUM,
+        values: ringVisibilityValues,
+        default: "private",
       },
     },
     options
   );
-
-  Ring.associate = function (models) {
-    models.Ring.belongsTo(models.Notebook, { foreignKey: "id", as: "notebook" });
-    models.Ring.belongsTo(models.User, { foreignKey: "id", as: "owner" });
-  };
-
+  
   return Ring;
 };
+ 

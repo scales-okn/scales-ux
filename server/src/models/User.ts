@@ -3,18 +3,18 @@ import { DataTypes } from "sequelize";
 import jwt from "jsonwebtoken";
 import mailTransport from "../services/mail";
 
+export const userRoleValues = ["user", "admin"];
+
 export default (sequelize, options) => {
   const User = sequelize.define(
     "User",
     {
       approved: {
         type: DataTypes.BOOLEAN,
-        allowNull: false,
         defaultValue: false,
       },
       blocked: {
         type: DataTypes.BOOLEAN,
-        allowNull: false,
         defaultValue: false,
       },
       firstName: {
@@ -43,12 +43,9 @@ export default (sequelize, options) => {
       },
       passwordResetToken: DataTypes.STRING,
       role: {
-        type: DataTypes.STRING,
-        allowNull: false,
-        defaultValue: "user",
-      },
-      notebookId: {
-        type: DataTypes.INTEGER,
+        type: DataTypes.ENUM,
+        values: userRoleValues,
+        default: "user",
       },
     },
     options
@@ -63,7 +60,7 @@ export default (sequelize, options) => {
       foreignKey: "userId",
       as: "rings",
     });
-  };
+  }; 
 
   User.addHook("afterCreate", "verifyEmail", async (user) => {
     try {

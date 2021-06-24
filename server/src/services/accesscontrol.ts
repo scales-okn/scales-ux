@@ -18,6 +18,13 @@ export const grants = {
       "update:any": ["*"],
       "update:own": ["*"],
     },
+    rings: {
+      "create:any": ["*"],
+      "read:any": ["*"],
+      "delete:any": ["*"],
+      "update:any": ["*"],
+      "update:own": ["*"],
+    },
   },
   user: {
     users: {
@@ -25,6 +32,10 @@ export const grants = {
       "update:own": ["*", "!role"],
     },
     notebooks: {
+      "read:own": ["*"],
+      "update:own": ["*"],
+    },
+    rings: {
       "read:own": ["*"],
       "update:own": ["*"],
     },
