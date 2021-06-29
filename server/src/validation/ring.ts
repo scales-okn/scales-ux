@@ -9,5 +9,5 @@ export const createRingValidationSchema = yup.object({
   sourceType: yup.string().required(),
   connectionDetails: yup.string(),
   description: yup.string(),
-  visibility: yup.mixed().oneOf(ringVisibilityValues)
+  visibility: yup.mixed().oneOf(ringVisibilityValues),
 });

@@ -11,10 +11,6 @@ export default (sequelize, options) => {
         type: DataTypes.INTEGER,
         allowNull: false,
       },
-      notebookId: {
-        type: DataTypes.INTEGER,
-        allowNull: false,
-      },
       contents: DataTypes.JSON,
       sourceType: {
         type: DataTypes.STRING,
@@ -29,12 +25,11 @@ export default (sequelize, options) => {
       visibility: {
         type: DataTypes.ENUM,
         values: ringVisibilityValues,
-        default: "private",
+        defaultValue: "private",
       },
     },
     options
   );
-  
+
   return Ring;
 };
- 

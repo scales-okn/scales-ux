@@ -14,11 +14,7 @@ import { accessControlMiddleware } from "../services/accesscontrol";
 const router = express.Router();
 
 // Create a new Ring
-router.post(
-  "/create",
-  validateResource(createRingValidationSchema),
-  create
-);
+router.post("/create", validateResource(createRingValidationSchema), create);
 
 // Retrieve all Rings
 router.get(

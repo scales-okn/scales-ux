@@ -1,4 +1,4 @@
-import { Request, Response } from "express";
+import e, { Request, Response } from "express";
 import { sequelize } from "../database";
 
 // Resources validations are made with validateResources middleware and validations schemas
@@ -30,7 +30,6 @@ export const create = async (req: Request, res: Response) => {
     const ring = await sequelize.models.Ring.create({
       name,
       userId,
-      notebookId,
       contents,
       sourceType,
       connectionDetails,
@@ -38,11 +37,25 @@ export const create = async (req: Request, res: Response) => {
       visibility,
     });
 
+    if (notebookId) {
+      const ringId = ring.dataValues.id;
+      addRingToNotebook(ringId, notebookId);
+    }
+
     return res.send_ok("Ring created succesfully!", { ring });
   } catch (error) {
     console.log(error);
 
     return res.send_internalServerError("An error occured, please try again!");
+  }
+};
+
+export const addRingToNotebook = async (ringId: number, notebookId: number) => {
+  try {
+    const notebook = await sequelize.models.Notebook.findByPk(notebookId);
+    await notebook.addRing(ringId);
+  } catch (error) {
+    console.log(error);
   }
 };
 

@@ -28,7 +28,6 @@ export const create = async (req: Request, res: Response) => {
       email,
       usage,
       password: hash,
-      role: "admin", // TODO: Seed
     });
 
     return res.send_ok("User created succesfully!", { user });
@@ -107,7 +106,7 @@ export const login = async (req: Request, res: Response) => {
   }
 };
 
-// Find all User(s)
+// Find all Users
 export const findAllUsers = async (req: Request, res: Response) => {
   try {
     const users = await sequelize.models.User.findAll({
@@ -140,7 +139,7 @@ export const findById = async (req: Request, res: Response) => {
   }
 };
 
-// Update an User
+// Update User
 export const update = async (req: Request, res: Response) => {
   try {
     const id = req.params.userId;
@@ -174,7 +173,7 @@ export const update = async (req: Request, res: Response) => {
   }
 };
 
-// Delete a User
+// Delete User
 export const deleteUser = async (req: Request, res: Response) => {
   try {
     const id = req.params.userId;

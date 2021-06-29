@@ -6,5 +6,5 @@ export const createNotebookValidationSchema = yup.object({
   userId: yup.string().required(),
   collaborators: yup.array(),
   contents: yup.string(),
-  visibility: yup.mixed().oneOf(notebookVisibilityValues)
+  visibility: yup.mixed().oneOf(notebookVisibilityValues),
 });

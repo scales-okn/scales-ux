@@ -13,7 +13,6 @@ export const create = async (req: Request, res: Response) => {
       userId,
       collaborators = [],
       contents,
-      rings = [],
       visibility,
       parent = null,
     } = req.body;
@@ -31,10 +30,11 @@ export const create = async (req: Request, res: Response) => {
       userId,
       collaborators,
       contents,
-      rings,
       visibility,
       parent,
     });
+
+    console.log({ notebook });
 
     return res.send_ok("Notebook created succesfully!", { notebook });
   } catch (error) {

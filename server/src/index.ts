@@ -31,8 +31,8 @@ const limiter = rateLimit({
 // Apply to all requests
 app.use(limiter);
 
-// Initialize Database
-database.initialize().then(async () => {
+// Run Database
+database.run().then(async () => {
   try {
     // Passport
     app.use(passport.initialize());
@@ -45,6 +45,10 @@ database.initialize().then(async () => {
     // Notebook Routes
     const notebookRoutes = await import("./routes/notebook");
     app.use("/api/notebooks", notebookRoutes.default);
+
+    // Ring Routes
+    const ringRoutes = await import("./routes/ring");
+    app.use("/api/rings", ringRoutes.default);
 
     // Serve React App
     app.use(express.static(path.join(__dirname, "../client/build")));

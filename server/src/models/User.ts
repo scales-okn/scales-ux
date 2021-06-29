@@ -45,7 +45,7 @@ export default (sequelize, options) => {
       role: {
         type: DataTypes.ENUM,
         values: userRoleValues,
-        default: "user",
+        defaultValue: "user",
       },
     },
     options
@@ -60,7 +60,7 @@ export default (sequelize, options) => {
       foreignKey: "userId",
       as: "rings",
     });
-  }; 
+  };
 
   User.addHook("afterCreate", "verifyEmail", async (user) => {
     try {
