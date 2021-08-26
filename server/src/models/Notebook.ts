@@ -33,7 +33,7 @@ export default (sequelize, options) => {
     options
   );
 
-  Notebook.associate = function (models) {
+  Notebook.associate = (models) => {
     models.Ring.belongsToMany(models.Notebook, {
       through: "NotebooksToRings",
       as: "notebooks",
@@ -45,5 +45,6 @@ export default (sequelize, options) => {
       foreignKey: "notebookId",
     });
   };
+
   return Notebook;
 };

@@ -8,7 +8,6 @@ import rateLimit from "express-rate-limit";
 import passport from "passport";
 import { jwtLogin } from "./services/passport";
 import database from "./database";
-import proxyRoutes from "./proxy";
 
 const app = express();
 app.use(express.json());
@@ -32,15 +31,16 @@ const limiter = rateLimit({
 // Apply limiter to all requests
 app.use(limiter);
 
-// Proxy Routes
-app.use("/proxy", proxyRoutes);
-
-// Run Database then import routes and dependencies
+// Run Database then import core routes and dependencies
 database().then(async () => {
   try {
     // Passport
     app.use(passport.initialize());
     passport.use(jwtLogin);
+
+    // Proxy Routes
+    const proxyRoutes = await import("./proxy");
+    app.use("/proxy", proxyRoutes.default);
 
     // User Routes
     const userRoutes = await import("./routes/user");
@@ -67,7 +67,7 @@ database().then(async () => {
       console.log(`Server is running on ${process.env.PORT} port!`);
     });
   } catch (error) {
-    console.log(error);  
+    console.log(error);
   }
 });
 

@@ -1,4 +1,4 @@
-import { DataTypes } from "sequelize";
+import { DataTypes, Sequelize } from "sequelize";
 import jwt from "jsonwebtoken";
 import mailTransport from "../services/mail";
 
@@ -7,7 +7,7 @@ export const userRoleValues = ["user", "admin"];
 export default (sequelize, options) => {
   const User = sequelize.define(
     "User",
-    {
+    { 
       approved: {
         type: DataTypes.BOOLEAN,
         defaultValue: false,
@@ -50,7 +50,7 @@ export default (sequelize, options) => {
     options
   );
 
-  User.associate = function (models) {
+  User.associate = (models) => {
     models.User.hasMany(models.Notebook, {
       foreignKey: "userId",
       as: "notebooks",
