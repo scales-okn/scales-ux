@@ -1,4 +1,3 @@
-//@ts-nocheck
 import Sequelize from "sequelize";
 import Version from "sequelize-version";
 import UserModel from "../models/User";
@@ -7,6 +6,7 @@ import RingModel from "../models/Ring";
 import LogModel from "../models/Log";
 import logs from "./logs";
 
+// @ts-ignore
 export const sequelize = new Sequelize(
   process.env.DB_NAME,
   process.env.DB_USERNAME,

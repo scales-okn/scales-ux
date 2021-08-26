@@ -1,7 +1,7 @@
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 import { Request, Response } from "express";
-import { sequelize } from "../database/index";
+import { sequelize } from "../database";
 import mailTransport from "../services/mail";
 
 // Resources validations are made with validateResources middleware and validations schemas

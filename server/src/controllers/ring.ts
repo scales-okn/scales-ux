@@ -1,6 +1,6 @@
 import { Request, Response } from "express";
 
-import { sequelize } from "../database/index";
+import { sequelize } from "../database";
 
 // Resources validations are made with validateResources middleware and validations schemas
 // server/middlewares/validateResources.ts

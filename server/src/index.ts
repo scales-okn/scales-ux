@@ -10,30 +10,34 @@ import { jwtLogin } from "./services/passport";
 import database from "./database";
 
 const app = express();
-app.use(express.json());
-app.use(
-  express.urlencoded({
-    extended: true,
-  })
-);
-app.use(responser);
-app.use(cors());
-app.use(helmet());
-app.use(hpp());
 
-// see https://expressjs.com/en/guide/behind-proxies.html
-// app.set('trust proxy', 1);
-const limiter = rateLimit({
-  windowMs: 15 * 60 * 1000, // 15 minutes
-  max: 100, // limit each IP to 100 requests per windowMs
-});
-
-// Apply limiter to all requests
-app.use(limiter);
-
-// Run Database then import core routes and dependencies
-database().then(async () => {
+(async (app) => {
   try {
+    // Database
+    await database();
+
+    // Middlewares
+    app.use(express.json());
+    app.use(
+      express.urlencoded({
+        extended: true,
+      })
+    );
+    app.use(responser);
+    app.use(cors());
+    app.use(helmet());
+    app.use(hpp());
+
+    // see https://expressjs.com/en/guide/behind-proxies.html
+    // app.set('trust proxy', 1);
+    const limiter = rateLimit({
+      windowMs: 15 * 60 * 1000, // 15 minutes
+      max: 100, // limit each IP to 100 requests per windowMs
+    });
+
+    // Apply limiter to all requests
+    app.use(limiter);
+
     // Passport
     app.use(passport.initialize());
     passport.use(jwtLogin);
@@ -69,7 +73,7 @@ database().then(async () => {
   } catch (error) {
     console.log(error);
   }
-});
+})(app);
 
 // TODO: Add Logger
 // TODO: Add i18n (gettext)

@@ -1,4 +1,3 @@
-//@ts-nocheck
 export default (sequelize) => {
   const saveLog = (action, instance, options) => {
     try {
@@ -7,6 +6,7 @@ export default (sequelize) => {
         instance,
         options,
       });
+
       const resource = instance.constructor.getTableName();
       const log = sequelize.models.Log.build({
         userId: instance?.req?.user?.id,
@@ -17,6 +17,7 @@ export default (sequelize) => {
         previousValues: instance?._previousDataValues,
         currentValues: instance?.dataValues,
       });
+      
       log.save();
     } catch (error) {
       console.log(error);

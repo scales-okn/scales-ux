@@ -7,7 +7,7 @@ export const userRoleValues = ["user", "admin"];
 export default (sequelize, options) => {
   const User = sequelize.define(
     "User",
-    { 
+    {
       approved: {
         type: DataTypes.BOOLEAN,
         defaultValue: false,
