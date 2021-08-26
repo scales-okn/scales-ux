@@ -4,6 +4,7 @@
   "dependencies": {
     "accesscontrol": "^2.2.1",
     "accesscontrol-middleware": "^1.0.3",
+    "accesscontrol-plus": "^1.0.1",
     "bcryptjs": "^2.4.3",
     "cors": "^2.8.5",
     "dotenv": "^9.0.2",
