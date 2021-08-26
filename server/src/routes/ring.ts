@@ -9,7 +9,6 @@ import {
 import validateResource from "../middlewares/validateResources";
 import { createRingValidationSchema } from "../validation/ring";
 import checkAuth from "../middlewares/checkAuth";
-import { accessControlMiddleware } from "../services/accesscontrol";
 
 const router = express.Router();
 
@@ -17,63 +16,15 @@ const router = express.Router();
 router.post("/create", validateResource(createRingValidationSchema), create);
 
 // Retrieve all Rings
-router.get(
-  "/",
-  checkAuth,
-  accessControlMiddleware.check({
-    resource: "rings",
-    action: "read",
-    operands: [
-      { source: "user", key: "id" }, // means req.user.id
-      null,
-    ],
-  }),
-  findAll
-);
+router.get("/", checkAuth, findAll);
 
 // Retrieve Ring by Id
-router.get(
-  "/:ringId",
-  checkAuth,
-  accessControlMiddleware.check({
-    resource: "rings",
-    action: "read",
-    operands: [
-      { source: "user", key: "id" }, // means req.user.id
-      null,
-    ],
-  }),
-  findById
-);
+router.get("/:ringId", checkAuth, findById);
 
 // Update a Ring
-router.put(
-  "/:userId",
-  checkAuth,
-  accessControlMiddleware.check({
-    resource: "rings",
-    action: "update",
-    operands: [
-      { source: "user", key: "id" }, // means req.user.id
-      null,
-    ],
-  }),
-  update
-);
+router.put("/:userId", checkAuth, update);
 
 // Delete a Ring
-router.delete(
-  "/:ringId",
-  checkAuth,
-  accessControlMiddleware.check({
-    resource: "rings",
-    action: "delete",
-    operands: [
-      { source: "user", key: "id" }, // means req.user.id
-      null,
-    ],
-  }),
-  deleteRing
-);
+router.delete("/:ringId", checkAuth, deleteRing);
 
 export default router;

@@ -7,7 +7,6 @@ import {
   history,
 } from "../controllers/notebook";
 
-import { accessControlMiddleware } from "../services/accesscontrol";
 import checkAuth from "../middlewares/checkAuth";
 import { createNotebookValidationSchema } from "../validation/notebook";
 import express from "express";
@@ -21,74 +20,14 @@ router.post(
   create
 );
 
-router.get(
-  "/",
-  checkAuth,
-  // accessControlMiddleware.check({
-  //   resource: "notebooks",
-  //   action: "read",
-  //   operands: [
-  //     { source: "user", key: "id" }, // means req.user.id
-  //     null,
-  //   ],
-  // }),
-  findAll
-);
+router.get("/", checkAuth, findAll);
 
-router.get(
-  "/:notebookId",
-  checkAuth,
-  accessControlMiddleware.check({
-    resource: "notebooks",
-    action: "read",
-    operands: [
-      { source: "user", key: "id" }, // means req.user.id
-      null,
-    ],
-  }),
-  findById
-);
+router.get("/:notebookId", checkAuth, findById);
 
-router.get(
-  "/:notebookId/history",
-  checkAuth,
-  accessControlMiddleware.check({
-    resource: "notebooks",
-    action: "read",
-    operands: [
-      { source: "user", key: "id" }, // means req.user.id
-      null,
-    ],
-  }),
-  history
-);
+router.get("/:notebookId/history", checkAuth, history);
 
-router.put(
-  "/:notebookId",
-  checkAuth,
-  // accessControlMiddleware.check({
-  //   resource: "notebooks",
-  //   action: "update",
-  //   operands: [
-  //     { source: "user", key: "id" }, // means req.user.id
-  //     null,
-  //   ],
-  // }),
-  update
-);
+router.put("/:notebookId", checkAuth, update);
 
-router.delete(
-  "/:notebookId",
-  checkAuth,
-  accessControlMiddleware.check({
-    resource: "notebooks",
-    action: "delete",
-    operands: [
-      { source: "user", key: "id" }, // means req.user.id
-      null,
-    ],
-  }),
-  deleteNotebook
-);
+router.delete("/:notebookId", checkAuth, deleteNotebook);
 
 export default router;

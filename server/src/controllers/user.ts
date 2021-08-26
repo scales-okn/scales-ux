@@ -3,6 +3,7 @@ import jwt from "jsonwebtoken";
 import { Request, Response } from "express";
 import { sequelize } from "../database";
 import mailTransport from "../services/mail";
+import accessControl, {accessControlFieldsFilter} from "../services/accesscontrol";
 
 // Resources validations are made with validateResources middleware and validations schemas
 // server/middlewares/validateResources.ts
@@ -109,6 +110,12 @@ export const login = async (req: Request, res: Response) => {
 // Find all Users
 export const findAllUsers = async (req: Request, res: Response) => {
   try {
+    // @ts-ignore
+    const permission = await accessControl.can(req.user.role, "users:read");
+    if (!permission.granted) {
+      return res.send_forbidden("Not allowed!");
+    }
+
     const users = await sequelize.models.User.findAll({
       attributes: { exclude: ["password"] },
       order: [["id", "DESC"]],
@@ -127,11 +134,17 @@ export const findById = async (req: Request, res: Response) => {
   try {
     const id = req.params.userId;
     const user = await sequelize.models.User.findOne({ where: { id } });
+    // @ts-ignore
+    const permission = await accessControl.can(req.user.role, "users:read", {user: req.user, resource: user});
+    if (!permission.granted) {
+      return res.send_forbidden("Not allowed!");
+    }
+
     if (!user) {
       return res.send_notFound("User not found!");
     }
 
-    return res.send_ok("", { user });
+    return res.send_ok("", { user: accessControlFieldsFilter(user.dataValues, permission.fields) });
   } catch (error) {
     console.log(error);
 
@@ -143,29 +156,48 @@ export const findById = async (req: Request, res: Response) => {
 export const update = async (req: Request, res: Response) => {
   try {
     const id = req.params.userId;
-    const payload = { ...req.body };
+    const user = await sequelize.models.User.findOne({ where: { id } });
+
+    if (!user) {
+      return res.send_notFound("User not found!");
+    }
+    
+    // @ts-ignore
+    const permission = await accessControl.can(req.user.role, "users:update", {user: req.user, resource: user});
+    
+    if (!permission.granted) {
+      return res.send_forbidden("Not allowed!");
+    }
+
+    const payload = accessControlFieldsFilter(req.body, permission.fields);
+
     if (payload.password) {
       const salt = await bcrypt.genSalt(10);
       const hash = await bcrypt.hash(payload.password, salt);
       payload.password = hash;
     }
     // Inject req for saveLog
-    // @ts-ignore
-    sequelize.models.User.beforeUpdate((model) => {
+    sequelize.models.User.beforeUpdate((model: any) => {
       model.req = req;
     });
+
+    if (Object.keys(payload).length === 0) {
+      return res.send_notModified("User has not been updated!");
+    }
 
     const result = await sequelize.models.User.update(payload, {
       where: { id },
       individualHooks: true,
+      returning: true
     });
 
     if (!result.length) {
       return res.send_notModified("User has not been updated!");
     }
-    const user = await sequelize.models.User.findOne({ where: { id } });
 
-    return res.send_ok("User has been updated!", { user });
+    const updatedUser = result[1][0].dataValues;
+
+    return res.send_ok("User has been updated!", {user: accessControlFieldsFilter(updatedUser, permission.fields)});
   } catch (error) {
     console.log(error);
 

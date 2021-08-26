@@ -1,11 +1,11 @@
 export default (sequelize) => {
   const saveLog = (action, instance, options) => {
     try {
-      console.log("saveLog", {
-        action,
-        instance,
-        options,
-      });
+      // console.log("saveLog", {
+      //   action,
+      //   instance,
+      //   options,
+      // });
 
       const resource = instance.constructor.getTableName();
       const log = sequelize.models.Log.build({
@@ -17,7 +17,7 @@ export default (sequelize) => {
         previousValues: instance?._previousDataValues,
         currentValues: instance?.dataValues,
       });
-      
+
       log.save();
     } catch (error) {
       console.log(error);
