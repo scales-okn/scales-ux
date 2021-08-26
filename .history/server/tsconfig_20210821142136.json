@@ -1,0 +1,15 @@
+{
+  "compilerOptions": {
+    "target": "es2017",
+    "module": "es2015",
+    "rootDir": "./",
+    "outDir": "./build",
+    "strict": false,
+    "noImplicitAny": false,
+    "strictNullChecks": false,
+  },
+  "exclude": [
+    "dist",
+    "node_modules"
+  ]
+}

@@ -1,4 +1,3 @@
-// @ts-nocheck
 import { DataTypes } from "sequelize";
 
 export const notebookVisibilityValues = ["public", "private"];
@@ -46,6 +45,5 @@ export default (sequelize, options) => {
       foreignKey: "notebookId",
     });
   };
-
   return Notebook;
 };

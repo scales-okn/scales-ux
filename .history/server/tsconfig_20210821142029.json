@@ -1,0 +1,17 @@
+{
+  "compilerOptions": {
+    "target": "es2017",
+    "module": "esnext",
+    "rootDir": "./",
+    "outDir": "./build",
+    "esModuleInterop": true,
+    "moduleResolution": "node",
+    "strict": false,
+    "noImplicitAny": false,
+    "strictNullChecks": false,
+  },
+  "exclude": [
+    "dist",
+    "node_modules"
+  ]
+}

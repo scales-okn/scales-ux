@@ -1,0 +1,23 @@
+{
+  "compilerOptions": {
+    "target": "es2017",
+    "module": "esnext",
+    "rootDir": "./",
+    "outDir": "./build",
+    "esModuleInterop": true,
+    "moduleResolution": "node",
+    "allowSyntheticDefaultImports": true,
+    "strict": false,
+    "noImplicitAny": false,
+    "strictNullChecks": false,
+  },
+  "ts-node": {
+    "compilerOptions": {
+      "module": "esnext"
+    }
+  },
+  "exclude": [
+    "dist",
+    "node_modules"
+  ]
+}
