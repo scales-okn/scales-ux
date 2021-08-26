@@ -8,6 +8,7 @@ import rateLimit from "express-rate-limit";
 import passport from "passport";
 import { jwtLogin } from "./services/passport";
 import database from "./database";
+import proxyRoutes from "./proxy";
 
 const app = express();
 app.use(express.json());
@@ -30,6 +31,9 @@ const limiter = rateLimit({
 
 // Apply limiter to all requests
 app.use(limiter);
+
+// Proxy Routes
+app.use("/proxy", proxyRoutes);
 
 // Run Database then import routes and dependencies
 database().then(async () => {
