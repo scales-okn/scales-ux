@@ -21,8 +21,9 @@ type Props = {
 const PageLayout: FunctionComponent<Props> = (props) => {
   const auth = useAuthUser();
   const signOut = useSignOut();
-  const isAdmin = auth()?.user?.role === "admin";
-  const isUser = auth()?.user?.role === "user";
+  const user = auth().user;
+  const isAdmin = user.role === "admin";
+  const isUser = user.role === "user";
 
   return (
     <>

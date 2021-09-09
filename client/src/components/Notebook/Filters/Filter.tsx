@@ -28,7 +28,7 @@ const Filter: FunctionComponent<Props> = (props) => {
   const [isLoading, setIsLoading] = useState(false);
   const filterColumn = getFilterColumnByKey(type);
   const filterOptions = getFilterOptionsByKey(type);
-  const [dateValue, onChange] = useState([new Date(), new Date()]);
+  const [dateValue, setDateValue] = useState([new Date(), new Date()]);
 
   const fetchAutocompleteSuggestions = async (type, query) => {
     setIsLoading(true);
@@ -51,7 +51,11 @@ const Filter: FunctionComponent<Props> = (props) => {
         return (
           <DateTimeRangePicker
             format="MM/dd/yyyy"
-            onChange={onChange}
+            onChange={(value) => {
+              console.log(value);
+              setDateValue(value);
+              setFilterInput({ ...filterInput, value: value });
+            }}
             value={dateValue}
           />
         );

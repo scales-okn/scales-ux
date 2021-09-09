@@ -57,6 +57,7 @@ const Notebook: FunctionComponent = () => {
                 className="border-0 bg-transparent ps-0 notebook-title"
               />
             </Col>
+
             <Col>
               <Button
                 className="text-white float-end"
@@ -65,6 +66,15 @@ const Notebook: FunctionComponent = () => {
                 disabled={savingNotebook}
               >
                 {savingNotebook ? "Loading…" : "Save"}
+              </Button>
+
+              <Button
+                className="text-white float-end me-2"
+                variant="danger"
+                onClick={() => saveNotebook()}
+                disabled={savingNotebook}
+              >
+                {savingNotebook ? "Loading…" : "Delete"}
               </Button>
             </Col>
           </Row>

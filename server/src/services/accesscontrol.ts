@@ -22,25 +22,20 @@ const userCanReadNotebook = ({ user, resource }) => {
   if (userIsNotebookOwner({ user, resource })) {
     return true;
   }
-
   // If notebook is private
   if (resource.visibility === "private") {
     if (userIsNotebookContributor({ user, resource })) {
       return true;
     }
-
     return false;
   }
-
   // If the notebook is public
   if (resource.visibility === "public") {
     return true;
   }
-
   if (userIsAllowedToReadNotebook({ user, resource })) {
     return true;
   }
-
   return false;
 };
 
@@ -100,17 +95,22 @@ accessControl
   // Users
   .grant("user")
     .resource("users")
-    .read.where(userIsResourceOwner).onFields("firstName", "lastName", "usage", "email")
+    .read
+      .where(userIsResourceOwner)
+        .onFields("firstName", "lastName", "usage", "email")
     .update
       .onFields("firstName", "lastName", "usage", "email")
         .where(userIsResourceOwner)
   // Notebooks
   .grant("user")
     .resource("notebooks")
-      .read.where(userCanReadNotebook)
-        .onFields("*", "!userId")
-      .update.where(userCanUpdateNotebook)
-        .onFields("*", "!deleted")
+      .read
+        .where(userCanReadNotebook)
+        .onFields("title", "contents")
+      .create
+      .update
+        .where(userCanUpdateNotebook)
+          .onFields("title", "contents")
   // Rings
   .grant("user")
     .resource("rings")
@@ -125,31 +125,44 @@ export const accessControlFieldsFilter = (input, fields) => {
   if (Object.keys(fields).length === 0) {
     return output;
   }
-  const exclude = Object.keys(fields).filter(field => fields[field] === false);
-  const include = Object.keys(fields).filter(field => fields[field] === true);
+  const exclude = Object.keys(fields).filter(
+    (field) => fields[field] === false
+  );
+  const include = Object.keys(fields).filter((field) => fields[field] === true);
 
-  output = {..._.omit(output, exclude)}
-  output = {..._.pick(output, include)}
+  output = { ..._.omit(output, exclude) };
+  output = { ..._.pick(output, include) };
 
   return output;
-}
+};
 
-export const accessControlMiddleware = (resource: string, action: string, context: IContext) => {
+export const accessControlMiddleware = (
+  resource: string,
+  action: string,
+  context: IContext
+) => {
   return async (req: Request, res: Response, next: NextFunction) => {
     try {
       const { user } = req;
-      // @ts-ignore
-      const permission = await accessControl.can(user.role, `${resource}:${action}`,context);
+
+      const permission = await accessControl.can(
+        // @ts-ignore
+        user.role,
+        `${resource}:${action}`,
+        context
+      );
 
       if (permission.granted) {
         return next();
       } else {
         res.send_forbidden("Not allowed!");
       }
-    } catch(error) {
+    } catch (error) {
       console.log(error);
 
-      return res.send_internalServerError("An error occured, please try again!");
+      return res.send_internalServerError(
+        "An error occured, please try again!"
+      );
     }
   };
 };
@@ -214,7 +227,11 @@ export default accessControl;
 // TODO: Ring Deletion
 // soft delete - not available for anybody except admin - users that use it => this ring doesn't exist
 // track date when deleted
+// Can be viewed by anyone
+// Users can create rings
 
 // TODO: Range for the inputs
 
 // TODO - Instantianting RING - JSON - Rings
+
+// V2 -

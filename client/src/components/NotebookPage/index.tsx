@@ -13,6 +13,7 @@ type Params = {
 
 const NotebookPage: FunctionComponent = () => {
   const { notebookId } = useParams<Params>();
+
   return (
     <PageLayout>
       <Loader animation="border" isVisible={false}>

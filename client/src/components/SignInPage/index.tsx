@@ -150,7 +150,9 @@ const SignInPage: FunctionComponent = () => {
                 className="rounded-0 rounded-top"
                 value={formik.values.email}
                 onChange={formik.handleChange}
-                isInvalid={formik.touched.email && Boolean(formik.errors.email)}
+                isInvalid={
+                  formik.touched.email && Boolean(formik.errors?.email)
+                }
               />
               <Form.Label>Email address</Form.Label>
             </div>
@@ -163,7 +165,7 @@ const SignInPage: FunctionComponent = () => {
                 value={formik.values.password}
                 onChange={formik.handleChange}
                 isInvalid={
-                  formik.touched.password && Boolean(formik.errors.password)
+                  formik.touched.password && Boolean(formik.errors?.password)
                 }
               />
               <Form.Label>Password</Form.Label>

@@ -15,7 +15,8 @@ import validateResource from "../middlewares/validateResources";
 const router = express.Router();
 
 router.post(
-  "/create",
+  "/",
+  checkAuth,
   validateResource(createNotebookValidationSchema),
   create
 );

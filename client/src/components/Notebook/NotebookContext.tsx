@@ -9,6 +9,7 @@ import { fetchInfo, infoSelector } from "../../store/info";
 import { useDispatch, useSelector } from "react-redux";
 import appendQuery from "append-query";
 import { useAuthHeader, useAuthUser } from "react-auth-kit";
+import dayjs from "dayjs";
 
 import usePersistedState from "use-persisted-state-hook";
 import Loader from "../Loader";
@@ -41,10 +42,14 @@ const NotebookContextProvider = ({ notebookId, children }: Props) => {
   const [notebookTitle, setNotebookTitle] = useState("New Notebook");
   const [loadingResults, setLoadingResults] = useState(false);
   const { info, loadingInfo, hasErrors } = useSelector(infoSelector);
-  const [filterInputs, setFilterInputs] = usePersistedState("filterInputs", []);
+  const [filterInputs, setFilterInputs] = usePersistedState(
+    `filterInputs-${notebookId}`,
+    []
+  );
+  // const [filterInputs, setFilterInputs] = useState<Array<FilterInput>>([]);
   const [loadingNotebook, setLoadingNotebook] = useState(false);
   const [savingNotebook, setSavingNotebook] = useState(false);
-  const [results, setResults] = usePersistedState<ResultsResponse>();
+  const [results, setResults] = useState<ResultsResponse>();
   const { filters = [], columns = [] } = info;
   const authHeader = useAuthHeader();
 
@@ -56,15 +61,27 @@ const NotebookContextProvider = ({ notebookId, children }: Props) => {
 
   const fetchResults = async (filterInputs: [], page = 0, batchSize = 10) => {
     setLoadingResults(true);
+    console.log(filterInputs);
     try {
       const response = await fetch(
         appendQuery(
           `${process.env.REACT_APP_BFF_PROXY_ENDPOINT_URL}/results/?page=${page}&batchSize=${batchSize}&sortBy=dateFiled&sortDirection=desc`,
-          filterInputs?.reduce((acc, current) => {
-            //@ts-ignore
-            acc[current.type] = current.value;
+          filterInputs?.reduce((acc, filterInput: FilterInput) => {
+            acc[filterInput.type] =
+              filterInput.type === "dateFiled"
+                ? //@ts-ignore
+                  //   filterInput.value?.map((date) =>
+                  //   dayjs(date).format("YYYY-MM-DD")
+                  // )
+                  //@ts-ignore
+                  `[${filterInput.value?.map((date) =>
+                    dayjs(date).format("YYYY-M-DD")
+                  )}]`
+                : filterInput.value;
+
             return acc;
-          }, {})
+          }, {}),
+          { encodeComponents: false }
         )
       );
       const data = await response.json();
@@ -78,21 +95,24 @@ const NotebookContextProvider = ({ notebookId, children }: Props) => {
 
   const saveNotebook = async () => {
     setSavingNotebook(true);
+    const isNewNotebook = notebookId === "new";
     try {
       const response = await fetch(
-        `${process.env.REACT_APP_BFF_API_ENDPOINT_URL}/notebooks/${notebookId}`,
+        `${process.env.REACT_APP_BFF_API_ENDPOINT_URL}/notebooks/${
+          isNewNotebook ? "" : notebookId
+        }`,
         {
-          method: "PUT",
+          method: isNewNotebook ? "POST" : "PUT",
           headers: {
             Authorization: authHeader(),
             "Content-Type": "application/json",
           },
           body: JSON.stringify({
             title: notebookTitle,
-            contents: {
+            contents: JSON.stringify({
               filterInputs,
               results,
-            },
+            }),
           }),
         }
       );
@@ -126,18 +146,34 @@ const NotebookContextProvider = ({ notebookId, children }: Props) => {
 
       setNotebook(notebook);
       setNotebookTitle(notebook.title);
-      setFilterInputs(notebook?.contents?.filterInputs);
-      setResults(notebook?.contents?.results);
+      if (notebook?.contents) {
+        const notebookContents = JSON.parse(notebook.contents);
+        notebookContents?.filterInputs &&
+          setFilterInputs(notebookContents.filterInputs);
+        notebookContents?.results && setResults(notebookContents.results);
+      }
     } catch (error) {
       // TODO: Implement Error handling
     }
   };
 
-  const getFilterInputById = (id: string) =>
-    filterInputs?.find((filterInput: FilterInput) => filterInput.id === id);
+  const getFilterInputById = (id: string) => {
+    try {
+      return filterInputs?.find(
+        (filterInput: FilterInput) => filterInput.id === id
+      );
+    } catch (error) {
+      console.log(error);
+    }
+  };
 
-  const getFilterColumnByKey = (key: string) =>
-    columns.find((column) => column.key == key);
+  const getFilterColumnByKey = (key: string) => {
+    try {
+      return columns.find((column) => column.key == key);
+    } catch (error) {
+      console.log(error);
+    }
+  };
 
   const getFilterOptionsByKey = (key) => {
     try {
@@ -148,15 +184,19 @@ const NotebookContextProvider = ({ notebookId, children }: Props) => {
   };
 
   const setFilterInput = (filterInput: FilterInput) => {
-    setFilterInputs((prevFilterInputs: Array<FilterInput>) => {
-      return [
-        ...prevFilterInputs.filter(
-          (prevFilterInput: FilterInput) =>
-            prevFilterInput.id !== filterInput.id
-        ),
-        { ...filterInput },
-      ];
-    });
+    try {
+      setFilterInputs((prevFilterInputs: Array<FilterInput>) => {
+        return [
+          ...prevFilterInputs.filter(
+            (prevFilterInput: FilterInput) =>
+              prevFilterInput.id !== filterInput.id
+          ),
+          { ...filterInput },
+        ];
+      });
+    } catch (error) {
+      console.log(error);
+    }
   };
 
   const getFiltersNormalized = () => {
@@ -171,11 +211,9 @@ const NotebookContextProvider = ({ notebookId, children }: Props) => {
 
   useEffect(() => {
     dispatch(fetchInfo());
-    if (notebookId && notebookId !== "new") {
-      fetchNotebook(notebookId);
-    } else {
-      fetchResults(filterInputs);
-    }
+    fetchNotebook(notebookId);
+    //@ts-ignore
+    fetchResults(filterInputs);
   }, []);
 
   if (loadingInfo) return <Loader animation="border" isVisible={true} />;

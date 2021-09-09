@@ -8,7 +8,11 @@ import uniqid from "uniqid";
 import { useNotebookContext } from "../NotebookContext";
 
 const Filters: FunctionComponent = () => {
-  const { setFilterInputs, filterInputs, fetchResults } = useNotebookContext();
+  const {
+    setFilterInputs,
+    filterInputs = [],
+    fetchResults,
+  } = useNotebookContext();
 
   return (
     <Row className="notebook-filters bg-white p-3">

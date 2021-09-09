@@ -3,7 +3,9 @@ import jwt from "jsonwebtoken";
 import { Request, Response } from "express";
 import { sequelize } from "../database";
 import mailTransport from "../services/mail";
-import accessControl, {accessControlFieldsFilter} from "../services/accesscontrol";
+import accessControl, {
+  accessControlFieldsFilter,
+} from "../services/accesscontrol";
 
 // Resources validations are made with validateResources middleware and validations schemas
 // server/middlewares/validateResources.ts
@@ -135,7 +137,10 @@ export const findById = async (req: Request, res: Response) => {
     const id = req.params.userId;
     const user = await sequelize.models.User.findOne({ where: { id } });
     // @ts-ignore
-    const permission = await accessControl.can(req.user.role, "users:read", {user: req.user, resource: user});
+    const permission = await accessControl.can(req.user.role, "users:read", {
+      user: req.user,
+      resource: user,
+    });
     if (!permission.granted) {
       return res.send_forbidden("Not allowed!");
     }
@@ -144,7 +149,9 @@ export const findById = async (req: Request, res: Response) => {
       return res.send_notFound("User not found!");
     }
 
-    return res.send_ok("", { user: accessControlFieldsFilter(user.dataValues, permission.fields) });
+    return res.send_ok("", {
+      user: accessControlFieldsFilter(user.dataValues, permission.fields),
+    });
   } catch (error) {
     console.log(error);
 
@@ -161,10 +168,13 @@ export const update = async (req: Request, res: Response) => {
     if (!user) {
       return res.send_notFound("User not found!");
     }
-    
+
     // @ts-ignore
-    const permission = await accessControl.can(req.user.role, "users:update", {user: req.user, resource: user});
-    
+    const permission = await accessControl.can(req.user.role, "users:update", {
+      user: req.user,
+      resource: user,
+    });
+
     if (!permission.granted) {
       return res.send_forbidden("Not allowed!");
     }
@@ -188,7 +198,7 @@ export const update = async (req: Request, res: Response) => {
     const result = await sequelize.models.User.update(payload, {
       where: { id },
       individualHooks: true,
-      returning: true
+      returning: true,
     });
 
     if (!result.length) {
@@ -197,7 +207,9 @@ export const update = async (req: Request, res: Response) => {
 
     const updatedUser = result[1][0].dataValues;
 
-    return res.send_ok("User has been updated!", {user: accessControlFieldsFilter(updatedUser, permission.fields)});
+    return res.send_ok("User has been updated!", {
+      user: accessControlFieldsFilter(updatedUser, permission.fields),
+    });
   } catch (error) {
     console.log(error);
 

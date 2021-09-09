@@ -1,6 +1,9 @@
 import { Request, Response } from "express";
 import { sequelize } from "../database";
-import accessControl from "../services/accesscontrol";
+import accessControl, {
+  accessControlFieldsFilter,
+} from "../services/accesscontrol";
+const { Op } = require("sequelize");
 
 // Resources validations are made with validateResources middleware and validations schemas
 // server/middlewares/validateResources.ts
@@ -9,26 +12,27 @@ import accessControl from "../services/accesscontrol";
 // Create Notebook
 export const create = async (req: Request, res: Response) => {
   try {
+    const permission = await accessControl.can(
+      // @ts-ignore
+      req.user.role,
+      "notebooks:create"
+    );
+    if (!permission.granted) {
+      return res.send_forbidden("Not allowed!");
+    }
+
     const {
       title,
-      userId,
       collaborators = [],
       contents,
       visibility,
       parent = null,
     } = req.body;
 
-    // TODO: Check if is needed.
-    // const notebooks = await sequelize.models.Notebook.findAll({ where: { contents } });
-    // if (notebooks?.length) {
-    //   return res.send_badRequest("Notebook was not created!", {
-    //     email: "An Notebook with the same contents already exists!",
-    //   });
-    // }
-
     const notebook = await sequelize.models.Notebook.create({
       title,
-      userId,
+      //@ts-ignore
+      userId: req.user.id,
       collaborators,
       contents,
       visibility,
@@ -48,7 +52,29 @@ export const create = async (req: Request, res: Response) => {
 // Find all Notebooks
 export const findAll = async (req: Request, res: Response) => {
   try {
+    const where =
+      //@ts-ignore
+      req.user.role === "admin"
+        ? {}
+        : {
+            [Op.or]: [
+              {
+                //@ts-ignore
+                visibility: "public",
+              },
+              {
+                //@ts-ignore
+                collaborators: { [Op.contains]: [req.user.id] },
+              },
+              {
+                //@ts-ignore
+                userId: req.user.id,
+              },
+            ],
+          };
+
     const notebooks = await sequelize.models.Notebook.findAll({
+      where,
       // attributes: { exclude: [""] }, // TODO: Check if we need to hide something.
       order: [["id", "DESC"]],
     });
@@ -66,11 +92,27 @@ export const findById = async (req: Request, res: Response) => {
   try {
     const id = req.params.notebookId;
     const notebook = await sequelize.models.Notebook.findOne({ where: { id } });
+
+    const permission = await accessControl.can(
+      // @ts-ignore
+      req.user.role,
+      "notebooks:read",
+      { user: req.user, resource: notebook }
+    );
+    if (!permission.granted) {
+      return res.send_forbidden("Not allowed!");
+    }
+
     if (!notebook) {
       return res.send_notFound("Notebook not found!");
     }
 
-    return res.send_ok("", { notebook });
+    return res.send_ok("", {
+      notebook: accessControlFieldsFilter(
+        notebook.dataValues,
+        permission.fields
+      ),
+    });
   } catch (error) {
     console.log(error);
 
