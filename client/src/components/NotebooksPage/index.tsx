@@ -4,7 +4,18 @@ import { useAuthHeader, useAuthUser } from "react-auth-kit";
 import Loader from "../Loader";
 import { DataGrid, GridCellParams } from "@material-ui/data-grid";
 import { Link } from "react-router-dom";
-import { Form, Row, Col, Button } from "react-bootstrap";
+import {
+  Form,
+  Row,
+  Col,
+  Button,
+  Popover,
+  OverlayTrigger,
+} from "react-bootstrap";
+// import ReactTags from "react-tag-autocomplete";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faEdit, faPlus } from "@fortawesome/free-solid-svg-icons";
+import { WithContext as ReactTags } from "react-tag-input";
 
 const NotebooksPage: FunctionComponent = () => {
   const [notebooks, setNotebooks] = useState([]);
@@ -57,11 +68,12 @@ const NotebooksPage: FunctionComponent = () => {
     }
   };
   const handleOnEditCellChangeCommitted = async (values, event) => {
+    console.log(values);
     await updateNotebook(values.id, {
       [values.field]:
         values.field === "collaborators"
           ? //@ts-ignore
-            values.props.value?.split(",")
+            values.props?.value?.split(",")
           : values.props.value,
     });
   };
@@ -80,6 +92,18 @@ const NotebooksPage: FunctionComponent = () => {
   );
 
   const fieldDecorator = (params) => console.log(params);
+
+  const KeyCodes = {
+    comma: 188,
+    enter: [10, 13],
+  };
+
+  const delimiters = [...KeyCodes.enter, KeyCodes.comma];
+
+  const tags = [
+    { id: "Thailand", text: "Thailand" },
+    { id: "India", text: "India" },
+  ];
 
   return (
     <PageLayout>
@@ -222,7 +246,67 @@ const NotebooksPage: FunctionComponent = () => {
                         field: "collaborators",
                         headerName: "collaborators",
                         width: 160,
-                        editable: true,
+                        editable: false,
+                        renderCell: (params: GridCellParams) => {
+                          console.log(params);
+                          return (
+                            <OverlayTrigger
+                              trigger="click"
+                              placement="right"
+                              overlay={
+                                <Popover
+                                  id={`collaborators-popover-${params.id}`}
+                                >
+                                  <Popover.Header as="h3">
+                                    Collaborators
+                                  </Popover.Header>
+                                  <Popover.Body>
+                                    <ReactTags
+                                      tags={params.row.collaborators.map(
+                                        (collaborator) => ({
+                                          id: collaborator,
+                                          text: collaborator,
+                                        })
+                                      )}
+                                      // suggestions={suggestions}
+                                      handleDelete={() => alert()}
+                                      handleAddition={() => alert()}
+                                      handleDrag={() => alert()}
+                                      delimiters={delimiters}
+                                    />
+                                  </Popover.Body>
+                                </Popover>
+                              }
+                            >
+                              <div className="d-block w-100">
+                                {" "}
+                                {params.row.collaborators.length ? (
+                                  <>
+                                    {params.row.collaborators.join(",")}
+                                    <Button
+                                      variant="primary"
+                                      size="sm"
+                                      className="text-white float-end  mt-2"
+                                    >
+                                      <FontAwesomeIcon icon={faEdit} />
+                                    </Button>
+                                  </>
+                                ) : (
+                                  <>
+                                    No collaborators
+                                    <Button
+                                      variant="primary"
+                                      size="sm"
+                                      className="text-white float-end mt-2"
+                                    >
+                                      <FontAwesomeIcon icon={faPlus} />
+                                    </Button>
+                                  </>
+                                )}
+                              </div>
+                            </OverlayTrigger>
+                          );
+                        },
                       },
                     ]}
                     pageSize={10}

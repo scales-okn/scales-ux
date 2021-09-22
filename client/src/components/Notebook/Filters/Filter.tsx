@@ -9,6 +9,8 @@ import { useNotebookContext } from "../NotebookContext";
 import { AsyncTypeahead } from "react-bootstrap-typeahead";
 import uniqid from "uniqid";
 
+import { Form } from "react-bootstrap";
+
 type Props = {
   filterInput: FilterInput;
 };
@@ -45,8 +47,29 @@ const Filter: FunctionComponent<Props> = (props) => {
     }
   };
 
+  const filterTypeRange = (
+    <>
+      <FormControl
+        placeholder="min"
+        min="0"
+        type="number"
+        className="filter-range-input"
+      />
+      <InputGroup.Text>-</InputGroup.Text>
+      <FormControl
+        placeholder="max"
+        type="number"
+        max="99999"
+        className="filter-range-input"
+      />
+    </>
+  );
+
   const filterTypeRender = (filterType: string, value: string | number) => {
     switch (filterType) {
+      case "range":
+        return filterTypeRange;
+
       case "date":
         return (
           <DateTimeRangePicker
@@ -80,6 +103,8 @@ const Filter: FunctionComponent<Props> = (props) => {
                   setFilterInput({ ...filterInput, value: event.target.value })
                 }
               />
+            ) : filterInput.type === "causeOfAction" ? (
+              filterTypeRange
             ) : (
               <FormControl
                 className="border-end-0"

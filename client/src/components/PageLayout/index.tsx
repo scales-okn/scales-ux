@@ -10,8 +10,11 @@ import {
   FormControl,
   Button,
   NavDropdown,
+  Dropdown,
 } from "react-bootstrap";
+import Gravatar from "react-gravatar";
 import { LinkContainer } from "react-router-bootstrap";
+import "./PageLayout.scss";
 
 type Props = {
   pageTitle?: string;
@@ -24,6 +27,8 @@ const PageLayout: FunctionComponent<Props> = (props) => {
   const user = auth().user;
   const isAdmin = user.role === "admin";
   const isUser = user.role === "user";
+
+  console.log(user);
 
   return (
     <>
@@ -66,12 +71,23 @@ const PageLayout: FunctionComponent<Props> = (props) => {
               </Form>
             </Nav>
             <Nav>
-              <Navbar.Text>
-                Signed in as:{" "}
-                <a onClick={() => signOut()} href="#" className="h6">
-                  {auth()?.user?.email}
-                </a>
-              </Navbar.Text>
+              <Dropdown>
+                <Dropdown.Toggle variant="link" className="profile-toggler">
+                  <Gravatar
+                    size={32}
+                    email={user?.email}
+                    className="rounded-circle"
+                  />
+                  <span className="ms-2">{user?.email}</span>
+                </Dropdown.Toggle>
+
+                <Dropdown.Menu>
+                  <Dropdown.Item href="#/action-1">Profile</Dropdown.Item>
+                  <Dropdown.Item onClick={() => signOut()}>
+                    Sign Out
+                  </Dropdown.Item>
+                </Dropdown.Menu>
+              </Dropdown>
             </Nav>
           </Navbar.Collapse>
         </Container>
