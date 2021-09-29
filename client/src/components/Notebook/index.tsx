@@ -11,6 +11,7 @@ import {
 import { DataGrid } from "@material-ui/data-grid";
 import Filters from "./Filters";
 import { useNotebookContext } from "./NotebookContext";
+import { uid } from "uid";
 import Loader from "../Loader";
 import "./Notebook.scss";
 
@@ -93,6 +94,7 @@ const Notebook: FunctionComponent = () => {
                             onPageChange={(params) =>
                               fetchResults(filterInputs, params.page)
                             }
+                            getRowId={() => uid()}
                             rows={results.results}
                             columns={columns.map((column) => ({
                               field: column.key,

@@ -51,6 +51,10 @@ export default (sequelize, options) => {
   );
 
   User.associate = (models) => {
+    models.User.hasMany(models.Panel, {
+      foreignKey: "userId",
+      as: "panels",
+    });
     models.User.hasMany(models.Notebook, {
       foreignKey: "userId",
       as: "notebooks",

@@ -48,90 +48,97 @@ const SignInPage: FunctionComponent = () => {
       password: "",
     },
     validationSchema: UserSignInValidationSchema,
-    onSubmit: (values: UserSignInFields, { setErrors }) => {
-      fetch(`${process.env.REACT_APP_BFF_API_ENDPOINT_URL}/users/login`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(values),
-      })
-        .then((response) => response.json())
-        .then((response) => {
-          try {
-            switch (response.code) {
-              case 200: {
-                const decodedToken: DecodedToken = jwt_decode(
-                  response.data.token
-                );
-                const {
-                  exp,
-                  id,
-                  email,
-                  role,
-                  firstName,
-                  lastName,
-                  blocked,
-                  approved,
-                } = decodedToken;
-                if (
-                  signIn({
-                    token: response.data.token,
-                    expiresIn: exp,
-                    tokenType: "Bearer",
-                    authState: {
-                      user: {
-                        id,
-                        role,
-                        email,
-                        firstName,
-                        lastName,
-                        blocked,
-                        approved,
-                      },
-                    },
-                  })
-                ) {
-                  enqueueSnackbar(response.message, {
-                    variant: "success",
-                    anchorOrigin: {
-                      vertical: "top",
-                      horizontal: "center",
-                    },
-                  });
-
-                  history.push("/");
-                } else {
-                  console.log("JWT Failed!");
-                }
-                break;
-              }
-              case 403: {
-                enqueueSnackbar(response.message, {
-                  variant: "warning",
-                  anchorOrigin: {
-                    vertical: "top",
-                    horizontal: "center",
-                  },
-                });
-                break;
-              }
-              default: {
-                enqueueSnackbar("Something went wrong. Please try again.", {
-                  variant: "error",
-                  anchorOrigin: {
-                    vertical: "top",
-                    horizontal: "center",
-                  },
-                });
-                setErrors(response.errors);
-                break;
-              }
-            }
-          } catch (error) {
-            console.log(error);
+    onSubmit: async (values: UserSignInFields, { setErrors }) => {
+      try {
+        const response = await fetch(
+          `${process.env.REACT_APP_BFF_API_ENDPOINT_URL}/users/login`,
+          {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify(values),
           }
+        );
+        const { data, code, message, errors } = await response.json();
+
+        switch (code) {
+          case 200: {
+            const decodedToken: DecodedToken = jwt_decode(data.token);
+            const {
+              exp,
+              id,
+              email,
+              role,
+              firstName,
+              lastName,
+              blocked,
+              approved,
+            } = decodedToken;
+            if (
+              signIn({
+                token: data.token,
+                expiresIn: exp,
+                tokenType: "Bearer",
+                authState: {
+                  user: {
+                    id,
+                    role,
+                    email,
+                    firstName,
+                    lastName,
+                    blocked,
+                    approved,
+                  },
+                },
+              })
+            ) {
+              enqueueSnackbar(message, {
+                variant: "success",
+                anchorOrigin: {
+                  vertical: "top",
+                  horizontal: "center",
+                },
+              });
+
+              history.push("/");
+            } else {
+              console.log("JWT Failed!");
+            }
+            break;
+          }
+          case 403: {
+            enqueueSnackbar(message, {
+              variant: "warning",
+              anchorOrigin: {
+                vertical: "top",
+                horizontal: "center",
+              },
+            });
+            break;
+          }
+          default: {
+            enqueueSnackbar("Something went wrong. Please try again.", {
+              variant: "error",
+              anchorOrigin: {
+                vertical: "top",
+                horizontal: "center",
+              },
+            });
+            setErrors(errors);
+            break;
+          }
+        }
+      } catch (error) {
+        enqueueSnackbar("Something went wrong. Please try again.", {
+          variant: "error",
+          anchorOrigin: {
+            vertical: "top",
+            horizontal: "center",
+          },
         });
+        console.log(error);
+      }
     },
   });
 

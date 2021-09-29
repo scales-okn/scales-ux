@@ -1,9 +1,11 @@
 import { configureStore } from "@reduxjs/toolkit";
 import infoReducer from "./info";
+import ringsReducer from "./rings";
 
 export const store = configureStore({
   reducer: {
     info: infoReducer,
+    rings: ringsReducer,
   },
 });
 

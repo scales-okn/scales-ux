@@ -5,9 +5,9 @@ import {
   findById,
   update,
   deleteRing,
-} from "../controllers/ring";
+} from "../controllers/rings";
 import validateResource from "../middlewares/validateResources";
-import { createRingValidationSchema } from "../validation/ring";
+import { createRingValidationSchema } from "../validation/rings";
 import checkAuth from "../middlewares/checkAuth";
 
 const router = express.Router();

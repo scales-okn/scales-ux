@@ -1,4 +1,4 @@
-import { Request, Response } from "express";
+import e, { Request, Response } from "express";
 import { sequelize } from "../database";
 import accessControl, {
   accessControlFieldsFilter,
@@ -51,25 +51,18 @@ export const create = async (req: Request, res: Response) => {
 
 // Find all Notebooks
 export const findAll = async (req: Request, res: Response) => {
+  //@ts-ignore
+  const { role, id } = req.user;
+
   try {
     const where =
-      //@ts-ignore
-      req.user.role === "admin"
+      role === "admin"
         ? {}
         : {
             [Op.or]: [
-              {
-                //@ts-ignore
-                visibility: "public",
-              },
-              {
-                //@ts-ignore
-                collaborators: { [Op.contains]: [req.user.id] },
-              },
-              {
-                //@ts-ignore
-                userId: req.user.id,
-              },
+              { visibility: "public" },
+              { collaborators: { [Op.contains]: [id] } },
+              { userId: id },
             ],
           };
 
@@ -108,10 +101,7 @@ export const findById = async (req: Request, res: Response) => {
     }
 
     return res.send_ok("", {
-      notebook: accessControlFieldsFilter(
-        notebook.dataValues,
-        permission.fields
-      ),
+      notebook: accessControlFieldsFilter(notebook.dataValues, permission.fields),
     });
   } catch (error) {
     console.log(error);

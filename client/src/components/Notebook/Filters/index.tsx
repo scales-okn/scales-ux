@@ -9,6 +9,7 @@ import { useNotebookContext } from "../NotebookContext";
 
 const Filters: FunctionComponent = () => {
   const {
+    ring,
     setFilterInputs,
     filterInputs = [],
     fetchResults,
@@ -34,7 +35,7 @@ const Filters: FunctionComponent = () => {
             <Button
               variant="primary"
               className="text-white"
-              onClick={() => fetchResults(filterInputs)}
+              onClick={() => fetchResults(ring, filterInputs)}
             >
               Update Results
             </Button>

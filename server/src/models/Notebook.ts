@@ -6,45 +6,48 @@ export default (sequelize, options) => {
   const Notebook = sequelize.define(
     "Notebook",
     {
+      userId: {
+        type: DataTypes.INTEGER,
+        allowNull: false,
+      },
       title: {
         type: DataTypes.STRING,
         allowNull: false,
       },
-      userId: DataTypes.INTEGER,
       collaborators: {
-        defaultValue: [], // Users in array can write;
+        defaultValue: [],  
         type: DataTypes.ARRAY(DataTypes.INTEGER),
-      },
-      contents: DataTypes.JSON,
+      },  
       visibility: {
         type: DataTypes.ENUM,
         values: notebookVisibilityValues,
         defaultValue: "private",
-      },
+      },  
       parent: {
         type: DataTypes.INTEGER,
         defaultValue: null,
-      },
+      } ,
+      description: DataTypes.STRING,
       deleted: {
         type: DataTypes.BOOLEAN,
         defaultValue: false,
-      },
+      } 
     },
     options
   );
 
   Notebook.associate = (models) => {
-    models.Ring.belongsToMany(models.Notebook, {
-      through: "NotebooksToRings",
-      as: "notebooks",
-      foreignKey: "ringId",
-    });
-    models.Notebook.belongsToMany(models.Ring, {
-      through: "NotebooksToRings",
-      as: "rings",
+    models.Notebook.belongsToMany(models.Panel, {
+      through: "PanelsToNotebooks",
+      as: "panels",
       foreignKey: "notebookId",
+    });
+    models.Panel.belongsToMany(models.Notebook, {
+      through: "PanelsToNotebooks",
+      as: "notebooks",
+      foreignKey: "panelId",
     });
   };
 
-  return Notebook;
+  return Notebook; 
 };

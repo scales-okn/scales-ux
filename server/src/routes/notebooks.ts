@@ -5,10 +5,10 @@ import {
   findById,
   update,
   history,
-} from "../controllers/notebook";
+} from "../controllers/notebooks";
 
 import checkAuth from "../middlewares/checkAuth";
-import { createNotebookValidationSchema } from "../validation/notebook";
+import { createNotebookValidationSchema } from "../validation/notebooks";
 import express from "express";
 import validateResource from "../middlewares/validateResources";
 
@@ -32,3 +32,4 @@ router.put("/:notebookId", checkAuth, update);
 router.delete("/:notebookId", checkAuth, deleteNotebook);
 
 export default router;
+ 

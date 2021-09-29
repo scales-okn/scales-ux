@@ -12,7 +12,7 @@ export const create = async (req: Request, res: Response) => {
     const {
       name,
       userId,
-      notebookId,
+      panelId,
       contents,
       sourceType,
       connectionDetails,
@@ -38,9 +38,9 @@ export const create = async (req: Request, res: Response) => {
       visibility,
     });
 
-    if (notebookId) {
+    if (panelId) {
       const ringId = ring.dataValues.id;
-      addRingToNotebook(ringId, notebookId);
+      addRingToPanel(ringId, panelId);
     }
 
     return res.send_ok("Ring created succesfully!", { ring });
@@ -51,10 +51,10 @@ export const create = async (req: Request, res: Response) => {
   }
 };
 
-export const addRingToNotebook = async (ringId: number, notebookId: number) => {
+export const addRingToPanel = async (ringId: number, panelId: number) => {
   try {
-    const notebook = await sequelize.models.Notebook.findByPk(notebookId);
-    await notebook.addRing(ringId);
+    const panel = await sequelize.models.Panel.findByPk(panelId);
+    await panel.addRing(ringId);
   } catch (error) {
     console.log(error);
   }

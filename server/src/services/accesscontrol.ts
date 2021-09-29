@@ -6,45 +6,45 @@ const userIsResourceOwner = ({ user, resource }) => {
   return user.id === resource.id;
 };
 
-const userIsNotebookOwner = ({ user, resource }) => {
+const userIsPanelOwner = ({ user, resource }) => {
   return user.id === resource.userId;
 };
 
-const userIsNotebookContributor = ({ user, resource }) => {
+const userIsPanelContributor = ({ user, resource }) => {
   return resource.collaborators.includes(user.id);
 };
 
-const userIsAllowedToReadNotebook = ({ user, resource }) => {
+const userIsAllowedToReadPanel = ({ user, resource }) => {
   return resource.visibility.includes(user.id);
 };
 
-const userCanReadNotebook = ({ user, resource }) => {
-  if (userIsNotebookOwner({ user, resource })) {
+const userCanReadPanel = ({ user, resource }) => {
+  if (userIsPanelOwner({ user, resource })) {
     return true;
   }
-  // If notebook is private
+  // If panel is private
   if (resource.visibility === "private") {
-    if (userIsNotebookContributor({ user, resource })) {
+    if (userIsPanelContributor({ user, resource })) {
       return true;
     }
     return false;
   }
-  // If the notebook is public
+  // If the panel is public
   if (resource.visibility === "public") {
     return true;
   }
-  if (userIsAllowedToReadNotebook({ user, resource })) {
+  if (userIsAllowedToReadPanel({ user, resource })) {
     return true;
   }
   return false;
 };
 
-const userCanUpdateNotebook = ({ user, resource }) => {
-  if (userIsNotebookOwner({ user, resource })) {
+const userCanUpdatePanel = ({ user, resource }) => {
+  if (userIsPanelOwner({ user, resource })) {
     return true;
   }
 
-  if (userIsNotebookContributor({ user, resource })) {
+  if (userIsPanelContributor({ user, resource })) {
     return true;
   }
 
@@ -64,12 +64,12 @@ const userCanReadRing = ({ user, resource }) => {
     return true;
   }
 
-  // If notebook is private
+  // If panel is private
   if (resource.visibility === "private") {
     return false;
   }
 
-  // If the notebook is public
+  // If the panel is public
   if (resource.visibility === "public") {
     return true;
   }
@@ -101,15 +101,15 @@ accessControl
     .update
       .onFields("firstName", "lastName", "usage", "email")
         .where(userIsResourceOwner)
-  // Notebooks
+  // Panels
   .grant("user")
-    .resource("notebooks")
+    .resource("panels")
       .read
-        .where(userCanReadNotebook)
+        .where(userCanReadPanel)
         .onFields("title", "contents")
       .create
       .update
-        .where(userCanUpdateNotebook)
+        .where(userCanUpdatePanel)
           .onFields("title", "contents")
   // Rings
   .grant("user")
@@ -181,7 +181,7 @@ export default accessControl;
 //       "update:any": ["*"],
 //       "update:own": ["*", "!blocked"],
 //     },
-//     notebooks: {
+//     panels: {
 //       "create:any": ["*"],
 //       "read:any": ["*"],
 //       "delete:any": ["*"],
@@ -201,7 +201,7 @@ export default accessControl;
 //       "read:own": ["*"],
 //       "update:own": ["*", "!role"],
 //     },
-//     notebooks: {
+//     panels: {
 //       "read:own": ["*"],
 //       "update:own": ["*"],
 //     },
@@ -221,8 +221,8 @@ export default accessControl;
 // TODO: Middleware for "contributors", "visibility", "deleted"
 
 // contributors - you can view, edit but no delete.
-// visibility - notebooks => view it, rings => you can use
-// deleted - only admin can view "deleted" notebooks; (soft delete) -> track date when deleted
+// visibility - panels => view it, rings => you can use
+// deleted - only admin can view "deleted" panels; (soft delete) -> track date when deleted
 
 // TODO: Ring Deletion
 // soft delete - not available for anybody except admin - users that use it => this ring doesn't exist

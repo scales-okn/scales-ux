@@ -236,9 +236,10 @@ export const deleteUser = async (req: Request, res: Response) => {
 // Email Verify
 export const verifyEmail = async (req: Request, res: Response) => {
   try {
-    //@ts-ignore
     const decodedToken = jwt.verify(req.body.token, process.env.JWT_SECRET);
+
     console.log("verifyEmail", decodedToken);
+
     const user = await sequelize.models.User.findOne({
       where: { emailVerificationToken: req.body.token, emailIsVerified: false },
     });
@@ -287,7 +288,6 @@ export const forgotPassword = async (req: Request, res: Response) => {
       const { firstName, lastName, email } = user;
       const passwordResetToken = jwt.sign(
         { email },
-        //@ts-ignore
         process.env.JWT_SECRET,
         { expiresIn: process.env.JWT_EXP }
       );

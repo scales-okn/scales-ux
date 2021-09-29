@@ -11,7 +11,7 @@ import database from "./database";
 
 const app = express();
 
-(async (app) => {
+const bootstrap = async () => {
   try {
     // Database
     await database();
@@ -42,21 +42,21 @@ const app = express();
     app.use(passport.initialize());
     passport.use(jwtLogin);
 
-    // Proxy Routes
-    const proxyRoutes = await import("./proxy");
-    app.use("/proxy", proxyRoutes.default);
+    // Proxy Router
+    const proxyRouter = await import("./proxy");
+    app.use("/proxy", proxyRouter.default);
 
-    // User Routes
-    const userRoutes = await import("./routes/user");
-    app.use("/api/users", userRoutes.default);
+    // Users Router
+    const usersRouter = await import("./routes/users");
+    app.use("/api/users", usersRouter.default);
 
-    // Notebook Routes
-    const notebookRoutes = await import("./routes/notebook");
-    app.use("/api/notebooks", notebookRoutes.default);
+    // Panels Router
+    const panelsRouter = await import("./routes/panels");
+    app.use("/api/panels", panelsRouter.default);
 
-    // Ring Routes
-    const ringRoutes = await import("./routes/ring");
-    app.use("/api/rings", ringRoutes.default);
+    // Notebooks Router
+    const ringsRouter = await import("./routes/notebooks");
+    app.use("/api/notebooks", ringsRouter.default);
 
     // Serve React App
     app.use(express.static(path.join(__dirname, "../client/build")));
@@ -73,8 +73,6 @@ const app = express();
   } catch (error) {
     console.log(error);
   }
-})(app);
+};
 
-// TODO: Add Logger
-// TODO: Add i18n (gettext)
-// TOOD: Add Error handler
+bootstrap();

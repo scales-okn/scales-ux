@@ -6,6 +6,8 @@ import NotebookContextProvider from "../Notebook/NotebookContext";
 import PageLayout from "../PageLayout";
 import { useAuthHeader, useAuthUser } from "react-auth-kit";
 import Loader from "../Loader";
+import { fetchRings, ringsSelector } from "../../store/rings";
+import { useDispatch, useSelector } from "react-redux";
 
 type Params = {
   notebookId: string | null;
@@ -13,14 +15,37 @@ type Params = {
 
 const NotebookPage: FunctionComponent = () => {
   const { notebookId } = useParams<Params>();
+  const { rings, loadingRings, hasErrors } = useSelector(ringsSelector);
+  const dispatch = useDispatch();
+
+  useEffect(() => {
+    dispatch(fetchRings());
+  }, []);
+
+  console.log(rings, loadingRings, hasErrors);
+
+  const getRing = () => {
+    try {
+      return Object.entries(rings)[0][1];
+    } catch (error) {
+      console.log(error);
+    }
+  };
 
   return (
     <PageLayout>
       <Loader animation="border" isVisible={false}>
         <>
-          <NotebookContextProvider notebookId={notebookId}>
-            <Notebook />
-          </NotebookContextProvider>
+          {loadingRings ? (
+            <Loader animation="border" isVisible={true} />
+          ) : (
+            <NotebookContextProvider
+              ring={getRing()}
+              notebookId={Number(notebookId) ? notebookId : null}
+            >
+              <Notebook />
+            </NotebookContextProvider>
+          )}
         </>
       </Loader>
     </PageLayout>

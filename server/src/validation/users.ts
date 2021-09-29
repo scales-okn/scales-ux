@@ -21,5 +21,3 @@ export const loginUserValidationSchema = yup.object({
   email: yup.string().email().required(),
   password: yup.string().required(),
 });
-
-// TODO: Implement the rest of the resources validation

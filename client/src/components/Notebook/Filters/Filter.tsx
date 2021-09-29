@@ -25,6 +25,7 @@ const Filter: FunctionComponent<Props> = (props) => {
     getFilterOptionsByKey,
     setFilterInput,
     fetchResults,
+    ring,
   } = useNotebookContext();
   const [autoCompleteSuggestions, setAutoCompleteSuggestions] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
@@ -124,13 +125,7 @@ const Filter: FunctionComponent<Props> = (props) => {
   };
 
   return (
-    <div
-      className="d-inline-block me-3"
-      style={{
-        width: filterOptions?.type === "date" ? "auto" : filterColumn?.width,
-        minWidth: "230px",
-      }}
-    >
+    <div className="d-inline-block me-3">
       <InputGroup className="mb-3">
         <InputGroup.Text className="bg-white">
           <FilterTypeDropDown filterInput={filterInput} />
@@ -146,7 +141,7 @@ const Filter: FunctionComponent<Props> = (props) => {
             ];
             await setFilterInputs(newFilterInputs);
 
-            fetchResults(newFilterInputs);
+            fetchResults(ring, newFilterInputs);
           }}
         >
           <FontAwesomeIcon icon={faTimesCircle} className="text-muted" />

@@ -4,6 +4,7 @@ import type { RootState, AppDispatch } from "./index";
 interface Info {
   filters?: Array<any>;
   columns?: Array<any>;
+  defaultEntity?: string;
 }
 
 interface InitialState {
@@ -48,13 +49,15 @@ export const infoSelector = (state: RootState) => state?.info;
 export default infoSlice.reducer;
 
 // Asynchronous thunk action
-export function fetchInfo() {
+export function fetchInfo(ring) {
+  if (!ring) return;
+
   return async (dispatch: AppDispatch) => {
     dispatch(getInfo());
 
     try {
       const response = await fetch(
-        `${process.env.REACT_APP_BFF_PROXY_ENDPOINT_URL}/info`
+        `${process.env.REACT_APP_BFF_PROXY_ENDPOINT_URL}/info/${ring}`
       );
       const data = await response.json();
 

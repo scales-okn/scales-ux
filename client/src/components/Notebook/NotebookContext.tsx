@@ -6,6 +6,7 @@ import React, {
   useState,
 } from "react";
 import { fetchInfo, infoSelector } from "../../store/info";
+import { ringsSelector } from "../../store/rings";
 import { useDispatch, useSelector } from "react-redux";
 import appendQuery from "append-query";
 import { useAuthHeader, useAuthUser } from "react-auth-kit";
@@ -20,6 +21,7 @@ export const useNotebookContext = () => useContext(NotebookContext);
 type Props = {
   notebookId?: string | null;
   children: ReactNode;
+  ring: string | any;
 };
 
 export type FilterInput = {
@@ -35,7 +37,7 @@ type ResultsResponse = {
   totalCount: number;
 };
 
-const NotebookContextProvider = ({ notebookId, children }: Props) => {
+const NotebookContextProvider = ({ ring, notebookId, children }: Props) => {
   const dispatch = useDispatch();
   const [loading, setLoading] = useState(true);
   const [notebook, setNotebook] = useState(null);
@@ -46,11 +48,10 @@ const NotebookContextProvider = ({ notebookId, children }: Props) => {
     `filterInputs-${notebookId}`,
     []
   );
-  // const [filterInputs, setFilterInputs] = useState<Array<FilterInput>>([]);
   const [loadingNotebook, setLoadingNotebook] = useState(false);
   const [savingNotebook, setSavingNotebook] = useState(false);
   const [results, setResults] = useState<ResultsResponse>();
-  const { filters = [], columns = [] } = info;
+  const { filters = [], columns = [], defaultEntity } = info;
   const authHeader = useAuthHeader();
 
   type FetchResultsParams = {
@@ -59,13 +60,20 @@ const NotebookContextProvider = ({ notebookId, children }: Props) => {
     filterInputs?: Array<FilterInput>;
   };
 
-  const fetchResults = async (filterInputs: [], page = 0, batchSize = 10) => {
+  console.log(ring);
+
+  const fetchResults = async (
+    ring,
+    filterInputs: [],
+    page = 0,
+    batchSize = 10
+  ) => {
     setLoadingResults(true);
     console.log(filterInputs);
     try {
       const response = await fetch(
         appendQuery(
-          `${process.env.REACT_APP_BFF_PROXY_ENDPOINT_URL}/results/?page=${page}&batchSize=${batchSize}&sortBy=dateFiled&sortDirection=desc`,
+          `${process.env.REACT_APP_BFF_PROXY_ENDPOINT_URL}/results/${ring}/${defaultEntity}?page=${page}&batchSize=${batchSize}&sortBy=dateFiled&sortDirection=desc`,
           filterInputs?.reduce((acc, filterInput: FilterInput) => {
             acc[filterInput.type] =
               filterInput.type === "dateFiled"
@@ -210,11 +218,10 @@ const NotebookContextProvider = ({ notebookId, children }: Props) => {
   };
 
   useEffect(() => {
-    dispatch(fetchInfo());
+    dispatch(fetchInfo(ring));
     fetchNotebook(notebookId);
-    //@ts-ignore
-    fetchResults(filterInputs);
-  }, []);
+    fetchResults(ring, filterInputs);
+  }, [ring, defaultEntity, notebookId]);
 
   if (loadingInfo) return <Loader animation="border" isVisible={true} />;
   if (hasErrors) return <p>Cannot display filters...</p>;
@@ -222,6 +229,7 @@ const NotebookContextProvider = ({ notebookId, children }: Props) => {
   return (
     <NotebookContext.Provider
       value={{
+        ring,
         columns,
         filters,
         filterInputs,

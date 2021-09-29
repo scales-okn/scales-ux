@@ -6,6 +6,10 @@ export default (sequelize, options) => {
   const Ring = sequelize.define(
     "Ring",
     {
+      name: {
+        type: DataTypes.STRING,
+        allowNull: false,
+      }, 
       userId: {
         type: DataTypes.INTEGER,
         allowNull: false,
@@ -14,12 +18,8 @@ export default (sequelize, options) => {
       sourceType: {
         type: DataTypes.STRING,
         allowNull: false,
-      },
+      },  
       connectionDetails: DataTypes.JSON,
-      name: {
-        type: DataTypes.STRING,
-        allowNull: false,
-      },
       description: DataTypes.STRING,
       visibility: {
         type: DataTypes.ENUM,

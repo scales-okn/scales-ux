@@ -113,7 +113,6 @@ const SignUpPage: FunctionComponent = () => {
 
   return (
     <Container component="main" maxWidth="xs">
-      <CssBaseline />
       <div className={classes.paper}>
         <Logo />
         <Typography component="h1" variant="h5" className="mt-5">

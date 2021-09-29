@@ -1,6 +1,7 @@
 import Sequelize from "sequelize";
 import Version from "sequelize-version";
 import UserModel from "../models/User";
+import PanelModel from "../models/Panel";
 import NotebookModel from "../models/Notebook";
 import RingModel from "../models/Ring";
 import LogModel from "../models/Log";
@@ -28,27 +29,40 @@ const database = async () => {
     const { logHooks } = logs(sequelize);
 
     // Models
-    const Notebook = NotebookModel(sequelize, { hooks: logHooks });
     const User = UserModel(sequelize, { hooks: logHooks });
+    const Panel = PanelModel(sequelize, { hooks: logHooks });
+    const Notebook = NotebookModel(sequelize, { hooks: logHooks });
     const Ring = RingModel(sequelize, { hooks: logHooks });
 
     // Associate Models
-    Notebook.associate({
+    Panel.associate({
       User,
-      Notebook,
+      Panel,
       Ring,
+      Notebook,
+    }); 
+    Notebook.associate({
+      Panel,
+      Notebook,
     });
     User.associate({
-      Notebook,
+      Panel,
       User,
       Ring,
+      Notebook,
     });
 
     // Logs
     LogModel(sequelize);
 
     // Versioning
-    new Version(Notebook);
+    new Version(Panel, {
+      sequelize,
+      underscored: false, 
+      tableUnderscored: false,
+      prefix: "Version",
+      attributePrefix: "version"
+    });
   } catch (error) {
     console.error("Models failed to initialize!", error);
   }
@@ -72,45 +86,56 @@ const database = async () => {
   // MOCKS
   // TODO: Remove
   try {
-    // const userForTesting = await sequelize.models.User.build({
-    //   firstName: "test",
-    //   lastName: "test",
-    //   email: "test@test.test",
-    //   usage: "Test",
-    //   password: "Pass-word-25!@#",
-    //   role: "admin"
-    // });
-    // await userForTesting.save();
-    // const newNote = await sequelize.models.Notebook.build({
-    //   title: "test",
-    //   userId: 1,
-    //   collaborators: [],
-    //   contents: '{"test" : 1}',
-    // });
-    // await newNote.save();
-    // console.log(newNote);
-    // const user = await sequelize.models.Notebook.findOne({
-    //   where: { id: 3 },
-    //   include: "rings",
-    // });
-    // console.log(user);
-    // const newRing = await sequelize.models.Ring.build({
-    //   name: "test",
-    //   userId: 1,
-    //   notebookId: 3,
-    //   sourceType: "test",
-    //   contents: '{"test" : 1}',
-    //   connectionDetails: '{"test" : 1}',
-    //   description: "desc",
-    //   visibility: "private",
-    // });
-    // await newRing.save();
-    // console.log(newRing);
-    // const userwithRings = await sequelize.models.Ring.findOne({
-    //   where: { id: 15 },
-    //   include: ["notebooks"],
-    // });
-    // console.log(userwithRings);
+    const userForTesting = await sequelize.models.User.build({
+      firstName: "test",
+      lastName: "test",
+      email: "test@test.test",
+      usage: "Test",
+      password: "Pass-word-25!@#",
+      role: "admin"
+    });
+    await userForTesting.save();
+
+    const notebookForTesting = await sequelize.models.Notebook.build({ 
+      title: "test",
+      userId: 1,     
+    });
+    await notebookForTesting.save();
+
+ 
+    const user = await sequelize.models.Panel.findOne({
+      where: { id: 1 },
+      include: "rings",
+    });
+
+    console.log(user);
+    const newRing = await sequelize.models.Ring.build({
+      name: "test",
+      userId: 1,
+      panelId: 1,
+      sourceType: "test",
+      contents: '{"test" : 1}', 
+      connectionDetails: '{"test" : 1}',
+      description: "desc",
+      visibility: "private",
+    });
+    await newRing.save(); 
+    console.log(newRing);
+    const userwithRings = await sequelize.models.Ring.findOne({
+      where: { id: 15 },
+      include: ["panels"],
+    });
+    console.log(userwithRings);
+
+    const panelForTesting = await sequelize.models.Panel.build({ 
+      title: "test",
+      userId: 1,
+      notebookId: 1,
+      collaborators: [],
+      contents: '{"test" : 1}',
+      ringId: 1,
+    });
+    await panelForTesting.save();
   } catch (error) {
     console.log(error);
   }
