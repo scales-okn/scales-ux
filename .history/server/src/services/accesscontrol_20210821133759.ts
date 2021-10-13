@@ -47,6 +47,8 @@ ac.lock();
 
 export const accessControlMiddleware = new AccessControlMiddleware(ac);
 
+export default ac;
+
 // TODO: Middleware for "contributors", "visibility", "deleted"
 
 // contributors - you can view, edit but no delete.

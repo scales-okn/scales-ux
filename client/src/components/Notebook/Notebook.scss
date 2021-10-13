@@ -32,3 +32,9 @@
     box-shadow: none !important;
   }
 }
+
+.panel-description {
+  &:focus {
+    box-shadow: none !important;
+  }
+}

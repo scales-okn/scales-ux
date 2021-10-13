@@ -9,13 +9,13 @@ export default (sequelize, options) => {
       description: {
         type: DataTypes.STRING,
         allowNull: true,
-      }, 
+      },
       notebookId: DataTypes.INTEGER,
       contents: DataTypes.JSON,
       deleted: {
         type: DataTypes.BOOLEAN,
         defaultValue: false,
-      },  
+      },
     },
     options
   );

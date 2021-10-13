@@ -82,7 +82,14 @@ const PageLayout: FunctionComponent<Props> = (props) => {
                 </Dropdown.Toggle>
 
                 <Dropdown.Menu>
-                  <Dropdown.Item href="#/action-1">Profile</Dropdown.Item>
+                  <Dropdown.Item
+                    style={{
+                      minWidth: "280px",
+                    }}
+                    href="#/action-1"
+                  >
+                    Profile
+                  </Dropdown.Item>
                   <Dropdown.Item onClick={() => signOut()}>
                     Sign Out
                   </Dropdown.Item>

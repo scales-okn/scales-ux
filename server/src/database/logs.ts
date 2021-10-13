@@ -1,11 +1,11 @@
 export default (sequelize) => {
   const saveLog = (action, instance, options) => {
     try {
-      // console.log("saveLog", {
-      //   action,
-      //   instance,
-      //   options,
-      // });
+      console.log("saveLog", {
+        action,
+        instance,
+        options,
+      });
 
       const resource = instance.constructor.getTableName();
       const log = sequelize.models.Log.build({

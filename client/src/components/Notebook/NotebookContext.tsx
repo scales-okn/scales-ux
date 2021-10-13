@@ -53,6 +53,9 @@ const NotebookContextProvider = ({ ring, notebookId, children }: Props) => {
   const [results, setResults] = useState<ResultsResponse>();
   const { filters = [], columns = [], defaultEntity } = info;
   const authHeader = useAuthHeader();
+  const [panels, setPanels] = useState([
+    { id: 1, description: "Panel Description" },
+  ]);
 
   type FetchResultsParams = {
     page?: number;
@@ -247,6 +250,9 @@ const NotebookContextProvider = ({ ring, notebookId, children }: Props) => {
         setNotebookTitle,
         saveNotebook,
         savingNotebook,
+        panels,
+        setPanels,
+        defaultEntity,
       }}
     >
       {children}

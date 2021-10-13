@@ -16,7 +16,7 @@ const Filters: FunctionComponent = () => {
   } = useNotebookContext();
 
   return (
-    <Row className="notebook-filters bg-white p-3">
+    <Row className="notebook-filters bg-white p-3 pt-4">
       <Col>
         {filterInputs.map((filterInput, key) => (
           <Filter key={key} filterInput={filterInput} />

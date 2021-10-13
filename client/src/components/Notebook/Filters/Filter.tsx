@@ -26,6 +26,7 @@ const Filter: FunctionComponent<Props> = (props) => {
     setFilterInput,
     fetchResults,
     ring,
+    defaultEntity,
   } = useNotebookContext();
   const [autoCompleteSuggestions, setAutoCompleteSuggestions] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
@@ -37,9 +38,11 @@ const Filter: FunctionComponent<Props> = (props) => {
     setIsLoading(true);
     try {
       const response = await fetch(
-        `${process.env.REACT_APP_BFF_PROXY_ENDPOINT_URL}/autocomplete/?type=${type}&query=${query}`
+        `${process.env.REACT_APP_BFF_PROXY_ENDPOINT_URL}/autocomplete/${ring}/${defaultEntity}/${type}?query=${query}`
       );
       const data = await response.json();
+
+      console.log(data);
 
       setAutoCompleteSuggestions(data);
       setIsLoading(false);
@@ -97,7 +100,7 @@ const Filter: FunctionComponent<Props> = (props) => {
                 onSearch={(query) =>
                   fetchAutocompleteSuggestions(filterInput.type, query)
                 }
-                options={autoCompleteSuggestions}
+                options={autoCompleteSuggestions.map(String)}
                 placeholder="Search..."
                 defaultInputValue={value}
                 onBlur={(event) =>

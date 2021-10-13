@@ -1,9 +1,7 @@
 import e, { Request, Response } from "express";
 import { sequelize } from "../database";
-import accessControl, {
-  accessControlFieldsFilter,
-} from "../services/accesscontrol";
-const { Op } = require("sequelize");
+import accessControl from "../services/accesscontrol";
+import { Op } from "sequelize";
 
 // Resources validations are made with validateResources middleware and validations schemas
 // server/middlewares/validateResources.ts
@@ -12,15 +10,6 @@ const { Op } = require("sequelize");
 // Create Notebook
 export const create = async (req: Request, res: Response) => {
   try {
-    const permission = await accessControl.can(
-      // @ts-ignore
-      req.user.role,
-      "notebooks:create"
-    );
-    if (!permission.granted) {
-      return res.send_forbidden("Not allowed!");
-    }
-
     const {
       title,
       collaborators = [],
@@ -39,8 +28,6 @@ export const create = async (req: Request, res: Response) => {
       parent,
     });
 
-    console.log({ notebook });
-
     return res.send_ok("Notebook created succesfully!", { notebook });
   } catch (error) {
     console.log(error);
@@ -52,20 +39,19 @@ export const create = async (req: Request, res: Response) => {
 // Find all Notebooks
 export const findAll = async (req: Request, res: Response) => {
   //@ts-ignore
-  const { role, id } = req.user;
-
+  const { role, id: userId } = req.user;
   try {
-    const where =
-      role === "admin"
-        ? {}
-        : {
-            [Op.or]: [
-              { visibility: "public" },
-              { collaborators: { [Op.contains]: [id] } },
-              { userId: id },
-            ],
-          };
-
+    let where = {};
+    if (role !== "admin") {
+      where = {
+        deleted: false,
+        [Op.or]: [
+          { visibility: "public" },
+          { collaborators: { [Op.contains]: [userId] } },
+          { userId },
+        ],
+      };
+    }
     const notebooks = await sequelize.models.Notebook.findAll({
       where,
       // attributes: { exclude: [""] }, // TODO: Check if we need to hide something.
@@ -83,25 +69,35 @@ export const findAll = async (req: Request, res: Response) => {
 // Find Notebook by notebookId
 export const findById = async (req: Request, res: Response) => {
   try {
-    const id = req.params.notebookId;
-    const notebook = await sequelize.models.Notebook.findOne({ where: { id } });
+    const notebookId = req.params.notebookId;
+    //@ts-ignore
+    const { role, id: reqUserId } = req.user;
 
-    const permission = await accessControl.can(
+    let where = { id: notebookId };
+    if (role !== "admin") {
       // @ts-ignore
-      req.user.role,
-      "notebooks:read",
-      { user: req.user, resource: notebook }
-    );
-    if (!permission.granted) {
-      return res.send_forbidden("Not allowed!");
+      where = { ...where, deleted: false };
     }
 
+    const notebook = await sequelize.models.Notebook.findOne({
+      where,
+    });
     if (!notebook) {
       return res.send_notFound("Notebook not found!");
     }
 
+    const { visibility, collaborators, userId } = notebook;
+    if (
+      role !== "admin" &&
+      visibility !== "public" &&
+      !collaborators.includes(reqUserId) &&
+      userId !== reqUserId
+    ) {
+      return res.send_forbidden("Not allowed!");
+    }
+
     return res.send_ok("", {
-      notebook: accessControlFieldsFilter(notebook.dataValues, permission.fields),
+      notebook: notebook.dataValues,
     });
   } catch (error) {
     console.log(error);
@@ -112,16 +108,23 @@ export const findById = async (req: Request, res: Response) => {
 
 export const history = async (req: Request, res: Response) => {
   try {
-    const id = req.params.notebookId;
-    const notebook = await sequelize.models.Notebook.findOne({ where: { id } });
+    const { notebookId } = req.params;
+    //@ts-ignore
+    const { role } = req.user;
+    if (role !== "admin") {
+      return res.send_forbidden("Not allowed!");
+    }
+
+    const notebook = await sequelize.models.Notebook.findOne({
+      where: { id: notebookId },
+    });
     if (!notebook) {
       return res.send_notFound("Notebook not found!");
     }
 
     const versions = await sequelize.models.Notebook.getVersions({
-      where: { id },
+      where: { id: notebookId },
     });
-    console.log(versions);
 
     return res.send_ok("", { versions });
   } catch (error) {
@@ -134,8 +137,56 @@ export const history = async (req: Request, res: Response) => {
 // Update a Notebook
 export const update = async (req: Request, res: Response) => {
   try {
-    const id = req.params.notebookId;
-    const payload = { ...req.body };
+    const { notebookId } = req.params;
+    //@ts-ignore
+    const { role, id: reqUserId } = req.user;
+    //@ts-ignore
+    const permission = accessControl.can(role).updateAny("notebooks");
+    if (!permission.granted) {
+      return res.send_forbidden("Not allowed!");
+    }
+
+    console.log(permission);
+
+    const payload = permission.filter(req.body);
+
+    if (Object.keys(payload).length === 0) {
+      return res.send_notModified("User has not been updated!");
+    }
+
+    let where = { id: notebookId };
+    if (role !== "admin") {
+      // @ts-ignore
+      where = { ...where, deleted: false };
+    }
+
+    const notebook = await sequelize.models.Notebook.findOne({
+      where,
+    });
+    if (!notebook) {
+      return res.send_notFound("Notebook not found!");
+    }
+
+    const { collaborators, userId } = notebook;
+    // General Case
+    if (
+      role !== "admin" &&
+      !collaborators.includes(reqUserId) &&
+      userId !== reqUserId
+    ) {
+      return res.send_forbidden("Not allowed!");
+    }
+
+    //  Owner Operations Case
+    if (userId !== reqUserId) {
+      if (
+        payload.includes("userId") ||
+        payload.includes("collaborators") ||
+        payload.includes("visibility")
+      ) {
+        return res.send_forbidden("Not allowed!");
+      }
+    }
 
     // Inject req for saveLog
     //@ts-ignore
@@ -144,16 +195,18 @@ export const update = async (req: Request, res: Response) => {
     });
 
     const result = await sequelize.models.Notebook.update(payload, {
-      where: { id },
+      where: { id: notebookId },
       individualHooks: true,
     });
 
     if (!result.length) {
       return res.send_notModified("Notebook has not been updated!");
     }
-    const notebook = await sequelize.models.Notebook.findOne({ where: { id } });
+    const updatedNotebook = await sequelize.models.Notebook.findOne({
+      where: { id: notebookId },
+    });
 
-    return res.send_ok("Notebook has been updated!", { notebook });
+    return res.send_ok("Notebook has been updated!", { updatedNotebook });
   } catch (error) {
     console.log(error);
 
@@ -164,13 +217,16 @@ export const update = async (req: Request, res: Response) => {
 // Delete a Notebook
 export const deleteNotebook = async (req: Request, res: Response) => {
   try {
-    const id = req.params.notebookId;
+    const { notebookId } = req.params;
+    //@ts-ignore
+    const { role, id: userId } = req.user;
+    console.log(userId);
     const result = await sequelize.models.Notebook.update(
       {
         deleted: true,
       },
       {
-        where: { id },
+        where: { id: notebookId, userId },
       }
     );
     if (result) {

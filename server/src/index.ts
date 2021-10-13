@@ -8,10 +8,14 @@ import rateLimit from "express-rate-limit";
 import passport from "passport";
 import { jwtLogin } from "./services/passport";
 import database from "./database";
+import proxyRouter from "./proxy";
+import usersRouter from "./routes/users";
+import ringsRouter from "./routes/rings";
+import notebooksRouter from "./routes/notebooks";
 
 const app = express();
 
-const bootstrap = async () => {
+(async () => {
   try {
     // Database
     await database();
@@ -43,20 +47,16 @@ const bootstrap = async () => {
     passport.use(jwtLogin);
 
     // Proxy Router
-    const proxyRouter = await import("./proxy");
-    app.use("/proxy", proxyRouter.default);
+    app.use("/proxy", proxyRouter);
 
     // Users Router
-    const usersRouter = await import("./routes/users");
-    app.use("/api/users", usersRouter.default);
+    app.use("/api/users", usersRouter);
 
-    // Panels Router
-    const panelsRouter = await import("./routes/panels");
-    app.use("/api/panels", panelsRouter.default);
+    // // Rings Router
+    // app.use("/api/rings", ringsRouter);
 
     // Notebooks Router
-    const ringsRouter = await import("./routes/notebooks");
-    app.use("/api/notebooks", ringsRouter.default);
+    app.use("/api/notebooks", notebooksRouter);
 
     // Serve React App
     app.use(express.static(path.join(__dirname, "../client/build")));
@@ -73,6 +73,4 @@ const bootstrap = async () => {
   } catch (error) {
     console.log(error);
   }
-};
-
-bootstrap();
+})();

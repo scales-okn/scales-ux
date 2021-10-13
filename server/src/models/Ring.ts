@@ -9,7 +9,7 @@ export default (sequelize, options) => {
       name: {
         type: DataTypes.STRING,
         allowNull: false,
-      }, 
+      },
       userId: {
         type: DataTypes.INTEGER,
         allowNull: false,
@@ -18,7 +18,7 @@ export default (sequelize, options) => {
       sourceType: {
         type: DataTypes.STRING,
         allowNull: false,
-      },  
+      },
       connectionDetails: DataTypes.JSON,
       description: DataTypes.STRING,
       visibility: {

@@ -16,6 +16,7 @@ import {
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faEdit, faPlus } from "@fortawesome/free-solid-svg-icons";
 import { WithContext as ReactTags } from "react-tag-input";
+import "./NotebooksPage.scss";
 
 const NotebooksPage: FunctionComponent = () => {
   const [notebooks, setNotebooks] = useState([]);
@@ -197,6 +198,7 @@ const NotebooksPage: FunctionComponent = () => {
                     },
                   ]}
                   pageSize={10}
+                  hideFooter={notebooks.length <= 10 ? true : false}
                   rowCount={notebooks.length}
                   checkboxSelection={false}
                   className="bg-white border-0 rounded-0"
@@ -311,6 +313,7 @@ const NotebooksPage: FunctionComponent = () => {
                     ]}
                     pageSize={10}
                     rowCount={userNotebooks.length}
+                    hideFooter={notebooks.length <= 10 ? true : false}
                     checkboxSelection={false}
                     className="bg-white border-0 rounded-0"
                   />
@@ -352,6 +355,9 @@ const NotebooksPage: FunctionComponent = () => {
                     ]}
                     pageSize={10}
                     rowCount={sharedWithUserNotebooks.length}
+                    hideFooter={
+                      sharedWithUserNotebooks.length <= 10 ? true : false
+                    }
                     checkboxSelection={false}
                     className="bg-white border-0 rounded-0"
                   />
@@ -386,6 +392,7 @@ const NotebooksPage: FunctionComponent = () => {
                     ]}
                     pageSize={10}
                     rowCount={publicNotebooks.length}
+                    hideFooter={publicNotebooks.length <= 10 ? true : false}
                     checkboxSelection={false}
                     className="bg-white border-0 rounded-0"
                   />

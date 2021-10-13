@@ -1,3 +1,4 @@
+import express from "express";
 import {
   create,
   deleteNotebook,
@@ -9,27 +10,72 @@ import {
 
 import checkAuth from "../middlewares/checkAuth";
 import { createNotebookValidationSchema } from "../validation/notebooks";
-import express from "express";
+
 import validateResource from "../middlewares/validateResources";
+import { accessControlMiddleware } from "../services/accesscontrol";
 
 const router = express.Router();
 
 router.post(
   "/",
   checkAuth,
+  accessControlMiddleware.check({
+    resource: "notebooks",
+    action: "create",
+  }),
   validateResource(createNotebookValidationSchema),
   create
 );
 
-router.get("/", checkAuth, findAll);
+router.get(
+  "/",
+  checkAuth,
+  accessControlMiddleware.check({
+    resource: "notebooks",
+    action: "read",
+  }),
+  checkAuth,
+  findAll
+);
 
-router.get("/:notebookId", checkAuth, findById);
+router.get(
+  "/:notebookId",
+  checkAuth,
+  accessControlMiddleware.check({
+    resource: "notebooks",
+    action: "read",
+  }),
+  findById
+);
 
-router.get("/:notebookId/history", checkAuth, history);
+router.get(
+  "/:notebookId/history",
+  checkAuth,
+  accessControlMiddleware.check({
+    resource: "notebooks",
+    action: "read",
+  }),
+  history
+);
 
-router.put("/:notebookId", checkAuth, update);
+router.put(
+  "/:notebookId",
+  checkAuth,
+  accessControlMiddleware.check({
+    resource: "notebooks",
+    action: "update",
+  }),
+  update
+);
 
-router.delete("/:notebookId", checkAuth, deleteNotebook);
+router.delete(
+  "/:notebookId",
+  checkAuth,
+  accessControlMiddleware.check({
+    resource: "notebooks",
+    action: "delete",
+  }),
+  deleteNotebook
+);
 
 export default router;
- 

@@ -15,23 +15,23 @@ export default (sequelize, options) => {
         allowNull: false,
       },
       collaborators: {
-        defaultValue: [],  
+        defaultValue: [],
         type: DataTypes.ARRAY(DataTypes.INTEGER),
-      },  
+      },
       visibility: {
         type: DataTypes.ENUM,
         values: notebookVisibilityValues,
         defaultValue: "private",
-      },  
+      },
       parent: {
         type: DataTypes.INTEGER,
         defaultValue: null,
-      } ,
+      },
       description: DataTypes.STRING,
       deleted: {
         type: DataTypes.BOOLEAN,
         defaultValue: false,
-      } 
+      },
     },
     options
   );
@@ -49,5 +49,5 @@ export default (sequelize, options) => {
     });
   };
 
-  return Notebook; 
+  return Notebook;
 };
