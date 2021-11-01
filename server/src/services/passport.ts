@@ -2,6 +2,10 @@ import { ExtractJwt, Strategy as JwtStrategy } from "passport-jwt";
 
 import { sequelize } from "../database/index";
 
+interface User {
+  role: string;
+}
+
 export const jwtLogin = new JwtStrategy(
   {
     jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
@@ -14,7 +18,7 @@ export const jwtLogin = new JwtStrategy(
         where: { id },
       });
       if (result) {
-        const user = result.dataValues;
+        const user: User = result.dataValues;
         return done(null, user);
       }
 

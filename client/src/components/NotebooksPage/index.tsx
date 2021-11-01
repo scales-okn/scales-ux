@@ -1,4 +1,9 @@
-import React, { FunctionComponent, useEffect, useState } from "react";
+import React, {
+  ChangeEventHandler,
+  FunctionComponent,
+  useEffect,
+  useState,
+} from "react";
 import PageLayout from "../PageLayout";
 import { useAuthHeader, useAuthUser } from "react-auth-kit";
 import Loader from "../Loader";
@@ -11,12 +16,40 @@ import {
   Button,
   Popover,
   OverlayTrigger,
+  FloatingLabel,
+  InputGroup,
 } from "react-bootstrap";
 // import ReactTags from "react-tag-autocomplete";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faEdit, faPlus } from "@fortawesome/free-solid-svg-icons";
+import { faEdit, faPlus, faSearch } from "@fortawesome/free-solid-svg-icons";
 import { WithContext as ReactTags } from "react-tag-input";
 import "./NotebooksPage.scss";
+import dayjs from "dayjs";
+
+import ReactDataGrid from "react-data-grid";
+const columns = [
+  { key: "id", name: "ID" },
+  { key: "title", name: "Title" },
+];
+
+const rows = [
+  { id: 0, title: "Example" },
+  { id: 1, title: "Demo" },
+];
+
+const fieldDecorator = (params) => console.log(params);
+
+const KeyCodes = {
+  comma: 188,
+  enter: [10, 13],
+};
+
+const delimiters = [...KeyCodes.enter, KeyCodes.comma];
+
+const tags = [
+  { id: "Thailand", text: "Thailand" },
+  { id: "India", text: "India" },
+];
 
 const NotebooksPage: FunctionComponent = () => {
   const [notebooks, setNotebooks] = useState([]);
@@ -25,6 +58,8 @@ const NotebooksPage: FunctionComponent = () => {
   const authUser = useAuthUser();
   const user = authUser().user;
   const isAdmin = user.role === "admin";
+  const [showNotebooks, setShowNotebooks] = useState("my-notebooks");
+  const [filterNotebooks, setFilterNotebooks] = useState("");
 
   const fetchNotebooks = async () => {
     setLoadingNotebooks(true);
@@ -83,323 +118,177 @@ const NotebooksPage: FunctionComponent = () => {
     fetchNotebooks();
   }, []);
 
-  const userNotebooks = notebooks.filter(({ userId }) => userId === user.id);
-  const sharedWithUserNotebooks = notebooks.filter(({ collaborators }) =>
-    collaborators.includes(user.id)
-  );
-  const publicNotebooks = notebooks.filter(
-    ({ collaborators, userId }) =>
-      !collaborators.includes(user.id) && userId !== user.id
-  );
+  const notebooksData = notebooks
+    .filter((notebook) => {
+      if (showNotebooks === "my-notebooks") {
+        return notebook.userId === user.id;
+      }
+      if (showNotebooks === "shared-notebooks") {
+        return notebook.collaborators.includes(user.id);
+      }
+      if (showNotebooks === "public-notebooks") {
+        return (
+          !notebook.collaborators.includes(user.id) &&
+          notebook.userId !== user.id
+        );
+      }
 
-  const fieldDecorator = (params) => console.log(params);
-
-  const KeyCodes = {
-    comma: 188,
-    enter: [10, 13],
-  };
-
-  const delimiters = [...KeyCodes.enter, KeyCodes.comma];
-
-  const tags = [
-    { id: "Thailand", text: "Thailand" },
-    { id: "India", text: "India" },
-  ];
+      return true;
+    })
+    .filter(
+      (notebook) =>
+        notebook.title
+          .toLowerCase()
+          .search(filterNotebooks.toLocaleLowerCase()) > -1
+    );
 
   return (
     <PageLayout>
       <Loader animation="border" isVisible={loadingNotebooks}>
         <>
-          {isAdmin ? (
-            <>
-              <Row className="align-items-center mb-4 mt-4">
-                <Col lg="10">
-                  <h3>All Notebooks</h3>
-                </Col>
-                <Col>
-                  <Button className="text-white float-end" variant="primary">
-                    <Link
-                      to="/notebooks/new"
-                      className="text-white text-decoration-none"
-                    >
-                      Create New
-                    </Link>
-                  </Button>
-                </Col>
-              </Row>
-              <div style={{ height: 650, width: "100%" }} className="mb-4">
-                <DataGrid
-                  rows={notebooks}
-                  onEditCellChangeCommitted={handleOnEditCellChangeCommitted}
-                  columns={[
-                    {
-                      field: "id",
-                      headerName: "ID",
-                      width: 100,
-                      renderCell: (params: GridCellParams) => (
-                        <Link to={`/notebooks/${params.row.id}`}>
-                          {params.row.id}
-                        </Link>
-                      ),
-                    },
-                    {
-                      field: "title",
-                      headerName: "title",
-                      width: 150,
-                      editable: true,
-                    },
-                    // {
-                    //   field: "contents",
-                    //   headerName: "contents",
-                    //   width: 300,
-                    //   renderCell: (params: GridCellParams) => (
-                    //     <Form.Control
-                    //       as="textarea"
-                    //       value={JSON.stringify(params.row.contents)}
-                    //     />
-                    //   ),
-                    // },
-                    {
-                      field: "createdAt",
-                      headerName: "createdAt",
-                      width: 150,
-                      editable: true,
-                    },
-                    {
-                      field: "updatedAt",
-                      headerName: "updatedAt",
-                      width: 150,
-                      editable: true,
-                    },
-                    // { field: "parent", headerName: "parent", width: 150 },
-                    {
-                      field: "userId",
-                      headerName: "userId",
-                      width: 150,
-                      editable: true,
-                    },
-                    {
-                      field: "visibility",
-                      headerName: "visibility",
-                      width: 120,
-                      editable: true,
-                    },
-                    {
-                      field: "collaborators",
-                      headerName: "collaborators",
-                      width: 160,
-                      editable: true,
-                    },
-                    {
-                      field: "deleted",
-                      headerName: "deleted",
-                      width: 150,
-                      editable: true,
-                    },
-                  ]}
-                  pageSize={10}
-                  hideFooter={notebooks.length <= 10 ? true : false}
-                  rowCount={notebooks.length}
-                  checkboxSelection={false}
-                  className="bg-white border-0 rounded-0"
+          <Row>
+            <Col md>
+              <InputGroup>
+                <InputGroup.Text className="bg-white">Show:</InputGroup.Text>
+                <Form.Select
+                  className="border-start-0 ps-0"
+                  value={showNotebooks}
+                  onChange={(event: React.ChangeEvent<HTMLSelectElement>) =>
+                    setShowNotebooks(event.target.value)
+                  }
+                >
+                  <option value="my-notebooks">My Notebooks</option>
+                  <option value="shared-notebooks">Shared with me</option>
+                  <option value="public-notebooks">Public Notebooks</option>
+                </Form.Select>
+              </InputGroup>
+            </Col>
+            <Col md>
+              <InputGroup>
+                <InputGroup.Text className="bg-white">
+                  <FontAwesomeIcon icon={faSearch} className="text-muted" />
+                </InputGroup.Text>
+                <Form.Control
+                  autoComplete="off"
+                  className="border-start-0 ps-0"
+                  id="filter-notebooks"
+                  placeholder="Filter Notebooks"
+                  onChange={(event: any) =>
+                    setFilterNotebooks(event.target.value)
+                  }
                 />
-              </div>
-            </>
-          ) : (
-            <Row>
-              <Col lg="4" className="pe-4">
-                <Row className="align-items-center mb-4 mt-4">
-                  <Col lg="8">
-                    <h4>My Notebooks</h4>
-                  </Col>
-                  <Col>
-                    <Button className="text-white float-end" variant="primary">
+              </InputGroup>
+            </Col>
+            <Col>
+              <Button
+                className="text-white float-end px-5"
+                variant="primary"
+                style={{
+                  backgroundColor: "#7DC142",
+                  borderColor: "#7DC142",
+                }}
+              >
+                <Link
+                  to="/notebooks/new"
+                  className="text-white text-decoration-none"
+                >
+                  Create Notebook
+                </Link>
+              </Button>
+            </Col>
+          </Row>
+          <Row>
+            <div style={{ height: 650, width: "100%" }} className="mt-4">
+              <DataGrid
+                rows={notebooksData}
+                onEditCellChangeCommitted={handleOnEditCellChangeCommitted}
+                columns={[
+                  {
+                    field: "title",
+                    headerName: "Name",
+                    width: 270,
+                    editable: true,
+                    renderCell: (params: GridCellParams) => (
                       <Link
-                        to="/notebooks/new"
-                        className="text-white text-decoration-none"
+                        to={`/notebooks/${params.row.title}`}
+                        className="ms-2"
                       >
-                        Create New
+                        {params.row.title}
                       </Link>
-                    </Button>
-                  </Col>
-                </Row>
-                <Row style={{ height: 650 }} className="mb-4">
-                  <DataGrid
-                    rows={userNotebooks}
-                    onEditCellChangeCommitted={handleOnEditCellChangeCommitted}
-                    columns={[
-                      {
-                        field: "id",
-                        headerName: "ID",
-                        width: 100,
-                        renderCell: (params: GridCellParams) => (
-                          <Link to={`/notebooks/${params.row.id}`}>
-                            {params.row.id}
-                          </Link>
-                        ),
-                      },
-                      {
-                        field: "title",
-                        headerName: "title",
-                        width: 140,
-                        editable: true,
-                      },
-                      {
-                        field: "collaborators",
-                        headerName: "collaborators",
-                        width: 160,
-                        editable: false,
-                        renderCell: (params: GridCellParams) => {
-                          console.log(params);
-                          return (
-                            <OverlayTrigger
-                              trigger="click"
-                              placement="right"
-                              overlay={
-                                <Popover
-                                  id={`collaborators-popover-${params.id}`}
-                                >
-                                  <Popover.Header as="h3">
-                                    Collaborators
-                                  </Popover.Header>
-                                  <Popover.Body>
-                                    <ReactTags
-                                      tags={params.row.collaborators.map(
-                                        (collaborator) => ({
-                                          id: collaborator,
-                                          text: collaborator,
-                                        })
-                                      )}
-                                      // suggestions={suggestions}
-                                      handleDelete={() => alert()}
-                                      handleAddition={() => alert()}
-                                      handleDrag={() => alert()}
-                                      delimiters={delimiters}
-                                    />
-                                  </Popover.Body>
-                                </Popover>
-                              }
-                            >
-                              <div className="d-block w-100">
-                                {" "}
-                                {params.row.collaborators.length ? (
-                                  <>
-                                    {params.row.collaborators.join(",")}
-                                    <Button
-                                      variant="primary"
-                                      size="sm"
-                                      className="text-white float-end  mt-2"
-                                    >
-                                      <FontAwesomeIcon icon={faEdit} />
-                                    </Button>
-                                  </>
-                                ) : (
-                                  <>
-                                    No collaborators
-                                    <Button
-                                      variant="primary"
-                                      size="sm"
-                                      className="text-white float-end mt-2"
-                                    >
-                                      <FontAwesomeIcon icon={faPlus} />
-                                    </Button>
-                                  </>
-                                )}
-                              </div>
-                            </OverlayTrigger>
-                          );
-                        },
-                      },
-                    ]}
-                    pageSize={10}
-                    rowCount={userNotebooks.length}
-                    hideFooter={notebooks.length <= 10 ? true : false}
-                    checkboxSelection={false}
-                    className="bg-white border-0 rounded-0"
-                  />
-                </Row>
-              </Col>
-              <Col lg="4" className="pe-4">
-                <Row className="align-items-center mb-4 mt-4">
-                  <Col>
-                    <h4>Shared with me</h4>
-                  </Col>
-                </Row>
-                <Row style={{ height: 650 }} className="mb-4">
-                  <DataGrid
-                    rows={sharedWithUserNotebooks}
-                    onEditCellChangeCommitted={handleOnEditCellChangeCommitted}
-                    columns={[
-                      {
-                        field: "id",
-                        headerName: "ID",
-                        width: 100,
-                        renderCell: (params: GridCellParams) => (
-                          <Link to={`/notebooks/${params.row.id}`}>
-                            {params.row.id}
-                          </Link>
-                        ),
-                      },
-                      {
-                        field: "title",
-                        headerName: "title",
-                        width: 140,
-                        editable: true,
-                      },
-                      {
-                        field: "collaborators",
-                        headerName: "collaborators",
-                        width: 160,
-                        editable: true,
-                      },
-                    ]}
-                    pageSize={10}
-                    rowCount={sharedWithUserNotebooks.length}
-                    hideFooter={
-                      sharedWithUserNotebooks.length <= 10 ? true : false
-                    }
-                    checkboxSelection={false}
-                    className="bg-white border-0 rounded-0"
-                  />
-                </Row>
-              </Col>
-              <Col lg="4">
-                <Row className="align-items-center mb-4 mt-4">
-                  <Col>
-                    <h4>Public Notebooks</h4>
-                  </Col>
-                </Row>
-                <Row style={{ height: 650 }} className="mb-4">
-                  <DataGrid
-                    rows={publicNotebooks}
-                    columns={[
-                      {
-                        field: "id",
-                        headerName: "ID",
-                        width: 100,
-                        renderCell: (params: GridCellParams) => (
-                          <Link to={`/notebooks/${params.row.id}`}>
-                            {params.row.id}
-                          </Link>
-                        ),
-                      },
-                      { field: "title", headerName: "title", width: 140 },
-                      {
-                        field: "collaborators",
-                        headerName: "collaborators",
-                        width: 160,
-                      },
-                    ]}
-                    pageSize={10}
-                    rowCount={publicNotebooks.length}
-                    hideFooter={publicNotebooks.length <= 10 ? true : false}
-                    checkboxSelection={false}
-                    className="bg-white border-0 rounded-0"
-                  />
-                </Row>
-              </Col>
-            </Row>
-          )}
+                    ),
+                  },
+                  {
+                    field: "updatedAt",
+                    headerName: "Last Modified",
+                    width: 200,
+                    editable: false,
+                    renderCell: (params: GridCellParams) => (
+                      <>{dayjs(params.row.createdAt).format("M/D/YYYY")}</>
+                    ),
+                  },
+                  {
+                    field: "createdAt",
+                    headerName: "Created On",
+                    width: 200,
+                    editable: false,
+                    renderCell: (params: GridCellParams) => (
+                      <>{dayjs(params.row.createdAt).format("M/D/YYYY")}</>
+                    ),
+                  },
+                  {
+                    field: "visibility",
+                    headerName: "Visibility",
+                    width: 210,
+                  },
+                  {
+                    field: "userId",
+                    headerName: "Owned By",
+                    width: 150,
+                    renderCell: (params: GridCellParams) => {
+                      if (params.row.userId === user.id) {
+                        return <>You</>;
+                      }
+
+                      if (params.row.userId === 1) {
+                        return <span className="user-initials-pill">AT</span>;
+                      }
+                    },
+                  },
+
+                  {
+                    field: "collaborators",
+                    headerName: "Shared With",
+                    width: 160,
+                    editable: true,
+                    renderCell: (params: GridCellParams) => {
+                      if (params.row.collaborators.length === 0) {
+                        return <>Nobody</>;
+                      }
+                      if (params.row.collaborators.includes(1)) {
+                        return <span className="user-initials-pill">AT</span>;
+                      }
+                      if (params.row.collaborators.includes(2)) {
+                        return <>You</>;
+                      }
+                      return <>{params.row.collaborators}</>;
+                    },
+                  },
+                  {
+                    field: "",
+                    headerName: " ",
+                    width: 100,
+                    sortable: false,
+                    renderCell: (params: GridCellParams) => <span>...</span>,
+                  },
+                ]}
+                pageSize={10}
+                hideFooter={notebooks.length <= 10 ? true : false}
+                rowCount={notebooks.length}
+                checkboxSelection={false}
+                className="bg-white border-0 rounded-0"
+              />
+            </div>
+          </Row>
         </>
       </Loader>
     </PageLayout>

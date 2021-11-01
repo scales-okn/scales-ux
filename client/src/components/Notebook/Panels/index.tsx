@@ -46,13 +46,13 @@ const Panels: FunctionComponent = () => {
     savingNotebook,
   } = useNotebookContext();
 
-  console.log(panels);
   return (
     <Accordion defaultActiveKey="0" flush>
       {panels.map((panel, key) => {
         return (
           <Accordion.Item eventKey={key} key={key}>
             <Accordion.Header>
+              {ring.name}
               <Form.Control
                 // size="sm"
                 type="text"
@@ -88,15 +88,15 @@ const Panels: FunctionComponent = () => {
             </Accordion.Header>
             <Accordion.Body>
               <Container className="bg-light">
-                <Row className="mb-3 p-3">
+                {/* <Row className="mb-3 p-3">
                   <Form.Group as={Col} controlId="ringState">
                     <Form.Label>Ring</Form.Label>
-                    <Form.Select defaultValue={ring}>
+                    <Form.Select defaultValue={ring.name} disabled>
                       <option>Choose...</option>
-                      <option selected>{ring}</option>
+                      <option selected>{ring.name}</option>
                     </Form.Select>
                   </Form.Group>
-                </Row>
+                </Row> */}
                 <Filters />
                 <Row className="p-3">
                   <Loader animation="border" isVisible={loadingResults}>
@@ -109,7 +109,7 @@ const Panels: FunctionComponent = () => {
                                 <DataGrid
                                   onPageChange={(params) =>
                                     fetchResults(
-                                      ring,
+                                      ring.id,
                                       filterInputs,
                                       params.page
                                     )

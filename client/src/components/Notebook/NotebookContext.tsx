@@ -76,7 +76,7 @@ const NotebookContextProvider = ({ ring, notebookId, children }: Props) => {
     try {
       const response = await fetch(
         appendQuery(
-          `${process.env.REACT_APP_BFF_PROXY_ENDPOINT_URL}/results/${ring}/${defaultEntity}?page=${page}&batchSize=${batchSize}&sortBy=dateFiled&sortDirection=desc`,
+          `${process.env.REACT_APP_BFF_PROXY_ENDPOINT_URL}/results/${ring.id}/${defaultEntity}?page=${page}&batchSize=${batchSize}&sortBy=dateFiled&sortDirection=desc`,
           filterInputs?.reduce((acc, filterInput: FilterInput) => {
             acc[filterInput.type] =
               filterInput.type === "dateFiled"
@@ -221,7 +221,7 @@ const NotebookContextProvider = ({ ring, notebookId, children }: Props) => {
   };
 
   useEffect(() => {
-    dispatch(fetchInfo(ring));
+    dispatch(fetchInfo(ring.id));
     fetchNotebook(notebookId);
     fetchResults(ring, filterInputs);
   }, [ring, defaultEntity, notebookId]);

@@ -63,6 +63,12 @@ const App: FunctionComponent = () => {
             />
             <PrivateRoute
               exact
+              path="/rings"
+              component={NotebooksPage}
+              loginPath="/sign-in"
+            />
+            <PrivateRoute
+              exact
               path="/notebooks/:notebookId"
               component={NotebookPage}
               loginPath="/sign-in"

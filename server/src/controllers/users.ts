@@ -3,7 +3,9 @@ import jwt from "jsonwebtoken";
 import { Request, Response } from "express";
 import { sequelize } from "../database";
 import mailTransport from "../services/mail";
-import accessControl from "../services/accesscontrol";
+import accessControl, {
+  permisionsFieldsFilter,
+} from "../services/accesscontrol";
 
 // Resources validations are made with validateResources middleware and validations schemas
 // server/middlewares/validateResources.ts
@@ -88,7 +90,6 @@ export const login = async (req: Request, res: Response) => {
     if (passwordsMatch) {
       const token = jwt.sign(
         { id, email, role, firstName, lastName, blocked, approved },
-        // @ts-ignore
         process.env.JWT_SECRET,
         { expiresIn: process.env.JWT_EXP }
       );
@@ -110,6 +111,12 @@ export const login = async (req: Request, res: Response) => {
 // Find all Users
 export const findAllUsers = async (req: Request, res: Response) => {
   try {
+    // @ts-ignore
+    const permission = await accessControl.can(req.user.role, "users:read");
+    if (!permission.granted) {
+      return res.send_forbidden("Not allowed!");
+    }
+
     const users = await sequelize.models.User.findAll({
       attributes: { exclude: ["password"] },
       order: [["id", "DESC"]],
@@ -127,13 +134,23 @@ export const findAllUsers = async (req: Request, res: Response) => {
 export const findById = async (req: Request, res: Response) => {
   try {
     const { userId } = req.params;
-    const user = await sequelize.models.User.findOne({ where: { id: userId } });
 
+    const user = await sequelize.models.User.findOne({ where: { id: userId } });
     if (!user) {
       return res.send_notFound("User not found!");
     }
+
+    // @ts-ignore
+    const permission = await accessControl.can(req.user.role, "users:read", {
+      user: req.user,
+      resource: user,
+    });
+    if (!permission.granted) {
+      return res.send_forbidden("Not allowed!");
+    }
+
     return res.send_ok("", {
-      user: user.dataValues, // accessControlFieldsFilter(user.dataValues, permission.fields),
+      user: permisionsFieldsFilter(user.dataValues, permission),
     });
   } catch (error) {
     console.log(error);
@@ -151,28 +168,30 @@ export const update = async (req: Request, res: Response) => {
     }
 
     //@ts-ignore
-    const permission = accessControl.can(req.user.role).updateOwn("users");
+    const permission = await accessControl.can(req.user.role, "users:read", {
+      user: req.user,
+      resource: user,
+    });
     if (!permission.granted) {
       return res.send_forbidden("Not allowed!");
     }
 
-    console.log(permission.attributes);
-
-    const payload = permission.filter(req.body);
+    const payload = permisionsFieldsFilter(req.body, permission);
     if (payload.password) {
       const salt = await bcrypt.genSalt(10);
       const hash = await bcrypt.hash(payload.password, salt);
       payload.password = hash;
     }
 
+    // No changes made
+    if (Object.keys(payload).length === 0) {
+      return res.send_notModified("User has not been updated!");
+    }
+
     // Inject req for saveLog
     sequelize.models.User.beforeUpdate((model: any) => {
       model.req = req;
     });
-
-    if (Object.keys(payload).length === 0) {
-      return res.send_notModified("User has not been updated!");
-    }
 
     const result = await sequelize.models.User.update(payload, {
       where: { id: userId },
@@ -185,7 +204,7 @@ export const update = async (req: Request, res: Response) => {
 
     const updatedUser = result[1][0].dataValues;
     return res.send_ok("User has been updated!", {
-      user: permission.filter(updatedUser),
+      user: permisionsFieldsFilter(updatedUser, permission),
     });
   } catch (error) {
     console.log(error);
@@ -196,6 +215,11 @@ export const update = async (req: Request, res: Response) => {
 // Delete User
 export const deleteUser = async (req: Request, res: Response) => {
   try {
+    //@ts-ignore
+    const permission = await accessControl.can(req.user.role, "users:delete");
+    if (!permission.granted) {
+      return res.send_forbidden("Not allowed!");
+    }
     const { userId } = req.params;
     const result = await sequelize.models.User.destroy({
       where: { id: userId },
@@ -215,7 +239,6 @@ export const deleteUser = async (req: Request, res: Response) => {
 export const verifyEmail = async (req: Request, res: Response) => {
   try {
     const decodedToken = jwt.verify(req.body.token, process.env.JWT_SECRET);
-
     console.log("verifyEmail", decodedToken);
 
     const user = await sequelize.models.User.findOne({

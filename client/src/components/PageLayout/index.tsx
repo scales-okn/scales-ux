@@ -1,7 +1,7 @@
 import React, { FunctionComponent, ReactNode } from "react";
 import { useAuthUser, useSignOut } from "react-auth-kit";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faBalanceScale } from "@fortawesome/free-solid-svg-icons";
+import { faBalanceScale, faSearch } from "@fortawesome/free-solid-svg-icons";
 import {
   Navbar,
   Container,
@@ -46,9 +46,9 @@ const PageLayout: FunctionComponent<Props> = (props) => {
               <LinkContainer to="/notebooks">
                 <Nav.Link>Notebooks</Nav.Link>
               </LinkContainer>
-              <LinkContainer to="/rings">
+              {/* <LinkContainer to="/rings">
                 <Nav.Link>Rings</Nav.Link>
-              </LinkContainer>
+              </LinkContainer> */}
               {isAdmin && (
                 <NavDropdown title="Admin" id="collasible-nav-dropdown">
                   <LinkContainer to="/admin/users">
@@ -60,16 +60,7 @@ const PageLayout: FunctionComponent<Props> = (props) => {
                 </NavDropdown>
               )}
             </Nav>
-            <Nav>
-              <Form className="d-flex me-lg-3">
-                <FormControl
-                  type="search"
-                  placeholder="Search..."
-                  className="mr-2"
-                  aria-label="Search"
-                />
-              </Form>
-            </Nav>
+
             <Nav>
               <Dropdown>
                 <Dropdown.Toggle variant="link" className="profile-toggler">

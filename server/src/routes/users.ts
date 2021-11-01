@@ -16,7 +16,6 @@ import {
   loginUserValidationSchema,
 } from "../validation/users";
 import checkAuth from "../middlewares/checkAuth";
-import { accessControlMiddleware } from "../services/accesscontrol";
 
 const router = express.Router();
 
@@ -27,58 +26,16 @@ router.post("/create", validateResource(createUserValidationSchema), create);
 router.post("/login", validateResource(loginUserValidationSchema), login);
 
 // Retrieve all Users
-router.get(
-  "/",
-  checkAuth,
-  accessControlMiddleware.check({
-    resource: "users",
-    action: "read",
-  }),
-  findAllUsers
-);
+router.get("/", checkAuth, findAllUsers);
 
 // Retrieve User by id
-router.get(
-  "/:userId",
-  checkAuth,
-  accessControlMiddleware.check({
-    resource: "users",
-    action: "read",
-    checkOwnerShip: true,
-    operands: [
-      { source: "user", key: "id" },
-      { source: "params", key: "userId" },
-    ],
-  }),
-  findById
-);
+router.get("/:userId", checkAuth, findById);
 
 // Update a User with id
-router.put(
-  "/:userId",
-  checkAuth,
-  accessControlMiddleware.check({
-    resource: "users",
-    action: "update",
-    checkOwnerShip: true,
-    operands: [
-      { source: "user", key: "id" },
-      { source: "params", key: "userId" },
-    ],
-  }),
-  update
-);
+router.put("/:userId", checkAuth, update);
 
 // Delete a User
-router.delete(
-  "/:userId",
-  checkAuth,
-  accessControlMiddleware.check({
-    resource: "users",
-    action: "delete",
-  }),
-  deleteUser
-);
+router.delete("/:userId", checkAuth, deleteUser);
 
 // Email Verify
 router.post("/verify-email", verifyEmail);

@@ -10,7 +10,7 @@ interface InitialState {
 export const initialState: InitialState = {
   loadingRings: true,
   hasErrors: false,
-  rings: {},
+  rings: [],
 };
 
 // A slice for rings with our three reducers
@@ -22,7 +22,7 @@ const ringsSlice = createSlice({
       state.loadingRings = true;
     },
     getRingsSuccess: (state, { payload }) => {
-      state.rings = payload.rings;
+      state.rings = payload;
       state.loadingRings = false;
       state.hasErrors = false;
     },
@@ -53,6 +53,8 @@ export function fetchRings() {
         `${process.env.REACT_APP_BFF_PROXY_ENDPOINT_URL}/info`
       );
       const data = await response.json();
+
+      console.log(data);
 
       dispatch(getRingsSuccess(data));
     } catch (error) {

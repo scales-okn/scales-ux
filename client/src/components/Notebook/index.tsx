@@ -8,7 +8,8 @@ import {
   Button,
   Form,
 } from "react-bootstrap";
-
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faEdit } from "@fortawesome/free-solid-svg-icons";
 import { useNotebookContext } from "./NotebookContext";
 
 import Loader from "../Loader";
@@ -30,7 +31,8 @@ const Notebook: FunctionComponent = () => {
       <>
         <Container className="mb-3">
           <Row className="align-items-center">
-            <Col lg="8">
+            <Col lg="8" className="d-flex align-items-center">
+              <FontAwesomeIcon icon={faEdit} className="me-2" />
               <Form.Control
                 size="lg"
                 type="text"

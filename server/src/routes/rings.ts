@@ -16,7 +16,7 @@ const router = express.Router();
 router.post("/create", validateResource(createRingValidationSchema), create);
 
 // Retrieve all Rings
-router.get("/", checkAuth, findAll);
+router.get("/",  findAll);
 
 // Retrieve Ring by Id
 router.get("/:ringId", checkAuth, findById);

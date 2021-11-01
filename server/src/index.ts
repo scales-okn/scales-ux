@@ -52,8 +52,8 @@ const app = express();
     // Users Router
     app.use("/api/users", usersRouter);
 
-    // // Rings Router
-    // app.use("/api/rings", ringsRouter);
+    // Rings Router
+    app.use("/api/rings", ringsRouter);
 
     // Notebooks Router
     app.use("/api/notebooks", notebooksRouter);

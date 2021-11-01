@@ -57,7 +57,7 @@ export function fetchInfo(ring) {
 
     try {
       const response = await fetch(
-        `${process.env.REACT_APP_BFF_PROXY_ENDPOINT_URL}/info/${ring}`
+        `${process.env.REACT_APP_BFF_PROXY_ENDPOINT_URL}/rings/${ring}`
       );
       const data = await response.json();
 

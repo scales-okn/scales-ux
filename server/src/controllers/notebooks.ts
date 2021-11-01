@@ -38,9 +38,16 @@ export const create = async (req: Request, res: Response) => {
 
 // Find all Notebooks
 export const findAll = async (req: Request, res: Response) => {
-  //@ts-ignore
-  const { role, id: userId } = req.user;
   try {
+    //@ts-ignore
+    const { role, id: userId } = req.user;
+
+      // @ts-ignore
+      const permission = await accessControl.can(req.user.role, "notebooks:read");
+      if (!permission.granted) {
+        return res.send_forbidden("Not allowed!");
+      }
+  
     let where = {};
     if (role !== "admin") {
       where = {
