@@ -20,14 +20,6 @@ export const create = async (req: Request, res: Response) => {
       visibility,
     } = req.body;
 
-    // TODO: Check if is needed.
-    // const rings = await sequelize.models.Ring.findAll({ where: { contents } });
-    // if (rings?.length) {
-    //   return res.send_badRequest("Ring was not created!", {
-    //     email: "An Ring with the same contents already exists!",
-    //   });
-    // }
-
     const ring = await sequelize.models.Ring.create({
       name,
       userId,
@@ -64,7 +56,6 @@ export const addRingToPanel = async (ringId: number, panelId: number) => {
 export const findAll = async (req: Request, res: Response) => {
   try {
     const rings = await sequelize.models.Ring.findAll({
-      // attributes: { exclude: [""] }, // TODO: Check if we need to hide something.
       order: [["id", "DESC"]],
     });
 

@@ -2,21 +2,13 @@ import React, { FunctionComponent } from "react";
 import { useHistory, useParams } from "react-router-dom";
 import { useFormik } from "formik";
 import * as yup from "yup";
-import {
-  Box,
-  Button,
-  Container,
-  CssBaseline,
-  Grid,
-  Link,
-  TextField,
-  Typography,
-} from "@material-ui/core";
-import useStyles from "../ForgotPasswordPage/styles";
-import Logo from "../Logo";
+
 import Copyright from "../Copyright";
 import { useSnackbar } from "notistack";
 
+import { Button, Col, Container, Form, Row } from "react-bootstrap";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faBalanceScale } from "@fortawesome/free-solid-svg-icons";
 interface ResetPasswordFields {
   password: string;
   repassword: string;
@@ -40,7 +32,6 @@ const ResetPasswordValidationSchema = yup.object({
 });
 
 const ResetPassword: FunctionComponent = () => {
-  const classes = useStyles();
   const history = useHistory();
   const { enqueueSnackbar } = useSnackbar();
   const { token } = useParams<ParamTypes>();
@@ -99,78 +90,58 @@ const ResetPassword: FunctionComponent = () => {
   });
 
   return (
-    <Container component="main" maxWidth="xs">
-      <CssBaseline />
-      <div className={classes.paper}>
-        <Logo />
-        <Typography component="h1" variant="h5" className="mt-5">
-          Sign up
-        </Typography>
-        <form
-          className={classes.form}
-          onSubmit={formik.handleSubmit}
-          noValidate
-        >
-          <Grid container spacing={2}>
-            <Grid item xs={12}>
-              <TextField
-                variant="outlined"
-                required
-                fullWidth
-                name="password"
-                label="Password"
+    <Container className="h-100">
+      <Row className="h-100 justify-content-center align-items-center text-center">
+        <Col md="4">
+          <Form noValidate onSubmit={formik.handleSubmit}>
+            <FontAwesomeIcon icon={faBalanceScale} size="3x" className="mb-4" />
+            <h1 className="h3 mb-3 fw-normal">Please sign in</h1>
+            <div className="form-floating">
+              <Form.Control
                 type="password"
-                id="password"
-                autoComplete="repassword"
+                name="password"
+                placeholder="Password"
+                className="rounded-0 rounded-top"
                 value={formik.values.password}
                 onChange={formik.handleChange}
-                error={
-                  formik.touched.password && Boolean(formik.errors.password)
+                isInvalid={
+                  formik.touched.password && Boolean(formik.errors?.password)
                 }
-                helperText={formik.touched.password && formik.errors.password}
               />
-            </Grid>
-            <Grid item xs={12}>
-              <TextField
-                variant="outlined"
-                required
-                fullWidth
-                name="repassword"
-                label="Confirm Password"
+              <Form.Label>Password</Form.Label>
+            </div>
+            <div className="form-floating mb-3">
+              <Form.Control
                 type="password"
-                id="repassword"
+                name="repassword"
+                placeholder="Confirm Password"
+                className="rounded-0 rounded-bottom border-top-0"
                 value={formik.values.repassword}
                 onChange={formik.handleChange}
-                error={
-                  formik.touched.repassword && Boolean(formik.errors.repassword)
-                }
-                helperText={
-                  formik.touched.repassword && formik.errors.repassword
+                isInvalid={
+                  formik.touched.repassword &&
+                  Boolean(formik.errors?.repassword)
                 }
               />
-            </Grid>
-          </Grid>
-          <Button
-            type="submit"
-            fullWidth
-            variant="contained"
-            color="primary"
-            className={classes.submit}
-          >
-            Reset Password
-          </Button>
-          <Grid container justify="flex-end">
-            <Grid item>
-              <Link href="/sign-in" variant="body2">
-                Sign in
-              </Link>
-            </Grid>
-          </Grid>
-        </form>
-      </div>
-      <Box mt={5}>
-        <Copyright />
-      </Box>
+              <Form.Label>Confirm Password</Form.Label>
+            </div>
+            <Button
+              variant="primary"
+              type="submit"
+              className="w-100 mb-3 text-white"
+              size="lg"
+            >
+              Reset Password
+            </Button>
+            <Row className="mb-5">
+              <Col className="text-end">
+                <a href="/sign-in" className="small">{`Sing in`}</a>
+              </Col>
+            </Row>
+            <Copyright />
+          </Form>
+        </Col>
+      </Row>
     </Container>
   );
 };

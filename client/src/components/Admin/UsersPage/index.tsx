@@ -98,7 +98,7 @@ const AdminUsersPages: FunctionComponent = () => {
             columns={columns}
             pageSize={5}
             checkboxSelection={false}
-            className="bg-white"
+            className="bg-white p-0"
           />
         </Row>
       )}

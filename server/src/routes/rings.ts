@@ -13,10 +13,10 @@ import checkAuth from "../middlewares/checkAuth";
 const router = express.Router();
 
 // Create a new Ring
-router.post("/create", validateResource(createRingValidationSchema), create);
+router.post("/create", checkAuth, validateResource(createRingValidationSchema), create);
 
 // Retrieve all Rings
-router.get("/",  findAll);
+router.get("/", checkAuth, findAll);
 
 // Retrieve Ring by Id
 router.get("/:ringId", checkAuth, findById);

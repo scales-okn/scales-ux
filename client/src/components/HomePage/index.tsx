@@ -3,7 +3,7 @@ import PageLayout from "../PageLayout";
 
 const HomePage: FunctionComponent = () => (
   <PageLayout>
-    <h4>Dashboard</h4>
+    <h4>Home Page</h4>
   </PageLayout>
 );
 

@@ -46,16 +46,10 @@ const PageLayout: FunctionComponent<Props> = (props) => {
               <LinkContainer to="/notebooks">
                 <Nav.Link>Notebooks</Nav.Link>
               </LinkContainer>
-              {/* <LinkContainer to="/rings">
-                <Nav.Link>Rings</Nav.Link>
-              </LinkContainer> */}
               {isAdmin && (
                 <NavDropdown title="Admin" id="collasible-nav-dropdown">
                   <LinkContainer to="/admin/users">
                     <Nav.Link>Manage Users</Nav.Link>
-                  </LinkContainer>
-                  <LinkContainer to="/admin/logs">
-                    <Nav.Link>Logs</Nav.Link>
                   </LinkContainer>
                 </NavDropdown>
               )}
@@ -77,7 +71,7 @@ const PageLayout: FunctionComponent<Props> = (props) => {
                     style={{
                       minWidth: "280px",
                     }}
-                    href="#/action-1"
+                    href="#"
                   >
                     Profile
                   </Dropdown.Item>

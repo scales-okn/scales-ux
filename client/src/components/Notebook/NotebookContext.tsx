@@ -6,7 +6,6 @@ import React, {
   useState,
 } from "react";
 import { fetchInfo, infoSelector } from "../../store/info";
-import { ringsSelector } from "../../store/rings";
 import { useDispatch, useSelector } from "react-redux";
 import appendQuery from "append-query";
 import { useAuthHeader, useAuthUser } from "react-auth-kit";
@@ -21,7 +20,7 @@ export const useNotebookContext = () => useContext(NotebookContext);
 type Props = {
   notebookId?: string | null;
   children: ReactNode;
-  ring: string | any;
+  rings: Array<any>;
 };
 
 export type FilterInput = {
@@ -37,7 +36,7 @@ type ResultsResponse = {
   totalCount: number;
 };
 
-const NotebookContextProvider = ({ ring, notebookId, children }: Props) => {
+const NotebookContextProvider = ({ rings, notebookId, children }: Props) => {
   const dispatch = useDispatch();
   const [loading, setLoading] = useState(true);
   const [notebook, setNotebook] = useState(null);
@@ -53,17 +52,13 @@ const NotebookContextProvider = ({ ring, notebookId, children }: Props) => {
   const [results, setResults] = useState<ResultsResponse>();
   const { filters = [], columns = [], defaultEntity } = info;
   const authHeader = useAuthHeader();
-  const [panels, setPanels] = useState([
-    { id: 1, description: "Panel Description" },
-  ]);
+  const [panels, setPanels] = useState([]);
 
   type FetchResultsParams = {
     page?: number;
     batchSize?: number;
     filterInputs?: Array<FilterInput>;
   };
-
-  console.log(ring);
 
   const fetchResults = async (
     ring,
@@ -72,7 +67,6 @@ const NotebookContextProvider = ({ ring, notebookId, children }: Props) => {
     batchSize = 10
   ) => {
     setLoadingResults(true);
-    console.log(filterInputs);
     try {
       const response = await fetch(
         appendQuery(
@@ -100,7 +94,7 @@ const NotebookContextProvider = ({ ring, notebookId, children }: Props) => {
       setResults(data);
       setLoadingResults(false);
     } catch (error) {
-      // TODO: Implement Error handling
+      console.log(error);
     }
   };
 
@@ -133,7 +127,7 @@ const NotebookContextProvider = ({ ring, notebookId, children }: Props) => {
       setSavingNotebook(false);
       setNotebook(notebook);
     } catch (error) {
-      // TODO: Implement Error handling
+      console.log(error);
     }
   };
 
@@ -164,7 +158,7 @@ const NotebookContextProvider = ({ ring, notebookId, children }: Props) => {
         notebookContents?.results && setResults(notebookContents.results);
       }
     } catch (error) {
-      // TODO: Implement Error handling
+      console.log(error);
     }
   };
 
@@ -220,11 +214,11 @@ const NotebookContextProvider = ({ ring, notebookId, children }: Props) => {
     }
   };
 
-  useEffect(() => {
-    dispatch(fetchInfo(ring.id));
-    fetchNotebook(notebookId);
-    fetchResults(ring, filterInputs);
-  }, [ring, defaultEntity, notebookId]);
+  // useEffect(() => {
+  //   // dispatch(fetchInfo(ring.id));
+  //   // fetchNotebook(notebookId);
+  //   // fetchResults(ring, filterInputs);
+  // }, [rings, defaultEntity, notebookId]);
 
   if (loadingInfo) return <Loader animation="border" isVisible={true} />;
   if (hasErrors) return <p>Cannot display filters...</p>;
@@ -232,7 +226,7 @@ const NotebookContextProvider = ({ ring, notebookId, children }: Props) => {
   return (
     <NotebookContext.Provider
       value={{
-        ring,
+        rings,
         columns,
         filters,
         filterInputs,

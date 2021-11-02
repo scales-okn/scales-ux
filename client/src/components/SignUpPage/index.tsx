@@ -2,26 +2,12 @@ import React, { ChangeEvent, FunctionComponent } from "react";
 import { useHistory } from "react-router-dom";
 import { useFormik } from "formik";
 import * as yup from "yup";
-import {
-  Avatar,
-  Box,
-  Button,
-  Checkbox,
-  Container,
-  CssBaseline,
-  FormControlLabel,
-  Grid,
-  Link,
-  TextField,
-  TextareaAutosize,
-  Typography,
-  FormHelperText,
-} from "@material-ui/core";
-import useStyles from "./styles";
-import Logo from "../Logo";
 import Copyright from "../Copyright";
 import { UserSignInFields, UserSignInValidationSchema } from "../SignInPage";
 import { useSnackbar } from "notistack";
+import { Container, Form, Button, Col, Row } from "react-bootstrap";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faBalanceScale } from "@fortawesome/free-solid-svg-icons";
 
 interface UserSignUpFields extends UserSignInFields {
   firstName: string;
@@ -53,7 +39,6 @@ const UserSignUpValidationSchema = UserSignInValidationSchema.concat(
 );
 
 const SignUpPage: FunctionComponent = () => {
-  const classes = useStyles();
   const history = useHistory();
   const { enqueueSnackbar } = useSnackbar();
 
@@ -112,145 +97,124 @@ const SignUpPage: FunctionComponent = () => {
   });
 
   return (
-    <Container component="main" maxWidth="xs">
-      <div className={classes.paper}>
-        <Logo />
-        <Typography component="h1" variant="h5" className="mt-5">
-          Sign up
-        </Typography>
-        <form
-          className={classes.form}
-          onSubmit={formik.handleSubmit}
-          noValidate
-        >
-          <Grid container spacing={2}>
-            <Grid item xs={12} sm={6}>
-              <TextField
-                autoComplete="fname"
-                name="firstName"
-                variant="outlined"
-                required
-                fullWidth
-                id="firstName"
-                label="First Name"
-                autoFocus
-                value={formik.values.firstName}
-                onChange={formik.handleChange}
-                error={
-                  formik.touched.firstName && Boolean(formik.errors.firstName)
-                }
-                helperText={formik.touched.firstName && formik.errors.firstName}
-              />
-            </Grid>
-            <Grid item xs={12} sm={6}>
-              <TextField
-                variant="outlined"
-                required
-                fullWidth
-                id="lastName"
-                label="Last Name"
-                name="lastName"
-                autoComplete="lname"
-                value={formik.values.lastName}
-                onChange={formik.handleChange}
-                error={
-                  formik.touched.lastName && Boolean(formik.errors.lastName)
-                }
-                helperText={formik.touched.lastName && formik.errors.lastName}
-              />
-            </Grid>
-            <Grid item xs={12}>
-              <TextField
-                variant="outlined"
-                required
-                fullWidth
-                id="email"
-                label="Email Address"
+    <Container className="h-100">
+      <Row className="h-100 justify-content-center align-items-center text-center">
+        <Col md="4">
+          <Form noValidate onSubmit={formik.handleSubmit}>
+            <FontAwesomeIcon icon={faBalanceScale} size="3x" className="mb-4" />
+            <h1 className="h3 mb-3 fw-normal">Please sign in</h1>
+
+            <Row className="mb-3">
+              <Col>
+                <div className="form-floating">
+                  <Form.Control
+                    type="text"
+                    name="firstName"
+                    placeholder="First Name"
+                    value={formik.values.firstName}
+                    onChange={formik.handleChange}
+                    isInvalid={
+                      formik.touched.firstName &&
+                      Boolean(formik.errors?.firstName)
+                    }
+                  />
+                  <Form.Label>First Name</Form.Label>
+                </div>
+              </Col>
+              <Col>
+                <div className="form-floating">
+                  <Form.Control
+                    type="text"
+                    name="lastName"
+                    placeholder="First Name"
+                    value={formik.values.lastName}
+                    onChange={formik.handleChange}
+                    isInvalid={
+                      formik.touched.lastName &&
+                      Boolean(formik.errors?.lastName)
+                    }
+                  />
+                  <Form.Label>Last Name</Form.Label>
+                </div>
+              </Col>
+            </Row>
+
+            <div className="form-floating mb-3">
+              <Form.Control
+                type="email"
                 name="email"
-                autoComplete="email"
+                placeholder="name@example.com"
                 value={formik.values.email}
                 onChange={formik.handleChange}
-                error={formik.touched.email && Boolean(formik.errors.email)}
-                helperText={formik.touched.email && formik.errors.email}
+                isInvalid={
+                  formik.touched.email && Boolean(formik.errors?.email)
+                }
               />
-            </Grid>
-            <Grid item xs={12}>
-              <TextField
-                variant="outlined"
-                required
-                fullWidth
-                name="password"
-                label="Password"
+              <Form.Label>Email address</Form.Label>
+            </div>
+            <div className="form-floating mb-3">
+              <Form.Control
                 type="password"
-                id="password"
-                autoComplete="current-password"
+                name="password"
+                placeholder="Password"
                 value={formik.values.password}
                 onChange={formik.handleChange}
-                error={
-                  formik.touched.password && Boolean(formik.errors.password)
+                isInvalid={
+                  formik.touched.password && Boolean(formik.errors?.password)
                 }
-                helperText={formik.touched.password && formik.errors.password}
               />
-            </Grid>
-            <Grid item xs={12}>
-              <TextField
-                multiline
-                rows={1}
-                rowsMax={4}
-                variant="outlined"
-                required
-                fullWidth
-                id="usage"
-                label="Account Usage"
+              <Form.Label>Password</Form.Label>
+            </div>
+            <div className="form-floating mb-3">
+              <Form.Control
+                as="textarea"
+                rows={3}
                 name="usage"
+                placeholder="Account Usage"
                 value={formik.values.usage}
                 onChange={formik.handleChange}
-                error={formik.touched.usage && Boolean(formik.errors.usage)}
-                helperText={formik.touched.usage && formik.errors.usage}
-              />
-            </Grid>
-            <Grid item xs={12}>
-              <FormControlLabel
-                control={
-                  <Checkbox
-                    value="tos"
-                    color="primary"
-                    onChange={(event: ChangeEvent<HTMLInputElement>) =>
-                      formik.setFieldValue("tos", event.target.checked)
-                    }
-                    required
-                  />
+                style={{ height: "100px" }}
+                isInvalid={
+                  formik.touched.usage && Boolean(formik.errors?.usage)
                 }
+              />
+              <Form.Label>Account Usage</Form.Label>
+            </div>
+            <Form.Group className="mb-4">
+              <Form.Check
+                type="switch"
                 label="I agree with the TOS."
+                className="text-start"
+                onChange={(event: ChangeEvent<HTMLInputElement>) =>
+                  formik.setFieldValue("tos", event.target.checked)
+                }
               />
               {formik.touched.tos && formik.errors.tos && (
-                <FormHelperText className={classes.error}>
+                <Form.Text className="text-danger float-start mb-3">
                   {formik.errors.tos}
-                </FormHelperText>
+                </Form.Text>
               )}
-            </Grid>
-          </Grid>
-          <Button
-            type="submit"
-            fullWidth
-            variant="contained"
-            color="primary"
-            className={classes.submit}
-          >
-            Sign Up
-          </Button>
-          <Grid container justify="flex-end">
-            <Grid item>
-              <Link href="/sign-in" variant="body2">
-                Already have an account? Sign in
-              </Link>
-            </Grid>
-          </Grid>
-        </form>
-      </div>
-      <Box mt={5}>
-        <Copyright />
-      </Box>
+            </Form.Group>
+            <Button
+              variant="primary"
+              type="submit"
+              className="w-100 mb-3 text-white"
+              size="lg"
+            >
+              Sign in
+            </Button>
+            <Row className="mb-5">
+              <Col className="text-end">
+                <a
+                  href="/sign-in"
+                  className="small"
+                >{`Already have an account? Sign in`}</a>
+              </Col>
+            </Row>
+            <Copyright />
+          </Form>
+        </Col>
+      </Row>
     </Container>
   );
 };

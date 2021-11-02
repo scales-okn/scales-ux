@@ -1,4 +1,3 @@
-// TODO: Remove from production
 import bcrypt from "bcryptjs";
 
 const users = async (sequelize) => {};
@@ -36,14 +35,14 @@ export const mocks = async (sequelize) => {
   }
 
   try {
-    [1, 2].forEach(async (value) => {
-      const notebook = await sequelize.models.Notebook.build({
-        title: "test221112313122",
-        userId: value,
-        description: "testing3123121112222",
-      });
-      await notebook.save();
-    });
+    // [1, 2].forEach(async (value) => {
+    //   const notebook = await sequelize.models.Notebook.build({
+    //     title: "test221112313122",
+    //     userId: value,
+    //     description: "testing3123121112222",
+    //   });
+    //   await notebook.save();
+    // });
 
     // const user = await sequelize.models.Panel.findOne({
     //   where: { id: 1 },

@@ -22,19 +22,26 @@ type Ring = {
 const NotebookPage: FunctionComponent = () => {
   const { notebookId } = useParams<Params>();
   const { rings, loadingRings, hasErrors } = useSelector(ringsSelector);
-  const [selectedRing, setSelectedRing] = useState<Ring>(null);
+  // const [selectedRing, setSelectedRing] = useState<Ring>(null);
   const dispatch = useDispatch();
 
   useEffect(() => {
     dispatch(fetchRings());
   }, []);
 
-  console.log({ selectedRing });
+  // console.log({ selectedRing });
 
   return (
     <PageLayout>
       <Loader animation="border" isVisible={loadingRings}>
-        {selectedRing ? (
+        <NotebookContextProvider
+          rings={rings}
+          notebookId={Number(notebookId) ? notebookId : null}
+        >
+          <Notebook />
+        </NotebookContextProvider>
+
+        {/* {selectedRing ? (
           <NotebookContextProvider
             ring={selectedRing}
             notebookId={Number(notebookId) ? notebookId : null}
@@ -59,8 +66,8 @@ const NotebookPage: FunctionComponent = () => {
                 ))}
               </Form.Select>
             </Form.Group>
-          </Row>
-        )}
+          </Row> */}
+        {/* )} */}
       </Loader>
     </PageLayout>
   );

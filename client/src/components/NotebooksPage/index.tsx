@@ -9,47 +9,11 @@ import { useAuthHeader, useAuthUser } from "react-auth-kit";
 import Loader from "../Loader";
 import { DataGrid, GridCellParams } from "@material-ui/data-grid";
 import { Link } from "react-router-dom";
-import {
-  Form,
-  Row,
-  Col,
-  Button,
-  Popover,
-  OverlayTrigger,
-  FloatingLabel,
-  InputGroup,
-} from "react-bootstrap";
-// import ReactTags from "react-tag-autocomplete";
+import { Form, Row, Col, Button, InputGroup } from "react-bootstrap";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faEdit, faPlus, faSearch } from "@fortawesome/free-solid-svg-icons";
-import { WithContext as ReactTags } from "react-tag-input";
+import { faSearch } from "@fortawesome/free-solid-svg-icons";
 import "./NotebooksPage.scss";
 import dayjs from "dayjs";
-
-import ReactDataGrid from "react-data-grid";
-const columns = [
-  { key: "id", name: "ID" },
-  { key: "title", name: "Title" },
-];
-
-const rows = [
-  { id: 0, title: "Example" },
-  { id: 1, title: "Demo" },
-];
-
-const fieldDecorator = (params) => console.log(params);
-
-const KeyCodes = {
-  comma: 188,
-  enter: [10, 13],
-};
-
-const delimiters = [...KeyCodes.enter, KeyCodes.comma];
-
-const tags = [
-  { id: "Thailand", text: "Thailand" },
-  { id: "India", text: "India" },
-];
 
 const NotebooksPage: FunctionComponent = () => {
   const [notebooks, setNotebooks] = useState([]);
@@ -80,7 +44,7 @@ const NotebooksPage: FunctionComponent = () => {
       setNotebooks(data.notebooks);
       setLoadingNotebooks(false);
     } catch (error) {
-      // TODO: Implement Error handling
+      console.log(error);
     }
   };
 

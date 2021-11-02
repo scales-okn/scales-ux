@@ -9,8 +9,10 @@
 .MuiDataGrid-cell {
   font-size: 1rem;
 }
-.MuiDataGrid-root .MuiDataGrid-columnHeaderMoving {
-  background-color: transparent !important;
+.MuiDataGrid-root {
+  .MuiDataGrid-columnHeaderMoving {
+    background-color: transparent !important;
+  }
 }
 
 .user-initials-pill {
