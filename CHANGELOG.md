@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.5.0](https://github.com/nu-c3lab/satyrn-ux/compare/v1.4.1...v1.5.0) (2021-11-04)
+
+
+### Features
+
+* **panels:** panels ([e53db2a](https://github.com/nu-c3lab/satyrn-ux/commit/e53db2a534706227e427d13ddcc4ea78a368fb69))
+
 ### [1.4.1](https://github.com/nu-c3lab/satyrn-ux/compare/v1.4.0...v1.4.1) (2021-06-09)
 
 ## [1.4.0](https://github.com/nu-c3lab/satyrn-ux/compare/v1.3.0...v1.4.0) (2021-06-09)
