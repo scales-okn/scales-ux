@@ -5,6 +5,7 @@ import store from "./store";
 import { Provider } from "react-redux";
 import reportWebVitals from "./reportWebVitals";
 import { SnackbarProvider } from "notistack";
+import "./vendor.scss";
 import "./index.scss";
 
 ReactDOM.render(

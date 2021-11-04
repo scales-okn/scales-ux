@@ -40,7 +40,7 @@ const NotebookContextProvider = ({ rings, notebookId, children }: Props) => {
   const dispatch = useDispatch();
   const [loading, setLoading] = useState(true);
   const [notebook, setNotebook] = useState(null);
-  const [notebookTitle, setNotebookTitle] = useState("New Notebook");
+  const [notebookTitle, setNotebookTitle] = useState(null);
   const [loadingResults, setLoadingResults] = useState(false);
   const { info, loadingInfo, hasErrors } = useSelector(infoSelector);
   const [filterInputs, setFilterInputs] = usePersistedState(
@@ -100,7 +100,7 @@ const NotebookContextProvider = ({ rings, notebookId, children }: Props) => {
 
   const saveNotebook = async () => {
     setSavingNotebook(true);
-    const isNewNotebook = notebookId === "new";
+    const isNewNotebook = !notebookId;
     try {
       const response = await fetch(
         `${process.env.REACT_APP_BFF_API_ENDPOINT_URL}/notebooks/${
@@ -113,11 +113,7 @@ const NotebookContextProvider = ({ rings, notebookId, children }: Props) => {
             "Content-Type": "application/json",
           },
           body: JSON.stringify({
-            title: notebookTitle,
-            contents: JSON.stringify({
-              filterInputs,
-              results,
-            }),
+            title: notebookTitle ? notebookTitle : " ",
           }),
         }
       );
@@ -151,12 +147,12 @@ const NotebookContextProvider = ({ rings, notebookId, children }: Props) => {
 
       setNotebook(notebook);
       setNotebookTitle(notebook.title);
-      if (notebook?.contents) {
-        const notebookContents = JSON.parse(notebook.contents);
-        notebookContents?.filterInputs &&
-          setFilterInputs(notebookContents.filterInputs);
-        notebookContents?.results && setResults(notebookContents.results);
-      }
+      // if (notebook?.contents) {
+      //   const notebookContents = JSON.parse(notebook.contents);
+      //   notebookContents?.filterInputs &&
+      //     setFilterInputs(notebookContents.filterInputs);
+      //   notebookContents?.results && setResults(notebookContents.results);
+      // }
     } catch (error) {
       console.log(error);
     }
@@ -214,11 +210,16 @@ const NotebookContextProvider = ({ rings, notebookId, children }: Props) => {
     }
   };
 
-  // useEffect(() => {
-  //   // dispatch(fetchInfo(ring.id));
-  //   // fetchNotebook(notebookId);
-  //   // fetchResults(ring, filterInputs);
-  // }, [rings, defaultEntity, notebookId]);
+  useEffect(() => {
+    if (!notebookId) {
+      saveNotebook();
+    } else {
+      fetchNotebook(notebookId);
+    }
+    // dispatch(fetchInfo(ring.id));
+    // fetchNotebook(notebookId);
+    // fetchResults(ring, filterInputs);
+  }, [rings, defaultEntity, notebookId]);
 
   if (loadingInfo) return <Loader animation="border" isVisible={true} />;
   if (hasErrors) return <p>Cannot display filters...</p>;

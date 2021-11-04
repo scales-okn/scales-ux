@@ -29,8 +29,6 @@ const NotebookPage: FunctionComponent = () => {
     dispatch(fetchRings());
   }, []);
 
-  // console.log({ selectedRing });
-
   return (
     <PageLayout>
       <Loader animation="border" isVisible={loadingRings}>
@@ -40,34 +38,6 @@ const NotebookPage: FunctionComponent = () => {
         >
           <Notebook />
         </NotebookContextProvider>
-
-        {/* {selectedRing ? (
-          <NotebookContextProvider
-            ring={selectedRing}
-            notebookId={Number(notebookId) ? notebookId : null}
-          >
-            <Notebook />
-          </NotebookContextProvider>
-        ) : (
-          <Row className="mb-3 p-3 bg-light">
-            <Form.Group as={Col} controlId="ringState">
-              <Form.Label>Select a Ring</Form.Label>
-              <Form.Select
-                onChange={(event: React.ChangeEvent<HTMLSelectElement>) =>
-                  setSelectedRing(
-                    rings.find((ring) => ring.id === event.target.value)
-                  )
-                }
-              >
-                {rings?.map((ring) => (
-                  <option key={ring.name} value={ring.id}>
-                    {ring.name} - {ring.id}
-                  </option>
-                ))}
-              </Form.Select>
-            </Form.Group>
-          </Row> */}
-        {/* )} */}
       </Loader>
     </PageLayout>
   );
