@@ -12,7 +12,7 @@ export default (sequelize, options) => {
       },
       title: {
         type: DataTypes.STRING,
-        allowNull: false,
+        allowNull: true,
       },
       collaborators: {
         defaultValue: [],
@@ -27,7 +27,10 @@ export default (sequelize, options) => {
         type: DataTypes.INTEGER,
         defaultValue: null,
       },
-      description: DataTypes.STRING,
+      description: {
+        type: DataTypes.STRING,
+        allowNull: true,
+      },
       deleted: {
         type: DataTypes.BOOLEAN,
         defaultValue: false,

@@ -1,8 +1,6 @@
 import e, { Request, Response } from "express";
 import { sequelize } from "../database";
-import accessControl, {
-  accessControlFieldsFilter,
-} from "../services/accesscontrol";
+import accessControl from "../services/accesscontrol";
 const { Op } = require("sequelize");
 
 // Resources validations are made with validateResources middleware and validations schemas
@@ -12,31 +10,18 @@ const { Op } = require("sequelize");
 // Create Panel
 export const create = async (req: Request, res: Response) => {
   try {
-    const permission = await accessControl.can(
-      // @ts-ignore
-      req.user.role,
-      "panels:create"
-    );
-    if (!permission.granted) {
-      return res.send_forbidden("Not allowed!");
-    }
-
     const {
-      title,
-      collaborators = [],
+      description,
+      notebookId,
+      ringId,
       contents,
-      visibility,
-      parent = null,
     } = req.body;
 
     const panel = await sequelize.models.Panel.create({
-      title,
-      //@ts-ignore
-      userId: req.user.id,
-      collaborators,
-      contents,
-      visibility,
-      parent,
+      description,
+      notebookId,
+      ringId,
+      contents
     });
 
     console.log({ panel });
@@ -51,23 +36,8 @@ export const create = async (req: Request, res: Response) => {
 
 // Find all Panels
 export const findAll = async (req: Request, res: Response) => {
-  //@ts-ignore
-  const { role, id } = req.user;
-
-  try {
-    const where =
-      role === "admin"
-        ? {}
-        : {
-            [Op.or]: [
-              { visibility: "public" },
-              { collaborators: { [Op.contains]: [id] } },
-              { userId: id },
-            ],
-          };
-
+  try{
     const panels = await sequelize.models.Panel.findAll({
-      where,
       // attributes: { exclude: [""] }, // TODO: Check if we need to hide something.
       order: [["id", "DESC"]],
     });
@@ -83,47 +53,17 @@ export const findAll = async (req: Request, res: Response) => {
 // Find Panel by panelId
 export const findById = async (req: Request, res: Response) => {
   try {
+
     const id = req.params.panelId;
     const panel = await sequelize.models.Panel.findOne({ where: { id } });
-
-    const permission = await accessControl.can(
-      // @ts-ignore
-      req.user.role,
-      "panels:read",
-      { user: req.user, resource: panel }
-    );
-    if (!permission.granted) {
-      return res.send_forbidden("Not allowed!");
-    }
-
+    console.log(panel);
     if (!panel) {
       return res.send_notFound("Panel not found!");
     }
 
     return res.send_ok("", {
-      panel: accessControlFieldsFilter(panel.dataValues, permission.fields),
+      panel: panel.dataValues,
     });
-  } catch (error) {
-    console.log(error);
-
-    return res.send_internalServerError("An error occured, please try again!");
-  }
-};
-
-export const history = async (req: Request, res: Response) => {
-  try {
-    const id = req.params.panelId;
-    const panel = await sequelize.models.Panel.findOne({ where: { id } });
-    if (!panel) {
-      return res.send_notFound("Panel not found!");
-    }
-
-    const versions = await sequelize.models.Panel.getVersions({
-      where: { id },
-    });
-    console.log(versions);
-
-    return res.send_ok("", { versions });
   } catch (error) {
     console.log(error);
 

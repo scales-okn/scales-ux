@@ -11,6 +11,7 @@ import database from "./database";
 import proxyRouter from "./proxy";
 import usersRouter from "./routes/users";
 import ringsRouter from "./routes/rings";
+import panelsRouter from "./routes/panels";
 import notebooksRouter from "./routes/notebooks";
 
 const app = express();
@@ -57,6 +58,9 @@ const app = express();
 
     // Notebooks Router
     app.use("/api/notebooks", notebooksRouter);
+
+    // Panels Router
+    app.use("/api/panels", panelsRouter);
 
     // Serve React App
     app.use(express.static(path.join(__dirname, "../client/build")));

@@ -11,6 +11,7 @@ export default (sequelize, options) => {
         allowNull: true,
       },
       notebookId: DataTypes.INTEGER,
+      ringId: DataTypes.INTEGER,
       contents: DataTypes.JSON,
       deleted: {
         type: DataTypes.BOOLEAN,
