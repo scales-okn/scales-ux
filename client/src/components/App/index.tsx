@@ -8,14 +8,13 @@ import SignInPage from "../SignInPage";
 import SignUpPage from "../SignUpPage";
 import ProfilePage from "../ProfilePage";
 import NotebooksPage from "../NotebooksPage";
+import NotebookPage from "../NotebookPage";
 import EmailVerificationPage from "../EmailVerificationPage";
 import ForgotPasswordPage from "../ForgotPasswordPage";
 import ResetPasswordPage from "../ResetPasswordPage";
-import useStyles from "./styles";
+import "./App.scss";
 
 const App: FunctionComponent = () => {
-  const classes = useStyles();
-
   return (
     <div className="app">
       <AuthProvider
@@ -60,6 +59,18 @@ const App: FunctionComponent = () => {
               exact
               path="/notebooks"
               component={NotebooksPage}
+              loginPath="/sign-in"
+            />
+            <PrivateRoute
+              exact
+              path="/rings"
+              component={NotebooksPage}
+              loginPath="/sign-in"
+            />
+            <PrivateRoute
+              exact
+              path="/notebooks/:notebookId"
+              component={NotebookPage}
               loginPath="/sign-in"
             />
             <Route path="/sign-in" component={SignInPage} />

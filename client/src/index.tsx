@@ -4,32 +4,15 @@ import App from "./components/App";
 import store from "./store";
 import { Provider } from "react-redux";
 import reportWebVitals from "./reportWebVitals";
-import { createMuiTheme } from "@material-ui/core/styles";
-import { ThemeProvider } from "@material-ui/core/styles";
 import { SnackbarProvider } from "notistack";
-
-const theme = createMuiTheme({
-  palette: {
-    // primary: {
-    //   main: "#616161",
-    //   dark: "#373737",
-    //   light: "#8e8e8e",
-    // },
-    // secondary: {
-    //   main: "#26c6da",
-    //   dark: "#6FF9FF",
-    //   light: "#0095A8",
-    // },
-  },
-});
+import "./vendor.scss";
+import "./index.scss";
 
 ReactDOM.render(
   <Provider store={store}>
-    <ThemeProvider theme={theme}>
-      <SnackbarProvider>
-        <App />
-      </SnackbarProvider>
-    </ThemeProvider>
+    <SnackbarProvider>
+      <App />
+    </SnackbarProvider>
   </Provider>,
   document.getElementById("root")
 );

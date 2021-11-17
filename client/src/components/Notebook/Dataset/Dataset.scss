@@ -1,0 +1,24 @@
+@import "../../../variables.scss";
+
+.dataset {
+}
+
+.dataset-dropdown {
+  .dropdown-toggle {
+    text-transform: uppercase;
+    &:focus {
+      outline: 0 !important;
+      box-shadow: none !important;
+    }
+  }
+  .dropdown-menu {
+    width: 400px;
+    padding: 0.5em;
+    .dropdown-item {
+      padding: $spacer;
+      &:not(:last-child) {
+        border-bottom: $border-width solid $gray-200;
+      }
+    }
+  }
+}

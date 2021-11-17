@@ -1,0 +1,25 @@
+.filter-type-dropdown {
+  .dropdown-item {
+    &.disabled {
+      .dropdown-item-text {
+        // color: $grey;
+      }
+    }
+  }
+}
+
+.notebook-filters {
+  .react-datetimerange-picker {
+    .react-datetimerange-picker__wrapper {
+      padding-left: 0.5em !important;
+      border: 1px solid #ced4da;
+      border-right: 1px solid #fff;
+    }
+  }
+}
+
+.notebook-title {
+  &:focus {
+    border: 0;
+  }
+}

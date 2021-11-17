@@ -10,6 +10,7 @@ import { Tooltip, Typography } from "@material-ui/core";
 import PageLayout from "../../PageLayout";
 import NotAuthorized from "../../NotAuthorized";
 import UserFieldToggle from "./UserFieldToggle";
+import { Row } from "react-bootstrap";
 
 const columns: GridColDef[] = [
   { field: "id", headerName: "ID", width: 100 },
@@ -91,14 +92,15 @@ const AdminUsersPages: FunctionComponent = () => {
       {!isAdmin ? (
         <NotAuthorized />
       ) : (
-        <div style={{ height: 400, width: "100%" }}>
+        <Row style={{ height: 400, width: "100%" }}>
           <DataGrid
             rows={rows}
             columns={columns}
             pageSize={5}
             checkboxSelection={false}
+            className="bg-white p-0"
           />
-        </div>
+        </Row>
       )}
     </PageLayout>
   );

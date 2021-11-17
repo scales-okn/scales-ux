@@ -2,7 +2,7 @@ import React, { FunctionComponent } from "react";
 import PageLayout from "../PageLayout";
 
 const ProfilePage: FunctionComponent = () => (
-  <PageLayout>ProfilePage</PageLayout>
+  <PageLayout>Profile Page</PageLayout>
 );
 
 export default ProfilePage;

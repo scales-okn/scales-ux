@@ -1,7 +1,12 @@
 import { configureStore } from "@reduxjs/toolkit";
+import infoReducer from "./info";
+import ringsReducer from "./rings";
 
-const store = configureStore({
-  reducer: {},
+export const store = configureStore({
+  reducer: {
+    info: infoReducer,
+    rings: ringsReducer,
+  },
 });
 
 export type RootState = ReturnType<typeof store.getState>;

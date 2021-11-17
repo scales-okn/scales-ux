@@ -1,27 +1,17 @@
-// @ts-nocheck
 import express from "express";
-import redis from "redis";
 import requestProxy from "express-request-proxy";
-import redisStreams from "redis-streams";
-
-const enhancedRedis = redisStreams(redis);
-const redisClient = enhancedRedis.createClient();
 
 const router = express.Router();
 
 router.all(
-  "/proxy/*",
+  "*",
   requestProxy({
-    cache: redisClient,
-    cacheMaxAge: 60,
     url: `${process.env.PROXY_API_URL}/*`,
+    timeout: 30000,
     headers: {
-      Authorization: `Bearer ${process.env.PROXY_API_AUTH_BEARER_TOKEN}`,
+      "x-api-key": process.env.PROXY_API_KEY,
     },
   })
 );
 
 export default router;
-
-// TODO: API PROXY ROUTES
-// TODO: TOKEN

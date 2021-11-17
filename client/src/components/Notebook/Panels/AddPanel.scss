@@ -1,0 +1,7 @@
+.add-panel-btn {
+  border: 2px dashed #ddd !important;
+  text-decoration: none !important;
+  &:focus {
+    box-shadow: none !important;
+  }
+}

@@ -1,0 +1,19 @@
+// Bootstrap variables to be overwrittenx
+
+$primary: #20b1c4;
+
+// Import Bootstrap
+@import "../node_modules/bootstrap/scss/bootstrap.scss";
+
+// Globals
+body {
+  background: $gray-200;
+  height: 100vh;
+}
+.app,
+.root {
+  height: 100vh;
+}
+.cursor-pointer {
+  cursor: pointer;
+}

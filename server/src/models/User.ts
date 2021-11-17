@@ -1,51 +1,69 @@
-// @ts-nocheck
-import { DataTypes } from "sequelize";
+import { DataTypes, Sequelize } from "sequelize";
 import jwt from "jsonwebtoken";
 import mailTransport from "../services/mail";
 
-export default (sequelize) => {
-  const User = sequelize.define("User", {
-    approved: {
-      type: DataTypes.BOOLEAN,
-      allowNull: false,
-      defaultValue: false,
+export const userRoleValues = ["user", "admin"];
+
+export default (sequelize, options) => {
+  const User = sequelize.define(
+    "User",
+    {
+      approved: {
+        type: DataTypes.BOOLEAN,
+        defaultValue: false,
+      },
+      blocked: {
+        type: DataTypes.BOOLEAN,
+        defaultValue: false,
+      },
+      firstName: {
+        type: DataTypes.STRING,
+        allowNull: false,
+      },
+      lastName: {
+        type: DataTypes.STRING,
+        allowNull: false,
+      },
+      email: {
+        type: DataTypes.STRING,
+        allowNull: false,
+        unique: true,
+      },
+      emailVerificationToken: DataTypes.STRING,
+      emailIsVerified: {
+        type: DataTypes.BOOLEAN,
+        allowNull: false,
+        defaultValue: false,
+      },
+      usage: DataTypes.STRING,
+      password: {
+        type: DataTypes.STRING,
+        allowNull: false,
+      },
+      passwordResetToken: DataTypes.STRING,
+      role: {
+        type: DataTypes.ENUM,
+        values: userRoleValues,
+        defaultValue: "user",
+      },
     },
-    blocked: {
-      type: DataTypes.BOOLEAN,
-      allowNull: false,
-      defaultValue: false,
-    },
-    firstName: {
-      type: DataTypes.STRING,
-      allowNull: false,
-    },
-    lastName: {
-      type: DataTypes.STRING,
-      allowNull: false,
-    },
-    email: {
-      type: DataTypes.STRING,
-      allowNull: false,
-      unique: true,
-    },
-    emailVerificationToken: DataTypes.STRING,
-    emailIsVerified: {
-      type: DataTypes.BOOLEAN,
-      allowNull: false,
-      defaultValue: false,
-    },
-    usage: DataTypes.STRING,
-    password: {
-      type: DataTypes.STRING,
-      allowNull: false,
-    },
-    passwordResetToken: DataTypes.STRING,
-    role: {
-      type: DataTypes.STRING,
-      allowNull: false,
-      defaultValue: "user",
-    },
-  });
+    options
+  );
+
+  User.associate = (models) => {
+    models.User.hasMany(models.Panel, {
+      foreignKey: "userId",
+      as: "panels",
+    });
+    models.User.hasMany(models.Notebook, {
+      foreignKey: "userId",
+      as: "notebooks",
+    });
+    models.User.hasMany(models.Ring, {
+      foreignKey: "userId",
+      as: "rings",
+    });
+  };
 
   User.addHook("afterCreate", "verifyEmail", async (user) => {
     try {
@@ -62,7 +80,7 @@ export default (sequelize) => {
           from: process.env.SENDGRID_FROM_SENDER,
           to: `${firstName} ${lastName} <${email}>`,
           subject: "Please confirm your Email account!",
-          html: `Hello, <br> 
+          html: `Hello, <br>
           Please Click on the link to verify your email. <br>
           <a href="${process.env.CLIENT_URL}/verify-email/${emailVerificationToken}">Click here to verify</a>`,
         },
@@ -74,7 +92,6 @@ export default (sequelize) => {
     }
   });
 
-  // @ts-ignore
   User.addHook("afterBulkUpdate", "sendUserApproveEmail", async (updated) => {
     try {
       const { fields, attributes, where } = updated;

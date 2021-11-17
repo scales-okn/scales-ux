@@ -1,8 +1,14 @@
-//@ts-nocheck
 import Sequelize from "sequelize";
-import User from "../models/User";
-import Notebook from "../models/Notebook";
+import Version from "sequelize-version";
+import UserModel from "../models/User";
+import PanelModel from "../models/Panel";
+import NotebookModel from "../models/Notebook";
+import RingModel from "../models/Ring";
+import LogModel from "../models/Log";
+import logs from "./logs";
+import { seeds } from "./seeds";
 
+// @ts-ignore
 export const sequelize = new Sequelize(
   process.env.DB_NAME,
   process.env.DB_USERNAME,
@@ -19,13 +25,59 @@ export const sequelize = new Sequelize(
   }
 );
 
-const initialize = async () => {
+const database = async () => {
+  // Models
   try {
-    User(sequelize);
-    Notebook(sequelize);
+    const { logHooks } = logs(sequelize);
+
+    // Create Models
+    const User = UserModel(sequelize, { hooks: logHooks });
+    const Panel = PanelModel(sequelize, { hooks: logHooks });
+    const Notebook = NotebookModel(sequelize, { hooks: logHooks });
+    const Ring = RingModel(sequelize, { hooks: logHooks });
+
+    // Associate Models
+    Panel.associate({
+      User,
+      Panel,
+      Ring,
+      Notebook,
+    });
+    Notebook.associate({
+      Panel,
+      Notebook,
+    });
+    User.associate({
+      Panel,
+      User,
+      Ring,
+      Notebook,
+    });
+
+    // Logs
+    LogModel(sequelize);
+
+    // Versioning
+    new Version(Notebook, {
+      sequelize,
+      underscored: false,
+      tableUnderscored: false,
+      prefix: "Version",
+      attributePrefix: "version",
+    });
+
+    new Version(Ring, {
+      sequelize,
+      underscored: false,
+      tableUnderscored: false,
+      prefix: "Version",
+      attributePrefix: "version",
+    });
   } catch (error) {
     console.error("Models failed to initialize!", error);
   }
+
+  // Authentification
   try {
     await sequelize.authenticate();
     console.log("Connection has been established successfully.");
@@ -33,16 +85,15 @@ const initialize = async () => {
     console.error("Unable to connect to the database:", error);
   }
 
+  // Sync
   try {
-    // force: true will drop the table if it already exits
-    await sequelize.sync({ force: false });
+    await sequelize.sync({ force: false }); // "{ force: true }" will drop the table if it already exits
     console.log("Sync succesfully!");
   } catch (error) {
     console.error("Sync Failed:", error);
   }
+
+  await seeds(sequelize);
 };
 
-export default {
-  sequelize,
-  initialize,
-};
+export default database;

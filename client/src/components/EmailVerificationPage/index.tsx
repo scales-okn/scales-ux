@@ -1,7 +1,6 @@
 import React, { FunctionComponent } from "react";
 import { useEffect } from "react";
 import { useHistory, useParams } from "react-router-dom";
-import PageLayout from "../PageLayout";
 import { useSnackbar } from "notistack";
 
 interface ParamTypes {
