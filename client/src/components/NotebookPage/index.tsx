@@ -22,11 +22,11 @@ type Ring = {
 const NotebookPage: FunctionComponent = () => {
   const { notebookId } = useParams<Params>();
   const { rings, loadingRings, hasErrors } = useSelector(ringsSelector);
-  // const [selectedRing, setSelectedRing] = useState<Ring>(null);
   const dispatch = useDispatch();
+  const authHeader = useAuthHeader();
 
   useEffect(() => {
-    dispatch(fetchRings());
+    dispatch(fetchRings(authHeader));
   }, []);
 
   return (

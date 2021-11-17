@@ -10,30 +10,27 @@ import { sequelize } from "../database";
 export const create = async (req: Request, res: Response) => {
   try {
     const {
-      name,
       userId,
-      // panelId,
-      contents,
-      sourceType,
-      connectionDetails,
+      rid,
+      name,
       description,
+      schemaVersion,
+      dataSource,
+      ontology,
       visibility,
     } = req.body;
 
     const ring = await sequelize.models.Ring.create({
-      name,
       userId,
-      contents,
-      sourceType,
-      connectionDetails,
+      rid,
+      name,
       description,
+      schemaVersion,
+      dataSource,
+      ontology,
       visibility,
+      version: 1,
     });
-
-    // if (panelId) {
-    //   const ringId = ring.dataValues.id;
-    //   addRingToPanel(ringId, panelId);
-    // }
 
     return res.send_ok("Ring created succesfully!", { ring });
   } catch (error) {
@@ -42,15 +39,6 @@ export const create = async (req: Request, res: Response) => {
     return res.send_internalServerError("An error occured, please try again!");
   }
 };
-
-// export const addRingToPanel = async (ringId: number, panelId: number) => {
-//   try {
-//     const panel = await sequelize.models.Panel.findByPk(panelId);
-//     await panel.addRing(ringId);
-//   } catch (error) {
-//     console.log(error);
-//   }
-// };
 
 // Find all Rings
 export const findAll = async (req: Request, res: Response) => {
@@ -70,8 +58,10 @@ export const findAll = async (req: Request, res: Response) => {
 // Find Ring by ringId
 export const findById = async (req: Request, res: Response) => {
   try {
-    const id = req.params.ringId;
-    const ring = await sequelize.models.Ring.findOne({ where: { id } });
+    const { ringId } = req.params;
+    const ring = await sequelize.models.Ring.findOne({
+      where: { rid: ringId },
+    });
     if (!ring) {
       return res.send_notFound("Ring not found!");
     }
@@ -84,27 +74,56 @@ export const findById = async (req: Request, res: Response) => {
   }
 };
 
+// Find Ring by ringId
+export const version = async (req: Request, res: Response) => {
+  try {
+    const { ringId, version } = req.params;
+    console.log({ ringId, version });
+    const versions = await sequelize.models.Ring.getVersions({
+      where: { rid: ringId, version },
+      order: [["versionTimestamp", "DESC"]],
+    });
+
+    if (versions.length === 0) {
+      return res.send_notFound("Ring version not found!");
+    }
+    const ring = Object.fromEntries(
+      Object.entries(versions[0].dataValues).filter(
+        ([key]) =>
+          !["versionType", "versionTimestamp", "versionId"].includes(key)
+      )
+    );
+
+    return res.send_ok("", { ring });
+  } catch (error) {
+    console.log(error);
+
+    return res.send_internalServerError("An error occured, please try again!");
+  }
+};
+
 // Update a Ring
 export const update = async (req: Request, res: Response) => {
   try {
-    const id = req.params.ringId;
-    const payload = { ...req.body };
+    const { ringId } = req.params;
+
+    const ring = await sequelize.models.Ring.findOne({
+      where: { rid: ringId },
+    });
 
     // Inject req for saveLog
-    //@ts-ignore
     sequelize.models.Ring.beforeUpdate((model) => {
       model.req = req;
     });
 
-    const result = await sequelize.models.Ring.update(payload, {
-      where: { id },
+    const updated = await ring.update({...req.body, version: ring.dataValues.version + 1}, {
       individualHooks: true,
+      returning: true
     });
 
-    if (!result.length) {
+    if (!updated) {
       return res.send_notModified("Ring has not been updated!");
     }
-    const ring = await sequelize.models.Ring.findOne({ where: { id } });
 
     return res.send_ok("Ring has been updated!", { ring });
   } catch (error) {
@@ -117,8 +136,10 @@ export const update = async (req: Request, res: Response) => {
 // Delete a Ring
 export const deleteRing = async (req: Request, res: Response) => {
   try {
-    const id = req.params.ringId;
-    const result = await sequelize.models.Ring.destroy({ where: { id } });
+    const { ringId } = req.params;
+    const result = await sequelize.models.Ring.destroy({
+      where: { rid: ringId },
+    });
     if (result) {
       return res.send_ok("Ring has been deleted successfully!");
     }

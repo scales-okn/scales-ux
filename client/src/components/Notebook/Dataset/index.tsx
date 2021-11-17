@@ -1,9 +1,10 @@
 import { tsIndexSignature } from "@babel/types";
-import React, { FunctionComponent, useState } from "react";
+import React, { FunctionComponent, useState, useEffect } from "react";
 import { Container, Row, Col, Dropdown, Button } from "react-bootstrap";
 import "./Dataset.scss";
 import { useNotebookContext } from "../NotebookContext";
 import { useAuthHeader, useAuthUser } from "react-auth-kit";
+import Loader from "../../Loader";
 
 const Dataset = (panel) => {
   const [selectedRing, setSelectedRing] = useState(null);
@@ -19,6 +20,21 @@ const Dataset = (panel) => {
     rings,
     setPanels,
   } = useNotebookContext();
+
+  const [info, setInfo] = useState(null);
+
+  useEffect(() => {
+    if (!selectedRing) return;
+    fetch(
+      //@ts-ignore
+      `${process.env.REACT_APP_BFF_API_ENDPOINT_URL}/satyrn/rings/${selectedRing.id}`
+    )
+      .then((response) => response.json())
+      .then((data) => {
+        setInfo(data);
+        console.log(data);
+      });
+  }, [selectedRing]);
 
   const updatePanel = async (payload) => {
     try {
@@ -79,16 +95,20 @@ const Dataset = (panel) => {
           </Dropdown>
         </Col>
       </Row>
-      <Row className="justify-content-md-center mb-4">
-        There are a total of 1234 records.
-      </Row>
-      <Row className="justify-content-md-center mb-4">
+      <Loader animation="border"  isVisible={selectedRing && !info}>
+        {info && (
+          <Row className="justify-content-md-center mb-4">
+            There are a total of {info.totalCount} records.
+          </Row>
+        )}
+      </Loader>
+      <Row className="justify-content-md-center mb-4 mt-3">
         <Col className="justify-content-center d-flex">
           <Button
             variant="primary"
             size="lg"
             className="text-white rounded-3"
-            disabled={!!setSelectedRing}
+            disabled={!info}
           >
             Start Exploring
           </Button>

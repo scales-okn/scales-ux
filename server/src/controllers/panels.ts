@@ -10,18 +10,13 @@ const { Op } = require("sequelize");
 // Create Panel
 export const create = async (req: Request, res: Response) => {
   try {
-    const {
-      description,
-      notebookId,
-      ringId,
-      contents,
-    } = req.body;
+    const { description, notebookId, ringId, contents } = req.body;
 
     const panel = await sequelize.models.Panel.create({
       description,
       notebookId,
       ringId,
-      contents
+      contents,
     });
 
     console.log({ panel });
@@ -36,7 +31,7 @@ export const create = async (req: Request, res: Response) => {
 
 // Find all Panels
 export const findAll = async (req: Request, res: Response) => {
-  try{
+  try {
     const panels = await sequelize.models.Panel.findAll({
       // attributes: { exclude: [""] }, // TODO: Check if we need to hide something.
       order: [["id", "DESC"]],
@@ -53,7 +48,6 @@ export const findAll = async (req: Request, res: Response) => {
 // Find Panel by panelId
 export const findById = async (req: Request, res: Response) => {
   try {
-
     const id = req.params.panelId;
     const panel = await sequelize.models.Panel.findOne({ where: { id } });
     console.log(panel);

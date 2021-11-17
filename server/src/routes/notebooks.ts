@@ -21,7 +21,7 @@ router.post(
   create
 );
 
-router.get("/", checkAuth, checkAuth, findAll);
+router.get("/", checkAuth, findAll);
 
 router.get("/:notebookId", checkAuth, findById);
 

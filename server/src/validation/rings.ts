@@ -2,12 +2,12 @@ import * as yup from "yup";
 import { ringVisibilityValues } from "../models/Ring";
 
 export const createRingValidationSchema = yup.object({
-  name: yup.string().required(),
   userId: yup.string().required(),
-  panelId: yup.string().required(),
-  contents: yup.string(),
-  sourceType: yup.string().required(),
-  connectionDetails: yup.string(),
-  description: yup.string(),
+  rid: yup.string().required(),
+  name: yup.string().required(),
+  description: yup.string().required(),
+  schemaVersion: yup.number().required(),
+  dataSource: yup.object().required(),
+  ontology: yup.object().required(),
   visibility: yup.mixed().oneOf(ringVisibilityValues),
 });

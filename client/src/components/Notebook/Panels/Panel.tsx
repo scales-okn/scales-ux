@@ -1,4 +1,4 @@
-import React, { FunctionComponent, useState } from "react";
+import React, { FunctionComponent, useState, useEffect } from "react";
 import {
   Accordion,
   Container,
@@ -42,11 +42,14 @@ const Panel = ({ panel }) => {
 
   if (!panel.ringId) return <Dataset panel={panel} />;
 
+  console.log(panel);
+  return <></>;
+
   return (
     <Accordion defaultActiveKey="0" flush>
       <Accordion.Item eventKey={panel.id} key={panel.id}>
         <Accordion.Header>
-          {ring.name}
+          {ring.id}
           <Form.Control
             // size="sm"
             type="text"

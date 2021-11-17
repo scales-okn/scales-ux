@@ -6,21 +6,39 @@ export default (sequelize, options) => {
   const Ring = sequelize.define(
     "Ring",
     {
-      name: {
-        type: DataTypes.STRING,
-        allowNull: false,
-      },
       userId: {
         type: DataTypes.INTEGER,
         allowNull: false,
       },
-      contents: DataTypes.JSON,
-      sourceType: {
+      rid: {
         type: DataTypes.STRING,
         allowNull: false,
       },
-      connectionDetails: DataTypes.JSON,
-      description: DataTypes.STRING,
+      name: {
+        type: DataTypes.STRING,
+        allowNull: false,
+      },
+      description: {
+        type: DataTypes.STRING,
+        allowNull: false,
+      },
+      version: {
+        type: DataTypes.INTEGER,
+        noUpdate: true,
+        defaultValue: 1,
+      },
+      schemaVersion: {
+        type: DataTypes.FLOAT,
+        allowNull: false,
+      },
+      dataSource: {
+        type: DataTypes.JSON,
+        allowNull: false,
+      },
+      ontology: {
+        type: DataTypes.JSON,
+        allowNull: false,
+      },
       visibility: {
         type: DataTypes.ENUM,
         values: ringVisibilityValues,
@@ -29,6 +47,6 @@ export default (sequelize, options) => {
     },
     options
   );
-
+  
   return Ring;
 };

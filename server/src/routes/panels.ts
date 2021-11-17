@@ -11,11 +11,7 @@ import express from "express";
 
 const router = express.Router();
 
-router.post(
-  "/",
-  checkAuth,
-  create
-);
+router.post("/", checkAuth, create);
 
 router.get("/", checkAuth, findAll);
 

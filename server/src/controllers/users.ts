@@ -189,7 +189,7 @@ export const update = async (req: Request, res: Response) => {
     }
 
     // Inject req for saveLog
-    sequelize.models.User.beforeUpdate((model: any) => {
+    sequelize.models.User.beforeUpdate((model) => {
       model.req = req;
     });
 

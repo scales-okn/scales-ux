@@ -6,7 +6,7 @@ import NotebookModel from "../models/Notebook";
 import RingModel from "../models/Ring";
 import LogModel from "../models/Log";
 import logs from "./logs";
-import { mocks } from "./mocks";
+import { seeds } from "./seeds";
 
 // @ts-ignore
 export const sequelize = new Sequelize(
@@ -65,6 +65,14 @@ const database = async () => {
       prefix: "Version",
       attributePrefix: "version",
     });
+
+    new Version(Ring, {
+      sequelize,
+      underscored: false,
+      tableUnderscored: false,
+      prefix: "Version",
+      attributePrefix: "version",
+    });
   } catch (error) {
     console.error("Models failed to initialize!", error);
   }
@@ -85,7 +93,7 @@ const database = async () => {
     console.error("Sync Failed:", error);
   }
 
-  await mocks(sequelize);
+  await seeds(sequelize);
 };
 
 export default database;

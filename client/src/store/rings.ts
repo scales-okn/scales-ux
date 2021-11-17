@@ -1,6 +1,5 @@
 import { createSlice } from "@reduxjs/toolkit";
 import type { RootState, AppDispatch } from "./index";
-
 interface InitialState {
   loadingRings: boolean;
   hasErrors: boolean;
@@ -44,20 +43,45 @@ export const ringsSelector = (state: RootState) => state.rings;
 export default ringsSlice.reducer;
 
 // Asynchronous thunk action
-export function fetchRings() {
+// export function fetchRings() {
+//   return async (dispatch: AppDispatch) => {
+//     dispatch(getRings());
+
+//     try {
+//       const response = await fetch(
+//         `${process.env.REACT_APP_BFF_PROXY_ENDPOINT_URL}/info`
+//       );
+//       const data = await response.json();
+
+//       console.log(data);
+
+//       dispatch(getRingsSuccess(data));
+//     } catch (error) {
+//       dispatch(getRingsFailure());
+//     }
+//   };
+// }
+export function fetchRings(authHeader) {
   return async (dispatch: AppDispatch) => {
+    console.log(authHeader());
     dispatch(getRings());
 
     try {
       const response = await fetch(
-        `${process.env.REACT_APP_BFF_PROXY_ENDPOINT_URL}/info`
+        `${process.env.REACT_APP_BFF_API_ENDPOINT_URL}/rings`,
+        {
+          headers: {
+            Authorization: authHeader(),
+          },
+        }
       );
-      const data = await response.json();
+      const { data } = await response.json();
 
       console.log(data);
 
-      dispatch(getRingsSuccess(data));
+      dispatch(getRingsSuccess(data.rings));
     } catch (error) {
+      console.log(error);
       dispatch(getRingsFailure());
     }
   };

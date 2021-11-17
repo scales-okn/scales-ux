@@ -42,12 +42,12 @@ export const findAll = async (req: Request, res: Response) => {
     //@ts-ignore
     const { role, id: userId } = req.user;
 
-      // @ts-ignore
-      const permission = await accessControl.can(req.user.role, "notebooks:read");
-      if (!permission.granted) {
-        return res.send_forbidden("Not allowed!");
-      }
-  
+    // @ts-ignore
+    const permission = await accessControl.can(req.user.role, "notebooks:read");
+    if (!permission.granted) {
+      return res.send_forbidden("Not allowed!");
+    }
+
     let where = {};
     if (role !== "admin") {
       where = {
