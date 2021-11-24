@@ -11,4 +11,5 @@ RUN cd server && npm install && npm run build
 
 EXPOSE 80
 
-CMD ['node', './server/build']
+CMD ["node", "./server/build"]
+
