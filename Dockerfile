@@ -6,9 +6,10 @@ RUN cd client && npm install && npm run build
 FROM node:lts-alpine AS server-build
 WORKDIR /app
 COPY server/ ./server/
-COPY --from=client-build /app/client/build ./server/client/build
+COPY --from=client-build /app/client/build ./server/client
 RUN cd server && npm install && npm run build
+COPY ./server/build ./server
 
 EXPOSE 80
 
-CMD ['node', './server/build']
+CMD ['node', './server']

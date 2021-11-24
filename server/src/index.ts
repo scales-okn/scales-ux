@@ -174,11 +174,11 @@ const app = express();
     });
 
     // Serve React App
-    app.use(express.static(path.join(__dirname, "../client/build")));
+    app.use(express.static(path.join(__dirname, "../client")));
 
     // Catch all other routes to React App
     app.get("*", (req: Request, res: Response) => {
-      res.sendFile(path.join(__dirname, "../client/build", "index.html"));
+      res.sendFile(path.join(__dirname, "../client", "index.html"));
     });
 
     // Create the Server
