@@ -8,8 +8,7 @@ WORKDIR /app
 COPY server/ ./server/
 COPY --from=client-build /app/client/build ./server/client
 RUN cd server && npm install && npm run build
-COPY ./server/build ./server
 
 EXPOSE 80
 
-CMD ['node', './server']
+CMD ['node', './server/build']
