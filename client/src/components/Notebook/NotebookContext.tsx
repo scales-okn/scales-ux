@@ -61,7 +61,7 @@ const NotebookContextProvider = ({ rings, notebookId, children }: Props) => {
   };
 
   const fetchResults = async (
-    ring,
+    rid,
     filterInputs: [],
     page = 0,
     batchSize = 10
@@ -70,7 +70,7 @@ const NotebookContextProvider = ({ rings, notebookId, children }: Props) => {
     try {
       const response = await fetch(
         appendQuery(
-          `${process.env.REACT_APP_BFF_PROXY_ENDPOINT_URL}/results/${ring.id}/${defaultEntity}?page=${page}&batchSize=${batchSize}&sortBy=dateFiled&sortDirection=desc`,
+          `${process.env.REACT_APP_BFF_PROXY_ENDPOINT_URL}/rings/${rid}/${defaultEntity}?page=${page}&batchSize=${batchSize}&sortBy=dateFiled&sortDirection=desc`,
           filterInputs?.reduce((acc, filterInput: FilterInput) => {
             acc[filterInput.type] =
               filterInput.type === "dateFiled"
@@ -221,7 +221,7 @@ const NotebookContextProvider = ({ rings, notebookId, children }: Props) => {
     // fetchResults(ring, filterInputs);
   }, [rings, defaultEntity, notebookId]);
 
-  if (loadingInfo) return <Loader animation="border" isVisible={true} />;
+  // if (loadingInfo) return <Loader animation="border" isVisible={true} />;
   if (hasErrors) return <p>Cannot display filters...</p>;
 
   return (

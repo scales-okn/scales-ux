@@ -38,9 +38,10 @@ const Panel = ({ panel }) => {
     results,
     fetchResults,
     loadingResults,
+    info,
   } = useNotebookContext();
 
-  if (!panel.ringId) return <Dataset panel={panel} />;
+  if (!info) return <Dataset panel={panel} />;
 
   console.log(panel);
   return <></>;
