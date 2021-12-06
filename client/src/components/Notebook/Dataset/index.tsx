@@ -5,6 +5,8 @@ import "./Dataset.scss";
 import { useNotebookContext } from "../NotebookContext";
 import { useAuthHeader, useAuthUser } from "react-auth-kit";
 import Loader from "../../Loader";
+import { useDispatch, useSelector } from "react-redux";
+import { fetchInfo, infoSelector } from "../../../store/info";
 
 const Dataset = (panel) => {
   const [selectedRing, setSelectedRing] = useState(null);
@@ -19,21 +21,30 @@ const Dataset = (panel) => {
     results,
     rings,
     setPanels,
+    fetchResults,
   } = useNotebookContext();
-
-  const [info, setInfo] = useState(null);
+  const dispatch = useDispatch();
+  const { info, loadingInfo, hasErrors } = useSelector(infoSelector);
 
   useEffect(() => {
     if (!selectedRing) return;
-    fetch(
-      //@ts-ignore
-      `${process.env.REACT_APP_BFF_API_ENDPOINT_URL}/satyrn/rings/${selectedRing.id}`
-    )
-      .then((response) => response.json())
-      .then((data) => {
-        setInfo(data);
-        console.log(data);
-      });
+
+    dispatch(fetchInfo(selectedRing.rid));
+
+    // debugger; // eslint-disable-line no-debugger
+
+    // fetch(
+    //   //@ts-ignore
+    //   `${process.env.REACT_APP_BFF_PROXY_ENDPOINT_URL}/rings/${selectedRing.rid}`
+    // )
+    //   .then((response) => response.json())
+    //   .then((data) => {
+    //     setInfo(data);
+    //     console.log(data);
+    //   })
+    //   .catch((error) => {
+    //     console.log(error);
+    //   });
   }, [selectedRing]);
 
   const updatePanel = async (payload) => {
@@ -60,6 +71,12 @@ const Dataset = (panel) => {
     }
   };
 
+  useEffect(() => {
+    if (!Object.keys(info).length || !selectedRing) return;
+    console.log(info, selectedRing);
+    fetchResults(selectedRing.rid);
+  }, [info, selectedRing]);
+
   return (
     <Container className="bg-light border p-5 mb-4">
       <Row className="justify-content-md-center mb-3">
@@ -80,9 +97,9 @@ const Dataset = (panel) => {
                   key={index}
                   onClick={() => {
                     setSelectedRing(ring);
-                    updatePanel({
-                      ringId: ring.id,
-                    });
+                    // updatePanel({
+                    //   ringId: ring.id,
+                    // });
                   }}
                 >
                   <h6>{ring.name}</h6>
@@ -95,25 +112,21 @@ const Dataset = (panel) => {
           </Dropdown>
         </Col>
       </Row>
-      <Loader animation="border"  isVisible={selectedRing && !info}>
-        {info && (
-          <Row className="justify-content-md-center mb-4">
-            There are a total of {info.totalCount} records.
-          </Row>
-        )}
+
+      <Loader animation="border" isVisible={selectedRing && loadingInfo}>
+        <Row className="justify-content-md-center mb-4 mt-3">
+          <Col className="justify-content-center d-flex">
+            <Button
+              variant="primary"
+              size="lg"
+              className="text-white rounded-3"
+              disabled={!Object.keys(info).length}
+            >
+              Start Exploring
+            </Button>
+          </Col>
+        </Row>
       </Loader>
-      <Row className="justify-content-md-center mb-4 mt-3">
-        <Col className="justify-content-center d-flex">
-          <Button
-            variant="primary"
-            size="lg"
-            className="text-white rounded-3"
-            disabled={!info}
-          >
-            Start Exploring
-          </Button>
-        </Col>
-      </Row>
     </Container>
   );
 };
