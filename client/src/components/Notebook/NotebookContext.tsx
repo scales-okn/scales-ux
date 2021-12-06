@@ -70,7 +70,7 @@ const NotebookContextProvider = ({ rings, notebookId, children }: Props) => {
     try {
       const response = await fetch(
         appendQuery(
-          `${process.env.REACT_APP_BFF_PROXY_ENDPOINT_URL}/rings/${rid}/${defaultEntity}?page=${page}&batchSize=${batchSize}&sortBy=dateFiled&sortDirection=desc`,
+          `${process.env.REACT_APP_BFF_PROXY_ENDPOINT_URL}/results/${rid}/1/${defaultEntity}?page=${page}&batchSize=${batchSize}&sortBy=dateFiled&sortDirection=desc`,
           filterInputs?.reduce((acc, filterInput: FilterInput) => {
             acc[filterInput.type] =
               filterInput.type === "dateFiled"
