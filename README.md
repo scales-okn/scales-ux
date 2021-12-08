@@ -20,6 +20,10 @@ cd client
 npm install
 npm run start
 ```
+### For testing purposes:
+
+User: user@testing.test:Pass-word-25
+Admin: admin@testing.test:Pass-word-25
 
 ## API Spec v0.1 (Ported from satyrn-platform for reference)
 
