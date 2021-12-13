@@ -5,7 +5,7 @@ import { useNotebookContext } from "../NotebookContext";
 import { useAuthHeader, useAuthUser } from "react-auth-kit";
 
 const AddPanel = () => {
-  const { setPanels, notebook } = useNotebookContext();
+  const { setPanels, notebook, panels } = useNotebookContext();
   const authHeader = useAuthHeader();
   const auth = useAuthUser();
   const user = auth();
@@ -25,7 +25,7 @@ const AddPanel = () => {
       );
       const { data } = await response.json();
       const { panel } = data;
-      setPanels((prev) => [...prev, setPanels]);
+      setPanels([panel, ...panels]);
     } catch (error) {
       console.log(error);
     }

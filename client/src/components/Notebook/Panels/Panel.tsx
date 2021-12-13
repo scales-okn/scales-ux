@@ -32,51 +32,28 @@ const ResultsToggler = ({ children, eventKey }) => {
 const Panel = ({ panel }) => {
   const {
     setPanels,
-    ring,
+    selectedRing,
     columns,
     filterInputs,
     results,
     fetchResults,
     loadingResults,
     info,
+    showResults,
   } = useNotebookContext();
 
-  if (!info) return <Dataset panel={panel} />;
+  if (!showResults) return <Dataset panel={panel} />;
 
   console.log(panel);
-  return <></>;
 
   return (
-    <Accordion defaultActiveKey="0" flush>
+    <Accordion defaultActiveKey={panel.id} flush className="mb-4">
       <Accordion.Item eventKey={panel.id} key={panel.id}>
         <Accordion.Header>
-          {ring.id}
-          <Form.Control
-            // size="sm"
-            type="text"
-            onClick={(event) => {
-              event.stopPropagation();
-            }}
-            placeholder="Your Panel Description Here"
-            onChange={(event) => {
-              // setPanels((prevPanels) =>
-              //   prevPanels.map((prevPanel) => {
-              //     if (prevPanel.id === panel.id) {
-              //       return {
-              //         ...prevPanel,
-              //         description: event.target.value,
-              //       };
-              //     }
-              //   })
-              // );
-            }}
-            value={panel.description}
-            className="border-0 bg-transparent ps-0 panel-description"
-          />
-
+          {selectedRing.rid}
           <FontAwesomeIcon
             icon={faTrashAlt}
-            className="text-danger ms-3 me-3"
+            className="text-danger ms-3 me-3 text-right"
             onClick={() =>
               setPanels((prevPanels) =>
                 prevPanels.filter((prevPanel) => prevPanel.id !== panel.id)
@@ -86,6 +63,28 @@ const Panel = ({ panel }) => {
         </Accordion.Header>
         <Accordion.Body>
           <Container className="bg-light">
+            <Form.Control
+              // size="sm"
+              type="text"
+              onClick={(event) => {
+                event.stopPropagation();
+              }}
+              placeholder="Your Panel Description Here"
+              onChange={(event) => {
+                // setPanels((prevPanels) =>
+                //   prevPanels.map((prevPanel) => {
+                //     if (prevPanel.id === panel.id) {
+                //       return {
+                //         ...prevPanel,
+                //         description: event.target.value,
+                //       };
+                //     }
+                //   })
+                // );
+              }}
+              value={panel.description}
+              className="border-0 bg-transparent ps-0 panel-description"
+            />
             <Filters />
             <Row className="p-3">
               <Loader animation="border" isVisible={loadingResults}>
@@ -97,7 +96,11 @@ const Panel = ({ panel }) => {
                           <div style={{ height: 400, width: "100%" }}>
                             <DataGrid
                               onPageChange={(params) =>
-                                fetchResults(ring.id, filterInputs, params.page)
+                                fetchResults(
+                                  selectedRing,
+                                  filterInputs,
+                                  params.page
+                                )
                               }
                               rows={results.results.map((result, id) => ({
                                 ...result,

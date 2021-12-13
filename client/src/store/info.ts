@@ -49,15 +49,15 @@ export const infoSelector = (state: RootState) => state?.info;
 export default infoSlice.reducer;
 
 // Asynchronous thunk action
-export function fetchInfo(ring) {
-  if (!ring) return;
+export function fetchInfo(rid, version = 1) {
+  if (!rid) return;
 
   return async (dispatch: AppDispatch) => {
     dispatch(getInfo());
 
     try {
       const response = await fetch(
-        `${process.env.REACT_APP_BFF_PROXY_ENDPOINT_URL}/rings/${ring}`
+        `${process.env.REACT_APP_BFF_PROXY_ENDPOINT_URL}/rings/${rid}/${version}`
       );
       const data = await response.json();
 

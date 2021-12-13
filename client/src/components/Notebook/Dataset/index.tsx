@@ -9,7 +9,6 @@ import { useDispatch, useSelector } from "react-redux";
 import { fetchInfo, infoSelector } from "../../../store/info";
 
 const Dataset = (panel) => {
-  const [selectedRing, setSelectedRing] = useState(null);
   const authHeader = useAuthHeader();
   const auth = useAuthUser();
   const user = auth();
@@ -22,6 +21,9 @@ const Dataset = (panel) => {
     rings,
     setPanels,
     fetchResults,
+    setShowResults,
+    selectedRing,
+    setSelectedRing,
   } = useNotebookContext();
   const dispatch = useDispatch();
   const { info, loadingInfo, hasErrors } = useSelector(infoSelector);
@@ -74,7 +76,7 @@ const Dataset = (panel) => {
   useEffect(() => {
     if (!Object.keys(info).length || !selectedRing) return;
     console.log(info, selectedRing);
-    fetchResults(selectedRing.rid);
+    fetchResults(selectedRing);
   }, [info, selectedRing]);
 
   return (
@@ -121,6 +123,9 @@ const Dataset = (panel) => {
               size="lg"
               className="text-white rounded-3"
               disabled={!Object.keys(info).length}
+              onClick={() => {
+                setShowResults(true);
+              }}
             >
               Start Exploring
             </Button>

@@ -53,6 +53,8 @@ const NotebookContextProvider = ({ rings, notebookId, children }: Props) => {
   const { filters = [], columns = [], defaultEntity } = info;
   const authHeader = useAuthHeader();
   const [panels, setPanels] = useState([]);
+  const [showResults, setShowResults] = useState(false);
+  const [selectedRing, setSelectedRing] = useState(null);
 
   type FetchResultsParams = {
     page?: number;
@@ -61,7 +63,7 @@ const NotebookContextProvider = ({ rings, notebookId, children }: Props) => {
   };
 
   const fetchResults = async (
-    rid,
+    ring,
     filterInputs: [],
     page = 0,
     batchSize = 10
@@ -70,7 +72,7 @@ const NotebookContextProvider = ({ rings, notebookId, children }: Props) => {
     try {
       const response = await fetch(
         appendQuery(
-          `${process.env.REACT_APP_BFF_PROXY_ENDPOINT_URL}/results/${rid}/1/${defaultEntity}?page=${page}&batchSize=${batchSize}&sortBy=dateFiled&sortDirection=desc`,
+          `${process.env.REACT_APP_BFF_PROXY_ENDPOINT_URL}/results/${ring.rid}/1/${defaultEntity}?page=${page}&batchSize=${batchSize}&sortBy=dateFiled&sortDirection=desc`,
           filterInputs?.reduce((acc, filterInput: FilterInput) => {
             acc[filterInput.type] =
               filterInput.type === "dateFiled"
@@ -224,6 +226,8 @@ const NotebookContextProvider = ({ rings, notebookId, children }: Props) => {
   // if (loadingInfo) return <Loader animation="border" isVisible={true} />;
   if (hasErrors) return <p>Cannot display filters...</p>;
 
+  console.log(panels);
+
   return (
     <NotebookContext.Provider
       value={{
@@ -248,6 +252,10 @@ const NotebookContextProvider = ({ rings, notebookId, children }: Props) => {
         panels,
         setPanels,
         defaultEntity,
+        showResults,
+        setShowResults,
+        selectedRing,
+        setSelectedRing,
       }}
     >
       {children}

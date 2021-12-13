@@ -25,7 +25,7 @@ const Filter: FunctionComponent<Props> = (props) => {
     getFilterOptionsByKey,
     setFilterInput,
     fetchResults,
-    ring,
+    selectedRing,
     defaultEntity,
   } = useNotebookContext();
   const [autoCompleteSuggestions, setAutoCompleteSuggestions] = useState([]);
@@ -38,7 +38,7 @@ const Filter: FunctionComponent<Props> = (props) => {
     setIsLoading(true);
     try {
       const response = await fetch(
-        `${process.env.REACT_APP_BFF_PROXY_ENDPOINT_URL}/autocomplete/${ring}/${defaultEntity}/${type}?query=${query}`
+        `${process.env.REACT_APP_BFF_PROXY_ENDPOINT_URL}/autocomplete/${selectedRing.rid}/1/${defaultEntity}/${type}?query=${query}`
       );
       const data = await response.json();
 
@@ -144,7 +144,7 @@ const Filter: FunctionComponent<Props> = (props) => {
             ];
             await setFilterInputs(newFilterInputs);
 
-            fetchResults(ring, newFilterInputs);
+            fetchResults(selectedRing, newFilterInputs);
           }}
         >
           <FontAwesomeIcon icon={faTimesCircle} className="text-muted" />
