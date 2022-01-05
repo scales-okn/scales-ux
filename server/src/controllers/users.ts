@@ -55,7 +55,7 @@ export const login = async (req: Request, res: Response) => {
     // Check if user exists
     if (!user) {
       console.log("User not found!", { email, password });
-      return res.send_notFound("Something went wrong. Please try again.");
+      return res.send_badRequest("Something went wrong. Please try again."); // We will send bad request in this case to not have a user checking breach.
     }
     const {
       id,
@@ -89,7 +89,7 @@ export const login = async (req: Request, res: Response) => {
     );
     if (passwordsMatch) {
       const token = jwt.sign(
-        { id, email, role, firstName, lastName, blocked, approved },
+        { user: { id, email, role, firstName, lastName, blocked, approved } },
         process.env.JWT_SECRET,
         { expiresIn: process.env.JWT_EXP }
       );
@@ -98,7 +98,7 @@ export const login = async (req: Request, res: Response) => {
         token,
       });
     }
-    return res.send_badRequest("Login Failed!", {
+    return res.send_unauthorized("Login Failed!", {
       password: "Password is not correct!",
     });
   } catch (error) {

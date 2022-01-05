@@ -19,7 +19,7 @@ export const initialState: InitialState = {
   info: {},
 };
 
-// A slice for info with our three reducers
+// Slice
 const infoSlice = createSlice({
   name: "info",
   initialState,
@@ -39,7 +39,7 @@ const infoSlice = createSlice({
   },
 });
 
-// Three actions generated from the slice
+// Actions
 export const { getInfo, getInfoSuccess, getInfoFailure } = infoSlice.actions;
 
 // Selectors

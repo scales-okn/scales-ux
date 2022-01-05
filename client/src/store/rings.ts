@@ -9,7 +9,7 @@ interface InitialState {
 export const initialState: InitialState = {
   loadingRings: true,
   hasErrors: false,
-  rings: [],
+  rings: null,
 };
 
 // A slice for rings with our three reducers
@@ -42,25 +42,6 @@ export const ringsSelector = (state: RootState) => state.rings;
 // The reducer
 export default ringsSlice.reducer;
 
-// Asynchronous thunk action
-// export function fetchRings() {
-//   return async (dispatch: AppDispatch) => {
-//     dispatch(getRings());
-
-//     try {
-//       const response = await fetch(
-//         `${process.env.REACT_APP_BFF_PROXY_ENDPOINT_URL}/info`
-//       );
-//       const data = await response.json();
-
-//       console.log(data);
-
-//       dispatch(getRingsSuccess(data));
-//     } catch (error) {
-//       dispatch(getRingsFailure());
-//     }
-//   };
-// }
 export function fetchRings(authHeader) {
   return async (dispatch: AppDispatch) => {
     console.log(authHeader());

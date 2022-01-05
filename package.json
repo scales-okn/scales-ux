@@ -26,5 +26,9 @@
     "commitizen": {
       "path": "./node_modules/cz-conventional-changelog"
     }
+  },
+  "dependencies": {
+    "react-focus-lock": "^2.7.1",
+    "react-icons": "^4.3.1"
   }
 }

@@ -15,13 +15,13 @@ const Loader: FunctionComponent<Props> = (props: Props) => {
     children,
   } = props;
 
-  if (isVisible) {
-    return (
-      <div className="d-flex justify-content-center p-2">
-        <Spinner animation={animation} variant={variant} size={size} />
-      </div>
-    );
-  }
+  if (!isVisible) return null;
+
+  return (
+    <div className="d-flex justify-content-center p-2">
+      <Spinner animation={animation} variant={variant} size={size} />
+    </div>
+  );
 
   return children;
 };

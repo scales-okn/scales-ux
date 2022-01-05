@@ -47,6 +47,6 @@ export default (sequelize, options) => {
     },
     options
   );
-  
+
   return Ring;
 };

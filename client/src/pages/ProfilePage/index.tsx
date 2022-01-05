@@ -1,5 +1,5 @@
 import React, { FunctionComponent } from "react";
-import PageLayout from "../PageLayout";
+import PageLayout from "../../components/PageLayout";
 
 const ProfilePage: FunctionComponent = () => (
   <PageLayout>Profile Page</PageLayout>

@@ -42,8 +42,7 @@ export const findAll = async (req: Request, res: Response) => {
     //@ts-ignore
     const { role, id: userId } = req.user;
 
-    // @ts-ignore
-    const permission = await accessControl.can(req.user.role, "notebooks:read");
+    const permission = await accessControl.can(role, "notebooks:read");
     if (!permission.granted) {
       return res.send_forbidden("Not allowed!");
     }
@@ -61,7 +60,6 @@ export const findAll = async (req: Request, res: Response) => {
     }
     const notebooks = await sequelize.models.Notebook.findAll({
       where,
-      // attributes: { exclude: [""] }, // TODO: Check if we need to hide something.
       order: [["id", "DESC"]],
     });
 

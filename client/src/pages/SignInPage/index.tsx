@@ -2,31 +2,23 @@ import * as yup from "yup";
 
 import { Button, Col, Container, Form, Row } from "react-bootstrap";
 import { Link, useHistory } from "react-router-dom";
-import React, { FunctionComponent, SyntheticEvent, useState } from "react";
+import React, {
+  FunctionComponent,
+  SyntheticEvent,
+  useState,
+  useEffect,
+} from "react";
 
-import Copyright from "../Copyright";
+import Copyright from "../../components/Copyright";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faBalanceScale } from "@fortawesome/free-solid-svg-icons";
-import jwt_decode from "jwt-decode";
 import { useFormik } from "formik";
-import { useSignIn } from "react-auth-kit";
-import { useSnackbar } from "notistack";
+import { login, authSelector, userSelector } from "../../store/auth";
+import { useSelector, useDispatch } from "react-redux";
 
 export interface UserSignInFields {
   email: string;
   password: string;
-}
-
-export interface DecodedToken {
-  iat: number;
-  exp: number;
-  id: number;
-  role: string;
-  email: string;
-  firstName: string;
-  lastName: string;
-  blocked: boolean;
-  approved: boolean;
 }
 
 export const UserSignInValidationSchema = yup.object({
@@ -39,8 +31,14 @@ export const UserSignInValidationSchema = yup.object({
 
 const SignInPage: FunctionComponent = () => {
   const history = useHistory();
-  const signIn = useSignIn();
-  const { enqueueSnackbar } = useSnackbar();
+  const { loading, user, hasErrors, errors } = useSelector(authSelector);
+  const dispatch = useDispatch();
+
+  useEffect(() => {
+    if (user) {
+      history.push("/");
+    }
+  }, [user, history]);
 
   const formik = useFormik({
     initialValues: {
@@ -49,95 +47,9 @@ const SignInPage: FunctionComponent = () => {
     },
     validationSchema: UserSignInValidationSchema,
     onSubmit: async (values: UserSignInFields, { setErrors }) => {
-      try {
-        const response = await fetch(
-          `${process.env.REACT_APP_BFF_API_ENDPOINT_URL}/users/login`,
-          {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-            },
-            body: JSON.stringify(values),
-          }
-        );
-        const { data, code, message, errors } = await response.json();
-
-        switch (code) {
-          case 200: {
-            const decodedToken: DecodedToken = jwt_decode(data.token);
-            const {
-              exp,
-              id,
-              email,
-              role,
-              firstName,
-              lastName,
-              blocked,
-              approved,
-            } = decodedToken;
-            if (
-              signIn({
-                token: data.token,
-                expiresIn: exp,
-                tokenType: "Bearer",
-                authState: {
-                  user: {
-                    id,
-                    role,
-                    email,
-                    firstName,
-                    lastName,
-                    blocked,
-                    approved,
-                  },
-                },
-              })
-            ) {
-              enqueueSnackbar(message, {
-                variant: "success",
-                anchorOrigin: {
-                  vertical: "top",
-                  horizontal: "center",
-                },
-              });
-
-              history.push("/");
-            } else {
-              console.log("JWT Failed!");
-            }
-            break;
-          }
-          case 403: {
-            enqueueSnackbar(message, {
-              variant: "warning",
-              anchorOrigin: {
-                vertical: "top",
-                horizontal: "center",
-              },
-            });
-            break;
-          }
-          default: {
-            enqueueSnackbar("Something went wrong. Please try again.", {
-              variant: "error",
-              anchorOrigin: {
-                vertical: "top",
-                horizontal: "center",
-              },
-            });
-            setErrors(errors);
-            break;
-          }
-        }
-      } catch (error) {
-        enqueueSnackbar("Something went wrong. Please try again.", {
-          variant: "error",
-          anchorOrigin: {
-            vertical: "top",
-            horizontal: "center",
-          },
-        });
-        console.log(error);
+      dispatch(login(values.email, values.password));
+      if (errors) {
+        setErrors(errors);
       }
     },
   });
@@ -168,7 +80,7 @@ const SignInPage: FunctionComponent = () => {
                 type="password"
                 name="password"
                 placeholder="Password"
-                className="rounded-0 rounded-bottom border-top-0"
+                className="rounded-0 rounded-bottom"
                 value={formik.values.password}
                 onChange={formik.handleChange}
                 isInvalid={

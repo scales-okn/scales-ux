@@ -3,7 +3,7 @@ import { useHistory, useParams } from "react-router-dom";
 import { useFormik } from "formik";
 import * as yup from "yup";
 
-import Copyright from "../Copyright";
+import Copyright from "../../components/Copyright";
 import { useSnackbar } from "notistack";
 
 import { Button, Col, Container, Form, Row } from "react-bootstrap";

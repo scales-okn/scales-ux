@@ -4,9 +4,8 @@ import React, {
   useEffect,
   useState,
 } from "react";
-import PageLayout from "../PageLayout";
-import { useAuthHeader, useAuthUser } from "react-auth-kit";
-import Loader from "../Loader";
+import PageLayout from "../../components/PageLayout";
+import Loader from "../../components/Loader";
 import { DataGrid, GridCellParams } from "@material-ui/data-grid";
 import { Link } from "react-router-dom";
 import { Form, Row, Col, Button, InputGroup } from "react-bootstrap";
@@ -14,16 +13,16 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faSearch } from "@fortawesome/free-solid-svg-icons";
 import "./NotebooksPage.scss";
 import dayjs from "dayjs";
+import { userSelector, useAuthHeader } from "../../store/auth";
+import { useSelector } from "react-redux";
 
 const NotebooksPage: FunctionComponent = () => {
   const [notebooks, setNotebooks] = useState([]);
   const [loadingNotebooks, setLoadingNotebooks] = useState(false);
-  const authHeader = useAuthHeader();
-  const authUser = useAuthUser();
-  const user = authUser().user;
-  const isAdmin = user.role === "admin";
+  const user = useSelector(userSelector);
   const [showNotebooks, setShowNotebooks] = useState("my-notebooks");
   const [filterNotebooks, setFilterNotebooks] = useState("");
+  const authHeader = useAuthHeader();
 
   const fetchNotebooks = async () => {
     setLoadingNotebooks(true);
@@ -33,13 +32,12 @@ const NotebooksPage: FunctionComponent = () => {
         {
           method: "GET",
           headers: {
-            Authorization: authHeader(),
+            ...authHeader,
             "Content-Type": "application/json",
           },
         }
       );
       const { data } = await response.json();
-      console.log(data);
 
       setNotebooks(data.notebooks);
       setLoadingNotebooks(false);
@@ -56,7 +54,7 @@ const NotebooksPage: FunctionComponent = () => {
           method: "PUT",
           body: JSON.stringify(payload),
           headers: {
-            Authorization: authHeader(),
+            ...authHeader,
             "Content-Type": "application/json",
           },
         }
@@ -67,6 +65,7 @@ const NotebooksPage: FunctionComponent = () => {
       console.log(error);
     }
   };
+
   const handleOnEditCellChangeCommitted = async (values, event) => {
     console.log(values);
     await updateNotebook(values.id, {

@@ -1,11 +1,11 @@
 import React, { FunctionComponent, useEffect, useState } from "react";
 import { useParams } from "react-router";
 import { Form, ListGroup, Row, Col } from "react-bootstrap";
-import Notebook from "../Notebook";
-import NotebookContextProvider from "../Notebook/NotebookContext";
-import PageLayout from "../PageLayout";
+import Notebook from "../../components/Notebook";
+import NotebookContextProvider from "../../components/Notebook/NotebookContext";
+import PageLayout from "../../components/PageLayout";
 import { useAuthHeader, useAuthUser } from "react-auth-kit";
-import Loader from "../Loader";
+import Loader from "../../components/Loader";
 import { fetchRings, ringsSelector } from "../../store/rings";
 import { useDispatch, useSelector } from "react-redux";
 

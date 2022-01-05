@@ -2,7 +2,7 @@ import React, { ChangeEvent, FunctionComponent } from "react";
 import { useHistory } from "react-router-dom";
 import { useFormik } from "formik";
 import * as yup from "yup";
-import Copyright from "../Copyright";
+import Copyright from "../../components/Copyright";
 import { UserSignInFields, UserSignInValidationSchema } from "../SignInPage";
 import { useSnackbar } from "notistack";
 import { Container, Form, Button, Col, Row } from "react-bootstrap";
@@ -16,7 +16,7 @@ interface UserSignUpFields extends UserSignInFields {
   tos: boolean;
 }
 
-const UserSignUpValidationSchema = UserSignInValidationSchema.concat(
+export const UserSignUpValidationSchema = UserSignInValidationSchema.concat(
   yup.object({
     firstName: yup.string().required("First Name is required"),
     lastName: yup.string().required("Last Name is required"),
@@ -205,10 +205,9 @@ const SignUpPage: FunctionComponent = () => {
             </Button>
             <Row className="mb-5">
               <Col className="text-end">
-                <a
-                  href="/sign-in"
-                  className="small"
-                >{`Already have an account? Sign in`}</a>
+                <a href="/sign-in" className="small">
+                  Already have an account? Sign in
+                </a>
               </Col>
             </Row>
             <Copyright />

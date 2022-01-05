@@ -19,12 +19,12 @@ export const sequelize = new Sequelize(
     host: process.env.DB_HOST,
     port: process.env.DB_PORT,
     dialect: process.env.DB_DIALECT,
-    dialectOptions: {
-    //   ssl: {
-    //     require: true,
-    //     rejectUnauthorized: false,
-    //  }
-    },
+    // dialectOptions: {
+    // //   ssl: {
+    // //     require: true,
+    // //     rejectUnauthorized: false,
+    // //  }
+    // },
     pool: {
       max: 5,
       min: 0,
@@ -102,7 +102,7 @@ const database = async () => {
     console.error("Sync Failed:", error);
   }
 
-  await seeds(sequelize);
+  // await seeds(sequelize);
 };
 
 export default database;
