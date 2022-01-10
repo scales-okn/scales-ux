@@ -19,8 +19,6 @@ export const create = async (req: Request, res: Response) => {
       contents,
     });
 
-    console.log({ panel });
-
     return res.send_ok("Panel created succesfully!", { panel });
   } catch (error) {
     console.log(error);
@@ -50,7 +48,6 @@ export const findById = async (req: Request, res: Response) => {
   try {
     const id = req.params.panelId;
     const panel = await sequelize.models.Panel.findOne({ where: { id } });
-    console.log(panel);
     if (!panel) {
       return res.send_notFound("Panel not found!");
     }

@@ -1,5 +1,7 @@
 import { createSlice } from "@reduxjs/toolkit";
 import type { RootState, AppDispatch } from "./index";
+import { authSelector, authorizationHeader } from "./auth";
+
 interface InitialState {
   loadingRings: boolean;
   hasErrors: boolean;
@@ -42,9 +44,11 @@ export const ringsSelector = (state: RootState) => state.rings;
 // The reducer
 export default ringsSlice.reducer;
 
-export function fetchRings(authHeader) {
-  return async (dispatch: AppDispatch) => {
-    console.log(authHeader());
+export function fetchRings() {
+  return async (dispatch: AppDispatch, getState) => {
+    const { token } = authSelector(getState());
+    const authHeader = authorizationHeader(token);
+
     dispatch(getRings());
 
     try {
@@ -52,13 +56,11 @@ export function fetchRings(authHeader) {
         `${process.env.REACT_APP_BFF_API_ENDPOINT_URL}/rings`,
         {
           headers: {
-            Authorization: authHeader(),
+            ...authHeader,
           },
         }
       );
       const { data } = await response.json();
-
-      console.log(data);
 
       dispatch(getRingsSuccess(data.rings));
     } catch (error) {

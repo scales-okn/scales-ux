@@ -1,5 +1,7 @@
 import { createSlice } from "@reduxjs/toolkit";
 import type { RootState, AppDispatch } from "./index";
+import { authSelector, authorizationHeader } from "./auth";
+import { useSelector, useDispatch } from "react-redux";
 
 interface InitialState {
   loadingNotebooks: boolean;
@@ -18,18 +20,21 @@ const notebooksSlice = createSlice({
   name: "notebooks",
   initialState,
   reducers: {
-    getNotebooks: (state) => {
-      state.loadingNotebooks = true;
-    },
-    getNotebooksSuccess: (state, { payload }) => {
-      state.notebooks = payload;
-      state.loadingNotebooks = false;
-      state.hasErrors = false;
-    },
-    getNotebooksFailure: (state) => {
-      state.loadingNotebooks = false;
-      state.hasErrors = true;
-    },
+    getNotebooks: (state) => ({
+      ...state,
+      loadingNotebooks: true
+    }),
+    getNotebooksSuccess: (state, { payload }) => ({
+      ...state,
+      notebooks: payload,
+      loadingNotebooks: false,
+      hasErrors: false,
+    }),
+    getNotebooksFailure: (state) => ({
+      ...state,
+      loadingNotebooks: false,
+      hasErrors: true,
+    }),
   },
 });
 
@@ -43,8 +48,11 @@ export const notebooksSelector = (state: RootState) => state.notebooks;
 // The reducer
 export default notebooksSlice.reducer;
 
-export function fetchNotebooks(authHeader) {
-  return async (dispatch: AppDispatch) => {
+export function fetchNotebooks() {
+  return async (dispatch: AppDispatch, getState) => {
+    const { token } = authSelector(getState());
+    const authHeader = authorizationHeader(token);
+
     dispatch(getNotebooks());
 
     try {
@@ -53,7 +61,7 @@ export function fetchNotebooks(authHeader) {
         {
           method: "GET",
           headers: {
-            Authorization: authHeader(),
+            ...authHeader,
             "Content-Type": "application/json",
           },
         }
@@ -66,4 +74,11 @@ export function fetchNotebooks(authHeader) {
       dispatch(getNotebooksFailure());
     }
   };
+}
+
+export const useFetchNotebooks = () => {
+  const dispatch = useDispatch();
+  return {
+    fetchNotebooks: () => dispatch(fetchNotebooks()),
+  }
 }

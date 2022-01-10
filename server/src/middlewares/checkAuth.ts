@@ -19,7 +19,7 @@ const checkAuth = async (req: Request, res: Response, next: NextFunction) => {
         const user = await sequelize.models.User.findOne({
           where: { id: token.user.id },
         });
-        req.user = user;
+        req.user = user.dataValues;
         next();
       }
     )(req, res, next);

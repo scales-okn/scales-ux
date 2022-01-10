@@ -13,72 +13,30 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faSearch } from "@fortawesome/free-solid-svg-icons";
 import "./NotebooksPage.scss";
 import dayjs from "dayjs";
-import { userSelector, useAuthHeader } from "../../store/auth";
-import { useSelector } from "react-redux";
+import { userSelector } from "../../store/auth";
+import { fetchNotebooks, notebooksSelector } from "../../store/notebooks";
+import { useDispatch, useSelector } from "react-redux";
 
 const NotebooksPage: FunctionComponent = () => {
-  const [notebooks, setNotebooks] = useState([]);
-  const [loadingNotebooks, setLoadingNotebooks] = useState(false);
   const user = useSelector(userSelector);
   const [showNotebooks, setShowNotebooks] = useState("my-notebooks");
   const [filterNotebooks, setFilterNotebooks] = useState("");
-  const authHeader = useAuthHeader();
+  const dispatch = useDispatch();
+  const { notebooks, loadingNotebooks, hasErrors } = useSelector(notebooksSelector);
 
-  const fetchNotebooks = async () => {
-    setLoadingNotebooks(true);
-    try {
-      const response = await fetch(
-        `${process.env.REACT_APP_BFF_API_ENDPOINT_URL}/notebooks`,
-        {
-          method: "GET",
-          headers: {
-            ...authHeader,
-            "Content-Type": "application/json",
-          },
-        }
-      );
-      const { data } = await response.json();
-
-      setNotebooks(data.notebooks);
-      setLoadingNotebooks(false);
-    } catch (error) {
-      console.log(error);
-    }
-  };
-
-  const updateNotebook = async (notebookId, payload) => {
-    try {
-      const response = await fetch(
-        `${process.env.REACT_APP_BFF_API_ENDPOINT_URL}/notebooks/${notebookId}`,
-        {
-          method: "PUT",
-          body: JSON.stringify(payload),
-          headers: {
-            ...authHeader,
-            "Content-Type": "application/json",
-          },
-        }
-      );
-      const { data } = await response.json();
-      console.log(data);
-    } catch (error) {
-      console.log(error);
-    }
-  };
-
-  const handleOnEditCellChangeCommitted = async (values, event) => {
-    console.log(values);
-    await updateNotebook(values.id, {
-      [values.field]:
-        values.field === "collaborators"
-          ? //@ts-ignore
-            values.props?.value?.split(",")
-          : values.props.value,
-    });
-  };
+  // const handleOnEditCellChangeCommitted = async (values, event) => {
+  //   console.log(values);
+  //   await updateNotebook(values.id, {
+  //     [values.field]:
+  //       values.field === "collaborators"
+  //         ? //@ts-ignore
+  //         values.props?.value?.split(",")
+  //         : values.props.value,
+  //   });
+  // };
 
   useEffect(() => {
-    fetchNotebooks();
+    dispatch(fetchNotebooks());
   }, []);
 
   const notebooksData = notebooks
@@ -164,7 +122,7 @@ const NotebooksPage: FunctionComponent = () => {
             <div style={{ height: 650, width: "100%" }} className="mt-4">
               <DataGrid
                 rows={notebooksData}
-                onEditCellChangeCommitted={handleOnEditCellChangeCommitted}
+                // onEditCellChangeCommitted={handleOnEditCellChangeCommitted}
                 columns={[
                   {
                     field: "title",
@@ -173,7 +131,7 @@ const NotebooksPage: FunctionComponent = () => {
                     editable: true,
                     renderCell: (params: GridCellParams) => (
                       <Link
-                        to={`/notebooks/${params.row.title}`}
+                        to={`/notebooks/${params.row.id}`}
                         className="ms-2"
                       >
                         {params.row.title}
@@ -212,9 +170,9 @@ const NotebooksPage: FunctionComponent = () => {
                         return <>You</>;
                       }
 
-                      if (params.row.userId === 1) {
-                        return <span className="user-initials-pill">AT</span>;
-                      }
+                      // if (params.row.userId === 1) {
+                      //   return <span className="user-initials-pill">AT</span>;
+                      // }
                     },
                   },
 
@@ -230,7 +188,7 @@ const NotebooksPage: FunctionComponent = () => {
                       if (params.row.collaborators.includes(1)) {
                         return <span className="user-initials-pill">AT</span>;
                       }
-                      if (params.row.collaborators.includes(2)) {
+                      if (params.row.collaborators.includes(user.id)) {
                         return <>You</>;
                       }
                       return <>{params.row.collaborators}</>;

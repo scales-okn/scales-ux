@@ -11,6 +11,8 @@ import auth from "./auth";
 import info from "./info";
 import rings from "./rings";
 import notebooks from "./notebooks";
+import notebook from "./notebook";
+import panels from "./panels";
 
 // Middlewares
 import { authMiddleware } from "./auth";
@@ -20,6 +22,8 @@ const reducers = combineReducers({
   info,
   rings,
   notebooks,
+  notebook,
+  panels,
   notifications: notificationsReducer(),
 });
 
@@ -27,12 +31,13 @@ const persistConfig = {
   key: "satyrn",
   version: Number(process.env.REACT_APP_VERSION.replace(/\./g, "")) || 1,
   storage,
+  blacklist: ["notifications"],
 };
 
 const store = configureStore({
   reducer: persistReducer(persistConfig, reducers),
   devTools: process.env.NODE_ENV !== "production",
-  middleware: [thunk, authMiddleware],
+  middleware: [thunk],
 });
 
 export const persistor = persistStore(store);

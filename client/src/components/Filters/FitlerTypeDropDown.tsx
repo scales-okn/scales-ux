@@ -1,29 +1,22 @@
 import React, { FunctionComponent, ReactNode, useState } from "react";
 
 import { Dropdown } from "react-bootstrap";
-import type { FilterInput } from "../NotebookContext";
+
 import { useEffect } from "react";
-import { useNotebookContext } from "../NotebookContext";
 
 type FilterColumn = {
   key: string;
   nicename: string;
 };
 
-type Props = {
-  filterInput: FilterInput;
-};
 
-const FilterTypeDropDown: FunctionComponent<Props> = (props) => {
-  const { filterInput } = props;
-  const { id, type } = filterInput;
-  const {
-    filterInputs,
+const FilterTypeDropDown: FunctionComponent<any> = (props) => {
+  const { filterInput, filterInputs,
     setFilterInputs,
     getFiltersNormalized,
     getFilterOptionsByKey,
-    setFilterInput,
-  } = useNotebookContext();
+    setFilterInput, } = props;
+  const { id, type } = filterInput;
 
   const filterOptions = getFilterOptionsByKey(type);
 
@@ -46,7 +39,7 @@ const FilterTypeDropDown: FunctionComponent<Props> = (props) => {
     const { allowMultiple, key } = filter;
     if (
       allowMultiple === false &&
-      filterInputs.some((filterInput: FilterInput) => filterInput.type === key)
+      filterInputs.some((filterInput: any) => filterInput.type === key)
     ) {
       return { ...filter, disabled: true };
     }

@@ -6,6 +6,7 @@ import {
   findById,
   update,
   history,
+  panels,
 } from "../controllers/notebooks";
 
 import checkAuth from "../middlewares/checkAuth";
@@ -24,6 +25,8 @@ router.post(
 router.get("/", checkAuth, findAll);
 
 router.get("/:notebookId", checkAuth, findById);
+
+router.get("/:notebookId/panels", checkAuth, panels);
 
 router.get("/:notebookId/history", checkAuth, history);
 

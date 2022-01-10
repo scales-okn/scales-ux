@@ -122,11 +122,17 @@ export const logout = () => {
   };
 };
 
+export const authorizationHeader = (token: string) => {
+  return {
+    Authorization: `Bearer ${token}`,
+  }
+};
+
 // Hooks
 export const useAuthHeader = () => {
   const { token } = useSelector(authSelector);
   
-  return token ? { Authorization: `Bearer ${token}` } : {};
+  return authorizationHeader(token);
 };
 
 export const useAuth = () => {

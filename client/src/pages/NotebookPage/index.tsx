@@ -1,13 +1,10 @@
-import React, { FunctionComponent, useEffect, useState } from "react";
+import React, { FunctionComponent, useEffect } from "react";
 import { useParams } from "react-router";
-import { Form, ListGroup, Row, Col } from "react-bootstrap";
 import Notebook from "../../components/Notebook";
-import NotebookContextProvider from "../../components/Notebook/NotebookContext";
 import PageLayout from "../../components/PageLayout";
-import { useAuthHeader, useAuthUser } from "react-auth-kit";
 import Loader from "../../components/Loader";
-import { fetchRings, ringsSelector } from "../../store/rings";
 import { useDispatch, useSelector } from "react-redux";
+import { fetchNotebook, notebookSelector, clearNotebook } from "../../store/notebook";
 
 type Params = {
   notebookId: string | null;
@@ -20,24 +17,23 @@ type Ring = {
 };
 
 const NotebookPage: FunctionComponent = () => {
-  const { notebookId } = useParams<Params>();
-  const { rings, loadingRings, hasErrors } = useSelector(ringsSelector);
+  const { notebookId = null } = useParams<Params>();
+  const { loadingNotebook } = useSelector(notebookSelector);
   const dispatch = useDispatch();
-  const authHeader = useAuthHeader();
 
   useEffect(() => {
-    dispatch(fetchRings(authHeader));
-  }, []);
+    if (notebookId === "new") {
+      dispatch(clearNotebook());
+      return;
+    }
+
+    dispatch(fetchNotebook(notebookId));
+  }, [notebookId]);
 
   return (
     <PageLayout>
-      <Loader animation="border" isVisible={loadingRings}>
-        <NotebookContextProvider
-          rings={rings}
-          notebookId={Number(notebookId) ? notebookId : null}
-        >
-          <Notebook />
-        </NotebookContextProvider>
+      <Loader animation="border" isVisible={loadingNotebook}>
+        <Notebook />
       </Loader>
     </PageLayout>
   );

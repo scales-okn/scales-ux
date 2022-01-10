@@ -1,38 +1,95 @@
 import React, { FunctionComponent, useState } from "react";
 import { FormControl, InputGroup } from "react-bootstrap";
 import DateTimeRangePicker from "@wojtekmaj/react-datetimerange-picker";
-import type { FilterInput } from "../NotebookContext";
+
 import FilterTypeDropDown from "./FitlerTypeDropDown";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faTimesCircle } from "@fortawesome/free-regular-svg-icons";
-import { useNotebookContext } from "../NotebookContext";
 import { AsyncTypeahead } from "react-bootstrap-typeahead";
 import uniqid from "uniqid";
-
+import { infoSelector } from "../../store/info";
 import { Form } from "react-bootstrap";
+import { useSelector, useDispatch } from "react-redux";
+
+export type FilterInput = {
+  id: string;
+  value: string | number;
+  type: string;
+};
 
 type Props = {
   filterInput: FilterInput;
+  filterInputs: Array<FilterInput>;
+  selectedRing: any;
+  setFilterInputs: any;
+  fetchResults: any;
 };
 
 const Filter: FunctionComponent<Props> = (props) => {
-  const { filterInput } = props;
+  const { filterInput, filterInputs, selectedRing, setFilterInputs, fetchResults } = props;
   const { id, type, value } = filterInput;
-  const {
-    setFilterInputs,
-    filterInputs,
-    getFilterColumnByKey,
-    getFilterOptionsByKey,
-    setFilterInput,
-    fetchResults,
-    selectedRing,
-    defaultEntity,
-  } = useNotebookContext();
   const [autoCompleteSuggestions, setAutoCompleteSuggestions] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
+
+  const [dateValue, setDateValue] = useState([new Date(), new Date()]);
+  const { info, hasErrors, loadingInfo } = useSelector(infoSelector);
+  const { filters = [], columns = [], defaultEntity } = info;
+
+  const setFilterInput = (filterInput: FilterInput) => {
+    try {
+      setFilterInputs((prevFilterInputs: Array<FilterInput>) => {
+        return [
+          ...prevFilterInputs.filter(
+            (prevFilterInput: FilterInput) =>
+              prevFilterInput.id !== filterInput.id
+          ),
+          { ...filterInput },
+        ];
+      });
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const getFilterInputById = (id: string) => {
+    try {
+      return filterInputs?.find(
+        (filterInput: FilterInput) => filterInput.id === id
+      );
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const getFilterColumnByKey = (key: string) => {
+    try {
+      return columns.find((column) => column.key == key);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const getFilterOptionsByKey = (key) => {
+    try {
+      return filters.find((filter) => filter.includes(key))[1];
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const getFiltersNormalized = () => {
+    try {
+      return filters
+        .map((filter) => ({ key: filter[0], ...filter[1] }))
+        .sort((a, b) => a.key.localeCompare(b.key));
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+
   const filterColumn = getFilterColumnByKey(type);
   const filterOptions = getFilterOptionsByKey(type);
-  const [dateValue, setDateValue] = useState([new Date(), new Date()]);
 
   const fetchAutocompleteSuggestions = async (type, query) => {
     setIsLoading(true);
@@ -131,7 +188,14 @@ const Filter: FunctionComponent<Props> = (props) => {
     <div className="d-inline-block me-3">
       <InputGroup className="mb-3">
         <InputGroup.Text className="bg-white">
-          <FilterTypeDropDown filterInput={filterInput} />
+
+          <FilterTypeDropDown
+            filterInput={filterInput}
+            getFilterOptionsByKey={getFilterOptionsByKey}
+            filterInputs={filterInputs}
+            setFilterInputs={setFilterInputs}
+            getFiltersNormalized={getFiltersNormalized}
+            setFilterInput={setFilterInput} />
         </InputGroup.Text>
         {filterTypeRender(filterOptions?.type, value)}
         <InputGroup.Text

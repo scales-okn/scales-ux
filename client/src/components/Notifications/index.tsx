@@ -27,7 +27,7 @@ const Notifications: React.FC = () => {
   useEffect(() => {
     setUpNotifications({
       defaultProps: {
-        position: "top-right",
+        position: "bottom-right",
         dismissible: true,
         dismissAfter: 5000,
       },

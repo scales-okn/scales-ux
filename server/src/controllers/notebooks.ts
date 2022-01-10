@@ -2,6 +2,7 @@ import e, { Request, Response } from "express";
 import { sequelize } from "../database";
 import accessControl from "../services/accesscontrol";
 import { Op } from "sequelize";
+import { permisionsFieldsFilter } from "../services/accesscontrol";
 
 // Resources validations are made with validateResources middleware and validations schemas
 // server/middlewares/validateResources.ts
@@ -145,19 +146,6 @@ export const update = async (req: Request, res: Response) => {
     const { notebookId } = req.params;
     //@ts-ignore
     const { role, id: reqUserId } = req.user;
-    //@ts-ignore
-    const permission = accessControl.can(role).updateAny("notebooks");
-    if (!permission.granted) {
-      return res.send_forbidden("Not allowed!");
-    }
-
-    console.log(permission);
-
-    const payload = permission.filter(req.body);
-
-    if (Object.keys(payload).length === 0) {
-      return res.send_notModified("User has not been updated!");
-    }
 
     let where = { id: notebookId };
     if (role !== "admin") {
@@ -170,6 +158,20 @@ export const update = async (req: Request, res: Response) => {
     });
     if (!notebook) {
       return res.send_notFound("Notebook not found!");
+    }
+
+    const permission = await accessControl.can(role, "notebooks:update", {
+      user: req.user,
+      resource: notebook,
+    });
+    if (!permission.granted) {
+      return res.send_forbidden("Not allowed!");
+    }
+
+    const payload = permisionsFieldsFilter(req.body, permission);
+
+    if (Object.keys(payload).length === 0) {
+      return res.send_notModified("User has not been updated!");
     }
 
     const { collaborators, userId } = notebook;
@@ -211,7 +213,7 @@ export const update = async (req: Request, res: Response) => {
       where: { id: notebookId },
     });
 
-    return res.send_ok("Notebook has been updated!", { updatedNotebook });
+    return res.send_ok("Notebook has been updated!", { ...updatedNotebook.dataValues });
   } catch (error) {
     console.log(error);
 
@@ -244,3 +246,39 @@ export const deleteNotebook = async (req: Request, res: Response) => {
     return res.send_internalServerError("Failed to delete notebook!");
   }
 };
+
+
+export const panels = async (req: Request, res: Response) => {
+  try {
+    const { notebookId } = req.params;
+    //@ts-ignore
+    const { role } = req.user;
+    const notebook = await sequelize.models.Notebook.findOne({
+      where: { id: notebookId },
+    });
+    if (!notebook) {
+      return res.send_notFound("Notebook not found!");
+    }
+
+    const { visibility, collaborators, userId } = notebook;
+    if (
+      role !== "admin" &&
+      visibility !== "public" &&
+      !collaborators.includes(userId) &&
+      userId !== userId
+    ) {
+      return res.send_forbidden("Not allowed!");
+    }
+
+    const panels = await sequelize.models.Panel.findAll({
+      where: { notebookId, deleted: false },
+      order: [["id", "DESC"]],
+    });
+
+    return res.send_ok("", { panels });
+  } catch (error) {
+    console.log(error);
+
+    return res.send_internalServerError("An error occured, please try again!");
+  }
+}

@@ -1,82 +1,25 @@
 import { tsIndexSignature } from "@babel/types";
 import React, { FunctionComponent, useState, useEffect } from "react";
 import { Container, Row, Col, Dropdown, Button } from "react-bootstrap";
-import "./Dataset.scss";
-import { useNotebookContext } from "../NotebookContext";
-import { useAuthHeader, useAuthUser } from "react-auth-kit";
-import Loader from "../../Loader";
+import Loader from "../Loader";
 import { useDispatch, useSelector } from "react-redux";
-import { fetchInfo, infoSelector } from "../../../store/info";
+import { fetchInfo, infoSelector } from "../../store/info";
+import "./Dataset.scss";
+import { ringsSelector } from "../../store/rings";
+import { updatePanel } from "../../store/panels";
 
-const Dataset = (panel) => {
-  const authHeader = useAuthHeader();
-  const auth = useAuthUser();
-  const user = auth();
-  const {
-    notebookTitle,
-    setNotebookTitle,
-    saveNotebook,
-    savingNotebook,
-    results,
-    rings,
-    setPanels,
-    fetchResults,
-    setShowResults,
-    selectedRing,
-    setSelectedRing,
-  } = useNotebookContext();
+const Dataset = ({ panel, selectedRing, setSelectedRing }) => {
   const dispatch = useDispatch();
   const { info, loadingInfo, hasErrors } = useSelector(infoSelector);
+  const { rings, loadingRings } = useSelector(ringsSelector);
 
   useEffect(() => {
     if (!selectedRing) return;
-
     dispatch(fetchInfo(selectedRing.rid));
-
-    // debugger; // eslint-disable-line no-debugger
-
-    // fetch(
-    //   //@ts-ignore
-    //   `${process.env.REACT_APP_BFF_PROXY_ENDPOINT_URL}/rings/${selectedRing.rid}`
-    // )
-    //   .then((response) => response.json())
-    //   .then((data) => {
-    //     setInfo(data);
-    //     console.log(data);
-    //   })
-    //   .catch((error) => {
-    //     console.log(error);
-    //   });
   }, [selectedRing]);
-
-  const updatePanel = async (payload) => {
-    try {
-      const response = await fetch(
-        `${process.env.REACT_APP_BFF_API_ENDPOINT_URL}/panels/`,
-        {
-          method: "POST",
-          headers: {
-            Authorization: authHeader(),
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify(payload),
-        }
-      );
-      const { data } = await response.json();
-      const { panel } = data;
-      setPanels((prev) => [
-        prev.filter((prevPanel) => prevPanel.id !== panel.id),
-        panel,
-      ]);
-    } catch (error) {
-      console.log(error);
-    }
-  };
 
   useEffect(() => {
     if (!Object.keys(info).length || !selectedRing) return;
-    console.log(info, selectedRing);
-    fetchResults(selectedRing);
   }, [info, selectedRing]);
 
   return (
@@ -99,9 +42,7 @@ const Dataset = (panel) => {
                   key={index}
                   onClick={() => {
                     setSelectedRing(ring);
-                    // updatePanel({
-                    //   ringId: ring.id,
-                    // });
+                    dispatch(updatePanel(panel.id, { rid: ring.rid }));
                   }}
                 >
                   <h6>{ring.name}</h6>
@@ -124,7 +65,7 @@ const Dataset = (panel) => {
               className="text-white rounded-3"
               disabled={!Object.keys(info).length}
               onClick={() => {
-                setShowResults(true);
+                // setShowResults(true);
               }}
             >
               Start Exploring

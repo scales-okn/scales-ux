@@ -3,23 +3,17 @@ import { Button, Col, Row } from "react-bootstrap";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faPlus } from "@fortawesome/free-solid-svg-icons";
 import Filter from "./Filter";
-
 import uniqid from "uniqid";
-import { useNotebookContext } from "../NotebookContext";
 
-const Filters: FunctionComponent = () => {
-  const {
-    selectedRing,
-    setFilterInputs,
-    filterInputs = [],
-    fetchResults,
-  } = useNotebookContext();
+// @ts-ignore
+const Filters: FunctionComponent = ({ selectedRing, fetchResults, filterInputs, setFilterInputs }) => {
 
   return (
     <Row className="notebook-filters bg-white p-3 pt-4">
       <Col>
         {filterInputs.map((filterInput, key) => (
-          <Filter key={key} filterInput={filterInput} />
+          //@ts-ignore
+          <Filter key={key} filterInput={filterInput} filterInputs={filterInputs} selectedRing={selectedRing} setFilterInputs={setFilterInputs} fetchResults={fetchResults} />
         ))}
         <div className="d-inline-block">
           <Button

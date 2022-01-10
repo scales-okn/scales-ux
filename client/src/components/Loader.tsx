@@ -4,6 +4,7 @@ import { SpinnerProps, Spinner } from "react-bootstrap";
 interface Props extends SpinnerProps {
   isVisible: boolean;
   children?: JSX.Element;
+  loaderContent?: ReactNode;
 }
 
 const Loader: FunctionComponent<Props> = (props: Props) => {
@@ -13,15 +14,18 @@ const Loader: FunctionComponent<Props> = (props: Props) => {
     variant,
     size = null,
     children,
+    loaderContent
   } = props;
 
-  if (!isVisible) return null;
-
-  return (
-    <div className="d-flex justify-content-center p-2">
-      <Spinner animation={animation} variant={variant} size={size} />
-    </div>
-  );
+  if (isVisible) {
+    return (
+      <>{
+        loaderContent ? loaderContent : <div className="d-flex justify-content-center p-2">
+          <Spinner animation={animation} variant={variant} size={size} />
+        </div>
+      }</>
+    );
+  }
 
   return children;
 };
