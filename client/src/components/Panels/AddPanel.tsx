@@ -1,18 +1,20 @@
-import React from "react";
+import React, { FunctionComponent } from "react";
 import { Button } from "react-bootstrap";
-import { createPanel } from "../../store/panels";
-import { useDispatch } from "react-redux";
+import { usePanels } from "../../store/panels";
 import "./AddPanel.scss";
+import { useNotebook } from "../../store/notebook";
 
-const AddPanel = () => {
-  const dispatch = useDispatch();
+const AddPanel: FunctionComponent = () => {
+  const { createPanel } = usePanels();
+  const { notebook } = useNotebook();
 
   return (
     <Button
       className="add-panel-btn w-100"
       size="lg"
       variant="link"
-      onClick={() => dispatch(createPanel())}
+      disabled={!notebook}
+      onClick={() => createPanel()}
     >
       Add Panel
     </Button>

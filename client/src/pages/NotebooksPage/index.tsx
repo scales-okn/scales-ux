@@ -1,5 +1,4 @@
 import React, {
-  ChangeEventHandler,
   FunctionComponent,
   useEffect,
   useState,
@@ -11,18 +10,17 @@ import { Link } from "react-router-dom";
 import { Form, Row, Col, Button, InputGroup } from "react-bootstrap";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faSearch } from "@fortawesome/free-solid-svg-icons";
-import "./NotebooksPage.scss";
 import dayjs from "dayjs";
 import { userSelector } from "../../store/auth";
-import { fetchNotebooks, notebooksSelector } from "../../store/notebooks";
-import { useDispatch, useSelector } from "react-redux";
+import { useSelector } from "react-redux";
+import { useNotebooks } from "../../store/notebooks";
+import "./NotebooksPage.scss";
 
 const NotebooksPage: FunctionComponent = () => {
   const user = useSelector(userSelector);
   const [showNotebooks, setShowNotebooks] = useState("my-notebooks");
   const [filterNotebooks, setFilterNotebooks] = useState("");
-  const dispatch = useDispatch();
-  const { notebooks, loadingNotebooks, hasErrors } = useSelector(notebooksSelector);
+  const { fetchNotebooks, notebooks, loadingNotebooks } = useNotebooks();
 
   // const handleOnEditCellChangeCommitted = async (values, event) => {
   //   console.log(values);
@@ -36,7 +34,7 @@ const NotebooksPage: FunctionComponent = () => {
   // };
 
   useEffect(() => {
-    dispatch(fetchNotebooks());
+    fetchNotebooks();
   }, []);
 
   const notebooksData = notebooks
@@ -203,8 +201,8 @@ const NotebooksPage: FunctionComponent = () => {
                   },
                 ]}
                 pageSize={10}
-                hideFooter={notebooks.length <= 10 ? true : false}
-                rowCount={notebooks.length}
+                hideFooter={notebooks?.length <= 10 ? true : false}
+                rowCount={notebooks?.length}
                 checkboxSelection={false}
                 className="bg-white border-0 rounded-0"
               />

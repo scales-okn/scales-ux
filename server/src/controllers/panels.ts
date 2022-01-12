@@ -10,13 +10,14 @@ const { Op } = require("sequelize");
 // Create Panel
 export const create = async (req: Request, res: Response) => {
   try {
-    const { description, notebookId, ringId, contents } = req.body;
+
+    const { description, notebookId, ringId, userId } = req.body;
 
     const panel = await sequelize.models.Panel.create({
       description,
       notebookId,
       ringId,
-      contents,
+      userId,
     });
 
     return res.send_ok("Panel created succesfully!", { panel });

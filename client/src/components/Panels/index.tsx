@@ -1,31 +1,26 @@
 import React, { FunctionComponent, useEffect } from "react";
-import { DataGrid } from "@material-ui/data-grid";
-
 import Loader from "../Loader";
-// import Dataset from "../Dataset";
-import AddPanel from "./AddPanel";
 import Panel from "./Panel";
-import { panelsSelector, fetchPanels } from "../../store/panels";
-import { useSelector, useDispatch } from "react-redux";
+import { usePanels } from "../../store/panels";
 
+type PanelsProps = {
+  notebookId: string | null;
+};
 
-const Panels: FunctionComponent = () => {
-  const { panels, loadingPanels } = useSelector(panelsSelector);
-  const dispatch = useDispatch();
+const Panels: FunctionComponent<PanelsProps> = ({ notebookId }) => {
+  const { panels, loadingPanels, getPanels } = usePanels();
 
   useEffect(() => {
-    dispatch(fetchPanels());
-  }, []);
-
-  console.log(panels);
+    if (!notebookId) return;
+    getPanels(notebookId);
+  }, [notebookId]);
 
   return (
     <Loader animation="border" isVisible={loadingPanels}>
       <>
-        {panels.length > 0 && panels.map((panel, index) => (
-          <Panel key="index" panel={panel} />
+        {panels && panels?.length > 0 && panels?.map((panel, index) => (
+          <Panel key={index} panelId={panel.id} />
         ))}
-        <AddPanel />
       </>
     </Loader>
 

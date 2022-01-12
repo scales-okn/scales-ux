@@ -7,6 +7,7 @@ import { useSelector, useDispatch } from "react-redux";
 
 interface InitialState {
   loadingNotebook: boolean;
+  creatingNotebook: boolean;
   savingNotebook: boolean;
   deletingNotebook: boolean;
   hasErrors: boolean;
@@ -16,18 +17,19 @@ interface InitialState {
 export const initialState: InitialState = {
   loadingNotebook: true,
   savingNotebook: false,
+  creatingNotebook: false,
   deletingNotebook: false,
   hasErrors: false,
   notebook: null,
 };
 
-const notebooksSlice = createSlice({
+const notebookSlice = createSlice({
   name: "notebook",
   initialState,
   reducers: {
     getNotebook: (state) => ({
       ...state,
-      loadingNotebook: true
+      loadingNotebook: true,
     }),
     getNotebookSuccess: (state, { payload }) => ({
       ...state,
@@ -43,6 +45,23 @@ const notebooksSlice = createSlice({
     clearNotebook: (state) => ({
       ...state,
       notebook: null,
+      loadingNotebook: false,
+    }),
+    createNotebook: (state) => ({
+      ...state,
+      creatingNotebook: true,
+      hasErrors: false,
+    }),
+    createNotebookSuccess: (state, { payload }) => ({
+      ...state,
+      notebook: payload,
+      creatingNotebook: false,
+      hasErrors: false,
+    }),
+    createNotebookFailure: (state) => ({
+      ...state,
+      creatingNotebook: false,
+      hasErrors: true,
     }),
     saveNotebook: (state) => ({
       ...state,
@@ -50,7 +69,7 @@ const notebooksSlice = createSlice({
     }),
     saveNotebookSuccess: (state, { payload }) => ({
       ...state,
-      notebook: payload,
+      notebook: { ...state.notebook, ...payload },
       savingNotebook: false,
       hasErrors: false,
     }),
@@ -78,31 +97,20 @@ const notebooksSlice = createSlice({
 });
 
 // Three actions generated from the slice
-export const {
-  getNotebook,
-  getNotebookSuccess,
-  getNotebookFailure,
-  clearNotebook,
-  saveNotebook,
-  saveNotebookFailure,
-  saveNotebookSuccess,
-  removeNotebook,
-  removeNotebookSuccess,
-  removeNotebookFailure,
-} = notebooksSlice.actions;
+export const notebookActions = notebookSlice.actions;
 
 // Selectors
 export const notebookSelector = (state: RootState) => state.notebook;
 
 // The reducer
-export default notebooksSlice.reducer;
+export default notebookSlice.reducer;
 
 export function fetchNotebook(id: string) {
   return async (dispatch: AppDispatch, getState) => {
     const { token } = authSelector(getState());
     const authHeader = authorizationHeader(token);
 
-    dispatch(getNotebook());
+    dispatch(notebookActions.getNotebook());
 
     try {
       const response = await fetch(
@@ -117,12 +125,12 @@ export function fetchNotebook(id: string) {
       );
       if (response.status === 200) {
         const { data } = await response.json();
-        dispatch(getNotebookSuccess(data.notebook));
+        dispatch(notebookActions.getNotebookSuccess(data.notebook));
       } else {
-        dispatch(getNotebookFailure());
+        dispatch(notebookActions.getNotebookFailure());
       }
     } catch (error) {
-      dispatch(getNotebookFailure());
+      dispatch(notebookActions.getNotebookFailure());
     }
   };
 }
@@ -131,7 +139,7 @@ export function updateNotebook(id: string, payload: any) {
   return async (dispatch: AppDispatch, getState) => {
     const { token } = authSelector(getState());
     const authHeader = authorizationHeader(token);
-    dispatch(saveNotebook());
+    dispatch(notebookActions.saveNotebook());
 
     try {
       const response = await fetch(
@@ -148,14 +156,14 @@ export function updateNotebook(id: string, payload: any) {
       if (response.status === 200) {
         const { data, message } = await response.json();
         dispatch(notify(message, "success"));
-        dispatch(saveNotebookSuccess(data));
+        dispatch(notebookActions.saveNotebookSuccess(data.notebook));
       } else {
         dispatch(notify(response.statusText, "error"));
-        dispatch(saveNotebookFailure());
+        dispatch(notebookActions.saveNotebookFailure());
       }
     } catch (error) {
       dispatch(notify(useUnknownErrorNotificationMessage, "error"));
-      dispatch(saveNotebookFailure());
+      dispatch(notebookActions.saveNotebookFailure());
     }
   };
 }
@@ -165,7 +173,7 @@ export function createNotebook(payload: any) {
     const { token } = authSelector(getState());
     const authHeader = authorizationHeader(token);
 
-    dispatch(saveNotebook());
+    dispatch(notebookActions.createNotebook());
 
     try {
       const response = await fetch(
@@ -182,13 +190,13 @@ export function createNotebook(payload: any) {
       const { data, message } = await response.json();
       if (response.status === 200) {
         dispatch(notify(message, "success"));
-        dispatch(saveNotebookSuccess(data));
+        dispatch(notebookActions.createNotebookSuccess(data.notebook));
       } else {
         dispatch(notify(message, "error"));
-        dispatch(saveNotebookFailure());
+        dispatch(notebookActions.createNotebookFailure());
       }
     } catch (error) {
-      dispatch(saveNotebookFailure());
+      dispatch(notebookActions.createNotebookFailure());
     }
   };
 }
@@ -198,7 +206,7 @@ export function deleteNotebook(id: string) {
     const { token } = authSelector(getState());
     const authHeader = authorizationHeader(token);
 
-    dispatch(removeNotebook());
+    dispatch(notebookActions.removeNotebook());
 
     try {
       const response = await fetch(
@@ -213,21 +221,23 @@ export function deleteNotebook(id: string) {
       );
       const { message } = await response.json();
       if (response.status === 200) {
+        dispatch(notebookActions.clearNotebook());
         dispatch(notify(message, "success"));
-        dispatch(removeNotebookSuccess());
+        dispatch(notebookActions.removeNotebookSuccess());
       } else {
         dispatch(notify(message, "error"));
-        dispatch(removeNotebookFailure());
+        dispatch(notebookActions.removeNotebookFailure());
       }
     } catch (error) {
-      dispatch(removeNotebookFailure());
+      dispatch(notebookActions.removeNotebookFailure());
     }
   };
 }
 
 // Hooks
 export function useNotebook() {
-  const { notebook, loadingNotebook, hasErrors } = useSelector(notebookSelector);
+  const { notebook, loadingNotebook, hasErrors } =
+    useSelector(notebookSelector);
   const dispatch = useDispatch();
 
   return {
@@ -235,7 +245,8 @@ export function useNotebook() {
     loadingNotebook,
     hasErrors,
     fetchNotebook: (id: string) => dispatch(fetchNotebook(id)),
-    updateNotebook: (id: string, payload: any) => dispatch(updateNotebook(id, payload)),
+    updateNotebook: (id: string, payload: any) =>
+      dispatch(updateNotebook(id, payload)),
     createNotebook: (payload: any) => dispatch(createNotebook(payload)),
     deleteNotebook: (id: string) => dispatch(deleteNotebook(id)),
   };
@@ -244,4 +255,4 @@ export function useNotebook() {
 export const useNotebookId = () => {
   const { notebook } = useSelector(notebookSelector);
   return notebook?.id;
-}
+};

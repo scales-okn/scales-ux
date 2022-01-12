@@ -8,7 +8,6 @@ import { reducer as notificationsReducer } from "reapop";
 
 // Reducers
 import auth from "./auth";
-import info from "./info";
 import rings from "./rings";
 import notebooks from "./notebooks";
 import notebook from "./notebook";
@@ -19,7 +18,6 @@ import { authMiddleware } from "./auth";
 
 const reducers = combineReducers({
   auth,
-  info,
   rings,
   notebooks,
   notebook,

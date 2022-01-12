@@ -1,50 +1,54 @@
-import React, { FunctionComponent, ReactNode, useState } from "react";
-
+import React, { FunctionComponent, useState, useEffect } from "react";
 import { Dropdown } from "react-bootstrap";
-
-import { useEffect } from "react";
 
 type FilterColumn = {
   key: string;
   nicename: string;
 };
 
+type FilterTypeProps = {
+  filter: any;
+  filters: any;
+  setFilter: any;
+  getFiltersNormalized: any;
+  getFilterOptionsByKey: any;
+}
 
-const FilterTypeDropDown: FunctionComponent<any> = (props) => {
-  const { filterInput, filterInputs,
-    setFilterInputs,
+const FilterTypeDropDown: FunctionComponent<FilterTypeProps> = (props) => {
+  const { filter,
+    filters,
     getFiltersNormalized,
     getFilterOptionsByKey,
-    setFilterInput, } = props;
-  const { id, type } = filterInput;
+    setFilter } = props;
+  const { id, type } = filter;
 
   const filterOptions = getFilterOptionsByKey(type);
 
-  const [filter, setFilter] = useState<FilterColumn>({
+  const [filterInput, setFilterInput] = useState<FilterColumn>({
     key: type,
     nicename: filterOptions?.nicename,
   });
 
   useEffect(() => {
     try {
-      if (filter) {
-        setFilterInput({ ...filterInput, type: filter.key });
+      if (filterInput) {
+        setFilter({ ...filter, type: filterInput.key });
       }
     } catch (error) {
       console.log(error);
     }
-  }, [filter]);
+  }, [filterInput]);
 
-  const filtersToRender = getFiltersNormalized()?.map((filter) => {
-    const { allowMultiple, key } = filter;
+  const filtersToRender = getFiltersNormalized()?.map((filterInput) => {
+    const { allowMultiple, key } = filterInput;
     if (
       allowMultiple === false &&
-      filterInputs.some((filterInput: any) => filterInput.type === key)
+      filters.some((filter: any) => filter.type === key)
     ) {
-      return { ...filter, disabled: true };
+      return { ...filterInput, disabled: true };
     }
 
-    return filter;
+    return filterInput;
   });
 
   return (
@@ -54,7 +58,7 @@ const FilterTypeDropDown: FunctionComponent<any> = (props) => {
         variant="link"
         className="shadow-none text-decoration-none small"
       >
-        {filter?.nicename || ""}
+        {filterInput?.nicename || ""}
       </Dropdown.Toggle>
 
       <Dropdown.Menu>
@@ -65,7 +69,7 @@ const FilterTypeDropDown: FunctionComponent<any> = (props) => {
           <React.Fragment key={key}>
             <Dropdown.Divider />
             <Dropdown.Item
-              onClick={() => setFilter({ key, nicename })}
+              onClick={() => setFilterInput({ key, nicename })}
               disabled={disabled}
             >
               <Dropdown.ItemText className={disabled ? "text-muted" : ""}>

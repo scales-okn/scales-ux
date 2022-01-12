@@ -4,32 +4,36 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faPlus } from "@fortawesome/free-solid-svg-icons";
 import Filter from "./Filter";
 import uniqid from "uniqid";
+import { usePanel } from "../../store/panels";
 
-// @ts-ignore
-const Filters: FunctionComponent = ({ selectedRing, fetchResults, filterInputs, setFilterInputs }) => {
+type FiltersProps = {
+  panelId: string;
+}
+
+const Filters: FunctionComponent<FiltersProps> = ({ panelId }) => {
+  const { filters = [], setPanelFilters, getPanelResults } = usePanel(panelId);
 
   return (
     <Row className="notebook-filters bg-white p-3 pt-4">
       <Col>
-        {filterInputs.map((filterInput, key) => (
-          //@ts-ignore
-          <Filter key={key} filterInput={filterInput} filterInputs={filterInputs} selectedRing={selectedRing} setFilterInputs={setFilterInputs} fetchResults={fetchResults} />
+        {filters?.map((filter, key) => (
+          <Filter key={key} panelId={panelId} filter={filter} />
         ))}
         <div className="d-inline-block">
           <Button
             variant="outline-dark"
             className="me-2"
             onClick={() => {
-              setFilterInputs([...filterInputs, { id: uniqid(), value: "" }]);
+              setPanelFilters([...(filters || []), { id: uniqid(), value: "" }]);
             }}
           >
             <FontAwesomeIcon icon={faPlus} />
           </Button>
-          {filterInputs.length > 0 ? (
+          {filters?.length > 0 ? (
             <Button
               variant="primary"
               className="text-white"
-              onClick={() => fetchResults(selectedRing, filterInputs)}
+              onClick={() => getPanelResults(filters)}
             >
               Update Results
             </Button>
@@ -38,7 +42,7 @@ const Filters: FunctionComponent = ({ selectedRing, fetchResults, filterInputs, 
           )}
         </div>
       </Col>
-    </Row>
+    </Row >
   );
 };
 

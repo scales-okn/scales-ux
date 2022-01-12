@@ -5,6 +5,7 @@ import NotificationsSystem, {
   dismissNotification,
   setUpNotifications,
   notify,
+  Status,
 } from "reapop";
 
 export const useUnknownErrorNotificationMessage =
@@ -49,5 +50,14 @@ const Notifications: React.FC = () => {
     </div>
   );
 };
+
+
+export const useNotify = () => {
+  const dispatch = useDispatch();
+  return {
+    notify: (message: string, status: Status) =>
+      dispatch(notify(message, status)),
+  }
+}
 
 export default Notifications;

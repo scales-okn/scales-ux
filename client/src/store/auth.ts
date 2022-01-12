@@ -72,6 +72,7 @@ export const { signIn, signInSuccess, signInFailure, signOut } =
 // Selectors
 export const authSelector = (state: RootState) => state.auth;
 export const userSelector = (state: RootState) => state.auth?.user;
+export const tokenSelector = (state: RootState) => state.auth?.token;
 
 // The reducer
 export default authSlice.reducer;
@@ -122,16 +123,18 @@ export const logout = () => {
   };
 };
 
-export const authorizationHeader = (token: string) => {
-  return {
-    Authorization: `Bearer ${token}`,
+export const authorizationHeader = (token = "") => {
+  if (!token) {
+    return {};
   }
+
+  return { Authorization: `Bearer ${token}` };
 };
 
 // Hooks
 export const useAuthHeader = () => {
   const { token } = useSelector(authSelector);
-  
+
   return authorizationHeader(token);
 };
 

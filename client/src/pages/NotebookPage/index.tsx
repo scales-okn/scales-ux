@@ -4,7 +4,8 @@ import Notebook from "../../components/Notebook";
 import PageLayout from "../../components/PageLayout";
 import Loader from "../../components/Loader";
 import { useDispatch, useSelector } from "react-redux";
-import { fetchNotebook, notebookSelector, clearNotebook } from "../../store/notebook";
+import { fetchNotebook, notebookSelector, notebookActions } from "../../store/notebook";
+import { panelsActions } from "../../store/panels";
 
 type Params = {
   notebookId: string | null;
@@ -22,12 +23,11 @@ const NotebookPage: FunctionComponent = () => {
   const dispatch = useDispatch();
 
   useEffect(() => {
-    if (notebookId === "new") {
-      dispatch(clearNotebook());
-      return;
+    dispatch(notebookActions.clearNotebook());
+    dispatch(panelsActions.clearPanels());
+    if (notebookId !== "new") {
+      dispatch(fetchNotebook(notebookId));
     }
-
-    dispatch(fetchNotebook(notebookId));
   }, [notebookId]);
 
   return (

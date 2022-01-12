@@ -1,4 +1,4 @@
-import React, { FunctionComponent, useState } from "react";
+import React, { FunctionComponent, useState, useEffect } from "react";
 import { Col, Container, Row, Button, Form } from "react-bootstrap";
 import Loader from "../Loader";
 import Panels from "../Panels";
@@ -7,12 +7,27 @@ import { notebookSelector, updateNotebook, deleteNotebook, createNotebook } from
 import { useDispatch } from "react-redux";
 import { useHistory } from "react-router-dom";
 import "./Notebook.scss";
+import { useRings } from "../../store/rings";
+import AddPanel from "../Panels/AddPanel";
+import { getPanels } from "../../store/panels";
 
 const Notebook: FunctionComponent = () => {
-  const { notebook, loadingNotebook, savingNotebook, deletingNotebook } = useSelector(notebookSelector);
-  const [notebookTitle, setNotebookTitle] = useState(notebook?.title || null);
+  const { getRings } = useRings();
+  const { notebook, loadingNotebook, savingNotebook, deletingNotebook, hasErrors } = useSelector(notebookSelector);
+  const [notebookTitle, setNotebookTitle] = useState(notebook?.title || "");
+  const [notebookTitleIsValid, setNotebookTitleIsValid] = useState(true);
   const dispatch = useDispatch();
   const history = useHistory();
+
+  useEffect(() => {
+    getRings();
+  }, []);
+
+  useEffect(() => {
+    if (notebook) {
+      dispatch(getPanels(notebook.id));
+    }
+  }, [notebook]);
 
   return (
     <Loader animation="border" isVisible={loadingNotebook}>
@@ -24,7 +39,7 @@ const Notebook: FunctionComponent = () => {
                 size="lg"
                 type="text"
                 placeholder="Your Notebook Title Here"
-                required
+                isInvalid={!notebookTitleIsValid}
                 onChange={(event) => {
                   setNotebookTitle(event.target.value);
                 }}
@@ -60,7 +75,15 @@ const Notebook: FunctionComponent = () => {
               {!notebook && <Button
                 className="text-white float-end"
                 variant="primary"
-                onClick={() => dispatch(createNotebook({ title: notebookTitle }))}
+                onClick={() => {
+                  if (!notebookTitle) {
+                    setNotebookTitleIsValid(false);
+                  } else {
+                    setNotebookTitleIsValid(true);
+                    dispatch(createNotebook({ title: notebookTitle }))
+                  }
+                }
+                }
                 disabled={savingNotebook}
               >
                 {savingNotebook ? "Loading…" : "Create"}
@@ -68,9 +91,10 @@ const Notebook: FunctionComponent = () => {
             </Col>
           </Row>
         </Container>
-        <Panels />
+        {notebook && <Panels notebookId={notebook?.id} />}
+        <AddPanel />
       </>
-    </Loader>
+    </Loader >
   );
 };
 

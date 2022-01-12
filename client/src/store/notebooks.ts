@@ -20,17 +20,17 @@ const notebooksSlice = createSlice({
   name: "notebooks",
   initialState,
   reducers: {
-    getNotebooks: (state) => ({
+    fetchNotebooks: (state) => ({
       ...state,
-      loadingNotebooks: true
+      loadingNotebooks: true,
     }),
-    getNotebooksSuccess: (state, { payload }) => ({
+    fetchNotebooksSuccess: (state, { payload }) => ({
       ...state,
       notebooks: payload,
       loadingNotebooks: false,
       hasErrors: false,
     }),
-    getNotebooksFailure: (state) => ({
+    fetchNotebooksFailure: (state) => ({
       ...state,
       loadingNotebooks: false,
       hasErrors: true,
@@ -39,11 +39,10 @@ const notebooksSlice = createSlice({
 });
 
 // Three actions generated from the slice
-export const { getNotebooks, getNotebooksSuccess, getNotebooksFailure } =
-  notebooksSlice.actions;
+export const notebooksActions = notebooksSlice.actions;
 
 // Selectors
-export const notebooksSelector = (state: RootState) => state.notebooks;
+export const notebooksSelector = (state: RootState) => state?.notebooks;
 
 // The reducer
 export default notebooksSlice.reducer;
@@ -53,7 +52,7 @@ export function fetchNotebooks() {
     const { token } = authSelector(getState());
     const authHeader = authorizationHeader(token);
 
-    dispatch(getNotebooks());
+    dispatch(notebooksActions.fetchNotebooks());
 
     try {
       const response = await fetch(
@@ -68,17 +67,23 @@ export function fetchNotebooks() {
       );
       const { data } = await response.json();
 
-      dispatch(getNotebooksSuccess(data.notebooks));
+      dispatch(notebooksActions.fetchNotebooksSuccess(data.notebooks));
     } catch (error) {
       console.log(error);
-      dispatch(getNotebooksFailure());
+      dispatch(notebooksActions.fetchNotebooksFailure());
     }
   };
 }
 
-export const useFetchNotebooks = () => {
+export const useNotebooks = () => {
+  const { loadingNotebooks, hasErrors, notebooks } =
+    useSelector(notebooksSelector);
   const dispatch = useDispatch();
+
   return {
+    loadingNotebooks,
+    hasErrors,
+    notebooks,
     fetchNotebooks: () => dispatch(fetchNotebooks()),
-  }
-}
+  };
+};

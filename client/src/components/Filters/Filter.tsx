@@ -1,51 +1,46 @@
 import React, { FunctionComponent, useState } from "react";
 import { FormControl, InputGroup } from "react-bootstrap";
 import DateTimeRangePicker from "@wojtekmaj/react-datetimerange-picker";
-
 import FilterTypeDropDown from "./FitlerTypeDropDown";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faTimesCircle } from "@fortawesome/free-regular-svg-icons";
 import { AsyncTypeahead } from "react-bootstrap-typeahead";
 import uniqid from "uniqid";
-import { infoSelector } from "../../store/info";
-import { Form } from "react-bootstrap";
-import { useSelector, useDispatch } from "react-redux";
+import { usePanel } from "../../store/panels";
+import { useRing } from "../../store/rings";
+import { DATE_FORMAT } from "../../constants";
+import { useNotify } from "../../components/Notifications";
 
-export type FilterInput = {
+export type Filter = {
   id: string;
   value: string | number;
   type: string;
 };
 
 type Props = {
-  filterInput: FilterInput;
-  filterInputs: Array<FilterInput>;
-  selectedRing: any;
-  setFilterInputs: any;
-  fetchResults: any;
+  filter: Filter;
+  panelId: string;
 };
 
-const Filter: FunctionComponent<Props> = (props) => {
-  const { filterInput, filterInputs, selectedRing, setFilterInputs, fetchResults } = props;
-  const { id, type, value } = filterInput;
-  const [autoCompleteSuggestions, setAutoCompleteSuggestions] = useState([]);
-  const [isLoading, setIsLoading] = useState(false);
+const Filter: FunctionComponent<Props> = ({ panelId, filter }) => {
+  const { panel, filters, setPanelFilters, getPanelResults } = usePanel(panelId);
+  const { ring, info } = useRing(panel.ringId);
+  const { type, id, value } = filter;
+  const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [autoCompleteSuggestions, setAutoCompleteSuggestions] = useState<string[]>([]);
+  const [dateValue, setDateValue] = useState<string>("");
+  const { notify } = useNotify();
 
-  const [dateValue, setDateValue] = useState([new Date(), new Date()]);
-  const { info, hasErrors, loadingInfo } = useSelector(infoSelector);
-  const { filters = [], columns = [], defaultEntity } = info;
-
-  const setFilterInput = (filterInput: FilterInput) => {
+  const setFilter = (filter: Filter) => {
     try {
-      setFilterInputs((prevFilterInputs: Array<FilterInput>) => {
-        return [
-          ...prevFilterInputs.filter(
-            (prevFilterInput: FilterInput) =>
-              prevFilterInput.id !== filterInput.id
-          ),
-          { ...filterInput },
-        ];
-      });
+      const newFilters = [
+        ...filters.filter(
+          (prevFilterInput: Filter) =>
+            prevFilterInput.id !== filter.id
+        ),
+        { ...filter },
+      ];
+      setPanelFilters(newFilters);
     } catch (error) {
       console.log(error);
     }
@@ -53,8 +48,8 @@ const Filter: FunctionComponent<Props> = (props) => {
 
   const getFilterInputById = (id: string) => {
     try {
-      return filterInputs?.find(
-        (filterInput: FilterInput) => filterInput.id === id
+      return filters?.find(
+        (filter: Filter) => filter.id === id
       );
     } catch (error) {
       console.log(error);
@@ -63,7 +58,7 @@ const Filter: FunctionComponent<Props> = (props) => {
 
   const getFilterColumnByKey = (key: string) => {
     try {
-      return columns.find((column) => column.key == key);
+      return info?.columns?.find((column) => column.key == key);
     } catch (error) {
       console.log(error);
     }
@@ -71,7 +66,7 @@ const Filter: FunctionComponent<Props> = (props) => {
 
   const getFilterOptionsByKey = (key) => {
     try {
-      return filters.find((filter) => filter.includes(key))[1];
+      return info?.filters?.find((filter) => filter.includes(key))[1];
     } catch (error) {
       console.log(error);
     }
@@ -79,14 +74,13 @@ const Filter: FunctionComponent<Props> = (props) => {
 
   const getFiltersNormalized = () => {
     try {
-      return filters
+      return info?.filters
         .map((filter) => ({ key: filter[0], ...filter[1] }))
         .sort((a, b) => a.key.localeCompare(b.key));
     } catch (error) {
       console.log(error);
     }
   };
-
 
   const filterColumn = getFilterColumnByKey(type);
   const filterOptions = getFilterOptionsByKey(type);
@@ -95,16 +89,20 @@ const Filter: FunctionComponent<Props> = (props) => {
     setIsLoading(true);
     try {
       const response = await fetch(
-        `${process.env.REACT_APP_BFF_PROXY_ENDPOINT_URL}/autocomplete/${selectedRing.rid}/1/${defaultEntity}/${type}?query=${query}`
+        `${process.env.REACT_APP_BFF_PROXY_ENDPOINT_URL}/autocomplete/${ring.rid}/1/${info?.defaultEntity}/${type}?query=${query}`
       );
-      const data = await response.json();
-
-      console.log(data);
-
-      setAutoCompleteSuggestions(data);
-      setIsLoading(false);
+      if (response.status === 200) {
+        const data = await response.json();
+        setAutoCompleteSuggestions(data);
+        setIsLoading(false);
+      } else {
+        notify("Could not fetch autocomplete suggestions", "error");
+      }
     } catch (error) {
-      // TODO: Implement Error handling
+      console.log(error);
+      notify("Could not fetch autocomplete suggestions", "error");
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -134,11 +132,10 @@ const Filter: FunctionComponent<Props> = (props) => {
       case "date":
         return (
           <DateTimeRangePicker
-            format="MM/dd/yyyy"
+            format={DATE_FORMAT}
             onChange={(value) => {
-              console.log(value);
               setDateValue(value);
-              setFilterInput({ ...filterInput, value: value });
+              setFilter({ ...filter, value: value });
             }}
             value={dateValue}
           />
@@ -155,26 +152,26 @@ const Filter: FunctionComponent<Props> = (props) => {
                 labelKey={null}
                 minLength={3}
                 onSearch={(query) =>
-                  fetchAutocompleteSuggestions(filterInput.type, query)
+                  fetchAutocompleteSuggestions(filter.type, query)
                 }
                 options={autoCompleteSuggestions.map(String)}
                 placeholder="Search..."
                 defaultInputValue={value}
                 onBlur={(event) =>
-                  setFilterInput({ ...filterInput, value: event.target.value })
+                  setFilter({ ...filter, value: event.target.value })
                 }
               />
-            ) : filterInput.type === "causeOfAction" ? (
+            ) : filter.type === "causeOfAction" ? (
               filterTypeRange
             ) : (
               <FormControl
                 className="border-end-0"
                 size="sm"
                 onChange={(event) => {
-                  if (!filterInput) {
+                  if (!filter) {
                     return false;
                   }
-                  setFilterInput({ ...filterInput, value: event.target.value });
+                  setFilter({ ...filter, value: event.target.value });
                 }}
                 value={value}
               />
@@ -188,27 +185,24 @@ const Filter: FunctionComponent<Props> = (props) => {
     <div className="d-inline-block me-3">
       <InputGroup className="mb-3">
         <InputGroup.Text className="bg-white">
-
           <FilterTypeDropDown
-            filterInput={filterInput}
+            filter={filter}
             getFilterOptionsByKey={getFilterOptionsByKey}
-            filterInputs={filterInputs}
-            setFilterInputs={setFilterInputs}
+            filters={filters}
             getFiltersNormalized={getFiltersNormalized}
-            setFilterInput={setFilterInput} />
+            setFilter={setFilter} />
         </InputGroup.Text>
         {filterTypeRender(filterOptions?.type, value)}
         <InputGroup.Text
           className="cursor-pointer bg-transparent"
           onClick={async () => {
-            const newFilterInputs = [
-              ...filterInputs.filter(
-                (filterInput: FilterInput) => filterInput.id !== id
+            const newFilters = [
+              ...filters.filter(
+                (filter: Filter) => filter.id !== id
               ),
             ];
-            await setFilterInputs(newFilterInputs);
-
-            fetchResults(selectedRing, newFilterInputs);
+            setPanelFilters(newFilters);
+            getPanelResults(newFilters);
           }}
         >
           <FontAwesomeIcon icon={faTimesCircle} className="text-muted" />

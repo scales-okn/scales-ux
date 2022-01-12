@@ -102,7 +102,7 @@ const database = async () => {
     console.error("Sync Failed:", error);
   }
 
-  // await seeds(sequelize);
+  await seeds(sequelize);
 };
 
 export default database;
