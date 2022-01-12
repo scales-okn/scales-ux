@@ -1,18 +1,18 @@
 import React from "react";
 import ReactDOM from "react-dom";
-import App from "./components/App";
-import store from "./store";
+import { PersistGate } from "redux-persist/integration/react";
+import App from "./App";
+import store, { persistor } from "./store";
 import { Provider } from "react-redux";
 import reportWebVitals from "./reportWebVitals";
-import { SnackbarProvider } from "notistack";
-import "./vendor.scss";
-import "./index.scss";
+import "./styles/vendor.scss"
+import "./styles/global.scss"
 
 ReactDOM.render(
   <Provider store={store}>
-    <SnackbarProvider>
+    <PersistGate loading={null} persistor={persistor}>
       <App />
-    </SnackbarProvider>
+    </PersistGate>
   </Provider>,
   document.getElementById("root")
 );

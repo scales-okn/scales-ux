@@ -45,4 +45,3 @@ router.post("/password/forgot", forgotPassword);
 router.post("/password/reset", resetPassword);
 
 export default router;
-

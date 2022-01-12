@@ -7,6 +7,8 @@ import RingModel from "../models/Ring";
 import LogModel from "../models/Log";
 import logs from "./logs";
 import { seeds } from "./seeds";
+const fs = require("fs");
+const path = require("path");
 
 // @ts-ignore
 export const sequelize = new Sequelize(
@@ -16,8 +18,13 @@ export const sequelize = new Sequelize(
   {
     host: process.env.DB_HOST,
     port: process.env.DB_PORT,
-    sslmode: process.env.DB_SSLMODE,
     dialect: process.env.DB_DIALECT,
+    // dialectOptions: {
+    // //   ssl: {
+    // //     require: true,
+    // //     rejectUnauthorized: false,
+    // //  }
+    // },
     pool: {
       max: 5,
       min: 0,

@@ -12,7 +12,11 @@ export default (sequelize, options) => {
       },
       notebookId: DataTypes.INTEGER,
       ringId: DataTypes.INTEGER,
+      ringVersion: DataTypes.INTEGER,
+      filters: DataTypes.JSON,
+      results: DataTypes.JSON,
       contents: DataTypes.JSON,
+      analysis: DataTypes.JSON,
       deleted: {
         type: DataTypes.BOOLEAN,
         defaultValue: false,

@@ -41,7 +41,7 @@ const app = express();
     });
 
     // Apply limiter to all requests
-    app.use(limiter);
+    // app.use(limiter);
 
     // Passport
     app.use(passport.initialize());

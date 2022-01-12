@@ -1,37 +1,28 @@
 import React, { FunctionComponent, ReactNode } from "react";
-import { useAuthUser, useSignOut } from "react-auth-kit";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faBalanceScale, faSearch } from "@fortawesome/free-solid-svg-icons";
-import {
-  Navbar,
-  Container,
-  Nav,
-  Form,
-  FormControl,
-  Button,
-  NavDropdown,
-  Dropdown,
-} from "react-bootstrap";
+import { useSelector } from "react-redux";
+import { Navbar, Container, Nav, NavDropdown, Dropdown } from "react-bootstrap";
 import Gravatar from "react-gravatar";
 import { LinkContainer } from "react-router-bootstrap";
 import "./PageLayout.scss";
+import { userSelector, logout } from "../../store/auth";
+import { useDispatch } from "react-redux";
 
 type Props = {
   pageTitle?: string;
+  id?: string;
   children: ReactNode;
 };
 
 const PageLayout: FunctionComponent<Props> = (props) => {
-  const auth = useAuthUser();
-  const signOut = useSignOut();
-  const user = auth().user;
+  const { id = "", children, pageTitle } = props;
+  const user = useSelector(userSelector);
+  const dispatch = useDispatch();
   const isAdmin = user.role === "admin";
-  const isUser = user.role === "user";
-
-  console.log(user);
 
   return (
-    <>
+    <div className="app-page" id={props.id}>
       <Navbar bg="white" className="mb-4 py-3">
         <Container>
           <Navbar.Brand>
@@ -75,7 +66,7 @@ const PageLayout: FunctionComponent<Props> = (props) => {
                   >
                     Profile
                   </Dropdown.Item>
-                  <Dropdown.Item onClick={() => signOut()}>
+                  <Dropdown.Item onClick={() => dispatch(logout())}>
                     Sign Out
                   </Dropdown.Item>
                 </Dropdown.Menu>
@@ -88,7 +79,7 @@ const PageLayout: FunctionComponent<Props> = (props) => {
         {props.pageTitle && <h4>{props.pageTitle}</h4>}
         {props.children}
       </Container>
-    </>
+    </div>
   );
 };
 

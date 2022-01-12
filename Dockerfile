@@ -9,7 +9,7 @@ COPY server server
 COPY --from=client-build /app/client/build server/client/build
 RUN cd server && npm install && npm run build
 
-EXPOSE 80
+EXPOSE 8080
 
 CMD ["node", "server/build"]
 

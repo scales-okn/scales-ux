@@ -1,0 +1,40 @@
+@import "variables.scss";
+
+// Reapop
+.reapop__container {}
+.reapop__container--single {}
+.reapop__container--top-left {}
+.reapop__container--top-center {}
+.reapop__container--top-right {}
+.reapop__container--bottom-right {}
+.reapop__container--bottom-center {}
+.reapop__container--bottom-left {}
+
+.reapop__notification
+.reapop__notification--none
+.reapop__notification--info
+.reapop__notification--loading
+.reapop__notification--success
+.reapop__notification--warning
+.reapop__notification--error
+.reapop__notification--buttons-0
+.reapop__notification--buttons-1
+.reapop__notification--buttons-2
+.reapop__notification--dismissible
+
+.reapop__notification-icon {}
+.reapop__notification-image-container {}
+.reapop__notification-image {}
+.reapop__notification-dismiss-icon {}
+.reapop__notification-meta {}
+.reapop__notification-title {}
+.reapop__notification-message {}
+.reapop__notification-buttons {}
+.reapop__notification-button {}
+.reapop__notification-button-text {}
+
+// Import Bootstrap
+@import "../../node_modules/bootstrap/scss/bootstrap.scss";
+
+// Import React Bootstrap Typeahead
+@import "../../node_modules/react-bootstrap-typeahead/css/Typeahead.css";
