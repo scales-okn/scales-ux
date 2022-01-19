@@ -2,14 +2,18 @@ import { createSlice } from "@reduxjs/toolkit";
 import type { RootState, AppDispatch } from "./index";
 import { authSelector, authorizationHeader } from "./auth";
 import { useDispatch, useSelector } from "react-redux";
-export interface Ring {
+export interface IRing {
+  [key: string]: any;
+}
+
+export interface IInfo {
   [key: string]: any;
 }
 interface InitialState {
   loadingRings: boolean;
   loadingRingInfo: boolean;
   hasErrors: boolean;
-  rings: Array<Ring>;
+  rings: Array<IRing>;
 }
 
 export const initialState: InitialState = {
