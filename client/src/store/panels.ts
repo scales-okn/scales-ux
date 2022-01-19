@@ -24,14 +24,36 @@ export interface IPanel {
   filters: Array<FilterInput>;
   results: IResults;
   analysis: any;
+  loadingPanelResults: boolean;
+  collapsed: boolean;
+  resultsCollapsed: boolean;
+  updatingPanel: boolean;
+  hasErrors: boolean;
 }
 
+const PanelInitialState = {
+  loadingPanelResults: false,
+  collapsed: true,
+  resultsCollapsed: true,
+  updatingPanel: false,
+  hasErrors: false,
+}
+
+export interface IAnalysisStatement {
+  [key: string]: any;
+}
+
+const AnalysisStatementInitialState: IAnalysisStatement = {
+}
+
+export interface IAnalysis {
+  [key: string]: any;
+  statements: Array<IAnalysisStatement>;
+}
 interface InitialState {
   loadingPanels: boolean;
   creatingPanel: boolean;
-  updatingPanel: boolean;
   deletingPanel: boolean;
-  loadingPanelResults: boolean;
   hasErrors: boolean;
   panels: Array<IPanel>;
 }
@@ -39,9 +61,7 @@ interface InitialState {
 export const initialState: InitialState = {
   loadingPanels: true,
   creatingPanel: false,
-  updatingPanel: false,
   deletingPanel: false,
-  loadingPanelResults: false,
   hasErrors: false,
   panels: [],
 };
@@ -56,7 +76,10 @@ const panelsSlice = createSlice({
     }),
     getPanelsSuccess: (state, { payload }) => ({
       ...state,
-      panels: payload,
+      panels: payload.map((panel: IPanel) => ({
+        ...PanelInitialState,
+        ...panel,
+      })),
       loadingPanels: false,
       hasErrors: false,
     }),
@@ -71,7 +94,7 @@ const panelsSlice = createSlice({
     }),
     createPanelSuccess: (state, { payload }) => ({
       ...state,
-      panels: [...state.panels, payload],
+      panels: [...state.panels, { ...PanelInitialState, ...payload }],
       creatingPanel: false,
       hasErrors: false,
     }),
@@ -82,24 +105,33 @@ const panelsSlice = createSlice({
     }),
     updatePanel: (state) => ({
       ...state,
-      updatingPanel: true,
+      panels: state.panels.map((panel) => ({
+        ...panel,
+        updatingPanel: true,
+      })),
     }),
     updatePanelSuccess: (state, { payload }) => ({
       ...state,
       panels: state.panels.map((panel) =>
-        panel.id === payload.id ? { ...panel, ...payload } : panel
+        panel.id === payload.id ? { ...panel, ...payload, updatingPanel: false } : panel
       ),
-      updatingPanel: false,
       hasErrors: false,
     }),
     updatePanelFailure: (state) => ({
       ...state,
-      updatingPanel: false,
-      hasErrors: true,
+      panels: state.panels.map((panel) => ({
+        ...panel,
+        updatingPanel: false,
+        hasErrors: true,
+      })),
+
     }),
     deletePanel: (state) => ({
       ...state,
-      deletingPanel: true,
+      panels: state.panels.map((panel) => ({
+        ...panel,
+        deletingPanel: true,
+      })),
     }),
     deletePanelSuccess: (state, { payload }) => ({
       ...state,
@@ -109,27 +141,36 @@ const panelsSlice = createSlice({
     }),
     deletePanelFailure: (state) => ({
       ...state,
+      panels: state.panels.map((panel) => ({
+        ...panel,
+        deletingPanel: false,
+        hasErrors: true,
+      })),
       deletingPanel: false,
       hasErrors: true,
     }),
     getPanelResults: (state) => ({
       ...state,
-      loadingPanelResults: true,
+      panels: state.panels.map((panel) => ({
+        ...panel,
+        loadingPanelResults: true,
+      })),
     }),
     getPanelResultsSuccess: (state, { payload }) => ({
       ...state,
-      loadingPanelResults: false,
-      hasErrors: false,
       panels: state.panels.map((panel) =>
         panel.id === payload.panelId
-          ? { ...panel, results: payload.results }
+          ? { ...panel, results: payload.results, loadingPanelResults: false, hasErrors: false }
           : panel
       ),
     }),
     getPanelResultsFailure: (state) => ({
       ...state,
-      loadingPanelResults: false,
-      hasErrors: true,
+      panels: state.panels.map((panel) => ({
+        ...panel,
+        loadingPanelResults: false,
+        hasErrors: true,
+      })),
     }),
     setPanelFilters: (state, { payload }) => ({
       ...state,
@@ -154,6 +195,18 @@ const panelsSlice = createSlice({
       panels: [],
       loadingPanels: false,
     }),
+    setPanelCollapsed: (state, { payload }) => ({
+      ...state,
+      panels: state.panels.map((panel) =>
+        panel.id === payload.panelId ? { ...panel, collapsed: payload.collapsed } : panel
+      ),
+    }),
+    setPanelResultsCollapsed: (state, { payload }) => ({
+      ...state,
+      panels: state.panels.map((panel) =>
+        panel.id === payload.panelId ? { ...panel, resultsCollapsed: payload.collapsed } : panel
+      ),
+    }),
   },
 });
 
@@ -175,6 +228,7 @@ export const panelFiltersSelector = (
 export const panelResultsSelector = (state: RootState, panelId: string) => {
   return state?.panels?.panels.find((panel) => panel.id === panelId)?.results;
 };
+
 
 // The reducer
 export default panelsSlice.reducer;
@@ -366,10 +420,8 @@ export const usePanels = () => {
   const {
     panels,
     loadingPanels,
-    loadingPanelResults,
     hasErrors,
     creatingPanel,
-    updatingPanel,
     deletingPanel,
   } = useSelector(panelsSelector);
   const dispatch = useDispatch();
@@ -378,17 +430,12 @@ export const usePanels = () => {
     panelsActions,
     panels,
     loadingPanels,
-    loadingPanelResults,
     hasErrors,
     creatingPanel,
-    updatingPanel,
     deletingPanel,
     getPanels: (notebookId) => dispatch(getPanels(notebookId)),
     createPanel: (payload: any = {}) => dispatch(createPanel(payload)),
-    updatePanel: (panelId, payload) => dispatch(updatePanel(panelId, payload)),
     deletePanel: (panelId) => dispatch(deletePanel(panelId)),
-    getPanelResults: (panelId, filters, page = 0, batchSize = 10) =>
-      dispatch(getPanelResults(panelId, filters, page, batchSize)),
   };
 };
 
@@ -402,7 +449,7 @@ export const usePanel = (panelId: string) => {
   const filters = useSelector((state: RootState) =>
     panelFiltersSelector(state, panelId)
   );
-  const { loadingPanelResults } = useSelector(panelsSelector);
+  const { loadingPanelResults, resultsCollapsed, collapsed, updatingPanel, hasErrors } = panel;
   const dispatch = useDispatch();
 
   return {
@@ -410,6 +457,14 @@ export const usePanel = (panelId: string) => {
     results,
     filters,
     loadingPanelResults,
+    resultsCollapsed,
+    collapsed,
+    updatingPanel,
+    hasErrors,
+    setPanelCollapsed: (collapsed: boolean) =>
+      dispatch(panelsActions.setPanelCollapsed({ panelId, collapsed })),
+    setPanelResultsCollapsed: (collapsed: boolean) =>
+      dispatch(panelsActions.setPanelResultsCollapsed({ panelId, collapsed })),
     setPanelFilters: (filters: any = {}) => {
       dispatch(panelsActions.setPanelFilters({ panelId, filters }));
     },

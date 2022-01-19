@@ -52,7 +52,7 @@ const Notebook: FunctionComponent = () => {
               {notebook && <>
                 <Button
                   className="text-white float-end"
-                  variant="primary"
+                  variant="success"
                   onClick={() => dispatch(updateNotebook(notebook?.id, { title: notebookTitle }))}
                   disabled={savingNotebook}
                 >

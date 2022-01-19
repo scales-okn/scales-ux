@@ -14,35 +14,33 @@ const Filters: FunctionComponent<FiltersProps> = ({ panelId }) => {
   const { filters = [], setPanelFilters, getPanelResults } = usePanel(panelId);
 
   return (
-    <Row className="notebook-filters bg-white p-3 pt-4">
-      <Col>
-        {filters?.map((filter, key) => (
-          <Filter key={key} panelId={panelId} filter={filter} />
-        ))}
-        <div className="d-inline-block">
+    <div className="notebook-filters bg-white p-3 pt-4 mx-0">
+      {filters?.map((filter, key) => (
+        <Filter key={key} panelId={panelId} filter={filter} />
+      ))}
+      <div className="d-inline-block">
+        <Button
+          variant="outline-dark"
+          className="me-2"
+          onClick={() => {
+            setPanelFilters([...(filters || []), { id: uniqid(), value: "" }]);
+          }}
+        >
+          <FontAwesomeIcon icon={faPlus} />
+        </Button>
+        {filters?.length > 0 ? (
           <Button
-            variant="outline-dark"
-            className="me-2"
-            onClick={() => {
-              setPanelFilters([...(filters || []), { id: uniqid(), value: "" }]);
-            }}
+            variant="primary"
+            className="text-white"
+            onClick={() => getPanelResults(filters)}
           >
-            <FontAwesomeIcon icon={faPlus} />
+            Update Results
           </Button>
-          {filters?.length > 0 ? (
-            <Button
-              variant="primary"
-              className="text-white"
-              onClick={() => getPanelResults(filters)}
-            >
-              Update Results
-            </Button>
-          ) : (
-            <small>Add a filter</small>
-          )}
-        </div>
-      </Col>
-    </Row >
+        ) : (
+          <small>Add a filter</small>
+        )}
+      </div>
+    </div >
   );
 };
 
