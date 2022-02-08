@@ -35,7 +35,7 @@ const persistConfig = {
 const store = configureStore({
   reducer: persistReducer(persistConfig, reducers),
   devTools: process.env.NODE_ENV !== "production",
-  middleware: [thunk],
+  middleware: [thunk, authMiddleware],
 });
 
 export const persistor = persistStore(store);

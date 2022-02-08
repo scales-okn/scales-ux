@@ -14,16 +14,31 @@ export type FilterInput = {
   type: string;
 };
 
-export interface IResults {
+export interface IPanelResults {
   [key: string]: any;
 }
+
+export interface IPanelAnalysis {
+  [key: string]: any;
+  statements: Array<IPanelAnalysisStatement>;
+}
+
+export interface IPanelAnalysisStatement {
+  id: string;
+  statement: string;
+  [key: string]: any;
+}
+
+const AnalysisInitialState: IPanelAnalysis = {
+  statements: [],
+};
 export interface IPanel {
   [key: string]: any;
   ringId: number;
   selectedRing: number;
   filters: Array<FilterInput>;
-  results: IResults;
-  analysis: any;
+  results: IPanelResults;
+  analysis: IPanelAnalysis;
   loadingPanelResults: boolean;
   collapsed: boolean;
   resultsCollapsed: boolean;
@@ -37,19 +52,10 @@ const PanelInitialState = {
   resultsCollapsed: true,
   updatingPanel: false,
   hasErrors: false,
-}
-
-export interface IAnalysisStatement {
-  [key: string]: any;
-}
-
-const AnalysisStatementInitialState: IAnalysisStatement = {
-}
-
-export interface IAnalysis {
-  [key: string]: any;
-  statements: Array<IAnalysisStatement>;
-}
+  analysis: {
+    ...AnalysisInitialState,
+  },
+};
 interface InitialState {
   loadingPanels: boolean;
   creatingPanel: boolean;
@@ -74,15 +80,20 @@ const panelsSlice = createSlice({
       ...state,
       loadingPanels: true,
     }),
-    getPanelsSuccess: (state, { payload }) => ({
-      ...state,
-      panels: payload.map((panel: IPanel) => ({
-        ...PanelInitialState,
-        ...panel,
-      })),
-      loadingPanels: false,
-      hasErrors: false,
-    }),
+    getPanelsSuccess: (state, { payload }) => {
+      return {
+        ...state,
+        loadingPanels: false,
+        hasErrors: false,
+        panels: payload
+          .map((panel) => ({
+            ...PanelInitialState,
+            ...state.panels.find((p) => p.id == panel.id),
+            ...panel,
+          }))
+          .reverse(),
+      };
+    },
     getPanelsFailure: (state) => ({
       ...state,
       loadingPanels: false,
@@ -103,28 +114,28 @@ const panelsSlice = createSlice({
       creatingPanel: false,
       hasErrors: true,
     }),
-    updatePanel: (state) => ({
+    updatePanel: (state, { payload }) => ({
       ...state,
-      panels: state.panels.map((panel) => ({
-        ...panel,
-        updatingPanel: true,
-      })),
+      panels: state.panels.map((panel) =>
+        panel.id === payload.panelId ? { ...panel, updatingPanel: true } : panel
+      ),
     }),
     updatePanelSuccess: (state, { payload }) => ({
       ...state,
       panels: state.panels.map((panel) =>
-        panel.id === payload.id ? { ...panel, ...payload, updatingPanel: false } : panel
+        panel.id === payload.id
+          ? { ...panel, ...payload, updatingPanel: false }
+          : panel
       ),
       hasErrors: false,
     }),
-    updatePanelFailure: (state) => ({
+    updatePanelFailure: (state, { payload }) => ({
       ...state,
-      panels: state.panels.map((panel) => ({
-        ...panel,
-        updatingPanel: false,
-        hasErrors: true,
-      })),
-
+      panels: state.panels.map((panel) =>
+        panel.id === payload.panelId
+          ? { ...panel, updatingPanel: false, hasErrors: true }
+          : panel
+      ),
     }),
     deletePanel: (state) => ({
       ...state,
@@ -149,28 +160,38 @@ const panelsSlice = createSlice({
       deletingPanel: false,
       hasErrors: true,
     }),
-    getPanelResults: (state) => ({
+    getPanelResults: (state, { payload }) => ({
       ...state,
-      panels: state.panels.map((panel) => ({
-        ...panel,
-        loadingPanelResults: true,
-      })),
+      panels: state.panels.map((panel) =>
+        panel.id === payload.panelId
+          ? { ...panel, loadingPanelResults: true }
+          : panel
+      ),
     }),
     getPanelResultsSuccess: (state, { payload }) => ({
       ...state,
       panels: state.panels.map((panel) =>
         panel.id === payload.panelId
-          ? { ...panel, results: payload.results, loadingPanelResults: false, hasErrors: false }
+          ? {
+            ...panel,
+            results: payload.results,
+            loadingPanelResults: false,
+            hasErrors: false,
+          }
           : panel
       ),
     }),
-    getPanelResultsFailure: (state) => ({
+    getPanelResultsFailure: (state, { payload }) => ({
       ...state,
-      panels: state.panels.map((panel) => ({
-        ...panel,
-        loadingPanelResults: false,
-        hasErrors: true,
-      })),
+      panels: state.panels.map((panel) =>
+        panel.id === payload.panelId
+          ? {
+            ...panel,
+            loadingPanelResults: false,
+            hasErrors: true,
+          }
+          : panel
+      ),
     }),
     setPanelFilters: (state, { payload }) => ({
       ...state,
@@ -198,13 +219,36 @@ const panelsSlice = createSlice({
     setPanelCollapsed: (state, { payload }) => ({
       ...state,
       panels: state.panels.map((panel) =>
-        panel.id === payload.panelId ? { ...panel, collapsed: payload.collapsed } : panel
+        panel.id === payload.panelId
+          ? { ...panel, collapsed: payload.collapsed }
+          : panel
       ),
     }),
     setPanelResultsCollapsed: (state, { payload }) => ({
       ...state,
       panels: state.panels.map((panel) =>
-        panel.id === payload.panelId ? { ...panel, resultsCollapsed: payload.collapsed } : panel
+        panel.id === payload.panelId
+          ? { ...panel, resultsCollapsed: payload.collapsed }
+          : panel
+      ),
+    }),
+    setPanelDescription: (state, { payload }) => ({
+      ...state,
+      panels: state.panels.map((panel) =>
+        panel.id === payload.panelId
+          ? { ...panel, description: payload.description }
+          : panel
+      ),
+    }),
+    setPanelAnalysisStatement: (state, { payload }) => ({
+      ...state,
+      panels: state.panels.map((panel) =>
+        panel.id === payload.panelId
+          ? {
+            ...panel,
+            analysis: { ...panel.analysis, statement: payload.statement },
+          }
+          : panel
       ),
     }),
   },
@@ -214,21 +258,22 @@ const panelsSlice = createSlice({
 export const panelsActions = panelsSlice.actions;
 
 // Selectors
-export const panelsSelector = (state: RootState) => state?.panels;
+export const panelsSelector = (state: RootState, notebookId) => ({
+  ...state.panels,
+  panels: state.panels.panels.filter((panel) => panel.notebookId == notebookId),
+});
 export const panelSelector = (state: RootState, panelId: string) => {
   return state?.panels?.panels?.find((panel) => panel.id === panelId);
 };
-export const panelFiltersSelector = (
-  state: RootState,
-  panelId: string
-) => {
-  return state?.panels?.panels?.find((panel) => panel.id === panelId)
-    ?.filters;
+export const panelFiltersSelector = (state: RootState, panelId: string) => {
+  return state?.panels?.panels?.find((panel) => panel.id === panelId)?.filters;
 };
 export const panelResultsSelector = (state: RootState, panelId: string) => {
   return state?.panels?.panels.find((panel) => panel.id === panelId)?.results;
 };
-
+export const panelAnalysisSelector = (state: RootState, panelId: string) => {
+  return state?.panels?.panels.find((panel) => panel.id === panelId)?.analysis;
+};
 
 // The reducer
 export default panelsSlice.reducer;
@@ -308,7 +353,7 @@ export const updatePanel =
       try {
         const { token } = authSelector(getState());
         const authHeader = authorizationHeader(token);
-        dispatch(panelsActions.updatePanel());
+        dispatch(panelsActions.updatePanel({ panelId }));
 
         const response = await fetch(
           `${process.env.REACT_APP_BFF_API_ENDPOINT_URL}/panels/${panelId}`,
@@ -328,10 +373,10 @@ export const updatePanel =
           dispatch(panelsActions.updatePanelSuccess(data.panel));
         } else {
           dispatch(notify(message, "error"));
-          dispatch(panelsActions.updatePanelFailure());
+          dispatch(panelsActions.updatePanelFailure({ panelId }));
         }
       } catch (error) {
-        dispatch(panelsActions.updatePanelFailure());
+        dispatch(panelsActions.updatePanelFailure({ panelId }));
       }
     };
 
@@ -369,7 +414,6 @@ export const deletePanel =
 export const getPanelResults =
   (panelId, filters = [], page = 0, batchSize = 10) =>
     async (dispatch: AppDispatch, getState) => {
-
       try {
         const { token } = authSelector(getState());
         const authHeader = authorizationHeader(token);
@@ -377,7 +421,7 @@ export const getPanelResults =
         const { filters, ringId } = panel;
         // @ts-ignore
         const { rid, info, version } = ringSelector(getState(), ringId);
-        dispatch(panelsActions.getPanelResults());
+        dispatch(panelsActions.getPanelResults({ panelId }));
 
         const response = await fetch(
           appendQuery(
@@ -406,24 +450,22 @@ export const getPanelResults =
           );
         } else {
           dispatch(notify("Error fetching results", "error"));
-          dispatch(panelsActions.getPanelResultsFailure());
+          dispatch(panelsActions.getPanelResultsFailure({ panelId }));
         }
       } catch (error) {
         console.log(error);
         dispatch(notify("Error fetching results", "error"));
-        dispatch(panelsActions.getPanelResultsFailure());
+        dispatch(panelsActions.getPanelResultsFailure({ panelId }));
       }
     };
 
 // Hooks
-export const usePanels = () => {
-  const {
-    panels,
-    loadingPanels,
-    hasErrors,
-    creatingPanel,
-    deletingPanel,
-  } = useSelector(panelsSelector);
+export const usePanels = (notebookId) => {
+  const { panels, loadingPanels, hasErrors, creatingPanel, deletingPanel } =
+    useSelector((state: RootState) => ({
+      ...state.panels,
+      ...panelsSelector(state, notebookId),
+    }));
   const dispatch = useDispatch();
 
   return {
@@ -433,6 +475,7 @@ export const usePanels = () => {
     hasErrors,
     creatingPanel,
     deletingPanel,
+    updatePanel: (panelId, payload) => dispatch(updatePanel(panelId, payload)),
     getPanels: (notebookId) => dispatch(getPanels(notebookId)),
     createPanel: (payload: any = {}) => dispatch(createPanel(payload)),
     deletePanel: (panelId) => dispatch(deletePanel(panelId)),
@@ -449,7 +492,17 @@ export const usePanel = (panelId: string) => {
   const filters = useSelector((state: RootState) =>
     panelFiltersSelector(state, panelId)
   );
-  const { loadingPanelResults, resultsCollapsed, collapsed, updatingPanel, hasErrors } = panel;
+  const analysis = useSelector((state: RootState) =>
+    panelAnalysisSelector(state, panelId)
+  );
+
+  const {
+    loadingPanelResults,
+    resultsCollapsed,
+    collapsed,
+    updatingPanel,
+    hasErrors,
+  } = panel;
   const dispatch = useDispatch();
 
   return {
@@ -461,6 +514,13 @@ export const usePanel = (panelId: string) => {
     collapsed,
     updatingPanel,
     hasErrors,
+    analysis,
+    setPanelAnalysisStatement: (payload: any = {}) =>
+      dispatch(
+        panelsActions.setPanelAnalysisStatement({ panelId, ...payload })
+      ),
+    setPanelDescription: (description) =>
+      dispatch(panelsActions.setPanelDescription({ panelId, description })),
     setPanelCollapsed: (collapsed: boolean) =>
       dispatch(panelsActions.setPanelCollapsed({ panelId, collapsed })),
     setPanelResultsCollapsed: (collapsed: boolean) =>

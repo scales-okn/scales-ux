@@ -15,12 +15,14 @@ import Filters from "../Filters";
 import Loader from "../Loader";
 
 import Dataset from "../Dataset";
-import ContentLoader from 'react-content-loader'
-import type { IPanel } from "../../store/panels";
+
 import { usePanel } from "../../store/panels";
 import { useRing } from "../../store/rings";
 import Analysis from "../Analysis";
 import "./Panel.scss"
+
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faPlus } from "@fortawesome/free-solid-svg-icons";
 
 type ResultsTogglerProps = {
   children: React.ReactNode;
@@ -68,22 +70,33 @@ const AccordionToggleButton = ({ eventKey, callback }: AccordionToggleButtonProp
   );
 }
 
-
 const Panel: FunctionComponent<PanelProps> = ({ panelId }) => {
-  const { filters, panel, deletePanel, updatePanel, results, loadingPanelResults, getPanelResults, collapsed, setPanelResultsCollapsed, resultsCollapsed, setPanelCollapsed } = usePanel(panelId);
-  const [panelDescription, setPanelDescription] = useState(panel?.description || null);
+  const {
+    filters,
+    panel,
+    deletePanel,
+    updatePanel,
+    results,
+    loadingPanelResults,
+    getPanelResults,
+    collapsed,
+    setPanelResultsCollapsed,
+    setPanelDescription,
+    resultsCollapsed,
+    setPanelCollapsed
+  } = usePanel(panelId);
+
   const { ring, info, getRingInfo, loadingRingInfo } = useRing(panel?.ringId);
-  const [statements, setStatements] = useState([]);
 
   useEffect(() => {
-    if (!ring || ring.info) return;
+    if (!ring || ring.info || loadingRingInfo) return;
     getRingInfo(ring.version);
   }, [ring]);
 
   useEffect(() => {
-    if (!info || collapsed) return;
+    if (!info || collapsed || loadingPanelResults) return;
     getPanelResults();
-  }, [collapsed]);
+  }, [collapsed, info]);
 
   if (!panel?.ringId) return <Dataset panelId={panel.id} />;
 
@@ -110,7 +123,6 @@ const Panel: FunctionComponent<PanelProps> = ({ panelId }) => {
           </div>
           <div className="ms-auto">
             <Button variant="outline-danger" size="sm" onClick={() => deletePanel()} className="me-1">Delete</Button>
-            <Button variant="outline-success" size="sm" className="me-1" onClick={() => updatePanel({ description: panelDescription, ringId: ring.id, results, filters })}>Save</Button>
             <AccordionToggleButton eventKey={panel.id} callback={() => setPanelCollapsed(!collapsed)} />
           </div>
         </Card.Header>
@@ -126,7 +138,7 @@ const Panel: FunctionComponent<PanelProps> = ({ panelId }) => {
                 onChange={(event) => {
                   setPanelDescription(event.target.value);
                 }}
-                value={panelDescription}
+                value={panel?.description}
                 style={{
                   fontSize: "0.9rem",
                 }}
@@ -140,7 +152,6 @@ const Panel: FunctionComponent<PanelProps> = ({ panelId }) => {
                 <Loader animation="border" contentHeight={resultsCollapsed ? "60px" : "400px"} isVisible={loadingPanelResults}>
                   <>
                     {results && (
-
                       <Accordion defaultActiveKey={resultsCollapsed === true ? "results-summary" : "results"}>
                         <Accordion.Collapse eventKey="results">
                           <>
@@ -149,7 +160,6 @@ const Panel: FunctionComponent<PanelProps> = ({ panelId }) => {
                                 onPageChange={(page) => {
                                   getPanelResults(
                                     [],
-                                    // @ts-ignore
                                     page
                                   )
                                 }
@@ -185,18 +195,24 @@ const Panel: FunctionComponent<PanelProps> = ({ panelId }) => {
                   </>
                 </Loader>
               </div>
-              <div className="bg-white p-3">
 
-              </div>
               <div className="bg-white p-3">
                 <Col>
-                  <Analysis panel={panel} ring={ring} info={info} />
+                  <Analysis panelId={panelId} ring={ring} info={info} />
                 </Col>
               </div>
 
             </Card.Body>
             <Card.Footer className="d-flex align-items-center py-3">
-              Analysis
+              <Button
+                variant="outline-dark"
+                className="me-2"
+                onClick={() => {
+                  // setPanelFilters([...(filters || []), { id: uniqid(), value: "" }]);
+                }}
+              >
+                <FontAwesomeIcon icon={faPlus} />
+              </Button> Add Analysis
             </Card.Footer>
           </>
         </Accordion.Collapse>

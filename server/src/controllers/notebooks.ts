@@ -171,7 +171,7 @@ export const update = async (req: Request, res: Response) => {
     const payload = permisionsFieldsFilter(req.body, permission);
 
     if (Object.keys(payload).length === 0) {
-      return res.send_notModified("User has not been updated!");
+      return res.send_notModified("Notebook has not been updated!");
     }
 
     const { collaborators, userId } = notebook;
@@ -213,7 +213,7 @@ export const update = async (req: Request, res: Response) => {
       where: { id: notebookId },
     });
 
-    return res.send_ok("Notebook has been updated!", { ...updatedNotebook.dataValues });
+    return res.send_ok(`Notebook ${notebookId} has been updated!`, { ...updatedNotebook.dataValues });
   } catch (error) {
     console.log(error);
 
@@ -233,7 +233,6 @@ export const deleteNotebook = async (req: Request, res: Response) => {
         deleted: true,
       },
       {
-        where: { id: notebookId, userId },
       }
     );
     if (result) {
@@ -256,6 +255,7 @@ export const panels = async (req: Request, res: Response) => {
     const notebook = await sequelize.models.Notebook.findOne({
       where: { id: notebookId },
     });
+
     if (!notebook) {
       return res.send_notFound("Notebook not found!");
     }

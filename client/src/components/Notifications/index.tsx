@@ -51,7 +51,6 @@ const Notifications: React.FC = () => {
   );
 };
 
-
 export const useNotify = () => {
   const dispatch = useDispatch();
   return {

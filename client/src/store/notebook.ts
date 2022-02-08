@@ -172,9 +172,7 @@ export function createNotebook(payload: any) {
   return async (dispatch: AppDispatch, getState) => {
     const { token } = authSelector(getState());
     const authHeader = authorizationHeader(token);
-
     dispatch(notebookActions.createNotebook());
-
     try {
       const response = await fetch(
         `${process.env.REACT_APP_BFF_API_ENDPOINT_URL}/notebooks`,
@@ -205,9 +203,7 @@ export function deleteNotebook(id: string) {
   return async (dispatch: AppDispatch, getState) => {
     const { token } = authSelector(getState());
     const authHeader = authorizationHeader(token);
-
     dispatch(notebookActions.removeNotebook());
-
     try {
       const response = await fetch(
         `${process.env.REACT_APP_BFF_API_ENDPOINT_URL}/notebooks/${id}`,
@@ -239,7 +235,6 @@ export function useNotebook() {
   const { notebook, loadingNotebook, hasErrors } =
     useSelector(notebookSelector);
   const dispatch = useDispatch();
-
   return {
     notebook,
     loadingNotebook,
@@ -256,4 +251,3 @@ export const useNotebookId = () => {
   const { notebook } = useSelector(notebookSelector);
   return notebook?.id;
 };
-

@@ -66,8 +66,7 @@ const authSlice = createSlice({
 });
 
 // Actions
-export const { signIn, signInSuccess, signInFailure, signOut } =
-  authSlice.actions;
+export const authActions = authSlice.actions;
 
 // Selectors
 export const authSelector = (state: RootState) => state.auth;
@@ -80,7 +79,7 @@ export default authSlice.reducer;
 // Asynchronous thunk actions
 export const login = (email: string, password: string) => {
   return async (dispatch: AppDispatch) => {
-    dispatch(signIn());
+    dispatch(authActions.signIn());
     try {
       const response = await fetch(
         `${process.env.REACT_APP_BFF_API_ENDPOINT_URL}/users/login`,
@@ -99,11 +98,13 @@ export const login = (email: string, password: string) => {
         case 200:
           decodedToken = jwt_decode(data.token);
           if (decodedToken) {
-            dispatch(signInSuccess({ ...decodedToken, token: data.token }));
+            dispatch(
+              authActions.signInSuccess({ ...decodedToken, token: data.token })
+            );
           }
           break;
         default:
-          dispatch(signInFailure(errors));
+          dispatch(authActions.signInFailure(errors));
           dispatch(
             notify(message || useUnknownErrorNotificationMessage, "error")
           );
@@ -112,14 +113,14 @@ export const login = (email: string, password: string) => {
     } catch (error) {
       console.log(error);
       dispatch(notify(useUnknownErrorNotificationMessage, "error"));
-      dispatch(signInFailure(error));
+      dispatch(authActions.signInFailure(error));
     }
   };
 };
 
 export const logout = () => {
   return (dispatch: AppDispatch) => {
-    dispatch(signOut());
+    dispatch(authActions.signOut());
   };
 };
 
@@ -157,18 +158,23 @@ export const useAuth = () => {
 export const authMiddleware =
   (store: Store) => (next: Dispatch) => (action: Action) => {
     next(action);
-    if (action.type !== "auth/signOut") {
-      const { exp, iat } = store.getState().auth;
-      if (exp && iat) {
-        const now = new Date().getTime() / 1000;
-        if (now > exp) {
+    if (action.type === "auth/signOut") {
+      setTimeout(
+        () =>
           store.dispatch(
             notify(
               "You've been logged off. Your session has expired.",
               "warning"
             )
-          );
-          store.dispatch(signOut());
+          ),
+        300
+      );
+    } else {
+      const { exp, iat } = store.getState().auth;
+      if (exp && iat) {
+        const now = new Date().getTime() / 1000;
+        if (now > exp) {
+          store.dispatch(authActions.signOut());
         }
       }
     }
