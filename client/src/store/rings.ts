@@ -51,7 +51,7 @@ const ringsSlice = createSlice({
     getRingInfoSuccess: (state, { payload }) => ({
       ...state,
       rings: state.rings.map((ring) =>
-        ring.rid == payload.rid ? { ...ring, info: payload.info } : ring
+        ring.rid == payload.rid ? { ...ring, info: payload.info } : ring,
       ),
       loadingRingInfo: false,
       hasErrors: false,
@@ -90,7 +90,7 @@ export const getRings = () => {
           headers: {
             ...authHeader,
           },
-        }
+        },
       );
       const { data } = await response.json();
 
@@ -114,7 +114,7 @@ export const getRingInfo = (rid: string, version: number) => {
     try {
       dispatch(ringsActions.getRingInfo());
       const response = await fetch(
-        `${process.env.REACT_APP_BFF_PROXY_ENDPOINT_URL}/rings/${rid}/${version}`
+        `${process.env.REACT_APP_BFF_PROXY_ENDPOINT_URL}/rings/${rid}/${version}`,
       );
       const info = await response.json();
 

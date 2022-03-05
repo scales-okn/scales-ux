@@ -63,7 +63,7 @@ export function fetchNotebooks() {
             ...authHeader,
             "Content-Type": "application/json",
           },
-        }
+        },
       );
       const { data } = await response.json();
 

@@ -18,11 +18,13 @@ import Dataset from "../Dataset";
 
 import { usePanel } from "../../store/panels";
 import { useRing } from "../../store/rings";
-import Analysis from "../Analysis";
+import Analysis from "../Analysis/_index";
 import "./Panel.scss"
 
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faPlus } from "@fortawesome/free-solid-svg-icons";
+
+import uniqid from "uniqid";
 
 type ResultsTogglerProps = {
   children: React.ReactNode;
@@ -83,7 +85,8 @@ const Panel: FunctionComponent<PanelProps> = ({ panelId }) => {
     setPanelResultsCollapsed,
     setPanelDescription,
     resultsCollapsed,
-    setPanelCollapsed
+    setPanelCollapsed,
+    addPanelAnalysis,
   } = usePanel(panelId);
 
   const { ring, info, getRingInfo, loadingRingInfo } = useRing(panel?.ringId);
@@ -208,7 +211,10 @@ const Panel: FunctionComponent<PanelProps> = ({ panelId }) => {
                 variant="outline-dark"
                 className="me-2"
                 onClick={() => {
-                  // setPanelFilters([...(filters || []), { id: uniqid(), value: "" }]);
+                  console.log(uniqid());
+                  addPanelAnalysis({
+                    id: uniqid()
+                  })
                 }}
               >
                 <FontAwesomeIcon icon={faPlus} />

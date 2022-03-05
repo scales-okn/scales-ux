@@ -13,68 +13,103 @@ import usersRouter from "./routes/users";
 import ringsRouter from "./routes/rings";
 import panelsRouter from "./routes/panels";
 import notebooksRouter from "./routes/notebooks";
+import { ppid } from "process";
 
 const app = express();
 
-(async () => {
-  try {
-    // Database
-    await database();
+// Database
+database().then(() => {
+  app.emit("ready");
+});
 
-    // Middlewares
-    app.use(express.json());
-    app.use(
-      express.urlencoded({
-        extended: true,
-      })
-    );
-    app.use(responser);
-    app.use(cors());
-    app.use(helmet());
-    app.use(hpp());
+// Middlewares
+app.use(express.json());
+app.use(
+  express.urlencoded({
+    extended: true,
+  })
+);
+app.use(responser);
+app.use(cors());
+app.use(helmet());
+app.use(hpp());
 
-    // see https://expressjs.com/en/guide/behind-proxies.html
-    // app.set('trust proxy', 1);
-    const limiter = rateLimit({
-      windowMs: 15 * 60 * 1000, // 15 minutes
-      max: 100, // limit each IP to 100 requests per windowMs
-    });
+// see https://expressjs.com/en/guide/behind-proxies.html
+// app.set('trust proxy', 1);
+const limiter = rateLimit({
+  windowMs: 15 * 60 * 1000, // 15 minutes
+  max: 100, // limit each IP to 100 requests per windowMs
+});
 
-    // Apply limiter to all requests
-    // app.use(limiter);
+// Apply limiter to all requests
+// app.use(limiter);
 
-    // Passport
-    app.use(passport.initialize());
-    passport.use(jwtLogin);
+// Passport
+app.use(passport.initialize());
+passport.use(jwtLogin);
 
-    // Proxy Router
-    app.use("/proxy", proxyRouter);
+// Proxy Router
+app.use("/proxy", proxyRouter);
 
-    // Users Router
-    app.use("/api/users", usersRouter);
+// Users Router
+app.use("/api/users", usersRouter);
 
-    // Rings Router
-    app.use("/api/rings", ringsRouter);
+// Rings Router
+app.use("/api/rings", ringsRouter);
 
-    // Notebooks Router
-    app.use("/api/notebooks", notebooksRouter);
+// Notebooks Router
+app.use("/api/notebooks", notebooksRouter);
 
-    // Panels Router
-    app.use("/api/panels", panelsRouter);
+// Panels Router
+app.use("/api/panels", panelsRouter);
 
-    // Serve React App
-    app.use(express.static(path.join(__dirname, "../client/build")));
+// Serve React App
+app.use(express.static(path.join(__dirname, "../client/build")));
 
-    // Catch all other routes to React App
-    app.get("*", (req: Request, res: Response) => {
-      res.sendFile(path.join(__dirname, "../client/build", "index.html"));
-    });
+// Catch all other routes to React App
+app.get("*", (req: Request, res: Response) => {
+  res.sendFile(path.join(__dirname, "../client/build", "index.html"));
+});
 
-    // Create the Server
-    app.listen(process.env.PORT, () => {
-      console.log(`Server is running on ${process.env.PORT} port!`);
-    });
-  } catch (error) {
-    console.log(error);
-  }
-})();
+app.on("ready", () => {
+  // Create the Server
+  app.listen(process.env.PORT, () => {
+    console.log(`Server is running on ${process.env.PORT} port!`);
+  });
+});
+
+export default app;
+
+
+// dev / test - env 
+// after integration test pass =>
+//   pp - env
+// e2e 
+
+//   release to 
+// prod  env
+
+// dev => pp => prod - stagging
+
+// git worklow
+// #main
+
+// feature - 1
+
+
+
+// feature - 2 => #main branch => triggers build => passes, integrations tests => pp => e2e;
+
+// pp.satyrn.io
+
+// commited manualy prod
+
+// dev stage {
+
+// }
+
+// pp === prod {
+//   env
+// }
+
+//TODO: Diagram Git Workflow and Stagging

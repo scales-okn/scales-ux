@@ -89,7 +89,7 @@ export const login = (email: string, password: string) => {
           headers: {
             "Content-Type": "application/json",
           },
-        }
+        },
       );
       const { data, code, message, errors } = await response.json();
       let decodedToken: DecodedToken = null;
@@ -99,14 +99,14 @@ export const login = (email: string, password: string) => {
           decodedToken = jwt_decode(data.token);
           if (decodedToken) {
             dispatch(
-              authActions.signInSuccess({ ...decodedToken, token: data.token })
+              authActions.signInSuccess({ ...decodedToken, token: data.token }),
             );
           }
           break;
         default:
           dispatch(authActions.signInFailure(errors));
           dispatch(
-            notify(message || useUnknownErrorNotificationMessage, "error")
+            notify(message || useUnknownErrorNotificationMessage, "error"),
           );
           break;
       }
@@ -164,10 +164,10 @@ export const authMiddleware =
           store.dispatch(
             notify(
               "You've been logged off. Your session has expired.",
-              "warning"
-            )
+              "warning",
+            ),
           ),
-        300
+        300,
       );
     } else {
       const { exp, iat } = store.getState().auth;

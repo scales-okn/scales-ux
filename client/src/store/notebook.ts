@@ -121,7 +121,7 @@ export function fetchNotebook(id: string) {
             "Content-Type": "application/json",
             ...authHeader,
           },
-        }
+        },
       );
       if (response.status === 200) {
         const { data } = await response.json();
@@ -151,7 +151,7 @@ export function updateNotebook(id: string, payload: any) {
             ...authHeader,
           },
           body: JSON.stringify(payload),
-        }
+        },
       );
       if (response.status === 200) {
         const { data, message } = await response.json();
@@ -183,7 +183,7 @@ export function createNotebook(payload: any) {
             ...authHeader,
           },
           body: JSON.stringify(payload),
-        }
+        },
       );
       const { data, message } = await response.json();
       if (response.status === 200) {
@@ -213,7 +213,7 @@ export function deleteNotebook(id: string) {
             "Content-Type": "application/json",
             ...authHeader,
           },
-        }
+        },
       );
       const { message } = await response.json();
       if (response.status === 200) {
