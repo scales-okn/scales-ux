@@ -1,53 +1,19 @@
 import { createSlice } from "@reduxjs/toolkit";
-import type { RootState, AppDispatch } from "./index";
-import { authSelector, authorizationHeader } from "./auth";
-import { notebookSelector } from "./notebook";
+import type { RootState, AppDispatch } from "store";
+import { authSelector } from "store/auth";
+import { notebookSelector } from "store/notebook";
 import { notify } from "reapop";
-import { ringSelector } from "./rings";
+import { ringSelector } from "store/rings";
 import appendQuery from "append-query";
 import dayjs from "dayjs";
 import { useSelector, useDispatch } from "react-redux";
-
-export type FilterInput = {
-  id: string;
-  value: any;
-  type: string;
-};
-
-export interface IPanelResults {
-  [key: string]: any;
-}
-
-export interface IPanelAnalysisItemStatement {
-  id: string;
-  statement: string;
-  [key: string]: any;
-}
-export interface IPanelAnalysisItem {
-  id: string;
-  statements: Array<IPanelAnalysisItemStatement>;
-  results: Array<any>;
-}
+import { authorizationHeader } from "utils";
 
 const initialStateAnalysisItem: IPanelAnalysisItem = {
   id: "",
   statements: [],
   results: [],
 };
-
-export interface IPanel {
-  [key: string]: any;
-  ringId: number;
-  selectedRing: number;
-  filters: Array<FilterInput>;
-  results: IPanelResults;
-  analysis: Array<IPanelAnalysisItem>;
-  loadingPanelResults: boolean;
-  collapsed: boolean;
-  resultsCollapsed: boolean;
-  updatingPanel: boolean;
-  hasErrors: boolean;
-}
 
 const PanelInitialState = {
   loadingPanelResults: false,
@@ -176,11 +142,11 @@ const panelsSlice = createSlice({
       panels: state.panels.map((panel) =>
         panel.id === payload.panelId
           ? {
-            ...panel,
-            results: payload.results,
-            loadingPanelResults: false,
-            hasErrors: false,
-          }
+              ...panel,
+              results: payload.results,
+              loadingPanelResults: false,
+              hasErrors: false,
+            }
           : panel,
       ),
     }),
@@ -189,10 +155,10 @@ const panelsSlice = createSlice({
       panels: state.panels.map((panel) =>
         panel.id === payload.panelId
           ? {
-            ...panel,
-            loadingPanelResults: false,
-            hasErrors: true,
-          }
+              ...panel,
+              loadingPanelResults: false,
+              hasErrors: true,
+            }
           : panel,
       ),
     }),
@@ -247,7 +213,13 @@ const panelsSlice = createSlice({
       ...state,
       panels: state.panels.map((panel) =>
         panel.id === payload.panelId
-          ? { ...panel, analysis: [...panel.analysis, { ...initialStateAnalysisItem, ...payload.analysis }] }
+          ? {
+              ...panel,
+              analysis: [
+                ...panel.analysis,
+                { ...initialStateAnalysisItem, ...payload.analysis },
+              ],
+            }
           : panel,
       ),
     }),
@@ -256,11 +228,11 @@ const panelsSlice = createSlice({
       panels: state.panels.map((panel) =>
         panel.id === payload.panelId
           ? {
-            ...panel,
-            analysis: panel.analysis.filter(
-              (analysis) => analysis.id !== payload.analysisId,
-            ),
-          }
+              ...panel,
+              analysis: panel.analysis.filter(
+                (analysis) => analysis.id !== payload.analysisId,
+              ),
+            }
           : panel,
       ),
     }),
@@ -269,16 +241,16 @@ const panelsSlice = createSlice({
       panels: state.panels.map((panel) =>
         panel.id === payload.panelId
           ? {
-            ...panel,
-            analysis: panel.analysis.map((analysis) =>
-              analysis.id === payload.analysisId
-                ? {
-                  ...analysis,
-                  statements: [...analysis.statements, payload.statement],
-                }
-                : analysis,
-            ),
-          }
+              ...panel,
+              analysis: panel.analysis.map((analysis) =>
+                analysis.id === payload.analysisId
+                  ? {
+                      ...analysis,
+                      statements: [...analysis.statements, payload.statement],
+                    }
+                  : analysis,
+              ),
+            }
           : panel,
       ),
     }),
@@ -287,18 +259,18 @@ const panelsSlice = createSlice({
       panels: state.panels.map((panel) =>
         panel.id === payload.panelId
           ? {
-            ...panel,
-            analysis: panel.analysis.map((analysis) =>
-              analysis.id === payload.analysisId
-                ? {
-                  ...analysis,
-                  statements: analysis.statements.filter(
-                    (statement) => statement.id !== payload.statementId,
-                  ),
-                }
-                : analysis,
-            ),
-          }
+              ...panel,
+              analysis: panel.analysis.map((analysis) =>
+                analysis.id === payload.analysisId
+                  ? {
+                      ...analysis,
+                      statements: analysis.statements.filter(
+                        (statement) => statement.id !== payload.statementId,
+                      ),
+                    }
+                  : analysis,
+              ),
+            }
           : panel,
       ),
     }),
@@ -329,6 +301,7 @@ export const panelAnalysisSelector = (state: RootState, panelId: string) => {
 // The reducer
 export default panelsSlice.reducer;
 
+// Thunk Async Actions
 export const getPanels = (notebookId) => {
   return async (dispatch: AppDispatch, getState) => {
     try {
@@ -362,74 +335,74 @@ export const getPanels = (notebookId) => {
 
 export const createPanel =
   (payload: any = {}) =>
-    async (dispatch: AppDispatch, getState) => {
-      try {
-        const { token, user } = authSelector(getState());
-        const { notebook } = notebookSelector(getState());
-        const authHeader = authorizationHeader(token);
-        dispatch(panelsActions.createPanel());
+  async (dispatch: AppDispatch, getState) => {
+    try {
+      const { token, user } = authSelector(getState());
+      const { notebook } = notebookSelector(getState());
+      const authHeader = authorizationHeader(token);
+      dispatch(panelsActions.createPanel());
 
-        const response = await fetch(
-          `${process.env.REACT_APP_BFF_API_ENDPOINT_URL}/panels`,
-          {
-            method: "POST",
-            headers: {
-              ...authHeader,
-              "Content-Type": "application/json",
-            },
-            body: JSON.stringify({
-              ...payload,
-              notebookId: notebook.id,
-              userId: user.id,
-            }),
+      const response = await fetch(
+        `${process.env.REACT_APP_BFF_API_ENDPOINT_URL}/panels`,
+        {
+          method: "POST",
+          headers: {
+            ...authHeader,
+            "Content-Type": "application/json",
           },
-        );
+          body: JSON.stringify({
+            ...payload,
+            notebookId: notebook.id,
+            userId: user.id,
+          }),
+        },
+      );
 
-        const { data, message } = await response.json();
-        if (response.status === 200) {
-          dispatch(notify(message, "success"));
-          dispatch(panelsActions.createPanelSuccess(data.panel));
-        } else {
-          dispatch(notify(message, "error"));
-          dispatch(panelsActions.createPanelFailure());
-        }
-      } catch (error) {
+      const { data, message } = await response.json();
+      if (response.status === 200) {
+        dispatch(notify(message, "success"));
+        dispatch(panelsActions.createPanelSuccess(data.panel));
+      } else {
+        dispatch(notify(message, "error"));
         dispatch(panelsActions.createPanelFailure());
       }
-    };
+    } catch (error) {
+      dispatch(panelsActions.createPanelFailure());
+    }
+  };
 
 export const updatePanel =
   (panelId, payload: any = {}) =>
-    async (dispatch: AppDispatch, getState) => {
-      try {
-        const { token } = authSelector(getState());
-        const authHeader = authorizationHeader(token);
-        dispatch(panelsActions.updatePanel({ panelId }));
+  async (dispatch: AppDispatch, getState) => {
+    try {
+      const { token } = authSelector(getState());
+      const authHeader = authorizationHeader(token);
+      dispatch(panelsActions.updatePanel({ panelId }));
 
-        const response = await fetch(
-          `${process.env.REACT_APP_BFF_API_ENDPOINT_URL}/panels/${panelId}`,
-          {
-            method: "PUT",
-            headers: {
-              ...authHeader,
-              "Content-Type": "application/json",
-            },
-            body: JSON.stringify(payload),
+      const response = await fetch(
+        `${process.env.REACT_APP_BFF_API_ENDPOINT_URL}/panels/${panelId}`,
+        {
+          method: "PUT",
+          headers: {
+            ...authHeader,
+            "Content-Type": "application/json",
           },
-        );
+          body: JSON.stringify(payload),
+        },
+      );
 
-        const { data, message } = await response.json();
-        if (response.status === 200) {
-          dispatch(notify(message, "success"));
-          dispatch(panelsActions.updatePanelSuccess(data.panel));
-        } else {
-          dispatch(notify(message, "error"));
-          dispatch(panelsActions.updatePanelFailure({ panelId }));
-        }
-      } catch (error) {
+      const { data, message } = await response.json();
+      if (response.status === 200) {
+        dispatch(notify(message, "success"));
+        dispatch(panelsActions.updatePanelSuccess(data.panel));
+      } else {
+        dispatch(notify(message, "error"));
         dispatch(panelsActions.updatePanelFailure({ panelId }));
       }
-    };
+    } catch (error) {
+      dispatch(panelsActions.updatePanelFailure({ panelId }));
+    }
+  };
 
 export const deletePanel =
   (panelId) => async (dispatch: AppDispatch, getState) => {
@@ -464,51 +437,51 @@ export const deletePanel =
 
 export const getPanelResults =
   (panelId, filters = [], page = 0, batchSize = 10) =>
-    async (dispatch: AppDispatch, getState) => {
-      try {
-        const { token } = authSelector(getState());
-        const authHeader = authorizationHeader(token);
-        const panel = panelSelector(getState(), panelId);
-        const { filters, ringId } = panel;
-        // @ts-ignore
-        const { rid, info, version } = ringSelector(getState(), ringId);
-        dispatch(panelsActions.getPanelResults({ panelId }));
+  async (dispatch: AppDispatch, getState) => {
+    try {
+      const { token } = authSelector(getState());
+      const authHeader = authorizationHeader(token);
+      const panel = panelSelector(getState(), panelId);
+      const { filters, ringId } = panel;
+      // @ts-ignore
+      const { rid, info, version } = ringSelector(getState(), ringId);
+      dispatch(panelsActions.getPanelResults({ panelId }));
 
-        const response = await fetch(
-          appendQuery(
-            `${process.env.REACT_APP_BFF_PROXY_ENDPOINT_URL}/results/${rid}/${version}/${info.defaultEntity}?page=${page}&batchSize=${batchSize}&sortBy=dateFiled&sortDirection=desc`,
-            filters?.reduce((acc, filterInput: FilterInput) => {
-              acc[filterInput.type] =
-                filterInput.type === "dateFiled"
-                  ? `[${filterInput.value?.map((date) =>
+      const response = await fetch(
+        appendQuery(
+          `${process.env.REACT_APP_BFF_PROXY_ENDPOINT_URL}/results/${rid}/${version}/${info.defaultEntity}?page=${page}&batchSize=${batchSize}&sortBy=dateFiled&sortDirection=desc`,
+          filters?.reduce((acc, filterInput: FilterInput) => {
+            acc[filterInput.type] =
+              filterInput.type === "dateFiled"
+                ? `[${filterInput.value?.map((date) =>
                     dayjs(date).format("YYYY-M-DD"),
                   )}]`
-                  : filterInput.value;
+                : filterInput.value;
 
-              return acc;
-            }, {}),
-            { encodeComponents: false },
-          ),
+            return acc;
+          }, {}),
+          { encodeComponents: false },
+        ),
+      );
+
+      const data = await response.json();
+      if (response.status === 200) {
+        dispatch(
+          panelsActions.getPanelResultsSuccess({
+            panelId,
+            results: data,
+          }),
         );
-
-        const data = await response.json();
-        if (response.status === 200) {
-          dispatch(
-            panelsActions.getPanelResultsSuccess({
-              panelId,
-              results: data,
-            }),
-          );
-        } else {
-          dispatch(notify("Error fetching results", "error"));
-          dispatch(panelsActions.getPanelResultsFailure({ panelId }));
-        }
-      } catch (error) {
-        console.log(error);
+      } else {
         dispatch(notify("Error fetching results", "error"));
         dispatch(panelsActions.getPanelResultsFailure({ panelId }));
       }
-    };
+    } catch (error) {
+      console.log(error);
+      dispatch(notify("Error fetching results", "error"));
+      dispatch(panelsActions.getPanelResultsFailure({ panelId }));
+    }
+  };
 
 // Hooks
 export const usePanels = (notebookId) => {

@@ -1,9 +1,9 @@
 import React, { FunctionComponent, useState, useEffect } from "react";
 import { Col, Container, Row, Button, Form } from "react-bootstrap";
-import Loader from "../Loader";
-import Panels from "../Panels";
+import Loader from "components/Loader";
+import Panels from "components/Panels";
 import { useSelector } from "react-redux";
-import { notebookSelector, updateNotebook, deleteNotebook, createNotebook } from "../../store/notebook";
+import { notebookSelector, updateNotebook, deleteNotebook, createNotebook } from "store/notebook";
 import { useDispatch } from "react-redux";
 import { useHistory } from "react-router-dom";
 import "./Notebook.scss";

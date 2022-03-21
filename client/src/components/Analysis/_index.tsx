@@ -1,13 +1,11 @@
 import React, { useState, useEffect, FunctionComponent } from "react";
 import { StatementManager } from "statement-mananger";
-import { IPanel } from "../../store/panels";
-import { IRing, IRingInfo } from "../../store/rings";
 import { BsXOctagonFill } from "react-icons/bs";
 import { AsyncTypeahead } from "react-bootstrap-typeahead";
 import uniqid from "uniqid";
 import { useNotify } from "../Notifications";
 import { Form, Button, Col, Row, Card } from "react-bootstrap"
-import { usePanel } from "../../store/panels";
+import { usePanel } from "store/panels";
 import axios from "axios";
 import Select from 'react-select'
 import { BarChart, Bar, Cell, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';

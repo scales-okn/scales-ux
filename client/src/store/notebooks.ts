@@ -1,7 +1,8 @@
 import { createSlice } from "@reduxjs/toolkit";
-import type { RootState, AppDispatch } from "./index";
-import { authSelector, authorizationHeader } from "./auth";
+import type { RootState, AppDispatch } from "store";
+import { authSelector } from "store/auth";
 import { useSelector, useDispatch } from "react-redux";
+import { authorizationHeader } from "utils";
 
 interface InitialState {
   loadingNotebooks: boolean;
@@ -15,7 +16,6 @@ export const initialState: InitialState = {
   notebooks: [],
 };
 
-// A slice for notebooks with our three reducers
 const notebooksSlice = createSlice({
   name: "notebooks",
   initialState,
@@ -38,7 +38,6 @@ const notebooksSlice = createSlice({
   },
 });
 
-// Three actions generated from the slice
 export const notebooksActions = notebooksSlice.actions;
 
 // Selectors

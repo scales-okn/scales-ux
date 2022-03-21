@@ -1,8 +1,9 @@
 import { createSlice } from "@reduxjs/toolkit";
-import type { RootState, AppDispatch } from "./index";
-import { authSelector, authorizationHeader } from "./auth";
+import type { RootState, AppDispatch } from "store";
+import { authSelector } from "store/auth";
+import { authorizationHeader } from "utils";
 import { notify } from "reapop";
-import { useUnknownErrorNotificationMessage } from "../components/Notifications";
+import { useUnknownErrorNotificationMessage } from "components/Notifications";
 import { useSelector, useDispatch } from "react-redux";
 
 interface InitialState {

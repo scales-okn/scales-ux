@@ -2,6 +2,12 @@ import { DataTypes, Sequelize } from "sequelize";
 import jwt from "jsonwebtoken";
 import mailTransport from "../services/mail";
 
+export interface User {
+  id: number;
+  role: string;
+  [key: string]: any;
+}
+
 export const userRoleValues = ["user", "admin"];
 
 export default (sequelize, options) => {

@@ -1,13 +1,13 @@
-import React, { ChangeEvent, FunctionComponent } from "react";
+import React, { FunctionComponent } from "react";
 import { useHistory } from "react-router-dom";
 import { useFormik } from "formik";
 import * as yup from "yup";
 
 import Copyright from "../../components/Copyright";
-import { useSnackbar } from "notistack";
 import { Button, Col, Container, Form, Row } from "react-bootstrap";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faBalanceScale } from "@fortawesome/free-solid-svg-icons";
+import { useNotify } from "components/Notifications";
 
 interface ForgotPasswordFields {
   email: string;
@@ -22,7 +22,7 @@ const ForgotPasswordValidationSchema = yup.object({
 
 const ForgotPassword: FunctionComponent = () => {
   const history = useHistory();
-  const { enqueueSnackbar } = useSnackbar();
+  const { notify } = useNotify();
 
   const formik = useFormik({
     initialValues: {
@@ -45,13 +45,7 @@ const ForgotPassword: FunctionComponent = () => {
           try {
             switch (response.code) {
               case 200: {
-                enqueueSnackbar(response.message, {
-                  variant: "success",
-                  anchorOrigin: {
-                    vertical: "top",
-                    horizontal: "center",
-                  },
-                });
+                notify(response.message, "success");
                 history.push("/sign-in");
                 break;
               }
@@ -59,13 +53,7 @@ const ForgotPassword: FunctionComponent = () => {
                 if (response.errors) {
                   setErrors(response.errors);
                 }
-                enqueueSnackbar(response.message, {
-                  variant: "warning",
-                  anchorOrigin: {
-                    vertical: "top",
-                    horizontal: "center",
-                  },
-                });
+                notify(response.message, "error");
                 break;
               }
             }
@@ -77,52 +65,50 @@ const ForgotPassword: FunctionComponent = () => {
   });
 
   return (
-    <>
-      <Container className="h-100">
-        <Row className="h-100 justify-content-center align-items-center text-center">
-          <Col md="4">
-            <Form noValidate onSubmit={formik.handleSubmit}>
-              <FontAwesomeIcon
-                icon={faBalanceScale}
-                size="3x"
-                className="mb-4"
+    <Container className="h-100">
+      <Row className="h-100 justify-content-center align-items-center text-center">
+        <Col md="4">
+          <Form noValidate onSubmit={formik.handleSubmit}>
+            <FontAwesomeIcon
+              icon={faBalanceScale}
+              size="3x"
+              className="mb-4"
+            />
+            <h1 className="h3 mb-5 fw-normal">Forgot Password?</h1>
+            <div className="form-floating mb-3">
+              <Form.Control
+                type="email"
+                name="email"
+                placeholder="name@example.com"
+                value={formik.values.email}
+                onChange={formik.handleChange}
+                isInvalid={
+                  formik.touched.email && Boolean(formik.errors?.email)
+                }
               />
-              <h1 className="h3 mb-5 fw-normal">Forgot Password?</h1>
-              <div className="form-floating mb-3">
-                <Form.Control
-                  type="email"
-                  name="email"
-                  placeholder="name@example.com"
-                  value={formik.values.email}
-                  onChange={formik.handleChange}
-                  isInvalid={
-                    formik.touched.email && Boolean(formik.errors?.email)
-                  }
-                />
-                <Form.Label>Email address</Form.Label>
-              </div>
+              <Form.Label>Email address</Form.Label>
+            </div>
 
-              <Button
-                variant="primary"
-                type="submit"
-                className="w-100 mb-3 text-white "
-                size="lg"
-              >
-                Submit
-              </Button>
-              <Row className="mb-5">
-                <Col className="text-end">
-                  <a href="/sign-in" className="small">
-                    Already have an account? Sign in
-                  </a>
-                </Col>
-              </Row>
-              <Copyright />
-            </Form>
-          </Col>
-        </Row>
-      </Container>
-    </>
+            <Button
+              variant="primary"
+              type="submit"
+              className="w-100 mb-3 text-white "
+              size="lg"
+            >
+              Submit
+            </Button>
+            <Row className="mb-5">
+              <Col className="text-end">
+                <a href="/sign-in" className="small">
+                  Already have an account? Sign in
+                </a>
+              </Col>
+            </Row>
+            <Copyright />
+          </Form>
+        </Col>
+      </Row>
+    </Container>
   );
 };
 

@@ -1,7 +1,5 @@
 import React, { useEffect, FunctionComponent } from 'react';
-import { usePanel } from '../../store/panels';
-import { IPanel } from "../../store/panels";
-import { IRing, IRingInfo } from "../../store/rings";
+import { usePanel } from 'store/panels';
 import { Button } from "react-bootstrap";
 import { StatementManager } from "statement-mananger";
 

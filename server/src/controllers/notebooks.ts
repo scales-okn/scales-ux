@@ -213,7 +213,9 @@ export const update = async (req: Request, res: Response) => {
       where: { id: notebookId },
     });
 
-    return res.send_ok(`Notebook ${notebookId} has been updated!`, { ...updatedNotebook.dataValues });
+    return res.send_ok(`Notebook ${notebookId} has been updated!`, {
+      ...updatedNotebook.dataValues,
+    });
   } catch (error) {
     console.log(error);
 
@@ -232,8 +234,7 @@ export const deleteNotebook = async (req: Request, res: Response) => {
       {
         deleted: true,
       },
-      {
-      }
+      {}
     );
     if (result) {
       return res.send_ok("Notebook has been deleted successfully!");
@@ -245,7 +246,6 @@ export const deleteNotebook = async (req: Request, res: Response) => {
     return res.send_internalServerError("Failed to delete notebook!");
   }
 };
-
 
 export const panels = async (req: Request, res: Response) => {
   try {
@@ -281,4 +281,4 @@ export const panels = async (req: Request, res: Response) => {
 
     return res.send_internalServerError("An error occured, please try again!");
   }
-}
+};

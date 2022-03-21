@@ -10,7 +10,6 @@ const { Op } = require("sequelize");
 // Create Panel
 export const create = async (req: Request, res: Response) => {
   try {
-
     const { description, notebookId, ringId, userId } = req.body;
 
     const panel = await sequelize.models.Panel.create({

@@ -1,15 +1,10 @@
 import { createSlice } from "@reduxjs/toolkit";
-import type { RootState, AppDispatch } from "./index";
-import { authSelector, authorizationHeader } from "./auth";
+import type { RootState, AppDispatch } from "store";
+import { authSelector } from "store/auth";
 import { useDispatch, useSelector } from "react-redux";
 import { notify } from "reapop";
-export interface IRing {
-  [key: string]: any;
-}
+import { authorizationHeader } from "utils";
 
-export interface IRingInfo {
-  [key: string]: any;
-}
 interface InitialState {
   loadingRings: boolean;
   loadingRingInfo: boolean;
@@ -77,6 +72,7 @@ export const ringInfoSelector = (state: RootState, id: string) =>
 // The reducer
 export default ringsSlice.reducer;
 
+// Async actions
 export const getRings = () => {
   return async (dispatch: AppDispatch, getState) => {
     try {

@@ -7,9 +7,9 @@ router.all(
   "*",
   requestProxy({
     url: `${process.env.PROXY_API_URL}/*`,
-    // timeout: 30000,
+    timeout: 30000,
     headers: {
-      // "Allow-Control-Allow-Origin": "*",
+      "Allow-Control-Allow-Origin": "*",
       "x-api-key": process.env.PROXY_API_KEY,
     },
   })

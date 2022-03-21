@@ -1,26 +1,11 @@
 import { createSlice } from "@reduxjs/toolkit";
-import type { RootState, AppDispatch } from "./index";
+import type { RootState, AppDispatch } from "store";
 import jwt_decode from "jwt-decode";
 import { useSelector, useDispatch } from "react-redux";
 import { Store, Dispatch, Action } from "redux";
 import { notify } from "reapop";
-import { useUnknownErrorNotificationMessage } from "../components/Notifications";
-
-export interface User {
-  id: number;
-  role: string;
-  email: string;
-  firstName: string;
-  lastName: string;
-  blocked: boolean;
-  approved: boolean;
-}
-
-export interface DecodedToken {
-  user: User | null;
-  iat: number;
-  exp: number;
-}
+import { useUnknownErrorNotificationMessage } from "components/Notifications";
+import { authorizationHeader } from "utils";
 
 interface InitialState extends DecodedToken {
   hasErrors: boolean;
@@ -39,7 +24,7 @@ export const initialState: InitialState = {
   exp: null,
 };
 
-// Slices
+// Slice
 const authSlice = createSlice({
   name: "auth",
   initialState,
@@ -118,18 +103,11 @@ export const login = (email: string, password: string) => {
   };
 };
 
+// Synchronous actions
 export const logout = () => {
   return (dispatch: AppDispatch) => {
     dispatch(authActions.signOut());
   };
-};
-
-export const authorizationHeader = (token = "") => {
-  if (!token) {
-    return {};
-  }
-
-  return { Authorization: `Bearer ${token}` };
 };
 
 // Hooks

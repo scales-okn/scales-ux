@@ -2,19 +2,19 @@ import React, { FunctionComponent } from "react";
 import { BrowserRouter, Redirect, Route, Switch } from "react-router-dom";
 import { Button } from "react-bootstrap";
 import { ErrorBoundary } from 'react-error-boundary'
-import HomePage from "./pages/HomePage";
-import AdminDashboardPage from "./components/Admin/DashboardPage";
-import AdminUsersPage from "./components/Admin/UsersPage";
-import SignInPage from "./pages/SignInPage";
-import SignUpPage from "./pages/SignUpPage";
-import ProfilePage from "./pages/ProfilePage";
-import NotebooksPage from "./pages/NotebooksPage";
-import NotebookPage from "./pages/NotebookPage";
-import EmailVerificationPage from "./pages/EmailVerificationPage";
-import ForgotPasswordPage from "./pages/ForgotPasswordPage";
-import ResetPasswordPage from "./pages/ResetPasswordPage";
-import ProtectedRoute from "./components/ProtectedRoute";
-import Notifications from "./components/Notifications";
+import HomePage from "pages/HomePage";
+import AdminDashboardPage from "components/Admin/DashboardPage";
+import AdminUsersPage from "components/Admin/UsersPage";
+import SignInPage from "pages/SignInPage";
+import SignUpPage from "pages/SignUpPage";
+import ProfilePage from "pages/ProfilePage";
+import NotebooksPage from "pages/NotebooksPage";
+import NotebookPage from "pages/NotebookPage";
+import EmailVerificationPage from "pages/EmailVerificationPage";
+import ForgotPasswordPage from "pages/ForgotPasswordPage";
+import ResetPasswordPage from "pages/ResetPasswordPage";
+import ProtectedRoute from "components/ProtectedRoute";
+import Notifications from "components/Notifications";
 
 const ErrorFallback = ({ error, resetErrorBoundary }) => {
   return (

@@ -13,7 +13,6 @@ import usersRouter from "./routes/users";
 import ringsRouter from "./routes/rings";
 import panelsRouter from "./routes/panels";
 import notebooksRouter from "./routes/notebooks";
-import { ppid } from "process";
 
 const app = express();
 
@@ -79,37 +78,3 @@ app.on("ready", () => {
 });
 
 export default app;
-
-
-// dev / test - env 
-// after integration test pass =>
-//   pp - env
-// e2e 
-
-//   release to 
-// prod  env
-
-// dev => pp => prod - stagging
-
-// git worklow
-// #main
-
-// feature - 1
-
-
-
-// feature - 2 => #main branch => triggers build => passes, integrations tests => pp => e2e;
-
-// pp.satyrn.io
-
-// commited manualy prod
-
-// dev stage {
-
-// }
-
-// pp === prod {
-//   env
-// }
-
-//TODO: Diagram Git Workflow and Stagging

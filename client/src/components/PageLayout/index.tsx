@@ -9,13 +9,13 @@ import "./PageLayout.scss";
 import { userSelector, logout } from "../../store/auth";
 import { useDispatch } from "react-redux";
 
-type PageLayoutProps = {
+type Props = {
   pageTitle?: string;
   id?: string;
   children: ReactNode;
 };
 
-const PageLayout: FunctionComponent<PageLayoutProps> = (props) => {
+const PageLayout: FunctionComponent<Props> = (props) => {
   const { id = "", children, pageTitle } = props;
   const user = useSelector(userSelector);
   const dispatch = useDispatch();
