@@ -10,7 +10,6 @@ const { Op } = require("sequelize");
 // Create Panel
 export const create = async (req: Request, res: Response) => {
   try {
-
     const { description, notebookId, ringId, userId } = req.body;
 
     const panel = await sequelize.models.Panel.create({
@@ -85,7 +84,7 @@ export const update = async (req: Request, res: Response) => {
     }
     const panel = await sequelize.models.Panel.findOne({ where: { id } });
 
-    return res.send_ok("Panel has been updated!", { panel });
+    return res.send_ok(`Panel ${id} has been updated!`, { panel });
   } catch (error) {
     console.log(error);
 

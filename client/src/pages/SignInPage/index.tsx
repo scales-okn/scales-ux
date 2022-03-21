@@ -5,16 +5,16 @@ import { Link, useHistory } from "react-router-dom";
 import React, {
   FunctionComponent,
   SyntheticEvent,
-  useState,
   useEffect,
+  useState,
 } from "react";
+import { authSelector, login, userSelector } from "store/auth";
+import { useDispatch, useSelector } from "react-redux";
 
-import Copyright from "../../components/Copyright";
+import Copyright from "components/Copyright";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faBalanceScale } from "@fortawesome/free-solid-svg-icons";
 import { useFormik } from "formik";
-import { login, authSelector, userSelector } from "../../store/auth";
-import { useSelector, useDispatch } from "react-redux";
 
 export interface UserSignInFields {
   email: string;
@@ -57,7 +57,7 @@ const SignInPage: FunctionComponent = () => {
   return (
     <Container className="h-100">
       <Row className="h-100 justify-content-center align-items-center text-center">
-        <Col md="4">
+        <Col md="5">
           <Form noValidate onSubmit={formik.handleSubmit}>
             <FontAwesomeIcon icon={faBalanceScale} size="3x" className="mb-4" />
             <h1 className="h3 mb-3 fw-normal">Please sign in</h1>

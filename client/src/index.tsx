@@ -1,12 +1,12 @@
 import React from "react";
 import ReactDOM from "react-dom";
 import { PersistGate } from "redux-persist/integration/react";
-import App from "./App";
-import store, { persistor } from "./store";
+import store, { persistor } from "store";
 import { Provider } from "react-redux";
 import reportWebVitals from "./reportWebVitals";
-import "./styles/vendor.scss"
-import "./styles/global.scss"
+import App from "./App";
+import "styles/vendor.scss"
+import "styles/global.scss"
 
 ReactDOM.render(
   <Provider store={store}>

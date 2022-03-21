@@ -1,35 +1,19 @@
 import { createSlice } from "@reduxjs/toolkit";
-import type { RootState, AppDispatch } from "./index";
-import { authSelector, authorizationHeader } from "./auth";
-import { notebookSelector } from "./notebook";
+import type { RootState, AppDispatch } from "store";
+import { authSelector } from "store/auth";
+import { notebookSelector } from "store/notebook";
 import { notify } from "reapop";
-import { ringSelector } from "./rings";
+import { ringSelector } from "store/rings";
 import appendQuery from "append-query";
 import dayjs from "dayjs";
 import { useSelector, useDispatch } from "react-redux";
+import { authorizationHeader } from "utils";
 
-export type FilterInput = {
-  id: string;
-  value: any;
-  type: string;
+const initialStateAnalysisItem: IPanelAnalysisItem = {
+  id: "",
+  statements: [],
+  results: [],
 };
-
-export interface IResults {
-  [key: string]: any;
-}
-export interface IPanel {
-  [key: string]: any;
-  ringId: number;
-  selectedRing: number;
-  filters: Array<FilterInput>;
-  results: IResults;
-  analysis: any;
-  loadingPanelResults: boolean;
-  collapsed: boolean;
-  resultsCollapsed: boolean;
-  updatingPanel: boolean;
-  hasErrors: boolean;
-}
 
 const PanelInitialState = {
   loadingPanelResults: false,
@@ -37,19 +21,8 @@ const PanelInitialState = {
   resultsCollapsed: true,
   updatingPanel: false,
   hasErrors: false,
-}
-
-export interface IAnalysisStatement {
-  [key: string]: any;
-}
-
-const AnalysisStatementInitialState: IAnalysisStatement = {
-}
-
-export interface IAnalysis {
-  [key: string]: any;
-  statements: Array<IAnalysisStatement>;
-}
+  analysis: [],
+};
 interface InitialState {
   loadingPanels: boolean;
   creatingPanel: boolean;
@@ -74,15 +47,20 @@ const panelsSlice = createSlice({
       ...state,
       loadingPanels: true,
     }),
-    getPanelsSuccess: (state, { payload }) => ({
-      ...state,
-      panels: payload.map((panel: IPanel) => ({
-        ...PanelInitialState,
-        ...panel,
-      })),
-      loadingPanels: false,
-      hasErrors: false,
-    }),
+    getPanelsSuccess: (state, { payload }) => {
+      return {
+        ...state,
+        loadingPanels: false,
+        hasErrors: false,
+        panels: payload
+          .map((panel) => ({
+            ...PanelInitialState,
+            ...state.panels.find((p) => p.id == panel.id),
+            ...panel,
+          }))
+          .reverse(),
+      };
+    },
     getPanelsFailure: (state) => ({
       ...state,
       loadingPanels: false,
@@ -103,28 +81,30 @@ const panelsSlice = createSlice({
       creatingPanel: false,
       hasErrors: true,
     }),
-    updatePanel: (state) => ({
+    updatePanel: (state, { payload }) => ({
       ...state,
-      panels: state.panels.map((panel) => ({
-        ...panel,
-        updatingPanel: true,
-      })),
+      panels: state.panels.map((panel) =>
+        panel.id === payload.panelId
+          ? { ...panel, updatingPanel: true }
+          : panel,
+      ),
     }),
     updatePanelSuccess: (state, { payload }) => ({
       ...state,
       panels: state.panels.map((panel) =>
-        panel.id === payload.id ? { ...panel, ...payload, updatingPanel: false } : panel
+        panel.id === payload.id
+          ? { ...panel, ...payload, updatingPanel: false }
+          : panel,
       ),
       hasErrors: false,
     }),
-    updatePanelFailure: (state) => ({
+    updatePanelFailure: (state, { payload }) => ({
       ...state,
-      panels: state.panels.map((panel) => ({
-        ...panel,
-        updatingPanel: false,
-        hasErrors: true,
-      })),
-
+      panels: state.panels.map((panel) =>
+        panel.id === payload.panelId
+          ? { ...panel, updatingPanel: false, hasErrors: true }
+          : panel,
+      ),
     }),
     deletePanel: (state) => ({
       ...state,
@@ -149,41 +129,51 @@ const panelsSlice = createSlice({
       deletingPanel: false,
       hasErrors: true,
     }),
-    getPanelResults: (state) => ({
+    getPanelResults: (state, { payload }) => ({
       ...state,
-      panels: state.panels.map((panel) => ({
-        ...panel,
-        loadingPanelResults: true,
-      })),
+      panels: state.panels.map((panel) =>
+        panel.id === payload.panelId
+          ? { ...panel, loadingPanelResults: true }
+          : panel,
+      ),
     }),
     getPanelResultsSuccess: (state, { payload }) => ({
       ...state,
       panels: state.panels.map((panel) =>
         panel.id === payload.panelId
-          ? { ...panel, results: payload.results, loadingPanelResults: false, hasErrors: false }
-          : panel
+          ? {
+              ...panel,
+              results: payload.results,
+              loadingPanelResults: false,
+              hasErrors: false,
+            }
+          : panel,
       ),
     }),
-    getPanelResultsFailure: (state) => ({
+    getPanelResultsFailure: (state, { payload }) => ({
       ...state,
-      panels: state.panels.map((panel) => ({
-        ...panel,
-        loadingPanelResults: false,
-        hasErrors: true,
-      })),
+      panels: state.panels.map((panel) =>
+        panel.id === payload.panelId
+          ? {
+              ...panel,
+              loadingPanelResults: false,
+              hasErrors: true,
+            }
+          : panel,
+      ),
     }),
     setPanelFilters: (state, { payload }) => ({
       ...state,
       panels: state.panels.map((panel) =>
         panel.id === payload.panelId
           ? { ...panel, filters: payload.filters }
-          : panel
+          : panel,
       ),
     }),
     clearPanelFilters: (state, { payload }) => ({
       ...state,
       panels: state.panels.map((panel) =>
-        panel.id === payload.panelId ? { ...panel, filters: [] } : panel
+        panel.id === payload.panelId ? { ...panel, filters: [] } : panel,
       ),
     }),
     clearPanel: (state, { payload }) => ({
@@ -198,13 +188,90 @@ const panelsSlice = createSlice({
     setPanelCollapsed: (state, { payload }) => ({
       ...state,
       panels: state.panels.map((panel) =>
-        panel.id === payload.panelId ? { ...panel, collapsed: payload.collapsed } : panel
+        panel.id === payload.panelId
+          ? { ...panel, collapsed: payload.collapsed }
+          : panel,
       ),
     }),
     setPanelResultsCollapsed: (state, { payload }) => ({
       ...state,
       panels: state.panels.map((panel) =>
-        panel.id === payload.panelId ? { ...panel, resultsCollapsed: payload.collapsed } : panel
+        panel.id === payload.panelId
+          ? { ...panel, resultsCollapsed: payload.collapsed }
+          : panel,
+      ),
+    }),
+    setPanelDescription: (state, { payload }) => ({
+      ...state,
+      panels: state.panels.map((panel) =>
+        panel.id === payload.panelId
+          ? { ...panel, description: payload.description }
+          : panel,
+      ),
+    }),
+    addPanelAnalysis: (state, { payload }) => ({
+      ...state,
+      panels: state.panels.map((panel) =>
+        panel.id === payload.panelId
+          ? {
+              ...panel,
+              analysis: [
+                ...panel.analysis,
+                { ...initialStateAnalysisItem, ...payload.analysis },
+              ],
+            }
+          : panel,
+      ),
+    }),
+    removePanelAnalysis: (state, { payload }) => ({
+      ...state,
+      panels: state.panels.map((panel) =>
+        panel.id === payload.panelId
+          ? {
+              ...panel,
+              analysis: panel.analysis.filter(
+                (analysis) => analysis.id !== payload.analysisId,
+              ),
+            }
+          : panel,
+      ),
+    }),
+    addPanelAnalysisStatement: (state, { payload }) => ({
+      ...state,
+      panels: state.panels.map((panel) =>
+        panel.id === payload.panelId
+          ? {
+              ...panel,
+              analysis: panel.analysis.map((analysis) =>
+                analysis.id === payload.analysisId
+                  ? {
+                      ...analysis,
+                      statements: [...analysis.statements, payload.statement],
+                    }
+                  : analysis,
+              ),
+            }
+          : panel,
+      ),
+    }),
+    removePanelAnalysisStatement: (state, { payload }) => ({
+      ...state,
+      panels: state.panels.map((panel) =>
+        panel.id === payload.panelId
+          ? {
+              ...panel,
+              analysis: panel.analysis.map((analysis) =>
+                analysis.id === payload.analysisId
+                  ? {
+                      ...analysis,
+                      statements: analysis.statements.filter(
+                        (statement) => statement.id !== payload.statementId,
+                      ),
+                    }
+                  : analysis,
+              ),
+            }
+          : panel,
       ),
     }),
   },
@@ -214,25 +281,27 @@ const panelsSlice = createSlice({
 export const panelsActions = panelsSlice.actions;
 
 // Selectors
-export const panelsSelector = (state: RootState) => state?.panels;
+export const panelsSelector = (state: RootState, notebookId) => ({
+  ...state.panels,
+  panels: state.panels.panels.filter((panel) => panel.notebookId == notebookId),
+});
 export const panelSelector = (state: RootState, panelId: string) => {
   return state?.panels?.panels?.find((panel) => panel.id === panelId);
 };
-export const panelFiltersSelector = (
-  state: RootState,
-  panelId: string
-) => {
-  return state?.panels?.panels?.find((panel) => panel.id === panelId)
-    ?.filters;
+export const panelFiltersSelector = (state: RootState, panelId: string) => {
+  return state?.panels?.panels?.find((panel) => panel.id === panelId)?.filters;
 };
 export const panelResultsSelector = (state: RootState, panelId: string) => {
   return state?.panels?.panels.find((panel) => panel.id === panelId)?.results;
 };
-
+export const panelAnalysisSelector = (state: RootState, panelId: string) => {
+  return state?.panels?.panels.find((panel) => panel.id === panelId)?.analysis;
+};
 
 // The reducer
 export default panelsSlice.reducer;
 
+// Thunk Async Actions
 export const getPanels = (notebookId) => {
   return async (dispatch: AppDispatch, getState) => {
     try {
@@ -248,7 +317,7 @@ export const getPanels = (notebookId) => {
             ...authHeader,
             "Content-Type": "application/json",
           },
-        }
+        },
       );
 
       const { data, message } = await response.json();
@@ -266,74 +335,74 @@ export const getPanels = (notebookId) => {
 
 export const createPanel =
   (payload: any = {}) =>
-    async (dispatch: AppDispatch, getState) => {
-      try {
-        const { token, user } = authSelector(getState());
-        const { notebook } = notebookSelector(getState());
-        const authHeader = authorizationHeader(token);
-        dispatch(panelsActions.createPanel());
+  async (dispatch: AppDispatch, getState) => {
+    try {
+      const { token, user } = authSelector(getState());
+      const { notebook } = notebookSelector(getState());
+      const authHeader = authorizationHeader(token);
+      dispatch(panelsActions.createPanel());
 
-        const response = await fetch(
-          `${process.env.REACT_APP_BFF_API_ENDPOINT_URL}/panels`,
-          {
-            method: "POST",
-            headers: {
-              ...authHeader,
-              "Content-Type": "application/json",
-            },
-            body: JSON.stringify({
-              ...payload,
-              notebookId: notebook.id,
-              userId: user.id,
-            }),
-          }
-        );
+      const response = await fetch(
+        `${process.env.REACT_APP_BFF_API_ENDPOINT_URL}/panels`,
+        {
+          method: "POST",
+          headers: {
+            ...authHeader,
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            ...payload,
+            notebookId: notebook.id,
+            userId: user.id,
+          }),
+        },
+      );
 
-        const { data, message } = await response.json();
-        if (response.status === 200) {
-          dispatch(notify(message, "success"));
-          dispatch(panelsActions.createPanelSuccess(data.panel));
-        } else {
-          dispatch(notify(message, "error"));
-          dispatch(panelsActions.createPanelFailure());
-        }
-      } catch (error) {
+      const { data, message } = await response.json();
+      if (response.status === 200) {
+        dispatch(notify(message, "success"));
+        dispatch(panelsActions.createPanelSuccess(data.panel));
+      } else {
+        dispatch(notify(message, "error"));
         dispatch(panelsActions.createPanelFailure());
       }
-    };
+    } catch (error) {
+      dispatch(panelsActions.createPanelFailure());
+    }
+  };
 
 export const updatePanel =
   (panelId, payload: any = {}) =>
-    async (dispatch: AppDispatch, getState) => {
-      try {
-        const { token } = authSelector(getState());
-        const authHeader = authorizationHeader(token);
-        dispatch(panelsActions.updatePanel());
+  async (dispatch: AppDispatch, getState) => {
+    try {
+      const { token } = authSelector(getState());
+      const authHeader = authorizationHeader(token);
+      dispatch(panelsActions.updatePanel({ panelId }));
 
-        const response = await fetch(
-          `${process.env.REACT_APP_BFF_API_ENDPOINT_URL}/panels/${panelId}`,
-          {
-            method: "PUT",
-            headers: {
-              ...authHeader,
-              "Content-Type": "application/json",
-            },
-            body: JSON.stringify(payload),
-          }
-        );
+      const response = await fetch(
+        `${process.env.REACT_APP_BFF_API_ENDPOINT_URL}/panels/${panelId}`,
+        {
+          method: "PUT",
+          headers: {
+            ...authHeader,
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(payload),
+        },
+      );
 
-        const { data, message } = await response.json();
-        if (response.status === 200) {
-          dispatch(notify(message, "success"));
-          dispatch(panelsActions.updatePanelSuccess(data.panel));
-        } else {
-          dispatch(notify(message, "error"));
-          dispatch(panelsActions.updatePanelFailure());
-        }
-      } catch (error) {
-        dispatch(panelsActions.updatePanelFailure());
+      const { data, message } = await response.json();
+      if (response.status === 200) {
+        dispatch(notify(message, "success"));
+        dispatch(panelsActions.updatePanelSuccess(data.panel));
+      } else {
+        dispatch(notify(message, "error"));
+        dispatch(panelsActions.updatePanelFailure({ panelId }));
       }
-    };
+    } catch (error) {
+      dispatch(panelsActions.updatePanelFailure({ panelId }));
+    }
+  };
 
 export const deletePanel =
   (panelId) => async (dispatch: AppDispatch, getState) => {
@@ -350,7 +419,7 @@ export const deletePanel =
             ...authHeader,
             "Content-Type": "application/json",
           },
-        }
+        },
       );
 
       const { data, message } = await response.json();
@@ -368,62 +437,59 @@ export const deletePanel =
 
 export const getPanelResults =
   (panelId, filters = [], page = 0, batchSize = 10) =>
-    async (dispatch: AppDispatch, getState) => {
+  async (dispatch: AppDispatch, getState) => {
+    try {
+      const { token } = authSelector(getState());
+      const authHeader = authorizationHeader(token);
+      const panel = panelSelector(getState(), panelId);
+      const { filters, ringId } = panel;
+      // @ts-ignore
+      const { rid, info, version } = ringSelector(getState(), ringId);
+      dispatch(panelsActions.getPanelResults({ panelId }));
 
-      try {
-        const { token } = authSelector(getState());
-        const authHeader = authorizationHeader(token);
-        const panel = panelSelector(getState(), panelId);
-        const { filters, ringId } = panel;
-        // @ts-ignore
-        const { rid, info, version } = ringSelector(getState(), ringId);
-        dispatch(panelsActions.getPanelResults());
-
-        const response = await fetch(
-          appendQuery(
-            `${process.env.REACT_APP_BFF_PROXY_ENDPOINT_URL}/results/${rid}/${version}/${info.defaultEntity}?page=${page}&batchSize=${batchSize}&sortBy=dateFiled&sortDirection=desc`,
-            filters?.reduce((acc, filterInput: FilterInput) => {
-              acc[filterInput.type] =
-                filterInput.type === "dateFiled"
-                  ? `[${filterInput.value?.map((date) =>
-                    dayjs(date).format("YYYY-M-DD")
+      const response = await fetch(
+        appendQuery(
+          `${process.env.REACT_APP_BFF_PROXY_ENDPOINT_URL}/results/${rid}/${version}/${info.defaultEntity}?page=${page}&batchSize=${batchSize}&sortBy=dateFiled&sortDirection=desc`,
+          filters?.reduce((acc, filterInput: FilterInput) => {
+            acc[filterInput.type] =
+              filterInput.type === "dateFiled"
+                ? `[${filterInput.value?.map((date) =>
+                    dayjs(date).format("YYYY-M-DD"),
                   )}]`
-                  : filterInput.value;
+                : filterInput.value;
 
-              return acc;
-            }, {}),
-            { encodeComponents: false }
-          )
+            return acc;
+          }, {}),
+          { encodeComponents: false },
+        ),
+      );
+
+      const data = await response.json();
+      if (response.status === 200) {
+        dispatch(
+          panelsActions.getPanelResultsSuccess({
+            panelId,
+            results: data,
+          }),
         );
-
-        const data = await response.json();
-        if (response.status === 200) {
-          dispatch(
-            panelsActions.getPanelResultsSuccess({
-              panelId,
-              results: data,
-            })
-          );
-        } else {
-          dispatch(notify("Error fetching results", "error"));
-          dispatch(panelsActions.getPanelResultsFailure());
-        }
-      } catch (error) {
-        console.log(error);
+      } else {
         dispatch(notify("Error fetching results", "error"));
-        dispatch(panelsActions.getPanelResultsFailure());
+        dispatch(panelsActions.getPanelResultsFailure({ panelId }));
       }
-    };
+    } catch (error) {
+      console.log(error);
+      dispatch(notify("Error fetching results", "error"));
+      dispatch(panelsActions.getPanelResultsFailure({ panelId }));
+    }
+  };
 
 // Hooks
-export const usePanels = () => {
-  const {
-    panels,
-    loadingPanels,
-    hasErrors,
-    creatingPanel,
-    deletingPanel,
-  } = useSelector(panelsSelector);
+export const usePanels = (notebookId) => {
+  const { panels, loadingPanels, hasErrors, creatingPanel, deletingPanel } =
+    useSelector((state: RootState) => ({
+      ...state.panels,
+      ...panelsSelector(state, notebookId),
+    }));
   const dispatch = useDispatch();
 
   return {
@@ -433,6 +499,7 @@ export const usePanels = () => {
     hasErrors,
     creatingPanel,
     deletingPanel,
+    updatePanel: (panelId, payload) => dispatch(updatePanel(panelId, payload)),
     getPanels: (notebookId) => dispatch(getPanels(notebookId)),
     createPanel: (payload: any = {}) => dispatch(createPanel(payload)),
     deletePanel: (panelId) => dispatch(deletePanel(panelId)),
@@ -441,15 +508,25 @@ export const usePanels = () => {
 
 export const usePanel = (panelId: string) => {
   const panel = useSelector((state: RootState) =>
-    panelSelector(state, panelId)
+    panelSelector(state, panelId),
   );
   const results = useSelector((state: RootState) =>
-    panelResultsSelector(state, panelId)
+    panelResultsSelector(state, panelId),
   );
   const filters = useSelector((state: RootState) =>
-    panelFiltersSelector(state, panelId)
+    panelFiltersSelector(state, panelId),
   );
-  const { loadingPanelResults, resultsCollapsed, collapsed, updatingPanel, hasErrors } = panel;
+  const analysis = useSelector((state: RootState) =>
+    panelAnalysisSelector(state, panelId),
+  );
+
+  const {
+    loadingPanelResults,
+    resultsCollapsed,
+    collapsed,
+    updatingPanel,
+    hasErrors,
+  } = panel;
   const dispatch = useDispatch();
 
   return {
@@ -461,6 +538,17 @@ export const usePanel = (panelId: string) => {
     collapsed,
     updatingPanel,
     hasErrors,
+    analysis,
+    addPanelAnalysis: (analysis) =>
+      dispatch(panelsActions.addPanelAnalysis({ panelId, analysis })),
+    removePanelAnalysis: (id) =>
+      dispatch(panelsActions.removePanelAnalysis({ panelId, analysisId: id })),
+    addPanelAnalysisStatement: (payload) =>
+      dispatch(panelsActions.addPanelAnalysisStatement(payload)),
+    removePanelAnalysisStatement: (payload) =>
+      dispatch(panelsActions.removePanelAnalysisStatement(payload)),
+    setPanelDescription: (description) =>
+      dispatch(panelsActions.setPanelDescription({ panelId, description })),
     setPanelCollapsed: (collapsed: boolean) =>
       dispatch(panelsActions.setPanelCollapsed({ panelId, collapsed })),
     setPanelResultsCollapsed: (collapsed: boolean) =>

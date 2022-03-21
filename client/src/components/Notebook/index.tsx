@@ -1,15 +1,15 @@
 import React, { FunctionComponent, useState, useEffect } from "react";
 import { Col, Container, Row, Button, Form } from "react-bootstrap";
-import Loader from "../Loader";
-import Panels from "../Panels";
+import Loader from "components/Loader";
+import Panels from "components/Panels";
 import { useSelector } from "react-redux";
-import { notebookSelector, updateNotebook, deleteNotebook, createNotebook } from "../../store/notebook";
+import { notebookSelector, updateNotebook, deleteNotebook, createNotebook } from "store/notebook";
 import { useDispatch } from "react-redux";
 import { useHistory } from "react-router-dom";
 import "./Notebook.scss";
 import { useRings } from "../../store/rings";
 import AddPanel from "../Panels/AddPanel";
-import { getPanels } from "../../store/panels";
+import { getPanels, usePanels } from "../../store/panels";
 
 const Notebook: FunctionComponent = () => {
   const { getRings } = useRings();
@@ -18,6 +18,7 @@ const Notebook: FunctionComponent = () => {
   const [notebookTitleIsValid, setNotebookTitleIsValid] = useState(true);
   const dispatch = useDispatch();
   const history = useHistory();
+  const { panels, updatePanel } = usePanels(notebook?.id);
 
   useEffect(() => {
     getRings();
@@ -53,7 +54,12 @@ const Notebook: FunctionComponent = () => {
                 <Button
                   className="text-white float-end"
                   variant="success"
-                  onClick={() => dispatch(updateNotebook(notebook?.id, { title: notebookTitle }))}
+                  onClick={() => {
+                    dispatch(updateNotebook(notebook?.id, { title: notebookTitle }));
+                    panels.forEach((panel) => {
+                      updatePanel(panel.id, panel);
+                    });
+                  }}
                   disabled={savingNotebook}
                 >
                   {savingNotebook ? "Loading…" : "Save"}
@@ -92,7 +98,7 @@ const Notebook: FunctionComponent = () => {
           </Row>
         </Container>
         {notebook && <Panels notebookId={notebook?.id} />}
-        <AddPanel />
+        <AddPanel notebookId={notebook?.id} />
       </>
     </Loader >
   );

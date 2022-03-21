@@ -16,7 +16,10 @@ export default (sequelize, options) => {
       filters: DataTypes.JSON,
       results: DataTypes.JSON,
       contents: DataTypes.JSON,
-      analysis: DataTypes.JSON,
+      analysis: {
+        type: DataTypes.JSON,
+        defaultValue: [],
+      },
       deleted: {
         type: DataTypes.BOOLEAN,
         defaultValue: false,

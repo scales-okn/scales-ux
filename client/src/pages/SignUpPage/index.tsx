@@ -2,12 +2,12 @@ import React, { ChangeEvent, FunctionComponent } from "react";
 import { useHistory } from "react-router-dom";
 import { useFormik } from "formik";
 import * as yup from "yup";
-import Copyright from "../../components/Copyright";
+import Copyright from "components/Copyright";
 import { UserSignInFields, UserSignInValidationSchema } from "../SignInPage";
-import { useSnackbar } from "notistack";
 import { Container, Form, Button, Col, Row } from "react-bootstrap";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faBalanceScale } from "@fortawesome/free-solid-svg-icons";
+import { useNotify } from "components/Notifications";
 
 interface UserSignUpFields extends UserSignInFields {
   firstName: string;
@@ -40,7 +40,7 @@ export const UserSignUpValidationSchema = UserSignInValidationSchema.concat(
 
 const SignUpPage: FunctionComponent = () => {
   const history = useHistory();
-  const { enqueueSnackbar } = useSnackbar();
+  const { notify } = useNotify();
 
   const formik = useFormik({
     initialValues: {
@@ -65,13 +65,7 @@ const SignUpPage: FunctionComponent = () => {
           try {
             switch (response.code) {
               case 200: {
-                enqueueSnackbar(response.message, {
-                  variant: "success",
-                  anchorOrigin: {
-                    vertical: "top",
-                    horizontal: "center",
-                  },
-                });
+                notify(response.message, "success");
                 history.push("/sign-in");
                 break;
               }
@@ -79,13 +73,7 @@ const SignUpPage: FunctionComponent = () => {
                 if (response.errors) {
                   setErrors(response.errors);
                 }
-                enqueueSnackbar(response.message, {
-                  variant: "warning",
-                  anchorOrigin: {
-                    vertical: "top",
-                    horizontal: "center",
-                  },
-                });
+                notify(response.message, "error");
                 break;
               }
             }
@@ -99,7 +87,7 @@ const SignUpPage: FunctionComponent = () => {
   return (
     <Container className="h-100">
       <Row className="h-100 justify-content-center align-items-center text-center">
-        <Col md="4">
+        <Col md="5">
           <Form noValidate onSubmit={formik.handleSubmit}>
             <FontAwesomeIcon icon={faBalanceScale} size="3x" className="mb-4" />
             <h1 className="h3 mb-3 fw-normal">Please sign in</h1>

@@ -22,7 +22,7 @@ const PageLayout: FunctionComponent<Props> = (props) => {
   const isAdmin = user.role === "admin";
 
   return (
-    <div className="app-page" id={props.id}>
+    <div className="app-page" id={id}>
       <Navbar bg="white" className="mb-4 py-3">
         <Container>
           <Navbar.Brand>
@@ -76,8 +76,8 @@ const PageLayout: FunctionComponent<Props> = (props) => {
         </Container>
       </Navbar>
       <Container id="main">
-        {props.pageTitle && <h4>{props.pageTitle}</h4>}
-        {props.children}
+        {pageTitle && <h4>{pageTitle}</h4>}
+        {children}
       </Container>
     </div>
   );

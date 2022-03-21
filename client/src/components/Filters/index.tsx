@@ -37,7 +37,7 @@ const Filters: FunctionComponent<FiltersProps> = ({ panelId }) => {
             Update Results
           </Button>
         ) : (
-          <small>Add a filter</small>
+          <>Add a filter</>
         )}
       </div>
     </div >

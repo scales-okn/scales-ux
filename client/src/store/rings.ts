@@ -1,14 +1,10 @@
 import { createSlice } from "@reduxjs/toolkit";
-import type { RootState, AppDispatch } from "./index";
-import { authSelector, authorizationHeader } from "./auth";
+import type { RootState, AppDispatch } from "store";
+import { authSelector } from "store/auth";
 import { useDispatch, useSelector } from "react-redux";
-export interface IRing {
-  [key: string]: any;
-}
+import { notify } from "reapop";
+import { authorizationHeader } from "utils";
 
-export interface IInfo {
-  [key: string]: any;
-}
 interface InitialState {
   loadingRings: boolean;
   loadingRingInfo: boolean;
@@ -17,7 +13,7 @@ interface InitialState {
 }
 
 export const initialState: InitialState = {
-  loadingRings: true,
+  loadingRings: false,
   loadingRingInfo: false,
   hasErrors: false,
   rings: null,
@@ -50,7 +46,7 @@ const ringsSlice = createSlice({
     getRingInfoSuccess: (state, { payload }) => ({
       ...state,
       rings: state.rings.map((ring) =>
-        ring.rid == payload.rid ? { ...ring, info: payload.info } : ring
+        ring.rid == payload.rid ? { ...ring, info: payload.info } : ring,
       ),
       loadingRingInfo: false,
       hasErrors: false,
@@ -76,6 +72,7 @@ export const ringInfoSelector = (state: RootState, id: string) =>
 // The reducer
 export default ringsSlice.reducer;
 
+// Async actions
 export const getRings = () => {
   return async (dispatch: AppDispatch, getState) => {
     try {
@@ -89,7 +86,7 @@ export const getRings = () => {
           headers: {
             ...authHeader,
           },
-        }
+        },
       );
       const { data } = await response.json();
 
@@ -107,28 +104,30 @@ export const getRings = () => {
 
 export const getRingInfo = (rid: string, version: number) => {
   return async (dispatch: AppDispatch) => {
+    const failedToGetRingInfoNotification = () =>
+      dispatch(notify("Failed to get ring info!", "error"));
+
     try {
       dispatch(ringsActions.getRingInfo());
-
       const response = await fetch(
-        `${process.env.REACT_APP_BFF_PROXY_ENDPOINT_URL}/rings/${rid}/${version}`
+        `${process.env.REACT_APP_BFF_PROXY_ENDPOINT_URL}/rings/${rid}/${version}`,
       );
       const info = await response.json();
 
       if (response.status === 200) {
         dispatch(ringsActions.getRingInfoSuccess({ rid, info }));
       } else {
+        failedToGetRingInfoNotification();
         dispatch(ringsActions.getRingInfoFailure());
       }
     } catch (error) {
-      console.log(error);
-      dispatch(ringsActions.getRingsFailure());
+      failedToGetRingInfoNotification();
+      dispatch(ringsActions.getRingInfoFailure());
     }
   };
 };
 
 // Hooks
-
 export const useRings = () => {
   const { rings, loadingRings, hasErrors, loadingRingInfo } =
     useSelector(ringsSelector);

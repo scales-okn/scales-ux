@@ -125,7 +125,7 @@ const NotebooksPage: FunctionComponent = () => {
                   {
                     field: "title",
                     headerName: "Name",
-                    width: 270,
+                    width: 250,
                     editable: true,
                     renderCell: (params: GridCellParams) => (
                       <Link
@@ -157,7 +157,7 @@ const NotebooksPage: FunctionComponent = () => {
                   {
                     field: "visibility",
                     headerName: "Visibility",
-                    width: 210,
+                    width: 160,
                   },
                   {
                     field: "userId",

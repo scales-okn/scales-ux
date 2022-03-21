@@ -11,12 +11,6 @@ type Params = {
   notebookId: string | null;
 };
 
-type Ring = {
-  id: string;
-  name: string;
-  description?: string | null;
-};
-
 const NotebookPage: FunctionComponent = () => {
   const { notebookId = null } = useParams<Params>();
   const { loadingNotebook } = useSelector(notebookSelector);
@@ -24,7 +18,6 @@ const NotebookPage: FunctionComponent = () => {
 
   useEffect(() => {
     dispatch(notebookActions.clearNotebook());
-    dispatch(panelsActions.clearPanels());
     if (notebookId !== "new") {
       dispatch(fetchNotebook(notebookId));
     }
