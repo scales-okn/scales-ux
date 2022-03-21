@@ -1,8 +1,9 @@
 import { createSlice } from "@reduxjs/toolkit";
-import type { RootState, AppDispatch } from "./index";
-import { authSelector, authorizationHeader } from "./auth";
+import type { RootState, AppDispatch } from "store";
+import { authSelector } from "store/auth";
+import { authorizationHeader } from "utils";
 import { notify } from "reapop";
-import { useUnknownErrorNotificationMessage } from "../components/Notifications";
+import { useUnknownErrorNotificationMessage } from "components/Notifications";
 import { useSelector, useDispatch } from "react-redux";
 
 interface InitialState {
@@ -121,7 +122,7 @@ export function fetchNotebook(id: string) {
             "Content-Type": "application/json",
             ...authHeader,
           },
-        }
+        },
       );
       if (response.status === 200) {
         const { data } = await response.json();
@@ -151,7 +152,7 @@ export function updateNotebook(id: string, payload: any) {
             ...authHeader,
           },
           body: JSON.stringify(payload),
-        }
+        },
       );
       if (response.status === 200) {
         const { data, message } = await response.json();
@@ -172,9 +173,7 @@ export function createNotebook(payload: any) {
   return async (dispatch: AppDispatch, getState) => {
     const { token } = authSelector(getState());
     const authHeader = authorizationHeader(token);
-
     dispatch(notebookActions.createNotebook());
-
     try {
       const response = await fetch(
         `${process.env.REACT_APP_BFF_API_ENDPOINT_URL}/notebooks`,
@@ -185,7 +184,7 @@ export function createNotebook(payload: any) {
             ...authHeader,
           },
           body: JSON.stringify(payload),
-        }
+        },
       );
       const { data, message } = await response.json();
       if (response.status === 200) {
@@ -205,9 +204,7 @@ export function deleteNotebook(id: string) {
   return async (dispatch: AppDispatch, getState) => {
     const { token } = authSelector(getState());
     const authHeader = authorizationHeader(token);
-
     dispatch(notebookActions.removeNotebook());
-
     try {
       const response = await fetch(
         `${process.env.REACT_APP_BFF_API_ENDPOINT_URL}/notebooks/${id}`,
@@ -217,7 +214,7 @@ export function deleteNotebook(id: string) {
             "Content-Type": "application/json",
             ...authHeader,
           },
-        }
+        },
       );
       const { message } = await response.json();
       if (response.status === 200) {
@@ -239,7 +236,6 @@ export function useNotebook() {
   const { notebook, loadingNotebook, hasErrors } =
     useSelector(notebookSelector);
   const dispatch = useDispatch();
-
   return {
     notebook,
     loadingNotebook,

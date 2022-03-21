@@ -99,7 +99,7 @@ export const login = async (req: Request, res: Response) => {
       });
     }
     return res.send_unauthorized("Login Failed!", {
-      password: "Password is not correct!",
+      password: "Credentials are not correct!",
     });
   } catch (error) {
     console.log(error);

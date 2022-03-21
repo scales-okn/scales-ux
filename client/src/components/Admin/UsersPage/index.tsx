@@ -1,5 +1,5 @@
 import React, { FunctionComponent, useState, useEffect } from "react";
-import { useAuthHeader, useAuthUser } from "react-auth-kit";
+// import { useAuthHeader, useAuthUser } from "react-auth-kit";
 import {
   DataGrid,
   GridColDef,
@@ -11,9 +11,11 @@ import PageLayout from "../../PageLayout";
 import NotAuthorized from "../../NotAuthorized";
 import UserFieldToggle from "./UserFieldToggle";
 import { Row } from "react-bootstrap";
+import { useAuthHeader, userSelector } from "store/auth";
+import { useSelector } from "react-redux";
 
 const columns: GridColDef[] = [
-  { field: "id", headerName: "ID", width: 100 },
+  // { field: "id", headerName: "ID", width: 100 },
   {
     field: "fullName",
     headerName: "Full name",
@@ -21,12 +23,11 @@ const columns: GridColDef[] = [
     sortable: false,
     width: 160,
     valueGetter: (params: GridValueGetterParams) =>
-      `${params.getValue(params.id, "firstName") || ""} ${
-        params.getValue(params.id, "lastName") || ""
+      `${params.getValue(params.id, "firstName") || ""} ${params.getValue(params.id, "lastName") || ""
       }`,
   },
-  { field: "createdAt", headerName: "Created At", width: 200 },
-  { field: "updatedAt", headerName: "Updated At", width: 200 },
+  // { field: "createdAt", headerName: "Created At", width: 200 },
+  // { field: "updatedAt", headerName: "Updated At", width: 200 },
   { field: "email", headerName: "Email", width: 210 },
   { field: "role", headerName: "Role", width: 140 },
   {
@@ -68,21 +69,20 @@ const columns: GridColDef[] = [
 ];
 
 const AdminUsersPages: FunctionComponent = () => {
-  const auth = useAuthUser();
-  const authHeader = useAuthHeader();
-  const isAdmin = auth()?.user?.role === "admin";
   const [rows, setRows] = useState([]);
+  const authorizationHeader = useAuthHeader();
+  const { role } = useSelector(userSelector);
+  const isAdmin = role === 'admin';
 
   useEffect(() => {
     fetch(`${process.env.REACT_APP_BFF_API_ENDPOINT_URL}/users`, {
       headers: {
-        Authorization: authHeader(),
+        ...authorizationHeader,
         "Content-Type": "application/json",
       },
     })
       .then((response) => response.json())
       .then((response) => {
-        console.log(response);
         setRows(response.data.users);
       });
   }, []);

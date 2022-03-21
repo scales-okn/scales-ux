@@ -1,19 +1,26 @@
-import React, { FunctionComponent } from "react";
+import React, { FunctionComponent, useEffect, useState } from "react";
 import { Container, Row, Col, Dropdown, Button } from "react-bootstrap";
 import Loader from "../Loader";
 import { usePanel } from "../../store/panels";
-import type { IPanel } from "../../store/panels";
 import { useRing, useRings } from "../../store/rings";
 import "./Dataset.scss";
+import { BsNodeMinusFill } from "react-icons/bs";
 
 type DatasetProps = {
   panelId: string;
 };
 
 const Dataset: FunctionComponent<DatasetProps> = ({ panelId }) => {
-  const { panel, updatePanel } = usePanel(panelId);
+  const { panel, updatePanel, setPanelCollapsed, getPanelResults } = usePanel(panelId);
   const { rings, loadingRings } = useRings();
-  const { ring, loadingRingInfo, info } = useRing(panel.ringId);
+  const [selectedRing, setSelectedRing] = useState(null);
+  const { ring, loadingRingInfo, info, getRingInfo } = useRing(selectedRing?.id);
+
+  useEffect(() => {
+    if (!ring || info) return
+    console.log(ring);
+    getRingInfo(ring.version);
+  }, [selectedRing]);
 
   return (
     <Loader animation="border" isVisible={loadingRings}>
@@ -27,7 +34,7 @@ const Dataset: FunctionComponent<DatasetProps> = ({ panelId }) => {
                 id="dropdown-dataset"
                 className="pt-2"
               >
-                {ring ? ring.name : "None"}
+                {selectedRing ? selectedRing.name : "None"}
               </Dropdown.Toggle>
 
               <Dropdown.Menu>
@@ -35,7 +42,7 @@ const Dataset: FunctionComponent<DatasetProps> = ({ panelId }) => {
                   <Dropdown.Item
                     key={index}
                     onClick={() => {
-                      updatePanel({ ringId: ring.id });
+                      setSelectedRing(ring);
                     }}
                   >
                     <h6>{ring.name}</h6>
@@ -57,6 +64,10 @@ const Dataset: FunctionComponent<DatasetProps> = ({ panelId }) => {
                 size="lg"
                 className="text-white rounded-3"
                 disabled={!info}
+                onClick={() => {
+                  updatePanel({ ringId: selectedRing.id });
+                  setPanelCollapsed(false);
+                }}
               >
                 Start Exploring
               </Button>

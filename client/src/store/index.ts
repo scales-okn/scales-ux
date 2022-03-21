@@ -7,15 +7,16 @@ import thunk from "redux-thunk";
 import { reducer as notificationsReducer } from "reapop";
 
 // Reducers
-import auth from "./auth";
-import rings from "./rings";
-import notebooks from "./notebooks";
-import notebook from "./notebook";
-import panels from "./panels";
+import auth from "store/auth";
+import rings from "store/rings";
+import notebooks from "store/notebooks";
+import notebook from "store/notebook";
+import panels from "store/panels";
 
 // Middlewares
-import { authMiddleware } from "./auth";
+import { authMiddleware } from "store/auth";
 
+// Root reducer
 const reducers = combineReducers({
   auth,
   rings,
@@ -32,12 +33,14 @@ const persistConfig = {
   blacklist: ["notifications"],
 };
 
+// Store
 const store = configureStore({
   reducer: persistReducer(persistConfig, reducers),
   devTools: process.env.NODE_ENV !== "production",
-  middleware: [thunk],
+  middleware: [thunk, authMiddleware],
 });
 
+// Persisted store
 export const persistor = persistStore(store);
 
 export default store;

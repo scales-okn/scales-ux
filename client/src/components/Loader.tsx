@@ -5,6 +5,7 @@ interface ILoaderProps extends SpinnerProps {
   isVisible: boolean;
   children?: any;
   loaderContent?: ReactNode;
+  contentHeight?: string;
 }
 
 const Loader: FunctionComponent<ILoaderProps> = ({
@@ -13,6 +14,7 @@ const Loader: FunctionComponent<ILoaderProps> = ({
   variant,
   size = null,
   children,
+  contentHeight,
   loaderContent,
 }) => {
   if (isVisible) {
@@ -21,8 +23,18 @@ const Loader: FunctionComponent<ILoaderProps> = ({
         {loaderContent ? (
           loaderContent
         ) : (
-          <div className="d-flex justify-content-center p-2">
-            <Spinner animation={animation} variant={variant} size={size} />
+          <div
+            className="d-flex justify-content-center p-2"
+            style={{
+              height: contentHeight || "100%",
+            }}
+          >
+            <Spinner
+              className="align-self-center"
+              animation={animation}
+              variant={variant}
+              size={size}
+            />
           </div>
         )}
       </>

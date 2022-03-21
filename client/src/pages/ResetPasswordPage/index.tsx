@@ -4,7 +4,7 @@ import { useFormik } from "formik";
 import * as yup from "yup";
 
 import Copyright from "../../components/Copyright";
-import { useSnackbar } from "notistack";
+import { useNotify } from "components/Notifications";
 
 import { Button, Col, Container, Form, Row } from "react-bootstrap";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -33,7 +33,7 @@ const ResetPasswordValidationSchema = yup.object({
 
 const ResetPassword: FunctionComponent = () => {
   const history = useHistory();
-  const { enqueueSnackbar } = useSnackbar();
+  const { notify } = useNotify();
   const { token } = useParams<ParamTypes>();
 
   const formik = useFormik({
@@ -58,13 +58,7 @@ const ResetPassword: FunctionComponent = () => {
           try {
             switch (response.code) {
               case 200: {
-                enqueueSnackbar(response.message, {
-                  variant: "success",
-                  anchorOrigin: {
-                    vertical: "top",
-                    horizontal: "center",
-                  },
-                });
+                notify(response.message, "success");
                 history.push("/sign-in");
                 break;
               }
@@ -72,13 +66,7 @@ const ResetPassword: FunctionComponent = () => {
                 if (response.errors) {
                   setErrors(response.errors);
                 }
-                enqueueSnackbar(response.message, {
-                  variant: "warning",
-                  anchorOrigin: {
-                    vertical: "top",
-                    horizontal: "center",
-                  },
-                });
+                notify(response.message, "error");
                 break;
               }
             }

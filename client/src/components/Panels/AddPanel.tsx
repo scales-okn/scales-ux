@@ -4,9 +4,13 @@ import { usePanels } from "../../store/panels";
 import "./AddPanel.scss";
 import { useNotebook } from "../../store/notebook";
 
-const AddPanel: FunctionComponent = () => {
-  const { createPanel } = usePanels();
+type AddPanelProps = {
+  notebookId: string | null;
+};
+
+const AddPanel: FunctionComponent<AddPanelProps> = ({notebookId}) => {
   const { notebook } = useNotebook();
+  const { createPanel } = usePanels(notebookId);
 
   return (
     <Button
