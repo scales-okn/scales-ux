@@ -16,7 +16,7 @@ pipeline {
         stage('Build') {
           steps {
             container('build') {
-                withCredentials([file(credentialsId: 'ssh_key', variable: 'keyfile')]){
+                withCredentials([file(credentialsId: 'github', variable: 'keyfile')]){
                   echo 'Starting docker build!'
                   sh "docker build --no-cache --build-arg SSH_PRIVATE_KEY=\"\$(cat ${keyfile})\" -t satyrn-ux . --network=host"
                 }
