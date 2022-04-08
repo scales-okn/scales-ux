@@ -6,7 +6,7 @@ pipeline {
         kind: Pod
         metadata:
           labels:
-            some-label: ux-build-and-test
+            some-label: ux-build
         spec:
           containers:
           - name: build
@@ -36,6 +36,10 @@ pipeline {
         '''
     }
   }
+  environment{
+      PROXY_API_URL = "https://dev.satyrn.io/api"
+      PROXY_API_KEY = credentials('API_KEY')
+    }
     stages { 
         stage('Checkout Deployment') {
             steps {
@@ -76,7 +80,7 @@ pipeline {
           steps {
             container('build') {
                 dir("$WORKSPACE/satyrn-deployment") {
-                    sh 'helm upgrade --install satyrn-ux charts/common --values charts/satyrn-ux/values-override-dev.yaml --create-namespace --namespace dev-satyrn-ux --set image.tag=$GIT_COMMIT'
+                    sh 'helm upgrade --install satyrn-ux charts/common --values charts/satyrn-ux/values-override-dev.yaml --set env.PROXY_API_KEY=$PROXY_API_KEY --set env.PROXY_API_URL=$PROXY_API_URL --create-namespace --namespace dev-satyrn-ux --set image.tag=$GIT_COMMIT'
                 }
             }
           }
