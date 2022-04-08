@@ -54,12 +54,13 @@ pipeline {
             container('build') {
                 withCredentials([file(credentialsId: 'ssh_key', variable: 'keyfile')]){
                   echo 'Starting docker build!'
-                  sh "set +x ; docker build --cache-from 304793330600.dkr.ecr.us-east-1.amazonaws.com/satyrn-ux:latest --build-arg SSH_PRIVATE_KEY=\"\$(cat ${keyfile})\" -t satyrn-ux . --network=host ; set -x"
+                  sh "set +x ; docker build --build-arg SSH_PRIVATE_KEY=\"\$(cat ${keyfile})\" -t satyrn-ux . --network=host ; set -x"
                 }
             }
           }
         }
         stage('Push') {
+          container('build') {
             steps {
                 echo  'Logging in!'
                 sh 'aws ecr get-login-password --region us-east-1 | docker login --username AWS --password-stdin 304793330600.dkr.ecr.us-east-1.amazonaws.com'
@@ -68,14 +69,17 @@ pipeline {
                 sh 'docker tag satyrn-ux:latest 304793330600.dkr.ecr.us-east-1.amazonaws.com/satyrn-ux:$GIT_COMMIT'
                 sh 'docker push 304793330600.dkr.ecr.us-east-1.amazonaws.com/satyrn-ux:$GIT_COMMIT'
             }
+          }
         }
 
         stage('Deploy') {
+          container('build') {
             steps {
                 dir("$WORKSPACE/satyrn-deployment") {
                     sh 'helm upgrade --install satyrn-ux charts/common --values charts/satyrn-ux/values-override-dev.yaml --create-namespace --namespace dev-satyrn-ux --set image.tag=$GIT_COMMIT'
                 }
             }
+          }
         }
     }
 }
