@@ -254,11 +254,15 @@ export const verifyEmail = async (req: Request, res: Response) => {
           {
             from: process.env.SENDGRID_FROM_SENDER,
             to: `${firstName} ${lastName} <${email}>`,
-            subject: "Welcome to Satyrn!",
+            subject: "Satyrn Beta Access",
             html: `
-                Hello, <br />
-                Thanks for registering with us. <br />
-                Your account it has to be approved. You will receive an email when is approved so you can start using it.
+                Hello ${firstName}, <br />
+                Thanks for registering for access to Satyrn. 
+                During our closed beta, we’re letting in a limited number of users, but will be expanding access over the coming months.<br /> 
+                Now that your email address has been verified, you have been added to our approval queue.<br /> Once your account is approved, 
+                you will receive an email to let you know you can log in to Satyrn. <br /><br />
+                Thanks! <br />
+                - The Satyrn Team
             `,
           },
           //@ts-ignore
@@ -296,9 +300,13 @@ export const forgotPassword = async (req: Request, res: Response) => {
         {
           from: process.env.SENDGRID_FROM_SENDER,
           to: `${firstName} ${lastName} <${email}>`,
-          subject: "Forgot Password",
-          html: `Hello, <br> 
-          <a href="${process.env.CLIENT_URL}/reset-password/${passwordResetToken}">Click here to reset your password.</a>`,
+          subject: "Satyrn: Password reset request",
+          html: `Hello ${firstName}, <br> 
+          You are receiving this email because of a password reset request received at <a href="${process.env.CLIENT_URL}">Satyrn</a>. <br />
+          If you did not request a password reset, then please ignore this email and contact us at {EMAIL ADDRESS} to let us know. <br />
+          Otherwise, <a href="${process.env.CLIENT_URL}/reset-password/${passwordResetToken}">click here to reset your password.</a> <br /><br />
+          Thanks! <br />
+          - The Satyrn Team`,
         },
         //@ts-ignore
         (error, info) => console.log(error, info)

@@ -153,6 +153,9 @@ const Analysis: FunctionComponent<AnalysisProps> = ({ panelId, ring, info }) => 
     }
   ];
 
+  console.log(data);
+
+
 
   return (<Col>
 
@@ -289,8 +292,8 @@ const Analysis: FunctionComponent<AnalysisProps> = ({ panelId, ring, info }) => 
             width={500}
             height={300}
             data={data.results.map((result) => ({
-              name: result.split(',')[0].replace(/\(|\)/g, ''),
-              value: result.split(',')[1].replace(/\(|\)/g, ''),
+              name: result?.[0],
+              value: result?.[1],
             }))}
             margin={{
               top: 5,

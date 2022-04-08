@@ -85,10 +85,11 @@ export default (sequelize, options) => {
         {
           from: process.env.SENDGRID_FROM_SENDER,
           to: `${firstName} ${lastName} <${email}>`,
-          subject: "Please confirm your Email account!",
-          html: `Hello, <br>
-          Please Click on the link to verify your email. <br>
-          <a href="${process.env.CLIENT_URL}/verify-email/${emailVerificationToken}">Click here to verify</a>`,
+          subject: "Satyrn - Please verify your email address",
+          html: `Hello ${firstName}, <br />
+          Thank you for signing up for access to <a href="${process.env.CLIENT_URL}">Satyrn</a>.<br />
+          Please <a href="${process.env.CLIENT_URL}/verify-email/${emailVerificationToken}">click here to verify this email address</a>. <br /><br />
+          - The Satyrn Team`,
         },
         (error, info) => console.log(error, info)
       );
@@ -109,9 +110,14 @@ export default (sequelize, options) => {
           {
             from: process.env.SENDGRID_FROM_SENDER,
             to: `${firstName} ${lastName} <${email}>`,
-            subject: "Your account was approved!",
-            html: `Hello, <br> 
-          Your account was approved. You can sign in <a href="${process.env.CLIENT_URL}/sign-in">here</a>.`,
+            subject: "Welcome to the Satyrn Beta!",
+            html: `Hello ${firstName}, <br> 
+            Your account has been approved and you can now access Satyrn! You can sign in <a href="${process.env.CLIENT_URL}/sign-in">here</a>. <br />
+            Please feel free to reach out to us at <EMAIL ADDRESS> with any questions or bug reports as you begin using the system. <br />
+            If you’re looking for a good place to get started, see <a href=”<LINK TO FUTURE POST”>this post</a> for more details about using the system.<br /> <br/>
+            Thanks! <br/>
+            - The Satyrn Team
+            `,
           },
           (error, info) => console.log(error, info)
         );
