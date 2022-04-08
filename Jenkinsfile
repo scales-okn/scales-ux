@@ -54,7 +54,7 @@ pipeline {
             container('build') {
                 withCredentials([file(credentialsId: 'ssh_key', variable: 'keyfile')]){
                   echo 'Starting docker build!'
-                  sh "docker build --no-cache --build-arg SSH_PRIVATE_KEY=\"\$(cat ${keyfile})\" -t satyrn-ux . --network=host"
+                  sh "set +x ; docker build --cache-from 304793330600.dkr.ecr.us-east-1.amazonaws.com/satyrn-ux:latest --build-arg SSH_PRIVATE_KEY=\"\$(cat ${keyfile})\" -t satyrn-ux . --network=host ; set -x"
                 }
             }
           }
