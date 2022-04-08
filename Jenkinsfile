@@ -60,8 +60,8 @@ pipeline {
           }
         }
         stage('Push') {
-          container('build') {
-            steps {
+          steps {
+            container('build') {
                 echo  'Logging in!'
                 sh 'aws ecr get-login-password --region us-east-1 | docker login --username AWS --password-stdin 304793330600.dkr.ecr.us-east-1.amazonaws.com'
                 sh 'docker tag satyrn-ux:latest 304793330600.dkr.ecr.us-east-1.amazonaws.com/satyrn-ux:latest'
@@ -73,8 +73,8 @@ pipeline {
         }
 
         stage('Deploy') {
-          container('build') {
-            steps {
+          steps {
+            container('build') {
                 dir("$WORKSPACE/satyrn-deployment") {
                     sh 'helm upgrade --install satyrn-ux charts/common --values charts/satyrn-ux/values-override-dev.yaml --create-namespace --namespace dev-satyrn-ux --set image.tag=$GIT_COMMIT'
                 }
