@@ -14,13 +14,15 @@ pipeline {
         }
 
         stage('Build') {
-            steps {
-                echo 'Starting docker build!'
-                sh 'ls'
-                sh 'docker build -t satyrn-ux . --network=host'
+          steps {
+            container('build') {
+                withCredentials([file(credentialsId: 'ssh_key', variable: 'keyfile')]){
+                  echo 'Starting docker build!'
+                  sh "docker build --no-cache --build-arg SSH_PRIVATE_KEY=\"\$(cat ${keyfile})\" -t satyrn-ux . --network=host"
+                }
             }
+          }
         }
-
         stage('Push') {
             steps {
                 echo  'Logging in!'
