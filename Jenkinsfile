@@ -1,5 +1,41 @@
 pipeline {
-    agent any
+  agent {
+    kubernetes {
+      yaml '''
+        apiVersion: v1
+        kind: Pod
+        metadata:
+          labels:
+            some-label: ux-build-and-test
+        spec:
+          containers:
+          - name: build
+            image: george7522/jenkins-agent:0.02
+            command:
+            - cat
+            volumeMounts:
+            - name: docker
+              mountPath: /var/lib/docker
+            - name: docker-sock
+              mountPath: /var/run/docker.sock
+            tty: true
+            securityContext:
+              privileged: true
+          volumes:
+          - name: docker
+            hostPath:
+              path: /var/lib/docker
+          - name: docker-sock
+            hostPath:
+              path: /var/run/docker.sock
+          securityContext:
+            runAsUser: 0
+            runAsGroup: 0
+          nodeSelector:
+            node-group: cicd
+        '''
+    }
+  }
     stages { 
         stage('Checkout Deployment') {
             steps {
@@ -18,7 +54,7 @@ pipeline {
             container('build') {
                 withCredentials([file(credentialsId: 'ssh_key', variable: 'keyfile')]){
                   echo 'Starting docker build!'
-                  sh "docker build --no-cache --build-arg SSH_PRIVATE_KEY=${keyfile} -t satyrn-ux . --network=host"
+                  sh "docker build --no-cache --build-arg SSH_PRIVATE_KEY=\"\$(cat ${keyfile})\" -t satyrn-ux . --network=host"
                 }
             }
           }
