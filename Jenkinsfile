@@ -6,7 +6,7 @@ pipeline {
                 dir("$WORKSPACE/satyrn-deployment") {
                     git(
                         branch: 'master',
-                        credentialsId: 'git-cred-c3',
+                        credentialsId: 'github',
                         url: 'git@github.com:nu-c3lab/satyrn-deployment.git'
                     )
                 }
