@@ -60,27 +60,31 @@ pipeline {
 
     stage('Push') {
       steps {
-        echo  'Logging in!'
-        sh 'aws ecr get-login-password --region us-east-1 | docker login --username AWS --password-stdin 304793330600.dkr.ecr.us-east-1.amazonaws.com'
-        sh 'docker tag satyrn-ux:latest 304793330600.dkr.ecr.us-east-1.amazonaws.com/satyrn-ux:latest'
-        sh 'docker push 304793330600.dkr.ecr.us-east-1.amazonaws.com/satyrn-ux:latest'
-        sh 'docker tag satyrn-ux:latest 304793330600.dkr.ecr.us-east-1.amazonaws.com/satyrn-ux:test-$GIT_COMMIT'
-        sh 'docker push 304793330600.dkr.ecr.us-east-1.amazonaws.com/satyrn-ux:test-$GIT_COMMIT'
+        container('build') {
+          echo  'Logging in!'
+          sh 'aws ecr get-login-password --region us-east-1 | docker login --username AWS --password-stdin 304793330600.dkr.ecr.us-east-1.amazonaws.com'
+          sh 'docker tag satyrn-ux:latest 304793330600.dkr.ecr.us-east-1.amazonaws.com/satyrn-ux:latest'
+          sh 'docker push 304793330600.dkr.ecr.us-east-1.amazonaws.com/satyrn-ux:latest'
+          sh 'docker tag satyrn-ux:latest 304793330600.dkr.ecr.us-east-1.amazonaws.com/satyrn-ux:test-$GIT_COMMIT'
+          sh 'docker push 304793330600.dkr.ecr.us-east-1.amazonaws.com/satyrn-ux:test-$GIT_COMMIT'
+        }
       }
     }
 
     stage('Deploy') {
       steps {
-        dir("$WORKSPACE/satyrn-deployment") {
-          sh 'helm upgrade --install satyrn-ux charts/common --values charts/satyrn-ux/values-override-dev.yaml --set env.PROXY_API_KEY=$PROXY_API_KEY --set env.PROXY_API_URL=$PROXY_API_URL --create-namespace --namespace dev-satyrn-ux --set image.tag=$GIT_COMMIT'
+        container('build') {
+          dir("$WORKSPACE/satyrn-deployment") {
+            sh 'helm upgrade --install satyrn-ux charts/common --values charts/satyrn-ux/values-override-dev.yaml --set env.PROXY_API_KEY=$PROXY_API_KEY --set env.PROXY_API_URL=$PROXY_API_URL --create-namespace --namespace dev-satyrn-ux --set image.tag=$GIT_COMMIT'
+          }
         }
       }
     }
 
     stage('Cypress') {
       steps {
-        dir("$WORKSPACE/client") {
-          container('cypress') {
+        container('cypress') {
+          dir("$WORKSPACE/client") {
             sshagent (credentials: ['github']) {
               withCredentials([file(credentialsId: 'ssh_key', variable: 'keyfile')]){
                 echo 'Replacing localhost:5000 with dev.satyrn.io'
