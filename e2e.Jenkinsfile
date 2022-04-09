@@ -47,6 +47,17 @@ pipeline {
       PROXY_API_KEY = credentials('API_KEY')
   }
   stages {
+    stage('Checkout Deployment') {
+        steps {
+            dir("$WORKSPACE/satyrn-deployment") {
+                git(
+                    branch: 'master',
+                    credentialsId: 'github',
+                    url: 'git@github.com:nu-c3lab/satyrn-deployment.git'
+                )
+            }
+        }
+    }
     stage('Build') {
       steps {
         container('build') {
@@ -75,7 +86,7 @@ pipeline {
       steps {
         container('build') {
           dir("$WORKSPACE/satyrn-deployment") {
-            sh 'helm upgrade --install satyrn-ux charts/common --values charts/satyrn-ux/values-override-dev.yaml --set env.PROXY_API_KEY=$PROXY_API_KEY --set env.PROXY_API_URL=$PROXY_API_URL --create-namespace --namespace dev-satyrn-ux --set image.tag=$GIT_COMMIT'
+            sh 'helm upgrade --install satyrn-ux ./charts/common --values charts/satyrn-ux/values-override-dev.yaml --set env.PROXY_API_KEY=$PROXY_API_KEY --set env.PROXY_API_URL=$PROXY_API_URL --create-namespace --namespace dev-satyrn-ux --set image.tag=$GIT_COMMIT'
           }
         }
       }
@@ -85,7 +96,7 @@ pipeline {
       steps {
         container('cypress') {
           dir("$WORKSPACE/client") {
-            sshagent (credentials: ['github']) {
+            // sshagent (credentials: ['github']) {
               withCredentials([file(credentialsId: 'ssh_key', variable: 'keyfile')]){
                 echo 'Replacing localhost:5000 with dev.satyrn.io'
                 sh 'cd cypress && find ./ -type f -exec sed -i "s/localhost:5000/dev.satyrn.io/g" {} \\; && cd -'
@@ -101,7 +112,7 @@ pipeline {
                   npm run e2e
                   """
             }
-            }
+            // }
           }
         }
       }
