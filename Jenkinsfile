@@ -37,8 +37,11 @@ pipeline {
     }
   }
   environment{
-      PROXY_API_URL = "https://dev.satyrn.io/api"
-      PROXY_API_KEY = credentials('API_KEY')
+      GIT_BRANCH_NAME = sh(script: "printf \$(a=`git rev-parse --abbrev-ref HEAD`; if echo \$a | grep -iq HEAD ; then a=dev; echo \$a; else echo \$a ; fi; )",returnStdout: true).trim()
+      DEV_PROXY_API_KEY = credentials('API_KEY')
+      DB_PASSWORD = credentials('DB_PASSWORD')
+      DEV_JWT_SECRET = credentials('DEV_JWT_SECRET')
+      DEV_SENDGRID_API_KEY = credentials('DEV_SENDGRID_API_KEY')
     }
     stages { 
         stage('Checkout Deployment') {
@@ -80,7 +83,7 @@ pipeline {
           steps {
             container('build') {
                 dir("$WORKSPACE/satyrn-deployment") {
-                    sh 'helm upgrade --install satyrn-ux charts/common --values charts/satyrn-ux/values-override-dev.yaml --set env.PROXY_API_KEY=$PROXY_API_KEY --set env.PROXY_API_URL=$PROXY_API_URL --create-namespace --namespace dev-satyrn-ux --set image.tag=$GIT_COMMIT'
+                    sh 'helm upgrade --install satyrn-ux charts/common --values ./.helm/values-dev.yaml --set env.SENDGRID_API_KEY=$DEV_SENDGRID_API_KEY --set env.PROXY_API_KEY=$DEV_PROXY_API_KEY --set env.DB_PASSWORD=$DB_PASSWORD --set env.JWT_SECRET=$DEV_JWT_SECRET --create-namespace --namespace dev-satyrn-ux --set image.tag=$GIT_COMMIT'
                 }
             }
           }
