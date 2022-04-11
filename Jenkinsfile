@@ -84,7 +84,7 @@ pipeline {
           steps {
             container('build') {
                 dir("$WORKSPACE/satyrn-deployment") {
-                    sh 'helm upgrade --install satyrn-ux charts/common --values ../.helm/values-dev.yaml --set env.SENDGRID_API_KEY=$DEV_SENDGRID_API_KEY --set env.PROXY_API_KEY=$DEV_PROXY_API_KEY --set env.DB_PASSWORD=$DB_PASSWORD --set env.JWT_SECRET=$DEV_JWT_SECRET --create-namespace --namespace dev-satyrn-ux --set image.tag=$GIT_COMMIT'
+                    sh 'helm upgrade --install satyrn-ux charts/common --values ../.helm/values-dev.yaml --set env.SENDGRID_API_KEY=$DEV_SENDGRID_API_KEY --set env.PROXY_API_KEY=$DEV_PROXY_API_KEY --set env.DB_PASSWORD=$DB_PASSWORD --set env.JWT_SECRET=$DEV_JWT_SECRET --create-namespace --namespace dev-satyrn-ux --set image.tag=$GIT_COMMIT --wait 1m'
                 }
             }
           }
