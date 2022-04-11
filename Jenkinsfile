@@ -38,7 +38,8 @@ pipeline {
   }
   environment{
       GIT_BRANCH_NAME = sh(script: "printf \$(a=`git rev-parse --abbrev-ref HEAD`; if echo \$a | grep -iq HEAD ; then a=dev; echo \$a; else echo \$a ; fi; )",returnStdout: true).trim()
-      DEV_PROXY_API_KEY = credentials('API_KEY')
+      DEV_PROXY_API_KEY = credentials('DEV_API_KEY')
+      DEV_PROXY_API_AUTH_BEARER_TOKEN = credentials('DEV_PROXY_API_AUTH_BEARER_TOKEN')
       DB_PASSWORD = credentials('DB_PASSWORD')
       DEV_JWT_SECRET = credentials('DEV_JWT_SECRET')
       DEV_SENDGRID_API_KEY = credentials('DEV_SENDGRID_API_KEY')
