@@ -1,5 +1,5 @@
 import React, { useState, useEffect, FunctionComponent } from "react";
-import { StatementManager } from "statement-mananger";
+import { Satyrn } from "statement-mananger";
 import { BsXOctagonFill } from "react-icons/bs";
 import { AsyncTypeahead } from "react-bootstrap-typeahead";
 import uniqid from "uniqid";
@@ -12,6 +12,8 @@ import { BarChart, Bar, Cell, XAxis, YAxis, CartesianGrid, Tooltip, Legend, Resp
 import "./style.scss"
 import config from "config";
 
+
+
 type AnalysisProps = {
   panelId: string;
   ring: IRing;
@@ -19,6 +21,7 @@ type AnalysisProps = {
 }
 
 const Analysis: FunctionComponent<AnalysisProps> = ({ panelId, ring, info }) => {
+
   const { panel, analysis } = usePanel(panelId);
   const [selectedStatement, setSelectedStatement] = useState(null);
   const [selectedParameter, setSelectedParameter] = useState(null);
@@ -29,11 +32,17 @@ const Analysis: FunctionComponent<AnalysisProps> = ({ panelId, ring, info }) => 
   const [autoCompleteSuggestions, setAutoCompleteSuggestions] = useState<string[]>([]);
   const { notify } = useNotify();
   const [data, setData] = useState(null);
+  const [satyrn, setSatyrn] = useState(null);
+
+  console.log(Satyrn);
 
   useEffect(() => {
     if (!info) return;
-    const SM = new StatementManager(info.operations, info.analysisSpace, ring);
-    setStatements(SM.generate());
+    const satyrn = new Satyrn(info.defaultEntity, info.operations, info.analysisSpace, ring);
+    console.log(satyrn);
+    setSatyrn(satyrn);
+    // debugger;
+    setStatements(satyrn.planManager.generate());
   }, [info]);
 
   const getStatement = (statement) => {
@@ -53,37 +62,6 @@ const Analysis: FunctionComponent<AnalysisProps> = ({ panelId, ring, info }) => 
     const plan = statementsrc?.plan;
     plan.rings = [ring.rid];
 
-    // write a post axios call to the server with headers and body
-
-
-    // const a = await axios.get(`${process.env.REACT_APP_BFF_PROXY_ENDPOINT_URL}/analysis/${ring.rid}/${ring.version}/${info?.defaultEntity}`, {
-    //   data: {...plan},
-    //   headers: {
-    //     "Content-Type": "application/json",
-    //     "x-api-key": "sIXOzihpQOePxmOheWeOsw26slDwiqsqN4v2dv30M"
-    //   }
-    // });
-
-
-    // console.log(a);
-    // const response = await axios.get(`${process.env.REACT_APP_BFF_PROXY_ENDPOINT_URL}/analysis/${ring.rid}/${ring.version}/${info?.defaultEntity}`, { ...plan });
-    // console.log(response);
-    // const response2 = await axios.get(`https://satyrn-api.nulab.org/api/analysis/20e114c2-ef05-490c-bdd8-f6f271a6733f/1/Contribution`, {
-    //   body: {
-    //     ...plan,
-    //   },
-    //   headers: {
-    //     "Content-Type": "application/json",
-    //     "x-api-key": "sIXOzihpQOePxmOheWeOsw26slDwiqsqN4v2dv30M"
-    //   });
-    // const response2 = await axios.get("${process.env.REACT_APP_BFF_PROXY_ENDPOINT_URL}/analysis/${ring.rid}/${ring.version}/${info?.defaultEntity}", { ...plan }, {
-    //   headers: {
-    //     "Content-Type": "application/json",
-    //     "Accept": "application/json",
-    //     "x-api-key": "sIXOzihpQOePxmOheWeOsw26slDwiqsqN4v2dv30M"
-    //   });
-    // console.log(response);
-    // setIsLoading(true);
     const response = await fetch(`https://satyrn-api.nulab.org/api/analysis/20e114c2-ef05-490c-bdd8-f6f271a6733f/1/Contribution/`, {
       method: "POST",
       headers: {
@@ -95,13 +73,7 @@ const Analysis: FunctionComponent<AnalysisProps> = ({ panelId, ring, info }) => 
     const data = await response.json();
     setData(data);
     console.log(data);
-    //   setIsLoading(false);
-    //   if (data.error) {
-    //     // notify(data.error, "danger");
-    //     return;
-    //   }
-    //   return data;
-    // }
+    console.log(satyrn(data))
   }
 
   const getFilterFromInfo = (fieldName, info) => {
@@ -138,22 +110,6 @@ const Analysis: FunctionComponent<AnalysisProps> = ({ panelId, ring, info }) => 
       setIsLoading(false);
     }
   };
-
-
-  const data2 = [
-    {
-      name: 'False',
-      value: 1.875,
-      amount: 1.875,
-    },
-    {
-      name: 'True',
-      value: 1.6666666666666667,
-      amount: 2,
-    }
-  ];
-
-  console.log(data);
 
 
 

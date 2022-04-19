@@ -16,10 +16,16 @@ import notebooksRouter from "./routes/notebooks";
 
 const app = express();
 
-// Database
-database().then(() => {
-  app.emit("ready");
-});
+// App dependencies
+(async () => {
+  try {
+    await database();
+    console.log("Database connected successfully!");
+    app.emit("ready");
+  } catch (error) {
+    console.log("Error connecting to database: ", error);
+  }
+})();
 
 // Middlewares
 app.use(express.json());
@@ -41,7 +47,7 @@ const limiter = rateLimit({
 });
 
 // Apply limiter to all requests
-// app.use(limiter);
+app.use(limiter);
 
 // Passport
 app.use(passport.initialize());
@@ -63,11 +69,11 @@ app.use("/api/notebooks", notebooksRouter);
 app.use("/api/panels", panelsRouter);
 
 // Serve React App
-app.use(express.static(path.join(__dirname, "../client/build")));
+app.use(express.static(path.join(__dirname, "../build")));
 
 // Catch all other routes to React App
-app.get("*", (req: Request, res: Response) => {
-  res.sendFile(path.join(__dirname, "../client/build", "index.html"));
+app.get("*", (req, res) => {
+  res.sendFile(path.join(__dirname, "../build", "index.html"));
 });
 
 app.on("ready", () => {
