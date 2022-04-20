@@ -50,7 +50,7 @@ pipeline {
     DB_PASSWORD = credentials('DB_PASSWORD')
 
     // DEV  
-    DEV_BRANCH_REGEX = '/cicd\/dev/'
+    DEV_BRANCH_REGEX = /cicd\/dev/
     DEV_PROXY_API_KEY = credentials('DEV_API_KEY')
     DEV_PROXY_API_AUTH_BEARER_TOKEN = credentials('DEV_PROXY_API_AUTH_BEARER_TOKEN')
     DEV_JWT_SECRET = credentials('DEV_JWT_SECRET')
