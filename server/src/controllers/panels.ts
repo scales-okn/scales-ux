@@ -1,7 +1,7 @@
-import e, { Request, Response } from "express";
+import { Request, Response } from "express";
 import { sequelize } from "../database";
 import accessControl from "../services/accesscontrol";
-const { Op } = require("sequelize");
+import { Op } from "sequelize";
 
 // Resources validations are made with validateResources middleware and validations schemas
 // server/middlewares/validateResources.ts

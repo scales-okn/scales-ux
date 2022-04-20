@@ -1,4 +1,4 @@
-import e, { Request, Response } from "express";
+import { Request, Response } from "express";
 import { sequelize } from "../database";
 import accessControl from "../services/accesscontrol";
 import { Op } from "sequelize";
@@ -234,7 +234,9 @@ export const deleteNotebook = async (req: Request, res: Response) => {
       {
         deleted: true,
       },
-      {}
+      {
+        where: { id: notebookId },
+      }
     );
     if (result) {
       return res.send_ok("Notebook has been deleted successfully!");
