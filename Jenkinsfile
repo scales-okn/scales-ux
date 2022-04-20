@@ -57,10 +57,10 @@ pipeline {
     DEV_SENDGRID_API_KEY = credentials('DEV_SENDGRID_API_KEY')
 
     // PP
-    PP_BRANCH_REGEX = '/cicd\/pp/'
+    PP_BRANCH_REGEX = /cicd\/pp/
 
     // PROD
-    PROD_BRANCH_REGEX = '/cicd\/prod/'
+    PROD_BRANCH_REGEX = /cicd\/prod/
           
   }
     stages { 
