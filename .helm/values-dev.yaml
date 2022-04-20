@@ -29,11 +29,10 @@ env:
   JWT_SECRET: replace_me
   JWT_EXP: "1d"
   PORT: 8080
-  PROXY_API_AUTH_BEARER_TOKEN: 1234
+  PROXY_API_AUTH_BEARER_TOKEN: replace_me
   REACT_APP_BFF_API_ENDPOINT_URL: "https://dev.satyrn.io/"
   REACT_APP_BFF_PROXY_ENDPOINT_URL: "https://dev.satyrn.io/proxy"
   INLINE_RUNTIME_CHUNK: false
-  
   PROXY_API_KEY: replace_me
   PROXY_API_URL: https://satyrn-api-app.dev-satyrn-api/api
   SENDGRID_API_KEY: replace_me
