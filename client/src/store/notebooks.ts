@@ -55,16 +55,13 @@ export function fetchNotebooks() {
     dispatch(notebooksActions.fetchNotebooks());
 
     try {
-      const response = await fetch(
-        `${config.SERVER_API_URL}/notebooks`,
-        {
-          method: "GET",
-          headers: {
-            ...authHeader,
-            "Content-Type": "application/json",
-          },
+      const response = await fetch(`${config.SERVER_API_URL}/notebooks`, {
+        method: "GET",
+        headers: {
+          ...authHeader,
+          "Content-Type": "application/json",
         },
-      );
+      });
       const { data } = await response.json();
 
       dispatch(notebooksActions.fetchNotebooksSuccess(data.notebooks));

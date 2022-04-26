@@ -115,16 +115,13 @@ export function fetchNotebook(id: string) {
     dispatch(notebookActions.getNotebook());
 
     try {
-      const response = await fetch(
-        `${config.SERVER_API_URL}/notebooks/${id}`,
-        {
-          method: "GET",
-          headers: {
-            "Content-Type": "application/json",
-            ...authHeader,
-          },
+      const response = await fetch(`${config.SERVER_API_URL}/notebooks/${id}`, {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+          ...authHeader,
         },
-      );
+      });
       if (response.status === 200) {
         const { data } = await response.json();
         dispatch(notebookActions.getNotebookSuccess(data.notebook));
@@ -144,17 +141,14 @@ export function updateNotebook(id: string, payload: any) {
     dispatch(notebookActions.saveNotebook());
 
     try {
-      const response = await fetch(
-        `${config.SERVER_API_URL}/notebooks/${id}`,
-        {
-          method: "PUT",
-          headers: {
-            "Content-Type": "application/json",
-            ...authHeader,
-          },
-          body: JSON.stringify(payload),
+      const response = await fetch(`${config.SERVER_API_URL}/notebooks/${id}`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+          ...authHeader,
         },
-      );
+        body: JSON.stringify(payload),
+      });
       if (response.status === 200) {
         const { data, message } = await response.json();
         dispatch(notify(message, "success"));
@@ -176,17 +170,14 @@ export function createNotebook(payload: any) {
     const authHeader = authorizationHeader(token);
     dispatch(notebookActions.createNotebook());
     try {
-      const response = await fetch(
-        `${config.SERVER_API_URL}/notebooks`,
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            ...authHeader,
-          },
-          body: JSON.stringify(payload),
+      const response = await fetch(`${config.SERVER_API_URL}/notebooks`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          ...authHeader,
         },
-      );
+        body: JSON.stringify(payload),
+      });
       const { data, message } = await response.json();
       if (response.status === 200) {
         dispatch(notify(message, "success"));
@@ -207,16 +198,13 @@ export function deleteNotebook(id: string) {
     const authHeader = authorizationHeader(token);
     dispatch(notebookActions.removeNotebook());
     try {
-      const response = await fetch(
-        `${config.SERVER_API_URL}/notebooks/${id}`,
-        {
-          method: "DELETE",
-          headers: {
-            "Content-Type": "application/json",
-            ...authHeader,
-          },
+      const response = await fetch(`${config.SERVER_API_URL}/notebooks/${id}`, {
+        method: "DELETE",
+        headers: {
+          "Content-Type": "application/json",
+          ...authHeader,
         },
-      );
+      });
       const { message } = await response.json();
       if (response.status === 200) {
         dispatch(notebookActions.clearNotebook());

@@ -81,14 +81,11 @@ export const getRings = () => {
       const authHeader = authorizationHeader(token);
       dispatch(ringsActions.getRings());
 
-      const response = await fetch(
-        `${config.SERVER_API_URL}/rings`,
-        {
-          headers: {
-            ...authHeader,
-          },
+      const response = await fetch(`${config.SERVER_API_URL}/rings`, {
+        headers: {
+          ...authHeader,
         },
-      );
+      });
       const { data } = await response.json();
 
       if (response.status === 200) {

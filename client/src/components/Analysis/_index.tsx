@@ -1,5 +1,5 @@
 import React, { useState, useEffect, FunctionComponent } from "react";
-import { Satyrn } from "statement-mananger";
+import { Satyrn } from "StatementManager";
 import { BsXOctagonFill } from "react-icons/bs";
 import { AsyncTypeahead } from "react-bootstrap-typeahead";
 import uniqid from "uniqid";
