@@ -34,10 +34,10 @@ env:
   REACT_APP_BFF_PROXY_ENDPOINT_URL: "https://dev.satyrn.io/proxy"
   INLINE_RUNTIME_CHUNK: false
   PROXY_API_KEY: replace_me
-  PROXY_API_URL: https://satyrn-api-app.dev-satyrn-api/api
+  PROXY_API_URL: https://api.dev.satyrn.io/api
   SENDGRID_API_KEY: replace_me
   SENDGRID_FROM_SENDER: adrian.staniloiu@gmail.com
-  CLIENT_URL: http://satyrn-ux-app.dev-satyrn-ux
+  CLIENT_URL: https://dev.satyrn.io/
 
 configMap:
   enabled: false
