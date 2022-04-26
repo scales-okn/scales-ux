@@ -210,7 +210,7 @@ pipeline {
               dir("$WORKSPACE/client") {
                   withCredentials([file(credentialsId: 'ssh_key', variable: 'keyfile')]){
                     echo 'Replacing localhost:5000 with ${ENVIRONMENT}.satyrn.io'
-                    sh 'cd cypress && find ./ -type f -exec sed -i "s/localhost:5000/${ENVIRONMENT}.satyrn.io/g" {} \\; && cd -'
+                    sh 'cd cypress && find ./ -type f | egrep -v "^(.//venv/|.//.git/)" | xargs -I {} sed -i "s/localhost:5000/${ENVIRONMENT}.satyrn.io/g" {} && cd -'
                     echo 'Running cypress tests!'
                     sh """
                       mkdir -p ~/.ssh
