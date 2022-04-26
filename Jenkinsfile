@@ -148,59 +148,58 @@ pipeline {
             }
         }
 
-        // stage('Build docker image') {
-        //     when {
-        //        expression { BRANCH_NAME ==~ DEV_BRANCH_REGEX }
-        //     }
-        //     steps {
-        //     container('build') {
-        //         withCredentials([file(credentialsId: 'ssh_key', variable: 'keyfile')]){
-        //           echo 'Starting docker build!'
-        //           sh "set +x ; docker build --build-arg SSH_PRIVATE_KEY=\"\$(cat ${keyfile})\" -t satyrn-ux . --network=host ; set -x"
-        //         }
-        //     }
-        //     }
-        // }
+        stage('Build docker image') {
+            when {
+               expression { BRANCH_NAME ==~ DEV_BRANCH_REGEX }
+            }
+            steps {
+            container('build') {
+                withCredentials([file(credentialsId: 'ssh_key', variable: 'keyfile')]){
+                  echo 'Starting docker build!'
+                  sh "set +x ; docker build --build-arg SSH_PRIVATE_KEY=\"\$(cat ${keyfile})\" -t satyrn-ux . --network=host ; set -x"
+                }
+            }
+            }
+        }
 
-        // stage('Push docker image') {
-        //   when {
-        //       expression { BRANCH_NAME ==~ DEV_BRANCH_REGEX }
-        //   }
-        //   steps{
-        //     container('build') {
-        //         echo  'Logging in!'
-        //         sh 'aws ecr get-login-password --region us-east-1 | docker login --username AWS --password-stdin 304793330600.dkr.ecr.us-east-1.amazonaws.com'
-        //         sh 'docker tag satyrn-ux:latest 304793330600.dkr.ecr.us-east-1.amazonaws.com/satyrn-ux:latest'
-        //         sh 'docker push 304793330600.dkr.ecr.us-east-1.amazonaws.com/satyrn-ux:latest'
-        //         sh "docker tag satyrn-ux:latest 304793330600.dkr.ecr.us-east-1.amazonaws.com/satyrn-ux:${ENVIRONMENT}"
-        //         sh "docker push 304793330600.dkr.ecr.us-east-1.amazonaws.com/satyrn-ux:${ENVIRONMENT}"
-        //         sh 'docker tag satyrn-ux:latest 304793330600.dkr.ecr.us-east-1.amazonaws.com/satyrn-ux:$GIT_COMMIT'
-        //         sh 'docker push 304793330600.dkr.ecr.us-east-1.amazonaws.com/satyrn-ux:$GIT_COMMIT'
-        //     }
-        //   }
-        // }
+        stage('Push docker image') {
+          when {
+              expression { BRANCH_NAME ==~ DEV_BRANCH_REGEX }
+          }
+          steps{
+            container('build') {
+                echo  'Logging in!'
+                sh 'aws ecr get-login-password --region us-east-1 | docker login --username AWS --password-stdin 304793330600.dkr.ecr.us-east-1.amazonaws.com'
+                sh 'docker tag satyrn-ux:latest 304793330600.dkr.ecr.us-east-1.amazonaws.com/satyrn-ux:latest'
+                sh 'docker push 304793330600.dkr.ecr.us-east-1.amazonaws.com/satyrn-ux:latest'
+                sh "docker tag satyrn-ux:latest 304793330600.dkr.ecr.us-east-1.amazonaws.com/satyrn-ux:${ENVIRONMENT}"
+                sh "docker push 304793330600.dkr.ecr.us-east-1.amazonaws.com/satyrn-ux:${ENVIRONMENT}"
+                sh 'docker tag satyrn-ux:latest 304793330600.dkr.ecr.us-east-1.amazonaws.com/satyrn-ux:$GIT_COMMIT'
+                sh 'docker push 304793330600.dkr.ecr.us-east-1.amazonaws.com/satyrn-ux:$GIT_COMMIT'
+            }
+          }
+        }
 
-        // stage('Deploy') {
-        //   steps {
-        //     container('build') {
-        //         dir("$WORKSPACE/satyrn-deployment") {
-        //           sh """
-        //           timestamp="\$(date +%d-%m-%Y-%H:%M:%s)"
-        //           if [[ ${ENVIRONMENT} == "dev" ]]; then
-        //             helm upgrade --install satyrn-ux charts/common --values ../.helm/values-dev.yaml --set env.SENDGRID_API_KEY=$DEV_SENDGRID_API_KEY --set env.PROXY_API_KEY=$DEV_PROXY_API_KEY --set env.DB_PASSWORD=$DB_PASSWORD --set env.JWT_SECRET=$DEV_JWT_SECRET --create-namespace --namespace ${ENVIRONMENT}-satyrn-ux --set image.tag=dev --set-string timestamp="\$timestamp"
-        //           fi
-        //           if [[ ${ENVIRONMENT} == "pp" ]]; then
-        //             helm upgrade --install satyrn-ux charts/common --values ../.helm/values-dev.yaml --set env.SENDGRID_API_KEY=$DEV_SENDGRID_API_KEY --set env.PROXY_API_KEY=$DEV_SENDGRID_API_KEY --set env.DB_PASSWORD=$DB_PASSWORD --set env.JWT_SECRET=$DEV_JWT_SECRET --create-namespace --namespace ${ENVIRONMENT}-satyrn-ux --set image.tag=dev --set-string timestamp="\$timestamp"
-        //           fi
-        //           if [[ ${ENVIRONMENT} == "prod" ]]; then
-        //             helm upgrade --install satyrn-ux charts/common --values ../.helm/values-dev.yaml --set env.SENDGRID_API_KEY=$DEV_SENDGRID_API_KEY --set env.PROXY_API_KEY=$DEV_SENDGRID_API_KEY --set env.DB_PASSWORD=$DB_PASSWORD --set env.JWT_SECRET=$DEV_JWT_SECRET --create-namespace --namespace ${ENVIRONMENT}-satyrn-ux --set image.tag=dev --set-string timestamp="\$timestamp"
-        //           fi
-
-        //           """
-        //       }
-        //     }
-        //   }
-        // }
+        stage('Deploy') {
+          steps {
+            container('build') {
+                dir("$WORKSPACE/satyrn-deployment") {
+                  sh """
+                  timestamp="\$(date +%d-%m-%Y-%H:%M:%s)"
+                  if [[ ${ENVIRONMENT} == "dev" ]]; then
+                    helm upgrade --install satyrn-ux charts/common --values ../.helm/values-dev.yaml --set env.SENDGRID_API_KEY=$DEV_SENDGRID_API_KEY --set env.PROXY_API_KEY=$DEV_PROXY_API_KEY --set env.DB_PASSWORD=$DB_PASSWORD --set env.JWT_SECRET=$DEV_JWT_SECRET --create-namespace --namespace ${ENVIRONMENT}-satyrn-ux --set image.tag=dev --set-string timestamp="\$timestamp"
+                  fi
+                  if [[ ${ENVIRONMENT} == "pp" ]]; then
+                    helm upgrade --install satyrn-ux charts/common --values ../.helm/values-dev.yaml --set env.SENDGRID_API_KEY=$DEV_SENDGRID_API_KEY --set env.PROXY_API_KEY=$DEV_SENDGRID_API_KEY --set env.DB_PASSWORD=$DB_PASSWORD --set env.JWT_SECRET=$DEV_JWT_SECRET --create-namespace --namespace ${ENVIRONMENT}-satyrn-ux --set image.tag=dev --set-string timestamp="\$timestamp"
+                  fi
+                  if [[ ${ENVIRONMENT} == "prod" ]]; then
+                    helm upgrade --install satyrn-ux charts/common --values ../.helm/values-dev.yaml --set env.SENDGRID_API_KEY=$DEV_SENDGRID_API_KEY --set env.PROXY_API_KEY=$DEV_SENDGRID_API_KEY --set env.DB_PASSWORD=$DB_PASSWORD --set env.JWT_SECRET=$DEV_JWT_SECRET --create-namespace --namespace ${ENVIRONMENT}-satyrn-ux --set image.tag=dev --set-string timestamp="\$timestamp"
+                  fi
+                  """
+              }
+            }
+          }
+        }
         stage('Cypress') {
           when {
               expression { BRANCH_NAME ==~ DEV_BRANCH_REGEX }
