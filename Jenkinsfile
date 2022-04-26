@@ -190,10 +190,10 @@ pipeline {
                     helm upgrade --install satyrn-ux charts/common --values ../.helm/values-dev.yaml --set env.SENDGRID_API_KEY=$DEV_SENDGRID_API_KEY --set env.PROXY_API_KEY=$DEV_PROXY_API_KEY --set env.DB_PASSWORD=$DB_PASSWORD --set env.JWT_SECRET=$DEV_JWT_SECRET --create-namespace --namespace ${ENVIRONMENT}-satyrn-ux --set image.tag=dev --set-string timestamp="\$timestamp"
                   fi
                   if [[ ${ENVIRONMENT} == "pp" ]]; then
-                    helm upgrade --install satyrn-ux charts/common --values ../.helm/values-dev.yaml --set env.SENDGRID_API_KEY=$PP_SENDGRID_API_KEY --set env.PROXY_API_KEY=$PP_PROXY_API_KEY --set env.DB_PASSWORD=$DB_PASSWORD --set env.JWT_SECRET=$PP_JWT_SECRET --create-namespace --namespace ${ENVIRONMENT}-satyrn-ux --set image.tag=dev --set-string timestamp="\$timestamp"
+                    helm upgrade --install satyrn-ux charts/common --values ../.helm/values-dev.yaml --set env.SENDGRID_API_KEY=$DEV_SENDGRID_API_KEY --set env.PROXY_API_KEY=$DEV_SENDGRID_API_KEY --set env.DB_PASSWORD=$DB_PASSWORD --set env.JWT_SECRET=$DEV_JWT_SECRET --create-namespace --namespace ${ENVIRONMENT}-satyrn-ux --set image.tag=dev --set-string timestamp="\$timestamp"
                   fi
                   if [[ ${ENVIRONMENT} == "prod" ]]; then
-                    helm upgrade --install satyrn-ux charts/common --values ../.helm/values-dev.yaml --set env.SENDGRID_API_KEY=$PROD_SENDGRID_API_KEY --set env.PROXY_API_KEY=$PROD_PROXY_API_KEY --set env.DB_PASSWORD=$DB_PASSWORD --set env.JWT_SECRET=$PROD_JWT_SECRET --create-namespace --namespace ${ENVIRONMENT}-satyrn-ux --set image.tag=dev --set-string timestamp="\$timestamp"
+                    helm upgrade --install satyrn-ux charts/common --values ../.helm/values-dev.yaml --set env.SENDGRID_API_KEY=$DEV_SENDGRID_API_KEY --set env.PROXY_API_KEY=$DEV_SENDGRID_API_KEY --set env.DB_PASSWORD=$DB_PASSWORD --set env.JWT_SECRET=$DEV_JWT_SECRET --create-namespace --namespace ${ENVIRONMENT}-satyrn-ux --set image.tag=dev --set-string timestamp="\$timestamp"
                   fi
 
                   """
