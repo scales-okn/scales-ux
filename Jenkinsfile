@@ -23,7 +23,7 @@ pipeline {
             securityContext:
               privileged: true
           - name: unittest
-            image: 304793330600.dkr.ecr.us-east-1.amazonaws.com/satyrn-ux:latest
+            image: 304793330600.dkr.ecr.us-east-1.amazonaws.com/satyrn-ux:16.15-buster-slim
             imagePullPolicy: Always
             command:
             - cat
