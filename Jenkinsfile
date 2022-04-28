@@ -1,6 +1,7 @@
 pipeline {
   agent {
     kubernetes {
+      defaultContainer 'jnlp'
       yaml '''
         apiVersion: v1
         kind: Pod
@@ -22,7 +23,7 @@ pipeline {
             securityContext:
               privileged: true
           - name: unittest
-            image: 304793330600.dkr.ecr.us-east-1.amazonaws.com/satyrn-api:latest
+            image: 304793330600.dkr.ecr.us-east-1.amazonaws.com/satyrn-ux:latest
             imagePullPolicy: Always
             command:
             - cat
@@ -207,7 +208,23 @@ pipeline {
           steps {
             container('cypress') {
               dir("$WORKSPACE/client") {
-                    sh 'echo hello'
+                  withCredentials([file(credentialsId: 'ssh_key', variable: 'keyfile')]){
+                    echo 'Replacing localhost:5000 with ${ENVIRONMENT}.satyrn.io'
+                    sh 'cd cypress && find ./ -type f | egrep -v "^(.//venv/|.//.git/)" > filelist'
+                    echo 'Replacing localhost:5000 with dev.satyrn.io'
+                    sh 'cat filelist | xargs -I {} sed -i "s/localhost:5000/dev.satyrn.io/g" {} && cd -'
+                    echo 'Running cypress tests!'
+                    sh """
+                      mkdir -p ~/.ssh
+                      ssh-keyscan -t rsa github.com >> ~/.ssh/known_hosts
+                      cp ${keyfile} ~/.ssh/id_rsa && chmod 400 ~/.ssh/id_rsa
+                      npm -v
+                      node -v
+                      npm install
+                      PORT=5000 npm run start &
+                      npm run e2e
+                      """
+                }
               }
             }
           }
