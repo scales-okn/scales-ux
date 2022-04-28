@@ -18,5 +18,5 @@ RUN cd server && npm install && npm run build
 
 EXPOSE 8080
 
-CMD ["node", "server/build"]
+CMD ["node", "/app/server/client/build"]
 
