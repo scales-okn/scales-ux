@@ -14,9 +14,9 @@ FROM node:lts-alpine AS server-build
 WORKDIR /app
 COPY server server
 COPY --from=client-build /app/client/build server/client/build
-RUN cd server && npm install && npm run build && mv server/client/build/* server/build
+RUN cd server && npm install && npm run build && mv client/build/* ./build
 
 EXPOSE 8080
 
-CMD ["node", "/app/server/client/build"]
+CMD ["node", "server/build"]
 
