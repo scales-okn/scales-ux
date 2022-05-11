@@ -1,5 +1,5 @@
 const chai = require('chai');
-const app = require('../../../server/build/index.js');
+const app = require('../../build/index.js');
 const request = require('supertest')(app.default);
 const notebookSchema = require('../fixtures/notebookSchema.js');
 const chaiJsonSchema = require('chai-json-schema');
@@ -61,7 +61,63 @@ describe('Notebooks API', () => {
       });  
   });
 
- 
+  it('should update a notebook', (done) => {
+    request
+      .put('/api/notebooks/2/')
+      .set('Accept', 'application/json')
+      .set('Authorization', token)
+      .send({
+        title: 'Test Notebook',
+        description: 'This is a test notebook',
+        collaborators: [],
+        visibility: 'public',
+      })
+      .expect('Content-Type', /json/)
+      .expect(200)
+      .end((err, res) => {
+        if (err) return done(err);
+        chai.expect(res.body.data).to.be.have.key('notebook');
+        chai.expect(res.body.data.notebook).to.be.an('object');
+        chai.expect(res.body.data.notebook).to.be.jsonSchema(notebookSchema);
+        done();
+
+      });
+  });
+
+  it('should delete a notebook', (done) => {
+    request
+      .delete('/api/notebooks/2/')
+      .set('Accept', 'application/json')
+      .set('Authorization', token)
+      .expect('Content-Type', /json/)
+      .expect(200)
+      .end((err, res) => {
+        if (err) return done(err);
+        chai.expect(res.body.data).to.be.have.key('notebook');
+        chai.expect(res.body.data.notebook).to.be.an('object');
+        chai.expect(res.body.data.notebook).to.be.jsonSchema(notebookSchema);
+        done();
+      }
+    );
+  });
+
+  it('should return a notebook with a specific id', (done) => {
+    request
+      .get('/api/notebooks/2/')
+      .set('Accept', 'application/json')
+      .set('Authorization', token)
+      .expect('Content-Type', /json/)
+      .expect(200)
+      .end((err, res) => {
+        if (err) return done(err);
+        chai.expect(res.body.data).to.be.have.key('notebook');
+        chai.expect(res.body.data.notebook).to.be.an('object');
+        chai.expect(res.body.data.notebook).to.be.jsonSchema(notebookSchema);
+        done();
+      }
+    );
+  });
+  
 });
  
   

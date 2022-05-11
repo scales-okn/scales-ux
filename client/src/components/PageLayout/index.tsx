@@ -45,7 +45,6 @@ const PageLayout: FunctionComponent<Props> = (props) => {
                 </NavDropdown>
               )}
             </Nav>
-
             <Nav>
               <Dropdown>
                 <Dropdown.Toggle variant="link" className="profile-toggler">

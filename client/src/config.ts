@@ -1,7 +1,7 @@
 let config = {
-  SERVER_URL: 'http://localhost',
-  SERVER_API_URL: 'http://localhost/api',
-  SERVER_PROXY_URL: 'http://localhost/proxy',
+  SERVER_URL: 'http://localhost:8080',
+  SERVER_API_URL: 'http://localhost:8080/api',
+  SERVER_PROXY_URL: 'http://localhost:8080/proxy',
 };
 
 switch (window.location.hostname) {
