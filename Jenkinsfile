@@ -1,6 +1,7 @@
 pipeline {
   agent {
     kubernetes {
+      defaultContainer 'jnlp'
       yaml '''
         apiVersion: v1
         kind: Pod
@@ -22,7 +23,7 @@ pipeline {
             securityContext:
               privileged: true
           - name: unittest
-            image: 304793330600.dkr.ecr.us-east-1.amazonaws.com/satyrn-ux:latest
+            image: 304793330600.dkr.ecr.us-east-1.amazonaws.com/satyrn-ux:16.15-buster-slim
             imagePullPolicy: Always
             command:
             - cat
@@ -156,7 +157,7 @@ pipeline {
             container('build') {
                 withCredentials([file(credentialsId: 'ssh_key', variable: 'keyfile')]){
                   echo 'Starting docker build!'
-                  sh "set +x ; docker build --build-arg SSH_PRIVATE_KEY=\"\$(cat ${keyfile})\" -t satyrn-ux . --network=host ; set -x"
+                  sh "set +x ; docker build --no-cache --build-arg SSH_PRIVATE_KEY=\"\$(cat ${keyfile})\" -t satyrn-ux . --network=host ; set -x"
                 }
             }
             }
@@ -190,12 +191,11 @@ pipeline {
                     helm upgrade --install satyrn-ux charts/common --values ../.helm/values-dev.yaml --set env.SENDGRID_API_KEY=$DEV_SENDGRID_API_KEY --set env.PROXY_API_KEY=$DEV_PROXY_API_KEY --set env.DB_PASSWORD=$DB_PASSWORD --set env.JWT_SECRET=$DEV_JWT_SECRET --create-namespace --namespace ${ENVIRONMENT}-satyrn-ux --set image.tag=dev --set-string timestamp="\$timestamp"
                   fi
                   if [[ ${ENVIRONMENT} == "pp" ]]; then
-                    helm upgrade --install satyrn-ux charts/common --values ../.helm/values-dev.yaml --set env.SENDGRID_API_KEY=$PP_SENDGRID_API_KEY --set env.PROXY_API_KEY=$PP_PROXY_API_KEY --set env.DB_PASSWORD=$DB_PASSWORD --set env.JWT_SECRET=$PP_JWT_SECRET --create-namespace --namespace ${ENVIRONMENT}-satyrn-ux --set image.tag=dev --set-string timestamp="\$timestamp"
+                    helm upgrade --install satyrn-ux charts/common --values ../.helm/values-dev.yaml --set env.SENDGRID_API_KEY=$DEV_SENDGRID_API_KEY --set env.PROXY_API_KEY=$DEV_SENDGRID_API_KEY --set env.DB_PASSWORD=$DB_PASSWORD --set env.JWT_SECRET=$DEV_JWT_SECRET --create-namespace --namespace ${ENVIRONMENT}-satyrn-ux --set image.tag=dev --set-string timestamp="\$timestamp"
                   fi
                   if [[ ${ENVIRONMENT} == "prod" ]]; then
-                    helm upgrade --install satyrn-ux charts/common --values ../.helm/values-dev.yaml --set env.SENDGRID_API_KEY=$PROD_SENDGRID_API_KEY --set env.PROXY_API_KEY=$PROD_PROXY_API_KEY --set env.DB_PASSWORD=$DB_PASSWORD --set env.JWT_SECRET=$PROD_JWT_SECRET --create-namespace --namespace ${ENVIRONMENT}-satyrn-ux --set image.tag=dev --set-string timestamp="\$timestamp"
+                    helm upgrade --install satyrn-ux charts/common --values ../.helm/values-dev.yaml --set env.SENDGRID_API_KEY=$DEV_SENDGRID_API_KEY --set env.PROXY_API_KEY=$DEV_SENDGRID_API_KEY --set env.DB_PASSWORD=$DB_PASSWORD --set env.JWT_SECRET=$DEV_JWT_SECRET --create-namespace --namespace ${ENVIRONMENT}-satyrn-ux --set image.tag=dev --set-string timestamp="\$timestamp"
                   fi
-
                   """
               }
             }
@@ -210,7 +210,9 @@ pipeline {
               dir("$WORKSPACE/client") {
                   withCredentials([file(credentialsId: 'ssh_key', variable: 'keyfile')]){
                     echo 'Replacing localhost:5000 with ${ENVIRONMENT}.satyrn.io'
-                    sh 'cd cypress && find ./ -type f -exec sed -i "s/localhost:5000/${ENVIRONMENT}.satyrn.io/g" {} \\; && cd -'
+                    sh 'cd cypress && find ./ -type f | egrep -v "^(.//venv/|.//.git/)" > filelist'
+                    echo 'Replacing localhost:5000 with dev.satyrn.io'
+                    sh 'cat filelist | xargs -I {} sed -i "s/localhost:5000/dev.satyrn.io/g" {} && cd -'
                     echo 'Running cypress tests!'
                     sh """
                       mkdir -p ~/.ssh
