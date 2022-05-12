@@ -25,7 +25,7 @@ const UserFieldToggle: FunctionComponent<Props> = ({
 
   const handleChange = (event: ChangeEvent<HTMLInputElement>) => {
     if (event.target.checked !== checked) {
-      fetch(`${config.SERVER_API_URL}/users/${userId}`, {
+      fetch(`${process.env.REACT_APP_UX_API_ENDPOINT}/users/${userId}`, {
         method: "PUT",
         body: JSON.stringify({
           [fieldName]: !checked,

@@ -46,7 +46,7 @@ const ResetPassword: FunctionComponent = () => {
     validationSchema: ResetPasswordValidationSchema,
     onSubmit: (values: ResetPasswordFields, { setErrors }) => {
       fetch(
-        `${config.SERVER_API_URL}/users/password/reset`,
+        `${process.env.REACT_APP_UX_API_ENDPOINT}/users/password/reset`,
         {
           method: "POST",
           headers: {

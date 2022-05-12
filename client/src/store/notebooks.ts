@@ -3,7 +3,6 @@ import type { RootState, AppDispatch } from "store";
 import { authSelector } from "store/auth";
 import { useSelector, useDispatch } from "react-redux";
 import { authorizationHeader } from "utils";
-import config from "config";
 
 interface InitialState {
   loadingNotebooks: boolean;
@@ -55,13 +54,16 @@ export function fetchNotebooks() {
     dispatch(notebooksActions.fetchNotebooks());
 
     try {
-      const response = await fetch(`${config.SERVER_API_URL}/notebooks`, {
-        method: "GET",
-        headers: {
-          ...authHeader,
-          "Content-Type": "application/json",
+      const response = await fetch(
+        `${process.env.REACT_APP_UX_API_ENDPOINT}/notebooks`,
+        {
+          method: "GET",
+          headers: {
+            ...authHeader,
+            "Content-Type": "application/json",
+          },
         },
-      });
+      );
       const { data } = await response.json();
 
       dispatch(notebooksActions.fetchNotebooksSuccess(data.notebooks));

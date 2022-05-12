@@ -5,9 +5,11 @@
   "description": "BFF + Frontend",
   "license": "C3 License",
   "scripts": {
+    "start": "concurrently 'cd server && npm run start' 'cd client && npm run start'",
+    "format": "concurrently 'cd server && npm run format' 'cd client && npm run format'",
+    "lint": "concurrently 'cd server && npm run lint' 'cd client && npm run lint'",
     "commit": "git-cz",
-    "release": "standard-version",
-    "start": "concurrently 'cd server && npm run start' 'cd client && npm run start'"
+    "release": "standard-version"
   },
   "repository": {
     "type": "git",
@@ -22,6 +24,7 @@
     "commitizen": "^4.2.4",
     "concurrently": "^7.0.0",
     "cz-conventional-changelog": "^3.3.0",
+    "dotenv": "^16.0.1",
     "standard-version": "^9.3.0"
   },
   "config": {

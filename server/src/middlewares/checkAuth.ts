@@ -5,7 +5,7 @@ import { sequelize } from "../database";
 
 const checkAuth = async (req: Request, res: Response, next: NextFunction) => {
   try {
-    if (req.headers["x-api-key"] === '12345') {
+    if (req.headers["x-api-key"] === "12345") {
       return next();
     }
     passport.authenticate(

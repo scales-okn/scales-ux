@@ -32,7 +32,7 @@ const ForgotPassword: FunctionComponent = () => {
     validationSchema: ForgotPasswordValidationSchema,
     onSubmit: (values: ForgotPasswordFields, { setErrors }) => {
       fetch(
-        `${config.SERVER_API_URL}/users/password/forgot`,
+        `${process.env.REACT_APP_UX_API_ENDPOINT}/users/password/forgot`,
         {
           method: "POST",
           headers: {

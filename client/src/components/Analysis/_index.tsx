@@ -91,7 +91,7 @@ const Analysis: FunctionComponent<AnalysisProps> = ({ panelId, ring, info }) => 
     setAutoCompleteSuggestions([]);
     try {
       const response = await fetch(
-        `${config.SERVER_PROXY_URL}/autocomplete/${ring.rid}/1/${info?.defaultEntity}/${type}?query=${query}`
+        `${process.env.UX_PROXY_ENDPOINT}/autocomplete/${ring.rid}/1/${info?.defaultEntity}/${type}?query=${query}`
       );
       // @ts-ignore
       if (response.status === 200) {

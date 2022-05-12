@@ -78,11 +78,9 @@ app.get("*", (req, res) => {
 
 app.on("ready", () => {
   // Create the Server
-  app.listen(process.env.PORT, () => {
-    console.log(`Server is running on ${process.env.PORT} port!`);
+  app.listen(process.env.UX_SERVER_PORT, () => {
+    console.log(`Server is running on ${process.env.UX_SERVER_PORT} port!`);
   });
 });
 
 export default app;
-
-//test

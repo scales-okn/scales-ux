@@ -76,7 +76,7 @@ const AdminUsersPages: FunctionComponent = () => {
   const isAdmin = role === 'admin';
 
   useEffect(() => {
-    fetch(`${config.SERVER_API_URL}/users`, {
+    fetch(`${process.env.REACT_APP_UX_API_ENDPOINT}/users`, {
       headers: {
         ...authorizationHeader,
         "Content-Type": "application/json",

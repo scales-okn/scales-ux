@@ -8,7 +8,6 @@ import appendQuery from "append-query";
 import dayjs from "dayjs";
 import { useSelector, useDispatch } from "react-redux";
 import { authorizationHeader } from "utils";
-import config from "config";
 
 const initialStateAnalysisItem: IPanelAnalysisItem = {
   id: "",
@@ -311,7 +310,7 @@ export const getPanels = (notebookId) => {
       dispatch(panelsActions.getPanels());
 
       const response = await fetch(
-        `${config.SERVER_API_URL}/notebooks/${notebookId}/panels`,
+        `${process.env.REACT_APP_UX_API_ENDPOINT}/notebooks/${notebookId}/panels`,
         {
           method: "GET",
           headers: {
@@ -343,18 +342,21 @@ export const createPanel =
       const authHeader = authorizationHeader(token);
       dispatch(panelsActions.createPanel());
 
-      const response = await fetch(`${config.SERVER_API_URL}/panels`, {
-        method: "POST",
-        headers: {
-          ...authHeader,
-          "Content-Type": "application/json",
+      const response = await fetch(
+        `${process.env.REACT_APP_UX_API_ENDPOINT}/panels`,
+        {
+          method: "POST",
+          headers: {
+            ...authHeader,
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            ...payload,
+            notebookId: notebook.id,
+            userId: user.id,
+          }),
         },
-        body: JSON.stringify({
-          ...payload,
-          notebookId: notebook.id,
-          userId: user.id,
-        }),
-      });
+      );
 
       const { data, message } = await response.json();
       if (response.status === 200) {
@@ -378,7 +380,7 @@ export const updatePanel =
       dispatch(panelsActions.updatePanel({ panelId }));
 
       const response = await fetch(
-        `${config.SERVER_API_URL}/panels/${panelId}`,
+        `${process.env.REACT_APP_UX_API_ENDPOINT}/panels/${panelId}`,
         {
           method: "PUT",
           headers: {
@@ -410,7 +412,7 @@ export const deletePanel =
       dispatch(panelsActions.deletePanel());
 
       const response = await fetch(
-        `${config.SERVER_API_URL}/panels/${panelId}`,
+        `${process.env.REACT_APP_UX_API_ENDPOINT}/panels/${panelId}`,
         {
           method: "DELETE",
           headers: {
@@ -447,7 +449,7 @@ export const getPanelResults =
 
       const response = await fetch(
         appendQuery(
-          `${config.SERVER_PROXY_URL}/results/${rid}/${version}/${info.defaultEntity}?page=${page}&batchSize=${batchSize}&sortBy=dateFiled&sortDirection=desc`,
+          `${process.env.UX_PROXY_ENDPOINT}/results/${rid}/${version}/${info.defaultEntity}?page=${page}&batchSize=${batchSize}&sortBy=dateFiled&sortDirection=desc`,
           filters?.reduce((acc, filterInput: FilterInput) => {
             acc[filterInput.type] =
               filterInput.type === "dateFiled"
