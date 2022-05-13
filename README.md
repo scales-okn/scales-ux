@@ -1,10 +1,24 @@
 # satyrn-ux
 The frontend repo for public-facing version of Satyrn's UX
 
+## Dependencies
+NodeJs - https://nodejs.org/en/
+
+NPM
+
 ## Server
-### Create a file callend .env in ./sever/.env
-### Copy and complete the .env.example variables
-### Start
+
+### Database
+
+For local development make sure to have a Postgres instance up and running.
+https://www.codecademy.com/article/installing-and-using-postgresql-locally
+
+### Configuration
+Create a file called .env in ./sever/.env
+
+Copy and complete the .env.example variables
+
+### Running
 ```
 cd server 
 npm install
@@ -12,17 +26,24 @@ npm run start
 ```
 
 ## Client
-### Create a file callend .env in ./client/.env
-### Copy and complete the .env.example variables
-### Start
+
+### Configuration
+
+Create a file callend .env in ./client/.env
+
+Copy and complete the .env.example variables
+
+### Running
 ```
 cd client 
 npm install
 npm run start
 ```
+
 ### For testing purposes:
 
 User: user@testing.test:Pass-word-25
+
 Admin: admin@testing.test:Pass-word-25
 
 ## API Spec v0.1 (Ported from satyrn-platform for reference)
@@ -151,3 +172,5 @@ Example (from SCALES ring): `/api/result/1-13-cv-07293%7C%7C%7C1:13-cv-07293?cas
 6. __/api/analysis/__
 
 #TODO
+
+///

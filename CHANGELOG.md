@@ -8,7 +8,7 @@ All notable changes to this project will be documented in this file. See [standa
 
 ## [1.5.0](https://github.com/nu-c3lab/satyrn-ux/compare/v1.4.1...v1.5.0) (2021-11-04)
 
-
+ 
 ### Features
 
 * **panels:** panels ([e53db2a](https://github.com/nu-c3lab/satyrn-ux/commit/e53db2a534706227e427d13ddcc4ea78a368fb69))

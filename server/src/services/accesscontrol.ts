@@ -97,7 +97,7 @@ const userUpdateRestrictedFields = [
   ...userReadRestrictedFields,
 ];
 
-// prettier-ignore
+//prettier-ignore
 accessControl
   // All
   .deny("*")
@@ -121,11 +121,11 @@ accessControl
   .grant("user")
     .resource("notebooks")
       .read
-        .onFields("title", "contents")
+        .onFields("title")
       .create
       .update
         .where(userCanUpdateNotebook)
-          .onFields("title", "contents")
+          .onFields("title", "description", "visibility", "collaborators")
   // Rings
   .grant("user")
     .resource("rings")

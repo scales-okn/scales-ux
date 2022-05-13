@@ -1,7 +1,7 @@
-import e, { Request, Response } from "express";
+import { Request, Response } from "express";
 import { sequelize } from "../database";
 import accessControl from "../services/accesscontrol";
-const { Op } = require("sequelize");
+import { Op } from "sequelize";
 
 // Resources validations are made with validateResources middleware and validations schemas
 // server/middlewares/validateResources.ts
@@ -10,16 +10,14 @@ const { Op } = require("sequelize");
 // Create Panel
 export const create = async (req: Request, res: Response) => {
   try {
-    const { description, notebookId, ringId, contents } = req.body;
+    const { description, notebookId, ringId, userId } = req.body;
 
     const panel = await sequelize.models.Panel.create({
       description,
       notebookId,
       ringId,
-      contents,
+      userId,
     });
-
-    console.log({ panel });
 
     return res.send_ok("Panel created succesfully!", { panel });
   } catch (error) {
@@ -50,7 +48,6 @@ export const findById = async (req: Request, res: Response) => {
   try {
     const id = req.params.panelId;
     const panel = await sequelize.models.Panel.findOne({ where: { id } });
-    console.log(panel);
     if (!panel) {
       return res.send_notFound("Panel not found!");
     }
@@ -87,7 +84,7 @@ export const update = async (req: Request, res: Response) => {
     }
     const panel = await sequelize.models.Panel.findOne({ where: { id } });
 
-    return res.send_ok("Panel has been updated!", { panel });
+    return res.send_ok(`Panel ${id} has been updated!`, { panel });
   } catch (error) {
     console.log(error);
 

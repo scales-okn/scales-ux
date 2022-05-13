@@ -116,10 +116,13 @@ export const update = async (req: Request, res: Response) => {
       model.req = req;
     });
 
-    const updated = await ring.update({...req.body, version: ring.dataValues.version + 1}, {
-      individualHooks: true,
-      returning: true
-    });
+    const updated = await ring.update(
+      { ...req.body, version: ring.dataValues.version + 1 },
+      {
+        individualHooks: true,
+        returning: true,
+      }
+    );
 
     if (!updated) {
       return res.send_notModified("Ring has not been updated!");

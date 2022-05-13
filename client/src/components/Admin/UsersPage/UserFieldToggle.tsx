@@ -1,8 +1,11 @@
 import React, { FunctionComponent, useState, ChangeEvent } from "react";
-import { useAuthHeader } from "react-auth-kit";
 import FormGroup from "@material-ui/core/FormGroup";
 import FormControlLabel from "@material-ui/core/FormControlLabel";
 import Switch from "@material-ui/core/Switch";
+import { useAuthHeader } from "store/auth";
+import { useNotify } from "components/Notifications";
+import config from "config";
+
 type Props = {
   userId: number;
   fieldName: string;
@@ -18,16 +21,17 @@ const UserFieldToggle: FunctionComponent<Props> = ({
 }) => {
   const [checked, setChecked] = useState(value);
   const authHeader = useAuthHeader();
+  const { notify } = useNotify();
 
   const handleChange = (event: ChangeEvent<HTMLInputElement>) => {
     if (event.target.checked !== checked) {
-      fetch(`${process.env.REACT_APP_BFF_API_ENDPOINT_URL}/users/${userId}`, {
+      fetch(`${process.env.REACT_APP_UX_API_ENDPOINT}/users/${userId}`, {
         method: "PUT",
         body: JSON.stringify({
           [fieldName]: !checked,
         }),
         headers: {
-          Authorization: authHeader(),
+          ...authHeader,
           "Content-Type": "application/json",
         },
       })
@@ -36,6 +40,7 @@ const UserFieldToggle: FunctionComponent<Props> = ({
           try {
             if (response?.code === 200) {
               setChecked(response.data.user[fieldName]);
+              notify(response.message, "success");
             }
           } catch (error) {
             console.log(error);

@@ -6,10 +6,11 @@ const router = express.Router();
 router.all(
   "*",
   requestProxy({
-    url: `${process.env.PROXY_API_URL}/*`,
+    url: `${process.env.CORE_API_ENDPOINT}/*`,
     timeout: 30000,
     headers: {
-      "x-api-key": process.env.PROXY_API_KEY,
+      "Allow-Control-Allow-Origin": "*",
+      "x-api-key": process.env.CORE_API_KEY,
     },
   })
 );

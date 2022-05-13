@@ -1,25 +1,43 @@
 import React, { FunctionComponent, ReactNode } from "react";
 import { SpinnerProps, Spinner } from "react-bootstrap";
 
-interface Props extends SpinnerProps {
+interface ILoaderProps extends SpinnerProps {
   isVisible: boolean;
-  children?: JSX.Element;
+  children?: any;
+  loaderContent?: ReactNode;
+  contentHeight?: string;
 }
 
-const Loader: FunctionComponent<Props> = (props: Props) => {
-  const {
-    isVisible = false,
-    animation,
-    variant,
-    size = null,
-    children,
-  } = props;
-
+const Loader: FunctionComponent<ILoaderProps> = ({
+  isVisible = false,
+  animation = "border",
+  variant,
+  size = null,
+  children,
+  contentHeight,
+  loaderContent,
+}) => {
   if (isVisible) {
     return (
-      <div className="d-flex justify-content-center p-2">
-        <Spinner animation={animation} variant={variant} size={size} />
-      </div>
+      <>
+        {loaderContent ? (
+          loaderContent
+        ) : (
+          <div
+            className="d-flex justify-content-center p-2"
+            style={{
+              height: contentHeight || "100%",
+            }}
+          >
+            <Spinner
+              className="align-self-center"
+              animation={animation}
+              variant={variant}
+              size={size}
+            />
+          </div>
+        )}
+      </>
     );
   }
 

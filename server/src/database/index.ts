@@ -16,8 +16,13 @@ export const sequelize = new Sequelize(
   {
     host: process.env.DB_HOST,
     port: process.env.DB_PORT,
-    sslmode: process.env.DB_SSLMODE,
     dialect: process.env.DB_DIALECT,
+    dialectOptions: {
+      ssl: {
+        require: true,
+        rejectUnauthorized: false,
+     }
+    },
     pool: {
       max: 5,
       min: 0,
@@ -89,7 +94,7 @@ const database = async () => {
 
   // Sync
   try {
-    await sequelize.sync({ force: false }); // "{ force: true }" will drop the table if it already exits
+    await sequelize.sync({ force: true }); // "{ force: true }" will drop the table if it already exits
     console.log("Sync succesfully!");
   } catch (error) {
     console.error("Sync Failed:", error);
