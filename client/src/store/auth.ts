@@ -67,7 +67,7 @@ export const login = (email: string, password: string) => {
     dispatch(authActions.signIn());
     try {
       const response = await fetch(
-        `${process.env.REACT_APP_UX_API_ENDPOINT}/users/login`,
+        `/api/users/login`,
         {
           method: "POST",
           body: JSON.stringify({ email, password }),

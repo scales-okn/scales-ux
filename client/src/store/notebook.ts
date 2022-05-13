@@ -115,7 +115,7 @@ export function fetchNotebook(id: string) {
 
     try {
       const response = await fetch(
-        `${process.env.REACT_APP_UX_API_ENDPOINT}/notebooks/${id}`,
+        `/api/notebooks/${id}`,
         {
           method: "GET",
           headers: {
@@ -144,7 +144,7 @@ export function updateNotebook(id: string, payload: any) {
 
     try {
       const response = await fetch(
-        `${process.env.REACT_APP_UX_API_ENDPOINT}/notebooks/${id}`,
+        `/api/notebooks/${id}`,
         {
           method: "PUT",
           headers: {
@@ -176,7 +176,7 @@ export function createNotebook(payload: any) {
     dispatch(notebookActions.createNotebook());
     try {
       const response = await fetch(
-        `${process.env.REACT_APP_UX_API_ENDPOINT}/notebooks`,
+        `/api/notebooks`,
         {
           method: "POST",
           headers: {
@@ -207,7 +207,7 @@ export function deleteNotebook(id: string) {
     dispatch(notebookActions.removeNotebook());
     try {
       const response = await fetch(
-        `${process.env.REACT_APP_UX_API_ENDPOINT}/notebooks/${id}`,
+        `/api/notebooks/${id}`,
         {
           method: "DELETE",
           headers: {

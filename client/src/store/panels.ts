@@ -310,7 +310,7 @@ export const getPanels = (notebookId) => {
       dispatch(panelsActions.getPanels());
 
       const response = await fetch(
-        `${process.env.REACT_APP_UX_API_ENDPOINT}/notebooks/${notebookId}/panels`,
+        `/api/notebooks/${notebookId}/panels`,
         {
           method: "GET",
           headers: {
@@ -343,7 +343,7 @@ export const createPanel =
       dispatch(panelsActions.createPanel());
 
       const response = await fetch(
-        `${process.env.REACT_APP_UX_API_ENDPOINT}/panels`,
+        `/api/panels`,
         {
           method: "POST",
           headers: {
@@ -380,7 +380,7 @@ export const updatePanel =
       dispatch(panelsActions.updatePanel({ panelId }));
 
       const response = await fetch(
-        `${process.env.REACT_APP_UX_API_ENDPOINT}/panels/${panelId}`,
+        `/api/panels/${panelId}`,
         {
           method: "PUT",
           headers: {
@@ -412,7 +412,7 @@ export const deletePanel =
       dispatch(panelsActions.deletePanel());
 
       const response = await fetch(
-        `${process.env.REACT_APP_UX_API_ENDPOINT}/panels/${panelId}`,
+        `/api/panels/${panelId}`,
         {
           method: "DELETE",
           headers: {
@@ -449,7 +449,7 @@ export const getPanelResults =
 
       const response = await fetch(
         appendQuery(
-          `${process.env.UX_PROXY_ENDPOINT}/results/${rid}/${version}/${info.defaultEntity}?page=${page}&batchSize=${batchSize}&sortBy=dateFiled&sortDirection=desc`,
+          `/api/proxy/results/${rid}/${version}/${info.defaultEntity}?page=${page}&batchSize=${batchSize}&sortBy=dateFiled&sortDirection=desc`,
           filters?.reduce((acc, filterInput: FilterInput) => {
             acc[filterInput.type] =
               filterInput.type === "dateFiled"

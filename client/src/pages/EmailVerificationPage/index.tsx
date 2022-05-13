@@ -15,7 +15,7 @@ const EmailVerificationPage: FunctionComponent = () => {
   const verifyEmail = useCallback(async () => {
     try {
       const response = await fetch(
-        `${process.env.REACT_APP_UX_API_ENDPOINT}/users/verify-email`,
+        `/api/users/verify-email`,
         {
           method: "POST",
           headers: {

@@ -54,7 +54,7 @@ const SignUpPage: FunctionComponent = () => {
     },
     validationSchema: UserSignUpValidationSchema,
     onSubmit: (values: UserSignUpFields, { setErrors }) => {
-      fetch(`${process.env.REACT_APP_UX_API_ENDPOINT}/users/create`, {
+      fetch(`/api/users/create`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
