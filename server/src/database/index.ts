@@ -94,7 +94,7 @@ const database = async () => {
 
   // Sync
   try {
-    await sequelize.sync({ force: true }); // "{ force: true }" will drop the table if it already exits
+    await sequelize.sync({ force: process.env.STAGE != "prod" }); // "{ force: true }" will drop the table if it already exits
     console.log("Sync succesfully!");
   } catch (error) {
     console.error("Sync Failed:", error);

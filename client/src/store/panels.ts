@@ -449,7 +449,7 @@ export const getPanelResults =
 
       const response = await fetch(
         appendQuery(
-          `/api/proxy/results/${rid}/${version}/${info.defaultEntity}?page=${page}&batchSize=${batchSize}&sortBy=dateFiled&sortDirection=desc`,
+          `/proxy/results/${rid}/${version}/${info.defaultEntity}?page=${page}&batchSize=${batchSize}&sortBy=dateFiled&sortDirection=desc`,
           filters?.reduce((acc, filterInput: FilterInput) => {
             acc[filterInput.type] =
               filterInput.type === "dateFiled"
