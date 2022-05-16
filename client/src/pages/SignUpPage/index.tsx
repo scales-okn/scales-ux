@@ -8,7 +8,6 @@ import { Container, Form, Button, Col, Row } from "react-bootstrap";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faBalanceScale } from "@fortawesome/free-solid-svg-icons";
 import { useNotify } from "components/Notifications";
-import config from "config";
 
 interface UserSignUpFields extends UserSignInFields {
   firstName: string;

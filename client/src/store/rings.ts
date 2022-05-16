@@ -110,7 +110,7 @@ export const getRingInfo = (rid: string, version: number) => {
     try {
       dispatch(ringsActions.getRingInfo());
       const response = await fetch(
-        `/api/rings/${rid}/${version}`,
+        `/proxy/rings/${rid}/${version}`,
       );
       const info = await response.json();
 

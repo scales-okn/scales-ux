@@ -13,7 +13,6 @@ import UserFieldToggle from "./UserFieldToggle";
 import { Row } from "react-bootstrap";
 import { useAuthHeader, userSelector } from "store/auth";
 import { useSelector } from "react-redux";
-import config from "config";
 
 const columns: GridColDef[] = [
   // { field: "id", headerName: "ID", width: 100 },

@@ -4,7 +4,6 @@ import FormControlLabel from "@material-ui/core/FormControlLabel";
 import Switch from "@material-ui/core/Switch";
 import { useAuthHeader } from "store/auth";
 import { useNotify } from "components/Notifications";
-import config from "config";
 
 type Props = {
   userId: number;

@@ -9,7 +9,6 @@ import { useNotify } from "components/Notifications";
 import { Button, Col, Container, Form, Row } from "react-bootstrap";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faBalanceScale } from "@fortawesome/free-solid-svg-icons";
-import config from "config";
 
 interface ResetPasswordFields {
   password: string;
@@ -82,7 +81,7 @@ const ResetPassword: FunctionComponent = () => {
   return (
     <Container className="h-100">
       <Row className="h-100 justify-content-center align-items-center text-center">
-        <Col md="4">
+        <Col md="5">
           <Form noValidate onSubmit={formik.handleSubmit}>
             <FontAwesomeIcon icon={faBalanceScale} size="3x" className="mb-4" />
             <h1 className="h3 mb-3 fw-normal">Please sign in</h1>

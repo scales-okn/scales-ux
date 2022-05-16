@@ -17,12 +17,12 @@ export const sequelize = new Sequelize(
     host: process.env.DB_HOST,
     port: process.env.DB_PORT,
     dialect: process.env.DB_DIALECT,
-    dialectOptions: {
+    dialectOptions: process.env.STAGE != "local" ? {
       ssl: {
         require: false,
         rejectUnauthorized: false,
      }
-    },
+    } : {},
     pool: {
       max: 5,
       min: 0,

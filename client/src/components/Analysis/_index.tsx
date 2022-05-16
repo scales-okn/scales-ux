@@ -10,9 +10,6 @@ import axios from "axios";
 import Select from 'react-select'
 import { BarChart, Bar, Cell, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
 import "./style.scss"
-import config from "config";
-
-
 
 type AnalysisProps = {
   panelId: string;
