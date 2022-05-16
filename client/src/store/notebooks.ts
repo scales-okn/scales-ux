@@ -55,7 +55,7 @@ export function fetchNotebooks() {
 
     try {
       const response = await fetch(
-        `${process.env.REACT_APP_UX_API_ENDPOINT}/notebooks`,
+        `/api/notebooks`,
         {
           method: "GET",
           headers: {
