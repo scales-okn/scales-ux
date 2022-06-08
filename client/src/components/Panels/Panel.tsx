@@ -18,7 +18,7 @@ import Dataset from "../Dataset";
 
 import { usePanel } from "../../store/panels";
 import { useRing } from "../../store/rings";
-import Analysis from "../Analysis/_index";
+import Analysis from "../Analysis";
 import "./Panel.scss"
 
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -114,8 +114,6 @@ const Panel: FunctionComponent<PanelProps> = ({ panelId }) => {
     width: 200, //column?.width,
     sortable: column.sortable,
   })) || [];
-
-  console.log(results);
 
   return (
     <Accordion defaultActiveKey={collapsed === true ? null : panel.id} className="mb-4">

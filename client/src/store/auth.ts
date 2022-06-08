@@ -66,16 +66,13 @@ export const login = (email: string, password: string) => {
   return async (dispatch: AppDispatch) => {
     dispatch(authActions.signIn());
     try {
-      const response = await fetch(
-        `/api/users/login`,
-        {
-          method: "POST",
-          body: JSON.stringify({ email, password }),
-          headers: {
-            "Content-Type": "application/json",
-          },
+      const response = await fetch(`/api/users/login`, {
+        method: "POST",
+        body: JSON.stringify({ email, password }),
+        headers: {
+          "Content-Type": "application/json",
         },
-      );
+      });
       const { data, code, message, errors } = await response.json();
       let decodedToken: DecodedToken = null;
 

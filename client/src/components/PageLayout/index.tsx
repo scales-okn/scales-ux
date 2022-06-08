@@ -8,6 +8,7 @@ import { LinkContainer } from "react-router-bootstrap";
 import "./PageLayout.scss";
 import { userSelector, logout } from "../../store/auth";
 import { useDispatch } from "react-redux";
+import Avatar from 'react-avatar';
 
 type Props = {
   pageTitle?: string;
@@ -38,21 +39,20 @@ const PageLayout: FunctionComponent<Props> = (props) => {
                 <Nav.Link>Notebooks</Nav.Link>
               </LinkContainer>
               {isAdmin && (
-                <NavDropdown title="Admin" id="collasible-nav-dropdown">
-                  <LinkContainer to="/admin/users">
-                    <Nav.Link>Manage Users</Nav.Link>
+                <>
+                  <LinkContainer to="/rings">
+                    <Nav.Link>Rings</Nav.Link>
                   </LinkContainer>
-                </NavDropdown>
+                  <LinkContainer to="/users">
+                    <Nav.Link>Users</Nav.Link>
+                  </LinkContainer>
+                </>
               )}
             </Nav>
             <Nav>
               <Dropdown>
                 <Dropdown.Toggle variant="link" className="profile-toggler">
-                  <Gravatar
-                    size={32}
-                    email={user?.email}
-                    className="rounded-circle"
-                  />
+                  <Avatar name={`${user?.firstName} ${user?.lastName}`} size="36" round={true} email={user?.email} />
                   <span className="ms-2">{user?.email}</span>
                 </Dropdown.Toggle>
 

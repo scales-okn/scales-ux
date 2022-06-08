@@ -167,10 +167,7 @@ const NotebooksPage: FunctionComponent = () => {
                       if (params.row.userId === user.id) {
                         return <>You</>;
                       }
-
-                      // if (params.row.userId === 1) {
-                      //   return <span className="user-initials-pill">AT</span>;
-                      // }
+                      // TODO: Users Initials call.
                     },
                   },
 
@@ -192,19 +189,19 @@ const NotebooksPage: FunctionComponent = () => {
                       return <>{params.row.collaborators}</>;
                     },
                   },
-                  {
-                    field: "",
-                    headerName: " ",
-                    width: 100,
-                    sortable: false,
-                    renderCell: (params: GridCellParams) => <span>...</span>,
-                  },
+                  // {
+                  //   field: "",
+                  //   headerName: " ",
+                  //   width: 100,
+                  //   sortable: false,
+                  //   renderCell: (params: GridCellParams) => <span>...</span>,
+                  // },
                 ]}
                 pageSize={10}
                 hideFooter={notebooks?.length <= 10 ? true : false}
                 rowCount={notebooks?.length}
                 checkboxSelection={false}
-                className="bg-white border-0 rounded-0"
+                className="bg-white"
               />
             </div>
           </Row>

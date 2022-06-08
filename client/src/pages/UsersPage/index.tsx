@@ -7,8 +7,8 @@ import {
   GridCellParams,
 } from "@material-ui/data-grid";
 import { Tooltip, Typography } from "@material-ui/core";
-import PageLayout from "../../PageLayout";
-import NotAuthorized from "../../NotAuthorized";
+import PageLayout from "../../components/PageLayout";
+import NotAuthorized from "../../components/NotAuthorized";
 import UserFieldToggle from "./UserFieldToggle";
 import { Row } from "react-bootstrap";
 import { useAuthHeader, userSelector } from "store/auth";
@@ -21,15 +21,13 @@ const columns: GridColDef[] = [
     headerName: "Full name",
     description: "This column has a value getter and is not sortable.",
     sortable: false,
-    width: 160,
+    width: 200,
     valueGetter: (params: GridValueGetterParams) =>
       `${params.getValue(params.id, "firstName") || ""} ${params.getValue(params.id, "lastName") || ""
       }`,
   },
-  // { field: "createdAt", headerName: "Created At", width: 200 },
-  // { field: "updatedAt", headerName: "Updated At", width: 200 },
-  { field: "email", headerName: "Email", width: 210 },
-  { field: "role", headerName: "Role", width: 140 },
+  { field: "email", headerName: "Email", width: 250 },
+  { field: "role", headerName: "Role", width: 150 },
   {
     field: "usage",
     headerName: "Usage",

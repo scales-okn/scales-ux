@@ -3,8 +3,7 @@ import { BrowserRouter, Redirect, Route, Switch } from "react-router-dom";
 import { Button } from "react-bootstrap";
 import { ErrorBoundary } from 'react-error-boundary'
 import HomePage from "pages/HomePage";
-import AdminDashboardPage from "components/Admin/DashboardPage";
-import AdminUsersPage from "components/Admin/UsersPage";
+import UsersPage from "pages/UsersPage";
 import SignInPage from "pages/SignInPage";
 import SignUpPage from "pages/SignUpPage";
 import ProfilePage from "pages/ProfilePage";
@@ -13,8 +12,10 @@ import NotebookPage from "pages/NotebookPage";
 import EmailVerificationPage from "pages/EmailVerificationPage";
 import ForgotPasswordPage from "pages/ForgotPasswordPage";
 import ResetPasswordPage from "pages/ResetPasswordPage";
+import RingsPage from "pages/RingsPage";
 import ProtectedRoute from "components/ProtectedRoute";
 import Notifications from "components/Notifications";
+import RingPage from "pages/RingPage";
 
 const ErrorFallback = ({ error, resetErrorBoundary }) => {
   return (
@@ -39,16 +40,20 @@ const App: FunctionComponent = () => {
         <BrowserRouter>
           <Switch>
             <ProtectedRoute exact path="/" component={HomePage} />
-            <ProtectedRoute exact path="/admin" component={AdminDashboardPage} />
             <ProtectedRoute
               exact
-              path="/admin/dashboard"
-              component={AdminDashboardPage}
+              path="/users"
+              component={UsersPage}
             />
             <ProtectedRoute
               exact
-              path="/admin/users"
-              component={AdminUsersPage}
+              path="/rings"
+              component={RingsPage}
+            />
+            <ProtectedRoute
+              exact
+              path="/rings/:ringId"
+              component={RingPage}
             />
             <ProtectedRoute exact path="/profile" component={ProfilePage} />
             <ProtectedRoute exact path="/notebooks" component={NotebooksPage} />
