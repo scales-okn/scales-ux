@@ -61,7 +61,7 @@ const Analysis: FunctionComponent<Props> = ({ panelId, ring, info }) => {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        "x-api-key": process.env.CORE_API_KEY
+        "x-api-key": process.env.REACT_APP_CORE_API_KEY
       },
       body: JSON.stringify(plan)
     });
