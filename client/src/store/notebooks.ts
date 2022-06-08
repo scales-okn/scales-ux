@@ -54,16 +54,13 @@ export function fetchNotebooks() {
     dispatch(notebooksActions.fetchNotebooks());
 
     try {
-      const response = await fetch(
-        `${process.env.REACT_APP_UX_API_ENDPOINT}/notebooks`,
-        {
-          method: "GET",
-          headers: {
-            ...authHeader,
-            "Content-Type": "application/json",
-          },
+      const response = await fetch(`/api/notebooks`, {
+        method: "GET",
+        headers: {
+          ...authHeader,
+          "Content-Type": "application/json",
         },
-      );
+      });
       const { data } = await response.json();
 
       dispatch(notebooksActions.fetchNotebooksSuccess(data.notebooks));

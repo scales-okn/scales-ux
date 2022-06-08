@@ -80,14 +80,11 @@ export const getRings = () => {
       const authHeader = authorizationHeader(token);
       dispatch(ringsActions.getRings());
 
-      const response = await fetch(
-        `${process.env.REACT_APP_UX_API_ENDPOINT}/rings`,
-        {
-          headers: {
-            ...authHeader,
-          },
+      const response = await fetch(`/api/rings`, {
+        headers: {
+          ...authHeader,
         },
-      );
+      });
       const { data } = await response.json();
 
       if (response.status === 200) {
@@ -109,9 +106,7 @@ export const getRingInfo = (rid: string, version: number) => {
 
     try {
       dispatch(ringsActions.getRingInfo());
-      const response = await fetch(
-        `${process.env.REACT_APP_UX_PROXY_ENDPOINT}/rings/${rid}/${version}`,
-      );
+      const response = await fetch(`/proxy/rings/${rid}/${version}`);
       const info = await response.json();
 
       if (response.status === 200) {

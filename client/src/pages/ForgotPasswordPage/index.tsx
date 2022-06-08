@@ -8,7 +8,6 @@ import { Button, Col, Container, Form, Row } from "react-bootstrap";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faBalanceScale } from "@fortawesome/free-solid-svg-icons";
 import { useNotify } from "components/Notifications";
-import config from "config";
 
 interface ForgotPasswordFields {
   email: string;
@@ -32,7 +31,7 @@ const ForgotPassword: FunctionComponent = () => {
     validationSchema: ForgotPasswordValidationSchema,
     onSubmit: (values: ForgotPasswordFields, { setErrors }) => {
       fetch(
-        `${process.env.REACT_APP_UX_API_ENDPOINT}/users/password/forgot`,
+        `/api/users/password/forgot`,
         {
           method: "POST",
           headers: {
@@ -68,7 +67,7 @@ const ForgotPassword: FunctionComponent = () => {
   return (
     <Container className="h-100">
       <Row className="h-100 justify-content-center align-items-center text-center">
-        <Col md="4">
+        <Col md="5">
           <Form noValidate onSubmit={formik.handleSubmit}>
             <FontAwesomeIcon
               icon={faBalanceScale}

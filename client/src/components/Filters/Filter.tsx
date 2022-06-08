@@ -89,7 +89,7 @@ const Filter: FunctionComponent<Props> = ({ panelId, filter }) => {
     setIsLoading(true);
     try {
       const response = await fetch(
-        `${process.env.UX_PROXY_ENDPOINT}/autocomplete/${ring.rid}/1/${info?.defaultEntity}/${type}?query=${query}`
+        `/proxy/autocomplete/${ring.rid}/1/${info?.defaultEntity}/${type}?query=${query}`
       );
       if (response.status === 200) {
         const data = await response.json();

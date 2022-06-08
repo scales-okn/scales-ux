@@ -2,7 +2,6 @@ import React, { FunctionComponent } from "react";
 import { useEffect, useCallback } from "react";
 import { useHistory, useParams } from "react-router-dom";
 import { useNotify } from "../../components/Notifications";
-import config from "config";
 
 interface Params {
   token: string;
@@ -15,7 +14,7 @@ const EmailVerificationPage: FunctionComponent = () => {
   const verifyEmail = useCallback(async () => {
     try {
       const response = await fetch(
-        `${process.env.REACT_APP_UX_API_ENDPOINT}/users/verify-email`,
+        `/api/users/verify-email`,
         {
           method: "POST",
           headers: {

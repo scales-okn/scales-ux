@@ -309,16 +309,13 @@ export const getPanels = (notebookId) => {
       const authHeader = authorizationHeader(token);
       dispatch(panelsActions.getPanels());
 
-      const response = await fetch(
-        `${process.env.REACT_APP_UX_API_ENDPOINT}/notebooks/${notebookId}/panels`,
-        {
-          method: "GET",
-          headers: {
-            ...authHeader,
-            "Content-Type": "application/json",
-          },
+      const response = await fetch(`/api/notebooks/${notebookId}/panels`, {
+        method: "GET",
+        headers: {
+          ...authHeader,
+          "Content-Type": "application/json",
         },
-      );
+      });
 
       const { data, message } = await response.json();
       if (response.status === 200) {
@@ -342,21 +339,18 @@ export const createPanel =
       const authHeader = authorizationHeader(token);
       dispatch(panelsActions.createPanel());
 
-      const response = await fetch(
-        `${process.env.REACT_APP_UX_API_ENDPOINT}/panels`,
-        {
-          method: "POST",
-          headers: {
-            ...authHeader,
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            ...payload,
-            notebookId: notebook.id,
-            userId: user.id,
-          }),
+      const response = await fetch(`/api/panels`, {
+        method: "POST",
+        headers: {
+          ...authHeader,
+          "Content-Type": "application/json",
         },
-      );
+        body: JSON.stringify({
+          ...payload,
+          notebookId: notebook.id,
+          userId: user.id,
+        }),
+      });
 
       const { data, message } = await response.json();
       if (response.status === 200) {
@@ -379,17 +373,14 @@ export const updatePanel =
       const authHeader = authorizationHeader(token);
       dispatch(panelsActions.updatePanel({ panelId }));
 
-      const response = await fetch(
-        `${process.env.REACT_APP_UX_API_ENDPOINT}/panels/${panelId}`,
-        {
-          method: "PUT",
-          headers: {
-            ...authHeader,
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify(payload),
+      const response = await fetch(`/api/panels/${panelId}`, {
+        method: "PUT",
+        headers: {
+          ...authHeader,
+          "Content-Type": "application/json",
         },
-      );
+        body: JSON.stringify(payload),
+      });
 
       const { data, message } = await response.json();
       if (response.status === 200) {
@@ -411,16 +402,13 @@ export const deletePanel =
       const authHeader = authorizationHeader(token);
       dispatch(panelsActions.deletePanel());
 
-      const response = await fetch(
-        `${process.env.REACT_APP_UX_API_ENDPOINT}/panels/${panelId}`,
-        {
-          method: "DELETE",
-          headers: {
-            ...authHeader,
-            "Content-Type": "application/json",
-          },
+      const response = await fetch(`/api/panels/${panelId}`, {
+        method: "DELETE",
+        headers: {
+          ...authHeader,
+          "Content-Type": "application/json",
         },
-      );
+      });
 
       const { data, message } = await response.json();
       if (response.status === 200) {
@@ -449,7 +437,7 @@ export const getPanelResults =
 
       const response = await fetch(
         appendQuery(
-          `${process.env.UX_PROXY_ENDPOINT}/results/${rid}/${version}/${info.defaultEntity}?page=${page}&batchSize=${batchSize}&sortBy=dateFiled&sortDirection=desc`,
+          `/proxy/results/${rid}/${version}/${info.defaultEntity}?page=${page}&batchSize=${batchSize}&sortBy=dateFiled&sortDirection=desc`,
           filters?.reduce((acc, filterInput: FilterInput) => {
             acc[filterInput.type] =
               filterInput.type === "dateFiled"
