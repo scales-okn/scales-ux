@@ -28,6 +28,7 @@ const Analysis: FunctionComponent<Props> = ({ panelId, ring, info }) => {
   const { notify } = useNotify();
   const [data, setData] = useState(null);
   const [satyrn, setSatyrn] = useState(null);
+  const [plan, setPlan] = useState(null);
   console.log({
     selectedStatement,
     parameters
@@ -57,6 +58,7 @@ const Analysis: FunctionComponent<Props> = ({ panelId, ring, info }) => {
       }
     });
 
+    setPlan(plan);
     const response = await fetch(`https://satyrn-api.nulab.org/api/analysis/${ring.rid}/${ring.version}/${info?.defaultEntity}/`, {
       method: "POST",
       headers: {
@@ -132,7 +134,7 @@ const Analysis: FunctionComponent<Props> = ({ panelId, ring, info }) => {
                 }}
               >Remove</Button>
             </Col>
-            <Answers data={data} satyrn={satyrn} loadingAnswers={loadingAnswers} />
+            <Answers plan={plan} statement={getStatement(selectedStatement)} data={data} satyrn={satyrn} loadingAnswers={loadingAnswers} />
           </Row>
         ))
         : <div>No analysis added.</div>
