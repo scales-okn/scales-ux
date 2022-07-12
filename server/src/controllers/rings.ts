@@ -18,6 +18,7 @@ export const create = async (req: Request, res: Response) => {
       dataSource,
       ontology,
       visibility,
+      version
     } = req.body;
 
     const ring = await sequelize.models.Ring.create({
@@ -29,7 +30,7 @@ export const create = async (req: Request, res: Response) => {
       dataSource,
       ontology,
       visibility,
-      version: 1,
+      version,
     });
 
     return res.send_ok("Ring created succesfully!", { ring });
