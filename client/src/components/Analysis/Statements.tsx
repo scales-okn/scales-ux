@@ -15,6 +15,7 @@ const Statements = ({
       <Col lg="8">
         <Form.Label>What do you want to know about?</Form.Label>
         <Typeahead
+          loading={!statements ? true : false}
           inputProps={{ autoComplete: "false" }}
           id={uniqid()}
           labelKey="statement"

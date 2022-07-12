@@ -154,3 +154,8 @@ export const authMiddleware =
       }
     }
   };
+
+  export const useUser = () => {
+    const { user } = useSelector(authSelector);
+    return user;
+  }

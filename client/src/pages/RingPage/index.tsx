@@ -6,6 +6,7 @@ import React, {
 import { Button, Table } from "react-bootstrap";
 import PageLayout from "../../components/PageLayout";
 import { useParams } from "react-router-dom";
+import { useAuthHeader } from "store/auth";
 
 import { useRing } from "store/rings";
 import JSONInput from 'react-json-editor-ajrm';
@@ -21,12 +22,14 @@ const RingPage = () => {
   const { ring } = useRing(Number(ringId));
   const [ontology, setOntology] = useState(null);
   const [dataSource, setDataSource] = useState(null);
+  const authHeader = useAuthHeader();
   
   const updateRing = (ring) => {
     fetch(`/api/rings/${ring.id}`, {
       method: "PUT",
       body: JSON.stringify(ring),
       headers: {
+        ...authHeader,
         "Content-Type": "application/json",
       },
     })

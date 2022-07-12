@@ -2,7 +2,7 @@ import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 import { Request, Response } from "express";
 import { sequelize } from "../database";
-import mailTransport from "../services/mail";
+import mailer from "../services/mail";
 import accessControl, {
   permisionsFieldsFilter,
 } from "../services/accesscontrol";
@@ -250,7 +250,7 @@ export const verifyEmail = async (req: Request, res: Response) => {
       });
       const { firstName, lastName, email } = user;
       if (updated) {
-        mailTransport.sendMail(
+        mailer.sendMail(
           {
             from: process.env.SENDGRID_FROM_SENDER,
             to: `${firstName} ${lastName} <${email}>`,
@@ -296,17 +296,23 @@ export const forgotPassword = async (req: Request, res: Response) => {
       });
       user.passwordResetToken = passwordResetToken;
       await user.save();
-      mailTransport.sendMail(
+      mailer.sendMail(
         {
           from: process.env.SENDGRID_FROM_SENDER,
           to: `${firstName} ${lastName} <${email}>`,
           subject: "Satyrn: Password reset request",
-          html: `Hello ${firstName}, <br> 
-          You are receiving this email because of a password reset request received at <a href="${process.env.UX_CLIENT_URL}">Satyrn</a>. <br />
-          If you did not request a password reset, then please ignore this email and contact us at {EMAIL ADDRESS} to let us know. <br />
-          Otherwise, <a href="${process.env.UX_CLIENT_URL}/reset-password/${passwordResetToken}">click here to reset your password.</a> <br /><br />
-          Thanks! <br />
-          - The Satyrn Team`,
+          template: "forgotPassword",
+          context: {
+            firstName,
+            passwordResetToken,
+            UX_CLIENT_URL: process.env.UX_CLIENT_URL,
+          },
+          // html: `Hello ${firstName}, <br> 
+          // You are receiving this email because of a password reset request received at <a href="${process.env.UX_CLIENT_URL}">Satyrn</a>. <br />
+          // If you did not request a password reset, then please ignore this email and contact us at {EMAIL ADDRESS} to let us know. <br />
+          // Otherwise, <a href="${process.env.UX_CLIENT_URL}/reset-password/${passwordResetToken}">click here to reset your password.</a> <br /><br />
+          // Thanks! <br />
+          // - The Satyrn Team`,
         },
         //@ts-ignore
         (error, info) => console.log(error, info)

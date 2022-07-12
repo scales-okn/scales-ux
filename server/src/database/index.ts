@@ -6,7 +6,6 @@ import NotebookModel from "../models/Notebook";
 import RingModel from "../models/Ring";
 import LogModel from "../models/Log";
 import logs from "./logs";
-import { seeds } from "./seeds";
 
 // @ts-ignore
 export const sequelize = new Sequelize(
@@ -99,8 +98,6 @@ const database = async () => {
   } catch (error) {
     console.error("Sync Failed:", error);
   }
-
-  await seeds(sequelize);
 };
 
 export default database;

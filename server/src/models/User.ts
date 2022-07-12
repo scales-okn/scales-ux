@@ -1,6 +1,6 @@
 import { DataTypes, Sequelize } from "sequelize";
 import jwt from "jsonwebtoken";
-import mailTransport from "../services/mail";
+import mailer from "../services/mail";
 
 export interface User {
   id: number;
@@ -81,7 +81,7 @@ export default (sequelize, options) => {
       );
       user.emailVerificationToken = emailVerificationToken;
       await user.save();
-      mailTransport.sendMail(
+      mailer.sendMail(
         {
           from: process.env.SENDGRID_FROM_SENDER,
           to: `${firstName} ${lastName} <${email}>`,
@@ -106,7 +106,7 @@ export default (sequelize, options) => {
       if (fields.includes("approved") && attributes?.approved === true) {
         const user = await User.findOne({ where });
         const { firstName, lastName, email } = user.dataValues;
-        mailTransport.sendMail(
+        mailer.sendMail(
           {
             from: process.env.SENDGRID_FROM_SENDER,
             to: `${firstName} ${lastName} <${email}>`,

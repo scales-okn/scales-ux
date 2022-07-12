@@ -16,6 +16,7 @@ import RingsPage from "pages/RingsPage";
 import ProtectedRoute from "components/ProtectedRoute";
 import Notifications from "components/Notifications";
 import RingPage from "pages/RingPage";
+import CreateRing from "pages/RingsPage/CreateRing";
 
 const ErrorFallback = ({ error, resetErrorBoundary }) => {
   return (
@@ -50,14 +51,15 @@ const App: FunctionComponent = () => {
               path="/rings"
               component={RingsPage}
             />
-            <ProtectedRoute
-              exact
-              path="/rings/:ringId"
-              component={RingPage}
-            />
             <ProtectedRoute exact path="/profile" component={ProfilePage} />
             <ProtectedRoute exact path="/notebooks" component={NotebooksPage} />
             <ProtectedRoute exact path="/rings" component={NotebooksPage} />
+            <ProtectedRoute exact path="/rings/create" component={CreateRing} />
+            <ProtectedRoute
+              exact
+              path="/rings/:ringId"
+              component={CreateRing}
+            />
             <ProtectedRoute
               exact
               path="/notebooks/:notebookId"
