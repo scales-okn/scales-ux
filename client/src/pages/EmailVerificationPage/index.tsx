@@ -39,7 +39,8 @@ const EmailVerificationPage: FunctionComponent = () => {
     } catch (error) {
       console.log(error);
     }
-    history.push("/sign-in");
+    
+    history.push("/");
   }, [token]);
 
   useEffect(() => {

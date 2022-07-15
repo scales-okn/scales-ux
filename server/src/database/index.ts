@@ -6,6 +6,7 @@ import NotebookModel from "../models/Notebook";
 import RingModel from "../models/Ring";
 import LogModel from "../models/Log";
 import logs from "./logs";
+import seeds from "./seeds";
 
 // @ts-ignore
 export const sequelize = new Sequelize(
@@ -91,9 +92,16 @@ const database = async () => {
     console.error("Unable to connect to the database:", error);
   }
 
+  // Seeds
+  try {
+    await seeds(sequelize);
+  } catch (error) {
+    console.error("Seeds failed to initialize!", error);
+  }
+
   // Sync
   try {
-    await sequelize.sync({ force: process.env.STAGE != "prod" }); // "{ force: true }" will drop the table if it already exits
+    await sequelize.sync({ force: false}); // "{ force: true }" will drop the table if it already exits
     console.log("Sync succesfully!");
   } catch (error) {
     console.error("Sync Failed:", error);

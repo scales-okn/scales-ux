@@ -18,7 +18,7 @@ const ProtectedRoute: FunctionComponent<Props> = ({
     <Route
       {...restOfProps}
       render={(props) =>
-        user ? <Component {...props} /> : <Redirect to="/sign-in" />
+        user ? <Component {...props} /> : <Redirect to="/sign-up" />
       }
     />
   );

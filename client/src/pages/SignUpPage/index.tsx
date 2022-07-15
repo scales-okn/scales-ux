@@ -26,7 +26,7 @@ export const UserSignUpValidationSchema = UserSignInValidationSchema.concat(
       .required("Usage Field is required"),
     password: yup
       .string()
-      .required()
+      .required("Password is required")
       .matches(
         /^.*(?=.{8,})((?=.*[!@#$%^&*()\-_=+{};:,<.>]){1})(?=.*\d)((?=.*[a-z]){1})((?=.*[A-Z]){1}).*$/,
         "Password must contain at least 8 characters, one uppercase, one number and one special case character"
@@ -49,7 +49,7 @@ const SignUpPage: FunctionComponent = () => {
       email: "",
       password: "",
       usage: "",
-      tos: false,
+      tos: true,
     },
     validationSchema: UserSignUpValidationSchema,
     onSubmit: (values: UserSignUpFields, { setErrors }) => {
@@ -66,7 +66,9 @@ const SignUpPage: FunctionComponent = () => {
             switch (response.code) {
               case 200: {
                 notify(response.message, "success");
-                history.push("/sign-in");
+                setTimeout(() => {
+                  history.push("/sign-in");
+                }, 2000);
                 break;
               }
               default: {
@@ -87,10 +89,10 @@ const SignUpPage: FunctionComponent = () => {
   return (
     <Container className="h-100">
       <Row className="h-100 justify-content-center align-items-center text-center">
-        <Col md="5">
+        <Col md="7">
           <Form noValidate onSubmit={formik.handleSubmit}>
             <FontAwesomeIcon icon={faBalanceScale} size="3x" className="mb-4" />
-            <h1 className="h3 mb-3 fw-normal">Please sign in</h1>
+            <h1 className="h3 mb-5 fw-normal">Please register for beta access</h1>
 
             <Row className="mb-3">
               <Col>
@@ -147,13 +149,23 @@ const SignUpPage: FunctionComponent = () => {
                 placeholder="Password"
                 value={formik.values.password}
                 onChange={formik.handleChange}
+                onBlur={formik.handleBlur}
                 isInvalid={
                   formik.touched.password && Boolean(formik.errors?.password)
                 }
               />
               <Form.Label>Password</Form.Label>
+              {
+                formik.touched.password &&
+                Boolean(formik.errors?.password) && (
+                  <Form.Text className="text-danger text-start d-block">
+                    {formik.errors.password}
+                  </Form.Text>
+                )
+              }
             </div>
             <div className="form-floating mb-3">
+              <p className="text-start">In a sentence or two, let us know the types of research you intend to explore with the SCALES dataset within the Satyrn platform:</p>
               <Form.Control
                 as="textarea"
                 rows={3}
@@ -166,9 +178,9 @@ const SignUpPage: FunctionComponent = () => {
                   formik.touched.usage && Boolean(formik.errors?.usage)
                 }
               />
-              <Form.Label>Account Usage</Form.Label>
+              <Form.Label></Form.Label>
             </div>
-            <Form.Group className="mb-4">
+            {/* <Form.Group className="mb-4">
               <Form.Check
                 type="switch"
                 label="I agree with the TOS."
@@ -182,22 +194,22 @@ const SignUpPage: FunctionComponent = () => {
                   {formik.errors.tos}
                 </Form.Text>
               )}
-            </Form.Group>
+            </Form.Group> */}
             <Button
               variant="primary"
               type="submit"
               className="w-100 mb-3 text-white"
               size="lg"
             >
-              Sign in
+              Register
             </Button>
-            <Row className="mb-5">
+            {/* <Row className="mb-5">
               <Col className="text-end">
                 <a href="/sign-in" className="small">
                   Already have an account? Sign in
                 </a>
               </Col>
-            </Row>
+            </Row> */}
             <Copyright />
           </Form>
         </Col>

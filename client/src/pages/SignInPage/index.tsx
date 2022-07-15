@@ -57,7 +57,7 @@ const SignInPage: FunctionComponent = () => {
   return (
     <Container className="h-100">
       <Row className="h-100 justify-content-center align-items-center text-center">
-        <Col md="5">
+        <Col md="7">
           <Form noValidate onSubmit={formik.handleSubmit}>
             <FontAwesomeIcon icon={faBalanceScale} size="3x" className="mb-4" />
             <h1 className="h3 mb-3 fw-normal">Please sign in</h1>
