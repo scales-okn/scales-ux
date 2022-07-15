@@ -30,7 +30,7 @@ const Notifications: React.FC = () => {
       defaultProps: {
         position: "bottom-right",
         dismissible: true,
-        dismissAfter: 5000,
+        dismissAfter: 8000,
       },
     });
   }, []);

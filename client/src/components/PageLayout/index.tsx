@@ -3,12 +3,12 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faBalanceScale, faSearch } from "@fortawesome/free-solid-svg-icons";
 import { useSelector } from "react-redux";
 import { Navbar, Container, Nav, NavDropdown, Dropdown } from "react-bootstrap";
-import Gravatar from "react-gravatar";
 import { LinkContainer } from "react-router-bootstrap";
 import "./PageLayout.scss";
 import { userSelector, logout } from "../../store/auth";
 import { useDispatch } from "react-redux";
 import Avatar from 'react-avatar';
+import Copyright from "components/Copyright";
 
 type Props = {
   pageTitle?: string;
@@ -78,6 +78,7 @@ const PageLayout: FunctionComponent<Props> = (props) => {
         {pageTitle && <h4>{pageTitle}</h4>}
         {children}
       </Container>
+      <Copyright />
     </div>
   );
 };

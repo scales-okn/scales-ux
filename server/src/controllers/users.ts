@@ -33,7 +33,7 @@ export const create = async (req: Request, res: Response) => {
       password: hash,
     });
 
-    return res.send_ok("User created succesfully!", { user });
+    return res.send_ok("Thanks for signing up for beta access! Please confirm your email address via the link we just sent you.", { user });
   } catch (error) {
     console.log(error);
 
@@ -256,19 +256,21 @@ export const verifyEmail = async (req: Request, res: Response) => {
             to: `${firstName} ${lastName} <${email}>`,
             subject: "Satyrn Beta Access",
             html: `
-                Hello ${firstName}, <br />
+                Hello ${firstName}, <br /><br />
                 Thanks for registering for access to Satyrn. 
                 During our closed beta, we’re letting in a limited number of users, but will be expanding access over the coming months.<br /> 
                 Now that your email address has been verified, you have been added to our approval queue.<br /> Once your account is approved, 
                 you will receive an email to let you know you can log in to Satyrn. <br /><br />
                 Thanks! <br />
-                - The Satyrn Team
-            `,
+                <br />
+                The Satyrn Team<br />
+                C3 Lab @ Northwestern University<br />
+                <a href="https://c3lab.northwestern.edu">c3lab.northwestern.edu</a>`,
           },
           //@ts-ignore
           (error, info) => console.log(error, info)
         );
-        return res.send_ok("Email verified succesfully!");
+        return res.send_ok("Thanks for registering your interest in trying out SCALES! We’ll let you know when you’ve been granted access.");
       }
     } else {
       return res.send_badRequest(
