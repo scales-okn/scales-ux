@@ -83,11 +83,11 @@ export default (sequelize, options) => {
       await user.save();
       mailer.sendMail(
         {
-          from: process.env.SENDGRID_FROM_SENDER,
+          from: `Satyrn <${process.env.SENDGRID_FROM_SENDER}>`,
           to: `${firstName} ${lastName} <${email}>`,
           subject: "Satyrn - Please verify your email address",
           html: `Hello ${firstName}, <br /><br />
-          Thank you for signing up for access to <a href="${process.env.UX_CLIENT_URL}">Satyrn</a>.<br />
+          Thank you for signing up for access to Satyrn.<br />
           Please <a href="${process.env.UX_CLIENT_URL}/verify-email/${emailVerificationToken}">click here to verify this email address</a>. <br /><br />
           <br />
           The Satyrn Team<br />
@@ -111,7 +111,7 @@ export default (sequelize, options) => {
         const { firstName, lastName, email } = user.dataValues;
         mailer.sendMail(
           {
-            from: process.env.SENDGRID_FROM_SENDER,
+            from: `Satyrn <${process.env.SENDGRID_FROM_SENDER}>`,
             to: `${firstName} ${lastName} <${email}>`,
             subject: "Welcome to the Satyrn Beta!",
             html: `Hello ${firstName}, <br> <br> 
