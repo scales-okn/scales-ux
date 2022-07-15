@@ -252,7 +252,7 @@ export const verifyEmail = async (req: Request, res: Response) => {
       if (updated) {
         mailer.sendMail(
           {
-            from: process.env.SENDGRID_FROM_SENDER,
+            from: `Satyrn <${process.env.SENDGRID_FROM_SENDER}>`,
             to: `${firstName} ${lastName} <${email}>`,
             subject: "Satyrn Beta Access",
             html: `
@@ -300,7 +300,7 @@ export const forgotPassword = async (req: Request, res: Response) => {
       await user.save();
       mailer.sendMail(
         {
-          from: process.env.SENDGRID_FROM_SENDER,
+          from: `Satyrn <${process.env.SENDGRID_FROM_SENDER}>`,
           to: `${firstName} ${lastName} <${email}>`,
           subject: "Satyrn: Password reset request",
           template: "forgotPassword",
