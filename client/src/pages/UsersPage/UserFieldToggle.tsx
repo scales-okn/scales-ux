@@ -23,11 +23,18 @@ const UserFieldToggle: FunctionComponent<Props> = ({
   const { notify } = useNotify();
 
   const handleChange = (event: ChangeEvent<HTMLInputElement>) => {
+    if (userId === 1) {
+      notify("You can't change this user", "error");
+      return;
+    }
     if (event.target.checked !== checked) {
+      const fieldValue = fieldName === 'role' ?
+        event.target.checked ? 'admin' : 'user' :
+        !checked;
       fetch(`/api/users/${userId}`, {
         method: "PUT",
         body: JSON.stringify({
-          [fieldName]: !checked,
+          [fieldName]: fieldValue,
         }),
         headers: {
           ...authHeader,
@@ -38,7 +45,11 @@ const UserFieldToggle: FunctionComponent<Props> = ({
         .then((response) => {
           try {
             if (response?.code === 200) {
-              setChecked(response.data.user[fieldName]);
+              if (fieldName === 'role') {
+                setChecked(response.data.user[fieldName] === 'admin');
+              } else {
+                setChecked(response.data.user[fieldName]);
+              }
               notify(response.message, "success");
             }
           } catch (error) {

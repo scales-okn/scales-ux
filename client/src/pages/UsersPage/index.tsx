@@ -13,64 +13,80 @@ import UserFieldToggle from "./UserFieldToggle";
 import { Row } from "react-bootstrap";
 import { useAuthHeader, userSelector } from "store/auth";
 import { useSelector } from "react-redux";
-
-const columns: GridColDef[] = [
-  // { field: "id", headerName: "ID", width: 100 },
-  {
-    field: "fullName",
-    headerName: "Full name",
-    description: "This column has a value getter and is not sortable.",
-    sortable: false,
-    width: 200,
-    valueGetter: (params: GridValueGetterParams) =>
-      `${params.getValue(params.id, "firstName") || ""} ${params.getValue(params.id, "lastName") || ""
-      }`,
-  },
-  { field: "email", headerName: "Email", width: 250 },
-  { field: "role", headerName: "Role", width: 150 },
-  {
-    field: "usage",
-    headerName: "Usage",
-    width: 300,
-    renderCell: (params: GridCellParams) => (
-      <Tooltip title={params.row.usage}>
-        <Typography noWrap variant="body2">
-          {params.row.usage}
-        </Typography>
-      </Tooltip>
-    ),
-  },
-  {
-    field: "approved",
-    headerName: "Approved",
-    width: 140,
-    renderCell: (params: GridCellParams) => (
-      <UserFieldToggle
-        userId={params.row.id}
-        fieldName="approved"
-        value={params.row.approved}
-      />
-    ),
-  },
-  {
-    field: "blocked",
-    headerName: "Blocked",
-    width: 140,
-    renderCell: (params: GridCellParams) => (
-      <UserFieldToggle
-        userId={params.row.id}
-        fieldName="blocked"
-        value={params.row.blocked}
-      />
-    ),
-  },
-];
+import UserRoleChange from "./UserRoleChange";
 
 const AdminUsersPages: FunctionComponent = () => {
   const [rows, setRows] = useState([]);
   const authorizationHeader = useAuthHeader();
   const { role } = useSelector(userSelector);
   const isAdmin = role === 'admin';
+
+
+  const columns: GridColDef[] = [
+    // { field: "id", headerName: "ID", width: 100 },
+    {
+      field: "fullName",
+      headerName: "Full name",
+      description: "This column has a value getter and is not sortable.",
+      sortable: false,
+      width: 200,
+      valueGetter: (params: GridValueGetterParams) =>
+        `${params.getValue(params.id, "firstName") || ""} ${params.getValue(params.id, "lastName") || ""
+        }`,
+    },
+    { field: "email", headerName: "Email", width: 250 },
+    {
+      field: "usage",
+      headerName: "Usage",
+      width: 300,
+      renderCell: (params: GridCellParams) => (
+        <Tooltip title={params.row.usage}>
+          <Typography noWrap variant="body2">
+            {params.row.usage}
+          </Typography>
+        </Tooltip>
+      ),
+    },
+    {
+      field: "approved",
+      headerName: "Approved",
+      width: 140,
+      renderCell: (params: GridCellParams) => (
+        <UserFieldToggle
+          userId={params.row.id}
+          fieldName="approved"
+          value={params.row.approved}
+        />
+      ),
+    },
+    {
+      field: "blocked",
+      headerName: "Blocked",
+      width: 140,
+      renderCell: (params: GridCellParams) => (
+        <UserFieldToggle
+          userId={params.row.id}
+          fieldName="blocked"
+          value={params.row.blocked}
+        />
+      ),
+    },
+  ];
+
+  if (isAdmin) {
+    columns.push({
+      field: "admin", headerName: "Admin", width: 150,
+      renderCell: (params: GridCellParams) => {
+        return (
+          <UserFieldToggle
+            userId={params.row.id}
+            fieldName="role"
+            value={params.row.role === 'admin'}
+          />
+        );
+      }
+    });
+  }
 
   useEffect(() => {
     fetch(`/api/users`, {
