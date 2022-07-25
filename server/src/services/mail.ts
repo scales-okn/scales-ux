@@ -1,6 +1,5 @@
 import nodemailer from "nodemailer";
 import nodemailerSendgrid from "nodemailer-sendgrid";
-import { pugEngine } from "nodemailer-pug-engine";
 
 const mailer = nodemailer.createTransport(
   nodemailerSendgrid({
@@ -8,11 +7,11 @@ const mailer = nodemailer.createTransport(
   })
 );
 
-console.log(__dirname + '../templates/emails'); 
+// console.log(__dirname + '../templates/emails'); 
 
-mailer.use('compile', pugEngine({
-  templateDir: __dirname + '../templates/emails',
-  pretty: true
-}));
+// mailer.use('compile', pugEngine({
+//   templateDir: __dirname + '../templates/emails',
+//   pretty: true
+// }));
 
 export default mailer;

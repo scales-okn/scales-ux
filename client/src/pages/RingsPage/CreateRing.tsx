@@ -101,7 +101,7 @@ const CreateRing: React.FC = () => {
                     onClick={() => deleteRing(ring.id)}
                     className="float-end">
                     Delete Ring
-                    </Button>
+                  </Button>
                 )
               }
             </Col>
@@ -210,15 +210,19 @@ const CreateRing: React.FC = () => {
               <Form.Label>Data Source</Form.Label>
               <JSONInput
                 id="dataSource"
-                placeholder={formik.values.dataSource}
+                // placeholder={formik.values.dataSource}
                 // colors="default"
                 locale={locale}
                 height="550px"
                 width="100%"
                 onChange={(e) => {
-                  formik.setFieldValue("dataSource", JSON.stringify(e.jsObject));
+                  try {
+                    formik.setFieldValue("dataSource", JSON.stringify(e.jsObject));
+                  } catch (error) {
+                    console.log(error);
+                  }
                 }}
-                onBlur={formik.handleBlur}
+                // onBlur={formik.handleBlur}
               />
               {formik.touched.dataSource && formik.errors.dataSource ? (
                 <Form.Text className="text-danger">
@@ -230,15 +234,20 @@ const CreateRing: React.FC = () => {
               <Form.Label>Ontology</Form.Label>
               <JSONInput
                 id="ontology"
-                placeholder={formik.values.ontology}
+                // placeholder={formik.values.ontology}`
                 // colors="default"
                 locale={locale}
                 height="550px"
                 width="100%"
                 onChange={(e) => {
-                  formik.setFieldValue("ontology", JSON.stringify(e.jsObject));
+                  try {
+                    formik.setFieldValue("ontology", JSON.stringify(e.jsObject));
+                  } catch (error) {
+                    console.log(error);
+                  }
+
                 }}
-                onBlur={formik.handleBlur}
+                // onBlur={formik.handleBlur}
               />
               {formik.touched.ontology && formik.errors.ontology ? (
                 <Form.Text className="text-danger">

@@ -303,18 +303,15 @@ export const forgotPassword = async (req: Request, res: Response) => {
           from: `Satyrn <${process.env.SENDGRID_FROM_SENDER}>`,
           to: `${firstName} ${lastName} <${email}>`,
           subject: "Satyrn: Password reset request",
-          template: "forgotPassword",
-          context: {
-            firstName,
-            passwordResetToken,
-            UX_CLIENT_URL: process.env.UX_CLIENT_URL,
-          },
-          // html: `Hello ${firstName}, <br> 
-          // You are receiving this email because of a password reset request received at <a href="${process.env.UX_CLIENT_URL}">Satyrn</a>. <br />
-          // If you did not request a password reset, then please ignore this email and contact us at {EMAIL ADDRESS} to let us know. <br />
-          // Otherwise, <a href="${process.env.UX_CLIENT_URL}/reset-password/${passwordResetToken}">click here to reset your password.</a> <br /><br />
-          // Thanks! <br />
-          // - The Satyrn Team`,
+          html: `Hello ${firstName}, <br> 
+          You are receiving this email because of a password reset request received at <a href="${process.env.UX_CLIENT_URL}">Satyrn</a>. <br />
+          If you did not request a password reset, then please ignore this email and contact us at {EMAIL ADDRESS} to let us know. <br />
+          Otherwise, <a href="${process.env.UX_CLIENT_URL}/reset-password/${passwordResetToken}">click here to reset your password.</a> <br /><br />
+          Thanks! <br />
+          <br />
+          The Satyrn Team<br />
+          C3 Lab @ Northwestern University<br />
+          <a href="https://c3lab.northwestern.edu">c3lab.northwestern.edu</a>`,
         },
         //@ts-ignore
         (error, info) => console.log(error, info)
