@@ -10,6 +10,7 @@ type Props = {
   fieldName: string;
   label?: string;
   value: boolean;
+  disabled?: boolean;
 };
 
 const UserFieldToggle: FunctionComponent<Props> = ({
@@ -17,6 +18,7 @@ const UserFieldToggle: FunctionComponent<Props> = ({
   fieldName,
   label,
   value,
+  disabled
 }) => {
   const [checked, setChecked] = useState(value);
   const authHeader = useAuthHeader();
@@ -65,6 +67,7 @@ const UserFieldToggle: FunctionComponent<Props> = ({
       <FormControlLabel
         control={
           <Switch
+            disabled={disabled}
             checked={checked}
             onChange={handleChange}
             color="primary"

@@ -1,26 +1,22 @@
-import React, { FunctionComponent, useState, ChangeEvent } from "react";
+import React, { FunctionComponent, useState } from "react";
+import { Button } from "react-bootstrap";
 import { useAuthHeader } from "store/auth";
 import { useNotify } from "components/Notifications";
-import { FormControl, Form } from 'react-bootstrap';
 
 type Props = {
   userId: number;
-  role: string;
-};
+  disabled?: boolean;
+}
 
-const UserRoleChange: FunctionComponent<Props> = ({
-  userId,
-  role,
-}) => {
+const DeleteUser: FunctionComponent<Props> = ({ userId, disabled = false }) => {
+  const [checked, setChecked] = useState(false);
   const authHeader = useAuthHeader();
   const { notify } = useNotify();
 
-  const handleChange = (event: ChangeEvent<HTMLInputElement>) => {
+  const deleteUser = () => {
+    window.confirm("Are you sure you want to delete this user?") &&
       fetch(`/api/users/${userId}`, {
-        method: "PUT",
-        body: JSON.stringify({
-          role: role,
-        }),
+        method: "DELETE",
         headers: {
           ...authHeader,
           "Content-Type": "application/json",
@@ -31,22 +27,20 @@ const UserRoleChange: FunctionComponent<Props> = ({
           try {
             if (response?.code === 200) {
               notify(response.message, "success");
+              window.location.reload();
             }
           } catch (error) {
             console.log(error);
           }
         })
         .catch((error) => console.log(error));
-  };
+  }
 
   return (
-   <Form.Group className="mb-3">
-    <Form.Label>Disabled select menu</Form.Label>
-    <Form.Select disabled>
-      <option>Disabled select</option>
-    </Form.Select>
-  </Form.Group>
+    <Button variant="outline-danger" size="sm" onClick={deleteUser} disabled={disabled}>
+      Delete
+    </Button>
   );
-};
+}
 
-export default UserRoleChange;
+export default DeleteUser;
