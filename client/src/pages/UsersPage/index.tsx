@@ -1,5 +1,4 @@
 import React, { FunctionComponent, useState, useEffect } from "react";
-// import { useAuthHeader, useAuthUser } from "react-auth-kit";
 import {
   DataGrid,
   GridColDef,
@@ -13,14 +12,12 @@ import UserFieldToggle from "./UserFieldToggle";
 import { Row } from "react-bootstrap";
 import { useAuthHeader, userSelector } from "store/auth";
 import { useSelector } from "react-redux";
-import UserRoleChange from "./UserRoleChange";
-
+import DeleteUser from "./DeleteUser";
 const AdminUsersPages: FunctionComponent = () => {
   const [rows, setRows] = useState([]);
   const authorizationHeader = useAuthHeader();
-  const { role } = useSelector(userSelector);
+  const { role, id } = useSelector(userSelector);
   const isAdmin = role === 'admin';
-
 
   const columns: GridColDef[] = [
     // { field: "id", headerName: "ID", width: 100 },
@@ -56,6 +53,7 @@ const AdminUsersPages: FunctionComponent = () => {
           userId={params.row.id}
           fieldName="approved"
           value={params.row.approved}
+          disabled={params.row.id === id}
         />
       ),
     },
@@ -68,6 +66,7 @@ const AdminUsersPages: FunctionComponent = () => {
           userId={params.row.id}
           fieldName="blocked"
           value={params.row.blocked}
+          disabled={params.row.id === id}
         />
       ),
     },
@@ -79,10 +78,21 @@ const AdminUsersPages: FunctionComponent = () => {
       renderCell: (params: GridCellParams) => {
         return (
           <UserFieldToggle
+            disabled={params.row.id === id}
             userId={params.row.id}
             fieldName="role"
             value={params.row.role === 'admin'}
           />
+        );
+      }
+    });
+    columns.push({
+      field: "delete",
+      headerName: "Delete",
+      width: 150,
+      renderCell: (params: GridCellParams) => {
+        return (
+          <DeleteUser userId={params.row.id} disabled={params.row.id === id} />
         );
       }
     });
