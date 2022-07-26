@@ -31,11 +31,11 @@ const AdminUsersPages: FunctionComponent = () => {
         `${params.getValue(params.id, "firstName") || ""} ${params.getValue(params.id, "lastName") || ""
         }`,
     },
-    { field: "email", headerName: "Email", width: 250 },
+    { field: "email", headerName: "Email", width: 240 },
     {
       field: "usage",
       headerName: "Usage",
-      width: 300,
+      width: 120,
       renderCell: (params: GridCellParams) => (
         <Tooltip title={params.row.usage}>
           <Typography noWrap variant="body2">
@@ -74,7 +74,7 @@ const AdminUsersPages: FunctionComponent = () => {
 
   if (isAdmin) {
     columns.push({
-      field: "admin", headerName: "Admin", width: 150,
+      field: "admin", headerName: "Admin", width: 140,
       renderCell: (params: GridCellParams) => {
         return (
           <UserFieldToggle

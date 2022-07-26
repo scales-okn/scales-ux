@@ -1,4 +1,4 @@
-import React, { FunctionComponent, useState, useEffect, useContext } from "react";
+import React, { FunctionComponent, useState, useEffect, useContext, useMemo } from "react";
 import {
   Accordion,
   Container,
@@ -101,19 +101,21 @@ const Panel: FunctionComponent<PanelProps> = ({ panelId }) => {
     getPanelResults();
   }, [collapsed, info]);
 
-  if (!panel?.ringId) return <Dataset panelId={panel.id} />;
-
   const rows = results?.results?.map((result) => ({
     ...result,
     id: uniqid(),
-  })) || [];
+  }));
 
-  const columns = info?.columns?.map((column) => ({
-    field: column.key,
-    headerName: column.nicename,
-    width: 200, //column?.width,
-    sortable: column.sortable,
-  })) || [];
+  const columns = useMemo(() => {
+    return info?.columns?.map((column) => ({
+      field: column.key,
+      headerName: column.nicename,
+      width: 200,
+      sortable: column.sortable,
+    })) || [];
+  }, [info]);
+
+  if (!panel?.ringId) return <Dataset panelId={panel.id} />;
 
   return (
     <Accordion defaultActiveKey={collapsed === true ? null : panel.id} className="mb-4">
@@ -160,14 +162,7 @@ const Panel: FunctionComponent<PanelProps> = ({ panelId }) => {
                           <>
                             <div style={{ height: 400, width: "100%", overflowX: "hidden" }}>
                               <DataGrid
-                                onPageChange={(page) => {
-                                  getPanelResults(
-                                    [],
-                                    page
-                                  )
-                                }
-                                }
-                                getRowId={() => uniqid()}
+                                onPageChange={(page) => getPanelResults([], page)}
                                 rows={rows}
                                 columns={columns}
                                 page={results?.page}
@@ -175,6 +170,7 @@ const Panel: FunctionComponent<PanelProps> = ({ panelId }) => {
                                 rowCount={results?.totalCount}
                                 checkboxSelection={false}
                                 className="bg-white border-0 rounded-0"
+                                paginationMode="server"
                               />
                             </div>
                             <div className="p-3">
