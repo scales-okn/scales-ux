@@ -2,6 +2,15 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.5.3](https://github.com/nu-c3lab/satyrn-ux/compare/v1.5.2...v1.5.3) (2022-07-26)
+
+
+### Bug Fixes
+
+* **config:** fixed proxy url ([662631c](https://github.com/nu-c3lab/satyrn-ux/commit/662631ca28dd598d695ec0dad6f15903ffd8cecd))
+* **env and config:** removed config and modified env variables ([8d0db96](https://github.com/nu-c3lab/satyrn-ux/commit/8d0db96be6181d28df85ab7f39b60fc95fc50927))
+* **requests:** requests ([58c9311](https://github.com/nu-c3lab/satyrn-ux/commit/58c93118a23055d0774c57136f4466521389903d))
+
 ### [1.5.2](https://github.com/nu-c3lab/satyrn-ux/compare/v1.5.1...v1.5.2) (2021-11-17)
 
 ### [1.5.1](https://github.com/nu-c3lab/satyrn-ux/compare/v1.5.0...v1.5.1) (2021-11-17)
