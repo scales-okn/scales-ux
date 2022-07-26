@@ -137,7 +137,7 @@ const Ring: React.FC = () => {
                   <Button
                     variant="danger"
                     type="button"
-                    onClick={() => window.confirm("Are you sure you want to delete this ring?") && deleteRing(ring.rid)}
+                    onClick={() => window.confirm("Are you sure you want to delete this ring?") && deleteRing(ring.id)}
                     className="float-end">
                     Delete Ring
                   </Button>
