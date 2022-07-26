@@ -12,7 +12,7 @@ interface InitialState {
   rings: Array<IRing>;
 }
 
-export const initialState: InitialState = {
+const initialState: InitialState = {
   loadingRings: false,
   loadingRingInfo: false,
   hasErrors: false,
@@ -108,12 +108,12 @@ export const getRingInfo = (rid: string, version: number) => {
     try {
       dispatch(ringsActions.getRingInfo());
       const response = await fetch(`/proxy/rings/${rid}/${version}`);
-      const data = await response.json();
-      if (response.status === 200 && data?.success !== false) {
-        dispatch(ringsActions.getRingInfoSuccess({ rid, data }));
+      const info = await response.json();
+      if (response.status === 200 && info?.success !== false) {
+        dispatch(ringsActions.getRingInfoSuccess({ rid, info }));
       } else {
         failedToGetRingInfoNotification(
-          data?.message || "Failed to get ring info!",
+          info?.message || "Failed to get ring info!",
         );
         dispatch(ringsActions.getRingInfoFailure());
       }

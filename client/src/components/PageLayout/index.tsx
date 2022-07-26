@@ -26,7 +26,7 @@ const PageLayout: FunctionComponent<Props> = (props) => {
     <div className="app-page" id={id}>
       <Navbar bg="white" className="mb-4 py-3">
         <Container>
-          <Navbar.Brand>
+          <Navbar.Brand href="/">
             <FontAwesomeIcon icon={faBalanceScale} /> &nbsp; SCALES
           </Navbar.Brand>
           <Navbar.Toggle aria-controls="responsive-navbar-nav" />
@@ -61,11 +61,7 @@ const PageLayout: FunctionComponent<Props> = (props) => {
                     style={{
                       minWidth: "280px",
                     }}
-                    href="#"
-                  >
-                    Profile
-                  </Dropdown.Item>
-                  <Dropdown.Item onClick={() => dispatch(logout())}>
+                    onClick={() => dispatch(logout())}>
                     Sign Out
                   </Dropdown.Item>
                 </Dropdown.Menu>
