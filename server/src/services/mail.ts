@@ -7,7 +7,7 @@ const mailer = nodemailer.createTransport(
   })
 );
 
-// console.log(__dirname + '../templates/emails'); 
+// console.log(__dirname + '../templates/emails');
 
 // mailer.use('compile', pugEngine({
 //   templateDir: __dirname + '../templates/emails',

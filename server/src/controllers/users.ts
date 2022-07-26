@@ -33,7 +33,10 @@ export const create = async (req: Request, res: Response) => {
       password: hash,
     });
 
-    return res.send_ok("Thanks for signing up for beta access! Please confirm your email address via the link we just sent you.", { user });
+    return res.send_ok(
+      "Thanks for signing up for beta access! Please confirm your email address via the link we just sent you.",
+      { user }
+    );
   } catch (error) {
     console.log(error);
 
@@ -270,7 +273,9 @@ export const verifyEmail = async (req: Request, res: Response) => {
           //@ts-ignore
           (error, info) => console.log(error, info)
         );
-        return res.send_ok("Thanks for registering your interest in trying out Satyrn with the SCALES dataset! We’ll let you know when you’ve been granted access.");
+        return res.send_ok(
+          "Thanks for registering your interest in trying out Satyrn with the SCALES dataset! We’ll let you know when you’ve been granted access."
+        );
       }
     } else {
       return res.send_badRequest(
