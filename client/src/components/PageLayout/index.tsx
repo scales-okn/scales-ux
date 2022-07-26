@@ -70,7 +70,7 @@ const PageLayout: FunctionComponent<Props> = (props) => {
           </Navbar.Collapse>
         </Container>
       </Navbar>
-      <Container id="main">
+      <Container id="main" className="main"> 
         {pageTitle && <h4>{pageTitle}</h4>}
         {children}
       </Container>
