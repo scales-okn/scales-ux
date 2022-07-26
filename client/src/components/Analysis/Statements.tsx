@@ -39,7 +39,7 @@ const Statements = ({
           maxHeight="200px"
           placeholder="Search or select a statement..."
           filterBy={(option, props) =>
-            props.text.toLowerCase().split(" ").every(x => option.statement.toLowerCase().includes(x))
+            props.text.toLowerCase().split(" ").every(text => option.statement.toLowerCase().includes(text))
           }
         />
       </Col>

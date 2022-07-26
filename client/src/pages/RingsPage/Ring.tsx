@@ -15,7 +15,7 @@ type Params = {
   ringId: string | null;
 };
 
-const CreateRing: React.FC = () => {
+const Ring: React.FC = () => {
   const { ringId = null } = useParams<Params>();
   const { ring } = useRing(Number(ringId));
   const [loading, setLoading] = useState(false)
@@ -50,7 +50,7 @@ const CreateRing: React.FC = () => {
     onSubmit: async (values) => {
       setLoading(true)
       fetch(`/api/rings/create`, {
-        method: "POST",
+        method: ringId ? "PUT" : "POST",
         body: JSON.stringify(values),
         headers: {
           ...authHeader,
@@ -66,7 +66,7 @@ const CreateRing: React.FC = () => {
             }
           } catch (error) {
             console.log(error);
-            notify(error.message, "success");
+            notify(error.message, "error");
           }
         })
         .catch((error) => console.log(error))
@@ -74,11 +74,46 @@ const CreateRing: React.FC = () => {
     }
   });
 
-  const deleteRing = async (id) => {
+  const deleteRing = async (rid) => {
     setLoading(true)
-    await deleteRing(id)
-    history.push("/rings")
-    setLoading(false)
+    fetch(`/api/rings/${rid}`, {
+      method: "DELETE",
+      headers: {
+        ...authHeader,
+        "Content-Type": "application/json",
+      },
+    }).then((response) => response.json())
+      .then((response) => {
+        try {
+          switch (response?.code) {
+            case 200:
+              notify(response.message, "success");
+              history.push("/rings");
+              break;
+            default:
+              notify(response.message, "error");
+              break;
+          }
+        } catch (error) {
+          console.log(error);
+          notify(error.message, "error");
+        }
+      }).catch((error) => console.log(error))
+      .finally(() => setLoading(false))
+  }
+
+  const sanitizeData = (data) => {
+    let output = {}
+
+    if (typeof data === "string") {
+      output = JSON.parse(data);
+    }
+
+    if (typeof data === "object") {
+      output = data;
+    }
+
+    return output;
   }
 
   return (
@@ -87,7 +122,11 @@ const CreateRing: React.FC = () => {
         <Form onSubmit={formik.handleSubmit}>
           <Row className="mb-3">
             <Col>
-              <h3 className="mb-3">Create Ring</h3>
+              <h3 className="mb-3">
+                {
+                  ring ? "Edit Ring" : "Create Ring"
+                }
+              </h3>
             </Col>
             <Col>
               <Button variant="primary" type="submit" className="text-white float-end ms-2">
@@ -98,7 +137,7 @@ const CreateRing: React.FC = () => {
                   <Button
                     variant="danger"
                     type="button"
-                    onClick={() => deleteRing(ring.id)}
+                    onClick={() => window.confirm("Are you sure you want to delete this ring?") && deleteRing(ring.rid)}
                     className="float-end">
                     Delete Ring
                   </Button>
@@ -210,19 +249,18 @@ const CreateRing: React.FC = () => {
               <Form.Label>Data Source</Form.Label>
               <JSONInput
                 id="dataSource"
-                // placeholder={formik.values.dataSource}
-                // colors="default"
+                value={sanitizeData(formik.values.dataSource)}
+                placeholder={sanitizeData(formik.values.dataSource)}
                 locale={locale}
                 height="550px"
                 width="100%"
                 onChange={(e) => {
                   try {
-                    formik.setFieldValue("dataSource", JSON.stringify(e.jsObject));
+                    formik.setFieldValue("dataSource", e.jsObject);
                   } catch (error) {
                     console.log(error);
                   }
                 }}
-                // onBlur={formik.handleBlur}
               />
               {formik.touched.dataSource && formik.errors.dataSource ? (
                 <Form.Text className="text-danger">
@@ -234,20 +272,19 @@ const CreateRing: React.FC = () => {
               <Form.Label>Ontology</Form.Label>
               <JSONInput
                 id="ontology"
-                // placeholder={formik.values.ontology}`
-                // colors="default"
+                placeholder={sanitizeData(formik.values.ontology)}
+                value={sanitizeData(formik.values.ontology)}
                 locale={locale}
                 height="550px"
                 width="100%"
                 onChange={(e) => {
                   try {
-                    formik.setFieldValue("ontology", JSON.stringify(e.jsObject));
+                    formik.setFieldValue("ontology", e.jsObject);
                   } catch (error) {
                     console.log(error);
                   }
 
                 }}
-                // onBlur={formik.handleBlur}
               />
               {formik.touched.ontology && formik.errors.ontology ? (
                 <Form.Text className="text-danger">
@@ -262,4 +299,4 @@ const CreateRing: React.FC = () => {
   );
 }
 
-export default CreateRing;
+export default Ring;

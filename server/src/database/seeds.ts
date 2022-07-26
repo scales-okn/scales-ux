@@ -1,4 +1,3 @@
-
 import bcrypt from "bcryptjs";
 
 const seeds = async (sequelize) => {
@@ -17,7 +16,7 @@ const seeds = async (sequelize) => {
         approved: "true",
         emailIsVerified: true,
       });
-      
+
       await adminUser.save();
     } else {
       console.log("No admin password, user not created");
@@ -25,6 +24,6 @@ const seeds = async (sequelize) => {
   } catch (error) {
     console.log(error);
   }
-}
+};
 
 export default seeds;
