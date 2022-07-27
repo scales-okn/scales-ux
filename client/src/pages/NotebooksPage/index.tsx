@@ -95,11 +95,6 @@ const NotebooksPage: FunctionComponent = () => {
     { value: "private", label: "Private" },
   ];
 
-  const filteredUsersList = useMemo(() => {
-    return usersList.filter(usersList => usersList.id !== user.id);
-  }, [usersList, user.id]);
-
-  
   const columns = useMemo(() => {
     return [
       {
@@ -182,7 +177,7 @@ const NotebooksPage: FunctionComponent = () => {
           const userList = getUserFromListById(params.row.userId)
           return (
             <div className="owned-by">
-              <Avatar name={`${userList?.firstName} ${userList?.lastName}`} size="28" round={true} email={userList.email} />
+              <Avatar name={`${userList?.firstName} ${userList?.lastName}`} size="28" round={true} email={userList?.email} />
               {params.row.userId === user.id ? "You" : `${userList?.firstName} ${userList?.lastName}`}
             </div>
           )
@@ -200,9 +195,9 @@ const NotebooksPage: FunctionComponent = () => {
           }
 
           if (params.row.userId !== user.id) {
-            return filteredUsersList.filter(userList => params.row.collaborators.includes(userList.id)).map((userList, index) => (
+            return usersList.filter(userList => params.row.collaborators.includes(userList.id)).map((userList, index) => (
               <div className="shared-with" key={index}>
-                <Avatar name={`${userList.firstName} ${userList.lastName}`} size="28" round={true} email={userList.email} />
+                <Avatar name={`${userList.firstName} ${userList.lastName}`} size="28" round={true} email={userList?.email} />
                 {userList.id === user.id && "You"}
               </div>
             ))
@@ -215,7 +210,7 @@ const NotebooksPage: FunctionComponent = () => {
               IndicatorSeparator: () => null,
               MultiValueLabel: (props: any) => {
                 const userList = getUserFromListById(props.data.value)
-                return <Avatar name={`${userList?.firstName} ${userList?.lastName}`} size="28" round={true} email={userList.email} style={{
+                return <Avatar name={`${userList?.firstName} ${userList?.lastName}`} size="28" round={true} email={userList?.email} style={{
                   display: "flex"
                 }} />
               },
@@ -223,7 +218,7 @@ const NotebooksPage: FunctionComponent = () => {
                 const userList = getUserFromListById(props.value)
                 return (
                   <div className="collaborator-option" ref={props.innerRef} {...props.innerProps}>
-                    <Avatar name={`${userList?.firstName} ${userList?.lastName}`} size="28" round={true} email={userList.email} />
+                    <Avatar name={`${userList?.firstName} ${userList?.lastName}`} size="28" round={true} email={userList?.email} />
                     {`${userList?.firstName} ${userList?.lastName}`}
                   </div>
                 )
@@ -231,11 +226,11 @@ const NotebooksPage: FunctionComponent = () => {
             }}
             styles={ReactSelectFullWidthStyles}
             placeholder="Nobody"
-            options={filteredUsersList.map((user) => ({
+            options={usersList.filter(usersList => usersList.id !== user.id).map((user) => ({
               value: user.id,
               label: `${user.firstName} ${user.lastName}`,
             }))}
-            defaultValue={filteredUsersList.filter((user) => params.row.collaborators.includes(user.id)).map((user) => ({
+            defaultValue={usersList.filter((user) => params.row.collaborators.includes(user.id)).map((user) => ({
               value: user.id,
               label: `${user.firstName} ${user.lastName}`,
             }))}
