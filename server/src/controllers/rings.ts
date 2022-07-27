@@ -109,7 +109,7 @@ export const update = async (req: Request, res: Response) => {
     const { ringId } = req.params;
 
     const ring = await sequelize.models.Ring.findOne({
-      where: { rid: ringId },
+      where: { id: ringId },
     });
 
     // Inject req for saveLog
@@ -117,8 +117,16 @@ export const update = async (req: Request, res: Response) => {
       model.req = req;
     });
 
+    let version;
+    
+    if (req.body.version === ring.dataValues.version) {
+      version = ring.dataValues.version + 1;
+    } else {
+      version = req.body.version;
+    }
+
     const updated = await ring.update(
-      { ...req.body, version: ring.dataValues.version + 1 },
+      { ...req.body, version },
       {
         individualHooks: true,
         returning: true,

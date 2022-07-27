@@ -12,6 +12,7 @@ import rings from "store/rings";
 import notebooks from "store/notebooks";
 import notebook from "store/notebook";
 import panels from "store/panels";
+import users from "store/users";
 
 // Middlewares
 import { authMiddleware } from "store/auth";
@@ -24,6 +25,7 @@ const reducers = combineReducers({
   notebook,
   panels,
   notifications: notificationsReducer(),
+  users
 });
 
 const persistConfig = {
@@ -37,7 +39,7 @@ const persistConfig = {
 const store = configureStore({
   reducer: persistReducer(persistConfig, reducers),
   devTools: process.env.NODE_ENV !== "production",
-  middleware: [thunk],
+  middleware: [thunk, authMiddleware],
 });
 
 // Persisted store

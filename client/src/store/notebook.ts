@@ -3,7 +3,7 @@ import type { RootState, AppDispatch } from "store";
 import { authSelector } from "store/auth";
 import { authorizationHeader } from "utils";
 import { notify } from "reapop";
-import { useUnknownErrorNotificationMessage } from "components/Notifications";
+import { unknownErrorNotificationMessage } from "components/Notifications";
 import { useSelector, useDispatch } from "react-redux";
 
 interface InitialState {
@@ -15,7 +15,7 @@ interface InitialState {
   notebook: any;
 }
 
-export const initialState: InitialState = {
+const initialState: InitialState = {
   loadingNotebook: true,
   savingNotebook: false,
   creatingNotebook: false,
@@ -157,7 +157,7 @@ export function updateNotebook(id: string, payload: any) {
         dispatch(notebookActions.saveNotebookFailure());
       }
     } catch (error) {
-      dispatch(notify(useUnknownErrorNotificationMessage, "error"));
+      dispatch(notify(unknownErrorNotificationMessage, "error"));
       dispatch(notebookActions.saveNotebookFailure());
     }
   };

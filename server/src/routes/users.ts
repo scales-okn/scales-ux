@@ -9,6 +9,7 @@ import {
   verifyEmail,
   forgotPassword,
   resetPassword,
+  usersList
 } from "../controllers/users";
 import validateResource from "../middlewares/validateResources";
 import {
@@ -27,6 +28,9 @@ router.post("/login", validateResource(loginUserValidationSchema), login);
 
 // Retrieve all Users
 router.get("/", checkAuth, findAllUsers);
+
+// Retrive Users list
+router.get("/list", checkAuth, usersList);
 
 // Retrieve User by id
 router.get("/:userId", checkAuth, findById);

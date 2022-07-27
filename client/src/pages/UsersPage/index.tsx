@@ -35,7 +35,7 @@ const AdminUsersPages: FunctionComponent = () => {
     {
       field: "usage",
       headerName: "Usage",
-      width: 120,
+      width: 290,
       renderCell: (params: GridCellParams) => (
         <Tooltip title={params.row.usage}>
           <Typography noWrap variant="body2">
@@ -48,6 +48,8 @@ const AdminUsersPages: FunctionComponent = () => {
       field: "approved",
       headerName: "Approved",
       width: 140,
+      headerAlign: "center",
+      align: "center",
       renderCell: (params: GridCellParams) => (
         <UserFieldToggle
           userId={params.row.id}
@@ -61,6 +63,8 @@ const AdminUsersPages: FunctionComponent = () => {
       field: "blocked",
       headerName: "Blocked",
       width: 140,
+      align: "center",
+      headerAlign: "center",
       renderCell: (params: GridCellParams) => (
         <UserFieldToggle
           userId={params.row.id}
@@ -75,6 +79,8 @@ const AdminUsersPages: FunctionComponent = () => {
   if (isAdmin) {
     columns.push({
       field: "admin", headerName: "Admin", width: 140,
+      align: "center",
+      headerAlign: "center",
       renderCell: (params: GridCellParams) => {
         return (
           <UserFieldToggle
@@ -90,6 +96,8 @@ const AdminUsersPages: FunctionComponent = () => {
       field: "delete",
       headerName: "Delete",
       width: 150,
+      align: "center",
+      headerAlign: "center",
       renderCell: (params: GridCellParams) => {
         return (
           <DeleteUser userId={params.row.id} disabled={params.row.id === id} />
@@ -120,7 +128,7 @@ const AdminUsersPages: FunctionComponent = () => {
           <DataGrid
             rows={rows}
             columns={columns}
-            pageSize={5}
+            pageSize={10}
             checkboxSelection={false}
             className="bg-white p-0"
           />

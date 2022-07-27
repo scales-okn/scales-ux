@@ -4,7 +4,7 @@ import jwt_decode from "jwt-decode";
 import { useSelector, useDispatch } from "react-redux";
 import { Store, Dispatch, Action } from "redux";
 import { notify } from "reapop";
-import { useUnknownErrorNotificationMessage } from "components/Notifications";
+import { unknownErrorNotificationMessage } from "components/Notifications";
 import { authorizationHeader } from "utils";
 
 interface InitialState extends DecodedToken {
@@ -14,7 +14,7 @@ interface InitialState extends DecodedToken {
   token: string;
 }
 
-export const initialState: InitialState = {
+const initialState: InitialState = {
   loading: false,
   hasErrors: false,
   errors: null,
@@ -88,13 +88,13 @@ export const login = (email: string, password: string) => {
         default:
           dispatch(authActions.signInFailure(errors));
           dispatch(
-            notify(message || useUnknownErrorNotificationMessage, "error"),
+            notify(message || unknownErrorNotificationMessage, "error"),
           );
           break;
       }
     } catch (error) {
       console.log(error);
-      dispatch(notify(useUnknownErrorNotificationMessage, "error"));
+      dispatch(notify(unknownErrorNotificationMessage, "error"));
       dispatch(authActions.signInFailure(error));
     }
   };

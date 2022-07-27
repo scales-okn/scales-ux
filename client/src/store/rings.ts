@@ -59,7 +59,7 @@ const ringsSlice = createSlice({
   },
 });
 
-// Three actions generated from the slice
+// Actions generated from the slice
 export const ringsActions = ringsSlice.actions;
 
 // Selectors

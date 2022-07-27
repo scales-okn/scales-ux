@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import PageLayout from "components/PageLayout";
 import Loader from "components/Loader";
 import { useFormik } from "formik";
@@ -9,7 +9,7 @@ import locale from "react-json-editor-ajrm/locale/en";
 import { useAuthHeader, useUser } from "store/auth";
 import { useNotify } from "components/Notifications";
 import { useHistory, useParams } from "react-router-dom";
-import { useRing } from "store/rings";
+import { useRing, useRings } from "store/rings";
 
 type Params = {
   ringId: string | null;
@@ -18,12 +18,13 @@ type Params = {
 const Ring: React.FC = () => {
   const { ringId = null } = useParams<Params>();
   const { ring } = useRing(Number(ringId));
+  const {getRings, rings} = useRings();
   const [loading, setLoading] = useState(false)
   const authHeader = useAuthHeader();
   const user = useUser();
   const { notify } = useNotify();
   const history = useHistory();
-
+    
   const formik = useFormik({
     initialValues: {
       rid: "",
@@ -49,7 +50,7 @@ const Ring: React.FC = () => {
     }),
     onSubmit: async (values) => {
       setLoading(true)
-      fetch(`/api/rings/create`, {
+      fetch(ringId ? `/api/rings/${ringId}` : `/api/rings/create`, {
         method: ringId ? "PUT" : "POST",
         body: JSON.stringify(values),
         headers: {
@@ -62,7 +63,16 @@ const Ring: React.FC = () => {
           try {
             if (response?.code === 200) {
               notify(response.message, "success");
-              history.push("/rings");
+              if (response?.data?.ring){
+                formik.setValues({
+                  ...formik.values,
+                  ...response.data.ring,
+                });
+                getRings();
+              }
+              if (!ringId) {
+                history.push("/rings");
+              }
             }
           } catch (error) {
             console.log(error);
@@ -196,7 +206,7 @@ const Ring: React.FC = () => {
             <Form.Group controlId="formVersion" className="mb-2" as={Col}>
               <Form.Label>Version</Form.Label>
               <Form.Control
-                type="number"
+                type="text"
                 name="version"
                 placeholder="Version"
                 value={formik.values.version}
@@ -212,7 +222,7 @@ const Ring: React.FC = () => {
             <Form.Group controlId="formSchemaVersion" className="mb-2" as={Col}>
               <Form.Label>Schema Version</Form.Label>
               <Form.Control
-                type="number"
+                type="text"
                 name="schemaVersion"
                 placeholder="Schema Version"
                 value={formik.values.schemaVersion}
@@ -249,6 +259,7 @@ const Ring: React.FC = () => {
               <Form.Label>Data Source</Form.Label>
               <JSONInput
                 id="dataSource"
+                theme="light_mitsuketa_tribute"
                 value={sanitizeData(formik.values.dataSource)}
                 placeholder={sanitizeData(formik.values.dataSource)}
                 locale={locale}
@@ -272,6 +283,7 @@ const Ring: React.FC = () => {
               <Form.Label>Ontology</Form.Label>
               <JSONInput
                 id="ontology"
+                theme="light_mitsuketa_tribute"
                 placeholder={sanitizeData(formik.values.ontology)}
                 value={sanitizeData(formik.values.ontology)}
                 locale={locale}

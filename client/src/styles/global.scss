@@ -20,8 +20,15 @@ body {
 }
 .MuiDataGrid-footerContainer {
   border-top: 1px solid rgba(224, 224, 224, 1);
-  background: #F9F9F9;
+  background: #f9f9f9;
 }
 .MuiDataGrid-root .MuiDataGrid-window {
   overflow-x: hidden !important;
+}
+
+.Select-input > input {
+  -moz-transition: none;
+  -ms-transition: none;
+  -webkit-transition: none;
+  transition: none;
 }

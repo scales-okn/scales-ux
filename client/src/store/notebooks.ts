@@ -10,7 +10,7 @@ interface InitialState {
   notebooks: any;
 }
 
-export const initialState: InitialState = {
+const initialState: InitialState = {
   loadingNotebooks: true,
   hasErrors: false,
   notebooks: [],

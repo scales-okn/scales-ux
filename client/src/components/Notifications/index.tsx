@@ -8,13 +8,13 @@ import NotificationsSystem, {
   Status,
 } from "reapop";
 
-export const useUnknownErrorNotificationMessage =
+export const unknownErrorNotificationMessage =
   "An unknown error occurred. Please try again or refresh the page.";
 
 export const useUnknownErrorNotification = () => {
   const dispatch = useDispatch();
   const onError = () =>
-    dispatch(notify(useUnknownErrorNotificationMessage, "error"));
+    dispatch(notify(unknownErrorNotificationMessage, "error"));
 
   return onError;
 };
