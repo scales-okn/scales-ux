@@ -249,6 +249,7 @@ const Ring: React.FC = () => {
               <Form.Label>Data Source</Form.Label>
               <JSONInput
                 id="dataSource"
+                theme="light_mitsuketa_tribute"
                 value={sanitizeData(formik.values.dataSource)}
                 placeholder={sanitizeData(formik.values.dataSource)}
                 locale={locale}
@@ -272,6 +273,7 @@ const Ring: React.FC = () => {
               <Form.Label>Ontology</Form.Label>
               <JSONInput
                 id="ontology"
+                theme="light_mitsuketa_tribute"
                 placeholder={sanitizeData(formik.values.ontology)}
                 value={sanitizeData(formik.values.ontology)}
                 locale={locale}

@@ -367,3 +367,16 @@ export const resetPassword = async (req: Request, res: Response) => {
     return res.send_internalServerError("Failed to reset your password!");
   }
 };
+
+export const usersList = async (req: Request, res: Response) => {
+  try {
+    const usersList = await sequelize.models.User.findAll({
+      attributes: ["id", "firstName", "lastName", "role", "email"],
+    });
+    return res.send_ok("", { usersList });
+  } catch (error) {
+    console.log(error);
+
+    return res.send_internalServerError("Failed to get users!");
+  }
+}

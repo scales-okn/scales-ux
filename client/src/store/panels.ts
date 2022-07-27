@@ -31,7 +31,7 @@ interface InitialState {
   panels: Array<IPanel>;
 }
 
-export const initialState: InitialState = {
+const initialState: InitialState = {
   loadingPanels: true,
   creatingPanel: false,
   deletingPanel: false,
