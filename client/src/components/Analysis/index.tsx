@@ -38,8 +38,12 @@ const Analysis: FunctionComponent<Props> = ({ panelId, ring, info }) => {
   useEffect(() => {
     if (!info) return;
     const satyrn = new Satyrn(info.defaultEntity, info.operations, info.analysisSpace, ring);
-    setSatyrn(satyrn);
-    setStatements(satyrn.planManager.generate());
+    try{
+      setSatyrn(satyrn);
+      setStatements(satyrn.planManager.generate());
+    } catch(error) {
+      console.log(error);
+    }
   }, [info]);
 
   const getStatement = (statement) => {
