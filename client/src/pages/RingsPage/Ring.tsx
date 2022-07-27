@@ -63,7 +63,6 @@ const Ring: React.FC = () => {
           try {
             if (response?.code === 200) {
               notify(response.message, "success");
-              console.log(response?.data?.ring);
               if (response?.data?.ring){
                 formik.setValues({
                   ...formik.values,
