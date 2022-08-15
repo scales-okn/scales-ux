@@ -10,6 +10,8 @@ import { useAuthHeader, useUser } from "store/auth";
 import { useNotify } from "components/Notifications";
 import { useHistory, useParams } from "react-router-dom";
 import { useRing, useRings } from "store/rings";
+import uniqid from 'uniqid';
+import ReactSelect from "react-select";
 
 type Params = {
   ringId: string | null;
@@ -20,14 +22,39 @@ const Ring: React.FC = () => {
   const { ring } = useRing(Number(ringId));
   const {getRings, rings} = useRings();
   const [loading, setLoading] = useState(false)
+  const [loadingVersions, setLoadingVersions] = useState(false)
   const authHeader = useAuthHeader();
   const user = useUser();
   const { notify } = useNotify();
   const history = useHistory();
+  const [ringVersions, setRingVersions] = useState<any[]>([]);
+
+  console.log(ringVersions);
+
+  const fetchRingVersionsByRid = async (rid: number) => {
+    try {
+      setLoadingVersions(true);
+      const response = await fetch(`/api/rings/${rid}/versions`, {
+        headers: authHeader,
+      });
+      const {data} = await response.json();
+      setRingVersions(data.versions);
+      setLoadingVersions(false);
+
+    } catch (error) {
+      notify("Error fetching ring versions", "error");
+    }
+  }
+
+  useEffect(() => {
+    if (ring) {
+      fetchRingVersionsByRid(ring.rid);
+    }
+  } , [ring])
     
   const formik = useFormik({
     initialValues: {
-      rid: "",
+      rid: uniqid(),
       name: "",
       description: "",
       version: 1.0,
@@ -156,6 +183,28 @@ const Ring: React.FC = () => {
             </Col>
           </Row>
           <Row>
+            <Col>
+              <Form.Group className="mb-2">
+                <Form.Label>Ring Versions</Form.Label>
+                <ReactSelect
+                  isLoading={loadingVersions}
+                  options={ringVersions?.map((version) => ({
+                    value: version.version,
+                    label: `Version: ${version.version} Schema Version ${version.schemaVersion} CreatedAt: ${version.createdAt}`,
+                  }))}
+                  onChange={(e) => {
+                    if (e?.value) {
+                      //
+                    } 
+                  } }
+                  isClearable={true}
+                  isSearchable={true}
+                  placeholder="Select a version"
+                />
+              </Form.Group>
+            </Col>
+          </Row>
+          <Row>
             <Form.Group controlId="formName" className="mb-2" as={Col}>
               <Form.Label>Name</Form.Label>
               <Form.Control
@@ -168,20 +217,6 @@ const Ring: React.FC = () => {
               />
               {formik.touched.name && formik.errors.name ? (
                 <Form.Text className="text-danger">{formik.errors.name}</Form.Text>
-              ) : null}
-            </Form.Group>
-            <Form.Group controlId="formRID" className="mb-2" as={Col}>
-              <Form.Label>RID</Form.Label>
-              <Form.Control
-                type="text"
-                name="rid"
-                placeholder="Ring Id"
-                value={formik.values.rid}
-                onChange={formik.handleChange}
-                onBlur={formik.handleBlur}
-              />
-              {formik.touched.rid && formik.errors.rid ? (
-                <Form.Text className="text-danger">{formik.errors.rid}</Form.Text>
               ) : null}
             </Form.Group>
           </Row>
