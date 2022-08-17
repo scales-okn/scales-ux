@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [2.0.1](https://github.com/nu-c3lab/satyrn-ux/compare/v2.0.0...v2.0.1) (2022-08-17)
+
+
+### Bug Fixes
+
+* **analysis request:** moved the Analysys Request to the proxy ([82d9378](https://github.com/nu-c3lab/satyrn-ux/commit/82d9378bb1c421278d50c3aea35f27b7cdee9140))
+
 ## [2.0.0](https://github.com/nu-c3lab/satyrn-ux/compare/v1.5.3...v2.0.0) (2022-08-17)
 
 
