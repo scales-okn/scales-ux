@@ -2,6 +2,20 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [2.0.0](https://github.com/nu-c3lab/satyrn-ux/compare/v1.5.3...v2.0.0) (2022-08-17)
+
+
+### ⚠ BREAKING CHANGES
+
+* **.env:** no
+
+### Bug Fixes
+
+* **fe - rings:** fixed delete ring ([1886a21](https://github.com/nu-c3lab/satyrn-ux/commit/1886a2185cfa85fa1b27ea3a1a11941589cb8b2b))
+
+
+* **.env:** bE - Rate Limit in env vars ([bb311b3](https://github.com/nu-c3lab/satyrn-ux/commit/bb311b370a51af8aebfc27837f4d6ce258c82ec4))
+
 ### [1.5.3](https://github.com/nu-c3lab/satyrn-ux/compare/v1.5.2...v1.5.3) (2022-07-26)
 
 
