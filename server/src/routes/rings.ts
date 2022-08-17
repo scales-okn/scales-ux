@@ -6,6 +6,7 @@ import {
   update,
   deleteRing,
   version,
+  versions,
 } from "../controllers/rings";
 import validateResource from "../middlewares/validateResources";
 import { createRingValidationSchema } from "../validation/rings";
@@ -27,8 +28,11 @@ router.get("/", checkAuth, findAll);
 // Retrieve Ring by Id
 router.get("/:ringId", checkAuth, findById);
 
+// Retrieve Ring Versions
+router.get("/:rid/versions", checkAuth, versions);
+
 // Retrieve Ring Version
-router.get("/:ringId/:version", checkAuth, version);
+router.get("/:rid/:version", checkAuth, version);
 
 // Update a Ring
 router.put("/:ringId", checkAuth, update);

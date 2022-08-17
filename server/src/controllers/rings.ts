@@ -1,4 +1,5 @@
 import { Request, Response } from "express";
+import { Op } from "sequelize";
 
 import { sequelize } from "../database";
 
@@ -44,7 +45,20 @@ export const create = async (req: Request, res: Response) => {
 // Find all Rings
 export const findAll = async (req: Request, res: Response) => {
   try {
+    //@ts-ignore
+    const { role, id: userId } = req.user;
+    let where = {};
+    if (role !== "admin") {
+      where = {
+        [Op.or]: [
+          { visibility: "public" },
+          { userId },
+        ],
+      };
+    }
+
     const rings = await sequelize.models.Ring.findAll({
+      where,
       order: [["id", "DESC"]],
     });
 
@@ -75,13 +89,30 @@ export const findById = async (req: Request, res: Response) => {
   }
 };
 
+export const versions = async (req: Request, res: Response) => {
+  try {
+    const { rid } = req.params;
+    const versions = await sequelize.models.Ring.getVersions({
+      where: { rid },
+      order: [["versionTimestamp", "DESC"]],
+    });
+    if (!versions) {
+      return res.send_notFound("Versions not found!");
+    }
+
+    return res.send_ok("", { versions });
+  } catch (error) {
+    console.log(error);
+    return res.send_internalServerError("An error occured, please try again!");
+  }
+}
+
 // Find Ring by ringId
 export const version = async (req: Request, res: Response) => {
   try {
-    const { ringId, version } = req.params;
-    console.log({ ringId, version });
+    const { rid, version } = req.params;
     const versions = await sequelize.models.Ring.getVersions({
-      where: { rid: ringId, version },
+      where: { rid: rid, version },
       order: [["versionTimestamp", "DESC"]],
     });
 
