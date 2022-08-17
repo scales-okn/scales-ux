@@ -1,5 +1,5 @@
 {
-  "name": "satyrn-bff",
+  "name": "satyrn-ux-server",
   "main": "build/index.js",
   "dependencies": {
     "accesscontrol": "^2.2.1",

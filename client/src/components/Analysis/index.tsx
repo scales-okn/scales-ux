@@ -92,12 +92,12 @@ const Analysis: FunctionComponent<Props> = ({ panelId, ring, info }) => {
       }
 
       setPlan(plan);
-      const response = await fetch(`https://satyrn-api.nulab.org/api/analysis/${ring.rid}/${ring.version}/${info?.defaultEntity}/`,
+      const response = await fetch(`/proxy/analysis/${ring.rid}/${ring.version}/${info?.defaultEntity}/`, 
         {
           method: "POST",
           headers: {
+            "Accept": "application/json",
             "Content-Type": "application/json",
-            "x-api-key": process.env.REACT_APP_CORE_API_KEY
           },
           body: JSON.stringify(plan)
         });

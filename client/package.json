@@ -1,6 +1,5 @@
 {
-  "name": "test",
-  "version": "1.0.0",
+  "name": "satyrn-ux-client",
   "private": true,
   "dependencies": {
     "@fortawesome/fontawesome-svg-core": "^1.2.36",
