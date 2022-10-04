@@ -19,7 +19,7 @@
     "nodemailer": "^6.7.2",
     "nodemailer-pug-engine": "^2.0.1",
     "nodemailer-sendgrid": "^1.0.3",
-    "passport": "^0.5.2",
+    "passport": "^0.6.0",
     "passport-jwt": "^4.0.0",
     "pg": "^8.7.1",
     "pm2": "^5.2.0",
@@ -28,9 +28,9 @@
     "redis-server": "^1.2.2",
     "redis-streams": "^1.1.0",
     "responser": "^2.5.2",
-    "sequelize": "^6.12.5",
-    "sequelize-paper-trail": "^3.0.1",
-    "sequelize-version": "0.0.58",
+    "sequelize": "5.22.5",
+    "sequelize-paper-trail": "3.0.1",
+    "sequelize-version": "^0.0.58",
     "yup": "^0.32.11"
   },
   "devDependencies": {
