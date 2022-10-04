@@ -1,7 +1,7 @@
 import React, { FunctionComponent, useState } from "react";
 import { FormControl, InputGroup } from "react-bootstrap";
 import DateTimeRangePicker from "@wojtekmaj/react-datetimerange-picker";
-import FilterTypeDropDown from "./FitlerTypeDropDown";
+import FilterTypeDropDown from "./FilterTypeDropDown";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faTimesCircle } from "@fortawesome/free-regular-svg-icons";
 import { AsyncTypeahead } from "react-bootstrap-typeahead";
@@ -10,6 +10,7 @@ import { usePanel } from "../../store/panels";
 import { useRing } from "../../store/rings";
 import { DATE_FORMAT } from "../../constants";
 import { useNotify } from "../../components/Notifications";
+import "./Filters.scss";
 
 export type Filter = {
   id: string;

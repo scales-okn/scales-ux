@@ -5,6 +5,7 @@ import { faPlus } from "@fortawesome/free-solid-svg-icons";
 import Filter from "./Filter";
 import uniqid from "uniqid";
 import { usePanel } from "../../store/panels";
+import "./Filters.scss";
 
 type FiltersProps = {
   panelId: string;
