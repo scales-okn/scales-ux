@@ -318,6 +318,7 @@ export const getPanels = (notebookId) => {
       });
 
       const { data, message } = await response.json();
+
       if (response.status === 200) {
         dispatch(panelsActions.getPanelsSuccess(data.panels));
       } else {
@@ -424,7 +425,7 @@ export const deletePanel =
   };
 
 export const getPanelResults =
-  (panelId, filters = [], page = 0, batchSize = 10) =>
+  (panelId, filters = [], page = 0, batchSize = 10, sortBy = "dateFiled", sortDirection = "desc", targetEntity = null) =>
   async (dispatch: AppDispatch, getState) => {
     try {
       const { token } = authSelector(getState());
@@ -435,16 +436,18 @@ export const getPanelResults =
       const { rid, info, version } = ringSelector(getState(), ringId);
       dispatch(panelsActions.getPanelResults({ panelId }));
 
+      if (!targetEntity) targetEntity = info.defaultEntity
+
       const response = await fetch(
         appendQuery(
-          `/proxy/results/${rid}/${version}/${info.defaultEntity}?page=${page}&batchSize=${batchSize}&sortBy=dateFiled&sortDirection=desc`,
+          `/proxy/results/${rid}/${version}/${targetEntity}?page=${page}&batchSize=${batchSize}&sortBy=${sortBy}&sortDirection=${sortDirection}`,
           filters?.reduce((acc, filterInput: FilterInput) => {
             acc[filterInput.type] =
               filterInput.type === "dateFiled"
                 ? `[${filterInput.value?.map((date) =>
                     dayjs(date).format("YYYY-M-DD"),
                   )}]`
-                : filterInput.value;
+              : encodeURIComponent(filterInput.value);
 
             return acc;
           }, {}),
@@ -452,7 +455,7 @@ export const getPanelResults =
         ),
       );
       const data = await response.json();
-      console.log(data);
+      // console.log(data);
       if (response.status === 200) {
         dispatch(
           panelsActions.getPanelResultsSuccess({
