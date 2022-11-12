@@ -11,13 +11,6 @@ const initialState: InitialState = {
   loadingDocument: true,
   document: null
 };
-// debugger; // eslint-disable-line no-debugger
-
-
-// THIS IS WHERE YOU STOPPED
-// HAVE TO FIGURE OUT HOW TO IMPLEMENT THIS FOR REAL...MAYBE REALLY UNDERSTAND THE DISPATCHER MODEL?? LOOK AT NOTEBOOKS TO SEE HOW THEY'RE LOADED AND REPLICATE THAT BELOW AND THEN LOAD DOCS IN IFRAMES
-
-
 
 export async function fetchDocument(ringId, ringVersion, entityType, docId) {
 

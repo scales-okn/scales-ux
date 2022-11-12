@@ -26,7 +26,7 @@ For local development make sure to have a Postgres instance up and running.
 https://www.codecademy.com/article/installing-and-using-postgresql-locally
 
 ### Configuration
-Create a file called .env in ./sever/.env
+Create a file called .env in ./server/.env
 
 Copy and complete the .env.example variables
 
@@ -58,6 +58,7 @@ npm run start
 2. Open up the Users table in the database
 3. Manually change `approved` to TRUE and `role` to "admin" for the new user
 4. Login in via {host}/sign-in
+5. (Optionally) Copy-Paste the relevant components of a ring config into the (alpha) Ring editor (only available to admins)
 
 ### Known Issues
 
