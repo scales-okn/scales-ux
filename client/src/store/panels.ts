@@ -209,20 +209,23 @@ const panelsSlice = createSlice({
           : panel,
       ),
     }),
-    addPanelAnalysis: (state, { payload }) => ({
-      ...state,
-      panels: state.panels.map((panel) =>
-        panel.id === payload.panelId
-          ? {
-              ...panel,
-              analysis: [
-                ...panel.analysis,
-                { ...initialStateAnalysisItem, ...payload.analysis },
-              ],
-            }
-          : panel,
-      ),
-    }),
+    addPanelAnalysis: (state, { payload }) => {
+      // debugger; // eslint-disable-line no-debugger
+      return ({
+        ...state,
+        panels: state.panels.map((panel) =>
+          panel.id === payload.panelId
+            ? {
+                ...panel,
+                analysis: [
+                  ...panel.analysis,
+                  { ...initialStateAnalysisItem, ...payload.analysis },
+                ],
+              }
+            : panel,
+        ),
+      })
+    },
     removePanelAnalysis: (state, { payload }) => ({
       ...state,
       panels: state.panels.map((panel) =>

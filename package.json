@@ -37,6 +37,7 @@
     "@mui/x-data-grid": "^5.11.0",
     "normalizr": "^3.6.1",
     "react-data-grid": "^7.0.0-beta.13",
-    "react-json-editor-ajrm": "^2.5.13"
+    "react-json-editor-ajrm": "^2.5.13",
+    "statement-mananger": "github:nu-c3lab/satyrn-PlanManager#main"
   }
 }

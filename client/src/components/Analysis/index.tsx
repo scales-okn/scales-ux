@@ -77,6 +77,7 @@ const Analysis: FunctionComponent<Props> = ({ panelId, ring, info }) => {
 
       if (Object.keys(queryFilters).length > 0) {
         const entity = info.defaultEntity;
+        // debugger; // eslint-disable-line no-debugger
         plan.query = {
           "AND": [
               ...Object.keys(queryFilters).map(key => {
@@ -85,24 +86,31 @@ const Analysis: FunctionComponent<Props> = ({ panelId, ring, info }) => {
                 field: key,
               }, 
               queryFilters[key],
-              "contains"]
+              (Array.isArray(queryFilters[key])) ? "range" : "contains"]
             })
           ]
         };
       }
 
       setPlan(plan);
+      console.log("Here is the plan...")
+      console.log(JSON.stringify(plan))
       const response = await fetch(`/proxy/analysis/${ring.rid}/${ring.version}/${info?.defaultEntity}/`, 
         {
           method: "POST",
           headers: {
             "Accept": "application/json",
-            "Content-Type": "application/json",
+            "Content-Type": "application/json"
           },
           body: JSON.stringify(plan)
         });
       const data = await response.json();
+      
+      data.genFilters = JSON.stringify(filters)
+
       setData(data);
+      // console.log("TEST")
+      // console.log(data)
       setAnswersLoading(false);
     } catch (error) {
       console.log(error);

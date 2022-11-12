@@ -94,8 +94,15 @@ const Filter: FunctionComponent<Props> = ({ panelId, filter }) => {
       );
       if (response.status === 200) {
         const data = await response.json();
-        setAutoCompleteSuggestions(data);
-        setIsLoading(false);
+        if (Array.isArray(data)) {
+          setAutoCompleteSuggestions(data);
+          setIsLoading(false);
+        } else {
+          console.log("Something odd happened with autocomplete data, which came back as:");
+          console.log(data);
+          setAutoCompleteSuggestions([]);
+          setIsLoading(false);
+        }
       } else {
         notify("Could not fetch autocomplete suggestions", "error");
       }
@@ -135,6 +142,8 @@ const Filter: FunctionComponent<Props> = ({ panelId, filter }) => {
           <DateTimeRangePicker
             format={DATE_FORMAT}
             onChange={(value) => {
+              // console.log(DATE_FORMAT)
+              // debugger; // eslint-disable-line no-debugger
               setDateValue(value);
               setFilter({ ...filter, value: value });
             }}
@@ -143,6 +152,7 @@ const Filter: FunctionComponent<Props> = ({ panelId, filter }) => {
         );
 
       default:
+        // debugger; // eslint-disable-line no-debugger
         return (
           <>
             {filterOptions?.autocomplete ? (

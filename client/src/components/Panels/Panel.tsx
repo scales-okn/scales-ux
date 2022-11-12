@@ -263,8 +263,9 @@ const Panel: FunctionComponent<PanelProps> = ({ panelId }) => {
                 variant="outline-dark"
                 className="me-2"
                 onClick={() => {
+                  const id = uniqid()
                   addPanelAnalysis({
-                    id: uniqid()
+                    id: id
                   })
                 }}
               >

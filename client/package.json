@@ -61,7 +61,7 @@
     "recharts": "^2.1.9",
     "redux-persist": "^6.0.0",
     "reduxjs-toolkit-persist": "^7.0.7",
-    "statement-mananger": "git+https://github.com/nu-c3lab/satyrn-PlanManager.git#main",
+    "statement-mananger": "github:nu-c3lab/satyrn-PlanManager#main",
     "typescript": "^4.5.4",
     "uid": "^2.0.0",
     "uniqid": "^5.4.0",
