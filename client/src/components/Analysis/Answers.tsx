@@ -5,6 +5,18 @@ import Loader from "components/Loader";
 import { usePanel } from "store/panels";
 import dayjs from "dayjs";
 
+const dataFormatter = (number) => {
+  if (number > 1000000000) return (number/1000000000).toString() + 'B';
+  if (number > 1000000) return (number/1000000).toString() + 'M';
+  if (number > 1000) return (number/1000).toString() + 'K';
+  return number.toString();
+}
+
+const formatVal = (num) => {
+    // if (this.props.question.answerMetadata.units == "%") return `${num.toLocaleString()}%`
+    return num.toLocaleString()
+  }
+
 const Answers = ({
   panelId,
   data,
@@ -15,6 +27,7 @@ const Answers = ({
 }) => {
   const [answerType, setAnswerType] = useState("bar");
   const [answer, setAnswer] = useState(null);
+
   const { filters } = usePanel(panelId);
 
   const getAnswersDisplayType = (plan, results) => {
@@ -25,8 +38,10 @@ const Answers = ({
   useEffect(() => {
     if (!data || !statement || !plan || !satyrn) return;
     setAnswerType(getAnswersDisplayType(plan, data.results));
+    
+    // debugger; // eslint-disable-line no-debugger
 
-    const formatedFilters = filters ? filters.reduce((acc, { type, value }) => {
+    const formatedFilters = (data.genFilters && data.genFilters !== "null") ? JSON.parse(data.genFilters).reduce((acc, { type, value }) => {
       if (!type || !value) return acc;
       if (type === "dateFiled") {
         acc[type] = `[${value?.map((date) =>
@@ -41,18 +56,20 @@ const Answers = ({
     console.log({
       formatedFilters
     })
+    // debugger; // eslint-disable-line no-debugger
     setAnswer(satyrn.responseManager.generate(formatedFilters, statement?.plan, data))
   }, [data, plan, satyrn, statement, filters]);
 
-  console.log({
-    filters,
-    data,
-    statement,
-    plan,
-    answer,
-    answerType
-  });
+  // console.log({
+  //   filters,
+  //   data,
+  //   statement,
+  //   plan,
+  //   answer,
+  //   answerType
+  // });
 
+  // debugger; // eslint-disable-line no-debugger
   return (
     <div className="answers">
       <Loader isVisible={loadingAnswers} animation="border">
@@ -72,7 +89,7 @@ const Answers = ({
                   height={600}
                   data={data.results.map((result) => ({
                     name: result?.[0],
-                    [data.units.results[1]]: result?.[1],
+                    [data.units.results[1]]: Number(result?.[1]),
                   }))}
                   margin={{
                     top: 5,
@@ -83,8 +100,8 @@ const Answers = ({
                 >
                   <CartesianGrid strokeDasharray="3 3" />
                   <XAxis dataKey="name" />
-                  <YAxis />
-                  <Tooltip />
+                  <YAxis tickFormatter={dataFormatter} />
+                  <Tooltip formatter={formatVal} />
                   <Legend />
                   <Bar dataKey={data.units.results[1]} fill="#82ca9d" />
                 </BarChart>
@@ -92,18 +109,22 @@ const Answers = ({
 
               {answerType === "line" &&
                 <LineChart
-                  width={1000}
-                  height={600}
+                  width={800}
+                  height={500}
                   data={data.results.map((result) => ({
-                    name: result?.[1],
-                    [data.units.results[1]]: result?.[1],
-                    [data.units.results[2]]: result?.[2],
-                  }))}>
-                  <XAxis dataKey={data.units.results[1]} />
-                  <YAxis />
-                  <Tooltip />
+                    name: result?.[0],
+                    [data.units.results[1]]: Number(result?.[1])
+                  }))}
+                  margin={{
+                    top: 5,
+                    right: 30,
+                    left: 22,
+                    bottom: 5,
+                  }}>
+                  <XAxis dataKey="name" />
+                  <YAxis tickFormatter={dataFormatter} />
+                  <Tooltip formatter={formatVal} />
                   <CartesianGrid stroke="#eee" strokeDasharray="5 5" />
-                  <Line type="monotone" dataKey={data.units.results[2]} stroke="#82ca9d" />
                   <Line type="monotone" dataKey={data.units.results[1]} stroke="#82ca9d" />
                 </LineChart>
               }

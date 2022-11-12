@@ -9,6 +9,7 @@ import SignUpPage from "pages/SignUpPage";
 import ProfilePage from "pages/ProfilePage";
 import NotebooksPage from "pages/NotebooksPage";
 import NotebookPage from "pages/NotebookPage";
+import DocumentPage from "pages/DocumentPage";
 import EmailVerificationPage from "pages/EmailVerificationPage";
 import ForgotPasswordPage from "pages/ForgotPasswordPage";
 import ResetPasswordPage from "pages/ResetPasswordPage";
@@ -39,7 +40,7 @@ const App: FunctionComponent = () => {
         <Notifications />
         <BrowserRouter>
           <Switch>
-            <ProtectedRoute exact path="/" component={HomePage} />
+            <ProtectedRoute exact path="/" component={NotebooksPage} />
             <ProtectedRoute
               exact
               path="/users"
@@ -63,6 +64,11 @@ const App: FunctionComponent = () => {
               exact
               path="/notebooks/:notebookId"
               component={NotebookPage}
+            />
+            <ProtectedRoute
+              exact
+              path="/document/:ringId/:ringVersion/:entityType/:docId"
+              component={DocumentPage}
             />
             <Route path="/sign-in" component={SignInPage} />
             <Route path="/sign-up" component={SignUpPage} />

@@ -11,6 +11,9 @@ import {
   Card
 } from "react-bootstrap";
 import { DataGrid } from "@material-ui/data-grid";
+import { IconButton } from "@material-ui/core";
+import OpenInNewIcon from "@material-ui/icons/OpenInNew";
+
 import Filters from "../Filters";
 import Loader from "../Loader";
 
@@ -101,22 +104,70 @@ const Panel: FunctionComponent<PanelProps> = ({ panelId }) => {
     getPanelResults();
   }, [collapsed, info]);
 
+  const onRowClick = (params, e) => {
+    e.defaultMuiPrevented = true
+  }
+
+  const handleSortModelChange = (e, a) => {
+    debugger; // eslint-disable-line no-debugger
+  }
+
   const rows = results?.results?.map((result) => ({
     ...result,
     id: uniqid(),
   }));
 
+  const columnCount = useMemo(() => {
+    return info?.columns?.length;
+  }, [info]);
+
+  const dataTableWidth = useMemo(() => {
+    const defaultColumnWidth = 200;
+    return (defaultColumnWidth * (columnCount+1));
+  }, [info]);
+
+  const fullTableWidth = useMemo(() => {
+    return (info?.includesRenderer) ? dataTableWidth + 100 : dataTableWidth;
+  }, [info]);
+
   const columns = useMemo(() => {
-    return info?.columns?.map((column) => ({
+    let cols = info?.columns?.map((column) => ({
       field: column.key,
       headerName: column.nicename,
-      width: 200,
-      sortable: column.sortable,
+      filterable: false,
+      width: (dataTableWidth * (Number(column.width.replace("%", "")) / 100)) || (dataTableWidth / columnCount),
+      sortable: column.sortable
     })) || [];
+
+    if (info?.includesRenderer) {
+      cols = [...cols, {
+        field: "action",
+        headerName: " ",
+        sortable: false,
+        filterable: false,
+        width: 100,
+        minWidth: 100,
+        renderCell: (params) => {
+          return (
+          <IconButton
+            onClick={(event) => {
+                // only supports single ids for now, as that's all the document API can support too
+                const idVal = Object.values(params.row.__uniqueId)[0];
+                const docUrl = `/document/${ring.rid}/${ring.version}/${params.row.__entType}/${idVal}`;
+                window.open(docUrl)
+            }}
+          >
+            <OpenInNewIcon />
+          </IconButton>
+        )}
+      }]
+    }
+
+    return cols
+
   }, [info]);
 
   if (!panel?.ringId) return <Dataset panelId={panel.id} />;
-
   return (
     <Accordion defaultActiveKey={collapsed === true ? null : panel.id} className="mb-4">
       <Card>
@@ -160,25 +211,29 @@ const Panel: FunctionComponent<PanelProps> = ({ panelId }) => {
                       <Accordion defaultActiveKey={resultsCollapsed === true ? "results-summary" : "results"}>
                         <Accordion.Collapse eventKey="results">
                           <>
-                            <div style={{ height: 400, width: "100%", overflowX: "hidden" }}>
+                            <div style={{ height: 400, width: "100%", overflowX: "auto" }}>
                               <DataGrid
                                 onPageChange={(page) => getPanelResults([], page)}
                                 rows={rows}
                                 columns={columns}
                                 page={results?.page}
+                                rowsPerPageOptions={[10]}
+                                sortingMode="server"
+                                onSortModelChange={handleSortModelChange}
                                 pageSize={results?.batchSize}
                                 rowCount={results?.totalCount}
                                 checkboxSelection={false}
                                 className="bg-white border-0 rounded-0"
                                 paginationMode="server"
+                                style={{ width: fullTableWidth, overflowX: "auto", display: "flex", flexShrink: 0 }}
+                                onRowClick={onRowClick}
                               />
                             </div>
-                            <div className="p-3">
-                              Displaying 1-10 of {results?.totalCount} Dockets
+                            {/* <div className="p-3">
                               <ResultsToggler eventKey="results-summary" callback={() => setPanelResultsCollapsed(!resultsCollapsed)}>
                                 (collapse)
                               </ResultsToggler>
-                            </div>
+                            </div> */}
                           </>
                         </Accordion.Collapse>
                         <Accordion.Collapse eventKey="results-summary">
@@ -208,8 +263,9 @@ const Panel: FunctionComponent<PanelProps> = ({ panelId }) => {
                 variant="outline-dark"
                 className="me-2"
                 onClick={() => {
+                  const id = uniqid()
                   addPanelAnalysis({
-                    id: uniqid()
+                    id: id
                   })
                 }}
               >

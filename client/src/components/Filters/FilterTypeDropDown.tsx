@@ -1,6 +1,7 @@
 import React, { FunctionComponent, useState, useEffect } from "react";
 import { Dropdown } from "react-bootstrap";
 import ReactSelect from "react-select";
+import "./Filters.scss";
 
 type FilterColumn = {
   key: string;
@@ -52,7 +53,7 @@ const FilterTypeDropDown: FunctionComponent<FilterTypeProps> = (props) => {
     return filterInput;
   });
 
-  console.log(filtersToRender);
+  // console.log(filtersToRender);
 
   return (
     <>
@@ -65,7 +66,7 @@ const FilterTypeDropDown: FunctionComponent<FilterTypeProps> = (props) => {
           {filterInput?.nicename || ""}
         </Dropdown.Toggle>
 
-        <Dropdown.Menu>
+        <Dropdown.Menu className="filter-type-dropdown">
           <Dropdown.ItemText className="text-muted fs-6 ms-3">
             <small>Select a filter type...</small>
           </Dropdown.ItemText>
