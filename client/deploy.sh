@@ -28,7 +28,7 @@ then
 	cd delivery
 	git init
 	git remote add origin root@198.199.81.89:/var/www/html/bare-repo
-	git branch -m master main
+	git branch -m master main # not actually sure whether this is necessary
 
     else
 	sudo -u $SUDO_USER mkdir delivery
@@ -51,4 +51,8 @@ rm -r build
 cd delivery
 git add .
 git commit -m 'automated deployment of new build'
-git push origin main
+
+if [ "$EUID" -ne 0 ]
+then git push origin main
+else sudo -u $SUDO_USER git push origin main
+fi
