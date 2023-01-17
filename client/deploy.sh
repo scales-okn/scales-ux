@@ -28,11 +28,12 @@ then
 	cd delivery
 	git init
 	git remote add origin root@198.199.81.89:/var/www/html/bare-repo
-	git branch -m master main # not actually sure whether this is necessary
+	git branch -m master main
 
     else
 	sudo -u $SUDO_USER mkdir delivery
 	sudo -u $SUDO_USER cd delivery
+	pwd
 	sudo -u $SUDO_USER git init
 	sudo -u $SUDO_USER git remote add origin root@198.199.81.89:/var/www/html/bare-repo
 	sudo -u $SUDO_USER git branch -m master main
