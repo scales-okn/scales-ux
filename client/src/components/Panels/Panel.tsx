@@ -214,7 +214,7 @@ const Panel: FunctionComponent<PanelProps> = ({ panelId }) => {
                 }}
               >
                 <FontAwesomeIcon icon={faPlus} />
-              </Button> Add Analysis :)
+              </Button> Add Analysis
             </Card.Footer>
           </>
         </Accordion.Collapse>
