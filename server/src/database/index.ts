@@ -87,19 +87,12 @@ const database = async () => {
     console.error("Models failed to initialize!", error);
   }
 
-  // Authentification
+  // Authentication
   try {
     await sequelize.authenticate();
     console.log("Connection has been established successfully.");
   } catch (error) {
     console.error("Unable to connect to the database:", error);
-  }
-
-  // Seeds
-  try {
-    await seeds(sequelize);
-  } catch (error) {
-    console.error("Seeds failed to initialize!", error);
   }
 
   // Sync
@@ -108,6 +101,13 @@ const database = async () => {
     console.log("Sync succesfully!");
   } catch (error) {
     console.error("Sync Failed:", error);
+  }
+
+  // Seeds
+  try {
+    await seeds(sequelize);
+  } catch (error) {
+    console.error("Seeds failed to initialize!", error);
   }
 };
 
