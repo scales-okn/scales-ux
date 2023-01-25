@@ -1,5 +1,4 @@
 #!/bin/bash
-
 # general note: the $SUDO_USER logic is surrounding all the commands that *shouldn't* be run as root ($SUDO_USER stores the name of the non-sudo user underneath the original sudo call)
 
 
@@ -59,12 +58,11 @@ then npm run build
 else sudo -u $SUDO_USER npm run build
 fi
 
+cd delivery && git pull origin main # in case the most recent build came from another machine
 rm -r delivery/static
 mv -v build/* delivery/
 rm -r build
-cd delivery
-git add .
-git commit -m 'automated deployment of new build'
+cd delivery && git add . && git commit -m 'automated deployment of new build'
 
 if [ "$EUID" -ne 0 ]
 then git push origin main
