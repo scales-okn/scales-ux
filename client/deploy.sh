@@ -58,7 +58,7 @@ then npm run build
 else sudo -u $SUDO_USER npm run build
 fi
 
-cd delivery && git pull origin main # in case the most recent build came from another machine
+cd delivery && git pull origin main && cd .. # in case the most recent build came from another machine
 rm -r delivery/static
 mv -v build/* delivery/
 rm -r build
