@@ -88,13 +88,11 @@ const Analysis: FunctionComponent<Props> = ({ panelId, ring, info }) => {
       }
 
       setPlan(plan);
-      const response = await fetch(`http://satyrn.scales-okn.org/proxy/analysis/${ring.rid}/${ring.version}/${info?.defaultEntity}/ `,
+      const response = await fetch(
+        `/proxy/analysis/${ring.rid}/${ring.version}/${info?.defaultEntity}/`,
         {
           method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            // "x-api-key": process.env.REACT_APP_CORE_API_KEY // not a correct env variable name, but I think the fetch works w/o any API key
-          },
+          headers: {"Content-Type": "application/json"},
           body: JSON.stringify(plan)
         });
       const data = await response.json();
