@@ -3,7 +3,7 @@ import PageLayout from "../../components/PageLayout";
 
 const HomePage: FunctionComponent = () => (
   <PageLayout>
-    <h4>Satyrn Dashboard</h4>
+    <h4>Dashboard</h4>
   </PageLayout>
 );
 
