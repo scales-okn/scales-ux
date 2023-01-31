@@ -79,7 +79,7 @@ app.get("*", (req, res) => {
 app.on("ready", () => {
   // Create the Server
   app.listen(process.env.UX_SERVER_PORT, () => {
-    console.log(`Server is running on port ${process.env.UX_SERVER_PORT}!`);
+    console.log(`Server is running on port ${process.env.UX_SERVER_PORT} skiddlededee!`);
   });
 });
 
