@@ -7,8 +7,6 @@ import React, {
 } from "react";
 import {
   Accordion,
-  Container,
-  Row,
   Col,
   Button,
   useAccordionButton,
@@ -22,15 +20,16 @@ import Loader from "../Loader";
 
 import Dataset from "../Dataset";
 
-import { usePanel } from "../../store/panels";
-import { useRing } from "../../store/rings";
-import Analysis from "../Analysis";
-import "./Panel.scss";
-
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faPlus } from "@fortawesome/free-solid-svg-icons";
 
 import uniqid from "uniqid";
+
+import { usePanel } from "../../store/panels";
+import { useRing } from "../../store/rings";
+import Analysis from "../Analysis";
+import "./Panel.scss";
+import ConfirmModal from "components/SharedElements/ConfirmModal";
 
 type ResultsTogglerProps = {
   children: React.ReactNode;
@@ -87,7 +86,7 @@ const Panel: FunctionComponent<PanelProps> = ({ panelId }) => {
     filters,
     panel,
     deletePanel,
-    updatePanel,
+    // updatePanel,
     results,
     loadingPanelResults,
     getPanelResults,
@@ -100,6 +99,9 @@ const Panel: FunctionComponent<PanelProps> = ({ panelId }) => {
   } = usePanel(panelId);
 
   const { ring, info, getRingInfo, loadingRingInfo } = useRing(panel?.ringId);
+
+  const [confirmVisible, setConfirmVisible] = useState(false);
+  const handleShow = () => setConfirmVisible(true);
 
   useEffect(() => {
     if (!ring || ring.info || loadingRingInfo) return;
@@ -148,7 +150,7 @@ const Panel: FunctionComponent<PanelProps> = ({ panelId }) => {
             <Button
               variant="outline-danger"
               size="sm"
-              onClick={() => deletePanel()}
+              onClick={handleShow}
               className="me-1"
             >
               Delete
@@ -276,6 +278,11 @@ const Panel: FunctionComponent<PanelProps> = ({ panelId }) => {
           </>
         </Accordion.Collapse>
       </Card>
+      <ConfirmModal
+        open={confirmVisible}
+        setOpen={setConfirmVisible}
+        onConfirm={deletePanel}
+      />
     </Accordion>
   );
 };

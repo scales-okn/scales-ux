@@ -20,13 +20,14 @@ const RingsPage: React.FC = () => {
   return (
     <PageLayout>
       <Loader animation="border" isVisible={loadingRings}>
-        <Button variant="primary" className="mb-3 text-white float-end me-3"
-        style={{
-          minWidth: "200px",
-        }}>
-          <Link
-            to="/rings/create"
-            className="text-white text-decoration-none">
+        <Button
+          variant="primary"
+          className="mb-3 text-white float-end me-3"
+          style={{
+            minWidth: "200px",
+          }}
+        >
+          <Link to="/rings/create" className="text-white text-decoration-none">
             Create Ring
           </Link>
         </Button>
@@ -61,14 +62,16 @@ const RingsPage: React.FC = () => {
                 renderCell: (params: GridCellParams) => (
                   <>{dayjs(params.row.createdAt).format("M/D/YYYY")}</>
                 ),
-              }, {
+              },
+              {
                 field: "updatedAt",
                 headerName: "Updated at",
                 width: 200,
                 renderCell: (params: GridCellParams) => (
                   <>{dayjs(params.row.updatedAt).format("M/D/YYYY")}</>
                 ),
-              }, {
+              },
+              {
                 field: "visibility",
                 headerName: "Visibility",
                 width: 150,
@@ -91,14 +94,13 @@ const RingsPage: React.FC = () => {
                       className="text-white text-decoration-none"
                       onClick={() => {
                         console.log("delete");
-                      }
-                      }
+                      }}
                     >
                       <i className="fas fa-trash-alt"></i>
                     </Button>
                   </OverlayTrigger>
-                )
-              }
+                ),
+              },
             ]}
             pageSize={5}
             checkboxSelection={false}
@@ -108,6 +110,6 @@ const RingsPage: React.FC = () => {
       </Loader>
     </PageLayout>
   );
-}
+};
 
 export default RingsPage;
