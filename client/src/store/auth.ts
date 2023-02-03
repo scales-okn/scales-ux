@@ -93,7 +93,7 @@ export const login = (email: string, password: string) => {
           break;
       }
     } catch (error) {
-      console.log(error);
+      console.warn(error);
       dispatch(notify(useUnknownErrorNotificationMessage, "error"));
       dispatch(authActions.signInFailure(error));
     }

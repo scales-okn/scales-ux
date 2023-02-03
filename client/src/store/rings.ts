@@ -46,7 +46,7 @@ const ringsSlice = createSlice({
     getRingInfoSuccess: (state, { payload }) => ({
       ...state,
       rings: state.rings.map((ring) =>
-        ring.rid == payload.rid ? { ...ring, info: payload.info } : ring,
+        ring.rid === payload.rid ? { ...ring, info: payload.info } : ring,
       ),
       loadingRingInfo: false,
       hasErrors: false,
@@ -93,7 +93,7 @@ export const getRings = () => {
         dispatch(ringsActions.getRingsFailure());
       }
     } catch (error) {
-      console.log(error);
+      console.warn(error);
       dispatch(ringsActions.getRingsFailure());
     }
   };

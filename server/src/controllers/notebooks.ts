@@ -31,7 +31,7 @@ export const create = async (req: Request, res: Response) => {
 
     return res.send_ok("Notebook created succesfully!", { notebook });
   } catch (error) {
-    console.log(error);
+    console.warn(error);
 
     return res.send_internalServerError("An error occured, please try again!");
   }
@@ -66,7 +66,7 @@ export const findAll = async (req: Request, res: Response) => {
 
     return res.send_ok("", { notebooks });
   } catch (error) {
-    console.log(error);
+    console.warn(error);
 
     return res.send_internalServerError("An error occured, please try again!");
   }
@@ -106,7 +106,7 @@ export const findById = async (req: Request, res: Response) => {
       notebook: notebook.dataValues,
     });
   } catch (error) {
-    console.log(error);
+    console.warn(error);
 
     return res.send_internalServerError("An error occured, please try again!");
   }
@@ -134,7 +134,7 @@ export const history = async (req: Request, res: Response) => {
 
     return res.send_ok("", { versions });
   } catch (error) {
-    console.log(error);
+    console.warn(error);
 
     return res.send_internalServerError("An error occured, please try again!");
   }
@@ -217,7 +217,7 @@ export const update = async (req: Request, res: Response) => {
       ...updatedNotebook.dataValues,
     });
   } catch (error) {
-    console.log(error);
+    console.warn(error);
 
     return res.send_internalServerError("An error occured, please try again!");
   }
@@ -243,7 +243,7 @@ export const deleteNotebook = async (req: Request, res: Response) => {
     }
     return res.send_internalServerError("Failed to delete notebook!");
   } catch (error) {
-    console.log(error);
+    console.warn(error);
 
     return res.send_internalServerError("Failed to delete notebook!");
   }
@@ -279,7 +279,7 @@ export const panels = async (req: Request, res: Response) => {
 
     return res.send_ok("", { panels });
   } catch (error) {
-    console.log(error);
+    console.warn(error);
 
     return res.send_internalServerError("An error occured, please try again!");
   }

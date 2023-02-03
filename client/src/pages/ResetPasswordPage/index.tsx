@@ -25,7 +25,7 @@ const ResetPasswordValidationSchema = yup.object({
     .required()
     .matches(
       /^.*(?=.{8,})((?=.*[!@#$%^&*()\-_=+{};:,<.>]){1})(?=.*\d)((?=.*[a-z]){1})((?=.*[A-Z]){1}).*$/,
-      "Password must contain at least 8 characters, one uppercase, one number and one special case character"
+      "Password must contain at least 8 characters, one uppercase, one number and one special case character",
     ),
   repassword: yup
     .string()
@@ -44,16 +44,13 @@ const ResetPassword: FunctionComponent = () => {
     },
     validationSchema: ResetPasswordValidationSchema,
     onSubmit: (values: ResetPasswordFields, { setErrors }) => {
-      fetch(
-        `/api/users/password/reset`,
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({ ...values, token }),
-        }
-      )
+      fetch(`/api/users/password/reset`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ ...values, token }),
+      })
         .then((response) => response.json())
         .then((response) => {
           try {
@@ -72,7 +69,7 @@ const ResetPassword: FunctionComponent = () => {
               }
             }
           } catch (error) {
-            console.log(error);
+            console.warn(error);
           }
         });
     },

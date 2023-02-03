@@ -65,7 +65,7 @@ export function fetchNotebooks() {
 
       dispatch(notebooksActions.fetchNotebooksSuccess(data.notebooks));
     } catch (error) {
-      console.log(error);
+      console.warn(error);
       dispatch(notebooksActions.fetchNotebooksFailure());
     }
   };

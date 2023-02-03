@@ -24,7 +24,7 @@ const checkAuth = async (req: Request, res: Response, next: NextFunction) => {
       }
     )(req, res, next);
   } catch (error) {
-    console.log(error);
+    console.warn(error);
     return res.send_internalServerError("An error occured, please try again!");
   }
 };

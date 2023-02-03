@@ -30,16 +30,13 @@ const ForgotPassword: FunctionComponent = () => {
     },
     validationSchema: ForgotPasswordValidationSchema,
     onSubmit: (values: ForgotPasswordFields, { setErrors }) => {
-      fetch(
-        `/api/users/password/forgot`,
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify(values),
-        }
-      )
+      fetch(`/api/users/password/forgot`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(values),
+      })
         .then((response) => response.json())
         .then((response) => {
           try {
@@ -58,7 +55,7 @@ const ForgotPassword: FunctionComponent = () => {
               }
             }
           } catch (error) {
-            console.log(error);
+            console.warn(error);
           }
         });
     },
@@ -69,11 +66,7 @@ const ForgotPassword: FunctionComponent = () => {
       <Row className="h-100 justify-content-center align-items-center text-center">
         <Col md="5">
           <Form noValidate onSubmit={formik.handleSubmit}>
-            <FontAwesomeIcon
-              icon={faBalanceScale}
-              size="3x"
-              className="mb-4"
-            />
+            <FontAwesomeIcon icon={faBalanceScale} size="3x" className="mb-4" />
             <h1 className="h3 mb-5 fw-normal">Forgot Password?</h1>
             <div className="form-floating mb-3">
               <Form.Control

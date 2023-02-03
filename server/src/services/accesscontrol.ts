@@ -143,7 +143,7 @@ export const permisionsFieldsFilter = (data, permission) => {
       return filteredData;
     }, {});
   } catch (error) {
-    console.log(error);
+    console.warn(error);
     return data;
   }
 };

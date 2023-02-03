@@ -18,7 +18,7 @@ const UserFieldToggle: FunctionComponent<Props> = ({
   fieldName,
   label,
   value,
-  disabled
+  disabled,
 }) => {
   const [checked, setChecked] = useState(value);
   const authHeader = useAuthHeader();
@@ -26,9 +26,12 @@ const UserFieldToggle: FunctionComponent<Props> = ({
 
   const handleChange = (event: ChangeEvent<HTMLInputElement>) => {
     if (event.target.checked !== checked) {
-      const fieldValue = fieldName === 'role' ?
-        event.target.checked ? 'admin' : 'user' :
-        !checked;
+      const fieldValue =
+        fieldName === "role"
+          ? event.target.checked
+            ? "admin"
+            : "user"
+          : !checked;
       fetch(`/api/users/${userId}`, {
         method: "PUT",
         body: JSON.stringify({
@@ -43,8 +46,8 @@ const UserFieldToggle: FunctionComponent<Props> = ({
         .then((response) => {
           try {
             if (response?.code === 200) {
-              if (fieldName === 'role') {
-                setChecked(response.data.user[fieldName] === 'admin');
+              if (fieldName === "role") {
+                setChecked(response.data.user[fieldName] === "admin");
               } else {
                 setChecked(response.data.user[fieldName]);
               }
@@ -53,10 +56,10 @@ const UserFieldToggle: FunctionComponent<Props> = ({
               notify(response.message, "error");
             }
           } catch (error) {
-            console.log(error);
+            console.warn(error);
           }
         })
-        .catch((error) => console.log(error));
+        .catch((error) => console.warn(error));
     }
   };
 

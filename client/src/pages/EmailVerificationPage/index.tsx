@@ -20,18 +20,15 @@ const EmailVerificationPage: FunctionComponent = () => {
   const [message, setMessage] = useState("");
   const verifyEmail = useCallback(async () => {
     try {
-      const response = await fetch(
-        `/api/users/verify-email`,
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            token,
-          }),
-        }
-      );
+      const response = await fetch(`/api/users/verify-email`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          token,
+        }),
+      });
       const { data, code, message, errors } = await response.json();
       setIsLoading(false);
       setMessage(message);
@@ -46,7 +43,7 @@ const EmailVerificationPage: FunctionComponent = () => {
       //   }
       // }
     } catch (error) {
-      console.log(error);
+      console.warn(error);
     }
 
     // history.push("/");

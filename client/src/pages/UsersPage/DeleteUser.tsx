@@ -6,7 +6,7 @@ import { useNotify } from "components/Notifications";
 type Props = {
   userId: number;
   disabled?: boolean;
-}
+};
 
 const DeleteUser: FunctionComponent<Props> = ({ userId, disabled = false }) => {
   const authHeader = useAuthHeader();
@@ -33,21 +33,22 @@ const DeleteUser: FunctionComponent<Props> = ({ userId, disabled = false }) => {
                 notify(response.message, "error");
             }
           } catch (error) {
-            console.log(error);
+            console.warn(error);
           }
         })
-        .catch((error) => console.log(error));
-  }
+        .catch((error) => console.warn(error));
+  };
 
   return (
     <Button
       variant="outline-danger"
       size="sm"
       onClick={deleteUser}
-      disabled={disabled}>
+      disabled={disabled}
+    >
       Delete
     </Button>
   );
-}
+};
 
 export default DeleteUser;

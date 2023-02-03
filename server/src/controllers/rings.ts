@@ -35,7 +35,7 @@ export const create = async (req: Request, res: Response) => {
 
     return res.send_ok("Ring created succesfully!", { ring });
   } catch (error) {
-    console.log(error);
+    console.warn(error);
 
     return res.send_internalServerError("An error occured, please try again!");
   }
@@ -50,7 +50,7 @@ export const findAll = async (req: Request, res: Response) => {
 
     return res.send_ok("", { rings });
   } catch (error) {
-    console.log(error);
+    console.warn(error);
 
     return res.send_internalServerError("An error occured, please try again!");
   }
@@ -69,7 +69,7 @@ export const findById = async (req: Request, res: Response) => {
 
     return res.send_ok("", { ring });
   } catch (error) {
-    console.log(error);
+    console.warn(error);
 
     return res.send_internalServerError("An error occured, please try again!");
   }
@@ -97,7 +97,7 @@ export const version = async (req: Request, res: Response) => {
 
     return res.send_ok("", { ring });
   } catch (error) {
-    console.log(error);
+    console.warn(error);
 
     return res.send_internalServerError("An error occured, please try again!");
   }
@@ -131,7 +131,7 @@ export const update = async (req: Request, res: Response) => {
 
     return res.send_ok("Ring has been updated!", { ring });
   } catch (error) {
-    console.log(error);
+    console.warn(error);
 
     return res.send_internalServerError("An error occured, please try again!");
   }
@@ -149,7 +149,7 @@ export const deleteRing = async (req: Request, res: Response) => {
     }
     return res.send_internalServerError("Failed to delete ring!");
   } catch (error) {
-    console.log(error);
+    console.warn(error);
 
     return res.send_internalServerError("Failed to delete ring!");
   }

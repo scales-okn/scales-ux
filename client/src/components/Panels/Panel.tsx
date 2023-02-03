@@ -1,4 +1,10 @@
-import React, { FunctionComponent, useState, useEffect, useContext, useMemo } from "react";
+import React, {
+  FunctionComponent,
+  useState,
+  useEffect,
+  useContext,
+  useMemo,
+} from "react";
 import {
   Accordion,
   Container,
@@ -8,7 +14,7 @@ import {
   useAccordionButton,
   Form,
   AccordionContext,
-  Card
+  Card,
 } from "react-bootstrap";
 import { DataGrid } from "@material-ui/data-grid";
 import Filters from "../Filters";
@@ -19,7 +25,7 @@ import Dataset from "../Dataset";
 import { usePanel } from "../../store/panels";
 import { useRing } from "../../store/rings";
 import Analysis from "../Analysis";
-import "./Panel.scss"
+import "./Panel.scss";
 
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faPlus } from "@fortawesome/free-solid-svg-icons";
@@ -30,10 +36,17 @@ type ResultsTogglerProps = {
   children: React.ReactNode;
   eventKey: string;
   callback?: (eventKey: string) => void;
-}
+};
 
-const ResultsToggler: FunctionComponent<ResultsTogglerProps> = ({ children, eventKey, callback }) => {
-  const decoratedOnClick = useAccordionButton(eventKey, () => callback && callback(eventKey));
+const ResultsToggler: FunctionComponent<ResultsTogglerProps> = ({
+  children,
+  eventKey,
+  callback,
+}) => {
+  const decoratedOnClick = useAccordionButton(
+    eventKey,
+    () => callback && callback(eventKey),
+  );
 
   return (
     <Button variant="link" size="sm" onClick={decoratedOnClick}>
@@ -44,14 +57,17 @@ const ResultsToggler: FunctionComponent<ResultsTogglerProps> = ({ children, even
 
 type PanelProps = {
   panelId: string;
-}
+};
 
 type AccordionToggleButtonProps = {
   eventKey: string;
   callback?: (eventKey: string) => void;
-}
+};
 
-const AccordionToggleButton = ({ eventKey, callback }: AccordionToggleButtonProps) => {
+const AccordionToggleButton = ({
+  eventKey,
+  callback,
+}: AccordionToggleButtonProps) => {
   const { activeEventKey } = useContext(AccordionContext);
   const decoratedOnClick = useAccordionButton(
     eventKey,
@@ -60,17 +76,11 @@ const AccordionToggleButton = ({ eventKey, callback }: AccordionToggleButtonProp
   const isCurrentEventKey = activeEventKey === eventKey;
 
   return (
-    <Button
-      variant="outline-primary"
-      size="sm"
-      onClick={decoratedOnClick}
-    >
-      {
-        isCurrentEventKey ? "Close" : "Open"
-      }
+    <Button variant="outline-primary" size="sm" onClick={decoratedOnClick}>
+      {isCurrentEventKey ? "Close" : "Open"}
     </Button>
   );
-}
+};
 
 const Panel: FunctionComponent<PanelProps> = ({ panelId }) => {
   const {
@@ -107,28 +117,46 @@ const Panel: FunctionComponent<PanelProps> = ({ panelId }) => {
   }));
 
   const columns = useMemo(() => {
-    return info?.columns?.map((column) => ({
-      field: column.key,
-      headerName: column.nicename,
-      width: 200,
-      sortable: column.sortable,
-    })) || [];
+    return (
+      info?.columns?.map((column) => ({
+        field: column.key,
+        headerName: column.nicename,
+        width: 200,
+        sortable: column.sortable,
+      })) || []
+    );
   }, [info]);
 
   if (!panel?.ringId) return <Dataset panelId={panel.id} />;
 
   return (
-    <Accordion defaultActiveKey={collapsed === true ? null : panel.id} className="mb-4">
+    <Accordion
+      defaultActiveKey={collapsed === true ? null : panel.id}
+      className="mb-4"
+    >
       <Card>
         <Card.Header className="d-flex align-items-center py-3">
-          <div className="notebook-ring-name" style={{
-            fontSize: "1.1rem",
-          }}>
+          <div
+            className="notebook-ring-name"
+            style={{
+              fontSize: "1.1rem",
+            }}
+          >
             {ring?.name}
           </div>
           <div className="ms-auto">
-            <Button variant="outline-danger" size="sm" onClick={() => deletePanel()} className="me-1">Delete</Button>
-            <AccordionToggleButton eventKey={panel.id} callback={() => setPanelCollapsed(!collapsed)} />
+            <Button
+              variant="outline-danger"
+              size="sm"
+              onClick={() => deletePanel()}
+              className="me-1"
+            >
+              Delete
+            </Button>
+            <AccordionToggleButton
+              eventKey={panel.id}
+              callback={() => setPanelCollapsed(!collapsed)}
+            />
           </div>
         </Card.Header>
         <Accordion.Collapse eventKey={panel.id}>
@@ -150,32 +178,56 @@ const Panel: FunctionComponent<PanelProps> = ({ panelId }) => {
                 className="border-0 bg-light border-bottom p-3 panel-description font-italic text-muted"
               />
 
-              <Filters
-                panelId={panel.id}
-              />
+              <Filters panelId={panel.id} />
               <div className="p-0 bg-light border-bottom border-top">
-                <Loader animation="border" contentHeight={resultsCollapsed ? "60px" : "400px"} isVisible={loadingPanelResults}>
+                <Loader
+                  animation="border"
+                  contentHeight={resultsCollapsed ? "60px" : "400px"}
+                  isVisible={loadingPanelResults}
+                >
                   <>
                     {results && (
-                      <Accordion defaultActiveKey={resultsCollapsed === true ? "results-summary" : "results"}>
+                      <Accordion
+                        defaultActiveKey={
+                          resultsCollapsed === true
+                            ? "results-summary"
+                            : "results"
+                        }
+                      >
                         <Accordion.Collapse eventKey="results">
                           <>
-                            <div style={{ height: 400, width: "100%", overflowX: "hidden" }}>
-                              <DataGrid
-                                onPageChange={(page) => getPanelResults([], page)}
-                                rows={rows}
-                                columns={columns}
-                                page={results?.page}
-                                pageSize={results?.batchSize}
-                                rowCount={results?.totalCount}
-                                checkboxSelection={false}
-                                className="bg-white border-0 rounded-0"
-                                paginationMode="server"
-                              />
+                            <div
+                              style={{
+                                height: 400,
+                                width: "100%",
+                                overflowX: "hidden",
+                              }}
+                            >
+                              {!resultsCollapsed && (
+                                <DataGrid
+                                  onPageChange={(page) =>
+                                    getPanelResults([], page)
+                                  }
+                                  rows={rows}
+                                  rowsPerPageOptions={[10]}
+                                  columns={columns}
+                                  page={results?.page}
+                                  pageSize={results?.batchSize}
+                                  rowCount={results?.totalCount}
+                                  checkboxSelection={false}
+                                  className="bg-white border-0 rounded-0"
+                                  paginationMode="server"
+                                />
+                              )}
                             </div>
                             <div className="p-3">
                               Displaying 1-10 of {results?.totalCount} Dockets
-                              <ResultsToggler eventKey="results-summary" callback={() => setPanelResultsCollapsed(!resultsCollapsed)}>
+                              <ResultsToggler
+                                eventKey="results-summary"
+                                callback={() =>
+                                  setPanelResultsCollapsed(!resultsCollapsed)
+                                }
+                              >
                                 (collapse)
                               </ResultsToggler>
                             </div>
@@ -183,14 +235,19 @@ const Panel: FunctionComponent<PanelProps> = ({ panelId }) => {
                         </Accordion.Collapse>
                         <Accordion.Collapse eventKey="results-summary">
                           <div className="p-3">
-                            Available data based on filters: {results?.totalCount} Dockets
-                            <ResultsToggler eventKey="results" callback={() => setPanelResultsCollapsed(!resultsCollapsed)}>
+                            Available data based on filters:{" "}
+                            {results?.totalCount} Dockets
+                            <ResultsToggler
+                              eventKey="results"
+                              callback={() =>
+                                setPanelResultsCollapsed(!resultsCollapsed)
+                              }
+                            >
                               (expand to browse data)
                             </ResultsToggler>
                           </div>
                         </Accordion.Collapse>
                       </Accordion>
-
                     )}
                   </>
                 </Loader>
@@ -201,7 +258,6 @@ const Panel: FunctionComponent<PanelProps> = ({ panelId }) => {
                   <Analysis panelId={panelId} ring={ring} info={info} />
                 </Col>
               </div>
-
             </Card.Body>
             <Card.Footer className="d-flex align-items-center py-3">
               <Button
@@ -209,16 +265,16 @@ const Panel: FunctionComponent<PanelProps> = ({ panelId }) => {
                 className="me-2"
                 onClick={() => {
                   addPanelAnalysis({
-                    id: uniqid()
-                  })
+                    id: uniqid(),
+                  });
                 }}
               >
                 <FontAwesomeIcon icon={faPlus} />
-              </Button> Add Analysis
+              </Button>{" "}
+              Add Analysis
             </Card.Footer>
           </>
         </Accordion.Collapse>
-
       </Card>
     </Accordion>
   );

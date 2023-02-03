@@ -22,7 +22,7 @@ const seeds = async (sequelize) => {
       console.log("No admin password, user not created");
     }
   } catch (error) {
-    console.log(error);
+    console.warn(error);
   }
 };
 
