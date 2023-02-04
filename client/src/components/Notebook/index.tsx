@@ -122,6 +122,7 @@ const Notebook: FunctionComponent = () => {
         <AddPanel notebookId={notebook?.id} />
       </>
       <ConfirmModal
+        itemName="notebook"
         open={confirmVisible}
         setOpen={setConfirmVisible}
         onConfirm={handleDeleteNotebook}

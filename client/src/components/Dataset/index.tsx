@@ -30,7 +30,7 @@ const Dataset: FunctionComponent<DatasetProps> = ({ panelId }) => {
   useEffect(() => {
     if (!ring || info) return;
     getRingInfo(ring.version);
-  }, [selectedRing, ring, info, getRingInfo]);
+  }, [selectedRing]); // eslint-disable-line react-hooks/exhaustive-deps
 
   return (
     <Loader animation="border" isVisible={loadingRings}>

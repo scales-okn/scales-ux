@@ -13,9 +13,25 @@
 }
 
 .analysis-item {
-  padding: .5rem .5rem 2rem;
+  padding: 0.5rem 0.5rem 2rem;
   margin-bottom: 2rem;
   border-bottom: 1px solid #f1f1f1;
 }
 
-.answers {}
+.answers {
+}
+
+.rbt-close {
+  margin-top: 1px !important;
+  margin-right: 2px !important;
+  border: none;
+  border-radius: 5px;
+  height: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  span {
+    margin-bottom: 2px;
+  }
+}

@@ -26,7 +26,8 @@ export const UserSignInValidationSchema = yup.object({
 
 const SignInPage: FunctionComponent = () => {
   const history = useHistory();
-  const { loading, user, hasErrors, errors } = useSelector(authSelector);
+  const { user, errors } = useSelector(authSelector);
+  // const { loading, user, hasErrors, errors } = useSelector(authSelector);
   const dispatch = useDispatch();
 
   useEffect(() => {

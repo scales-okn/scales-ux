@@ -2,20 +2,21 @@ import React, { memo, useEffect, useState } from "react";
 import {
   BarChart,
   Bar,
-  Cell,
+  // Cell,
   XAxis,
   YAxis,
   CartesianGrid,
   Tooltip,
   Legend,
-  ResponsiveContainer,
+  // ResponsiveContainer,
   LineChart,
   Line,
 } from "recharts";
-import { Col, Accordion } from "react-bootstrap";
+import { Col } from "react-bootstrap";
 import Loader from "components/Loader";
 import { usePanel } from "store/panels";
 import dayjs from "dayjs";
+import { isEmpty } from "lodash";
 
 const Answers = ({
   panelId,
@@ -30,7 +31,8 @@ const Answers = ({
   const { filters } = usePanel(panelId);
 
   const getAnswersDisplayType = (plan, results) => {
-    if (!plan || !results) return null;
+    // TODO(JS): by year graphs not displaying
+    if (isEmpty(plan) || isEmpty(results)) return null;
     return satyrn.responseManager.pickVisType(plan, results);
   };
 
@@ -63,13 +65,13 @@ const Answers = ({
       <Loader isVisible={loadingAnswers} animation="border">
         <>
           {answer && (
-            <div className="mb-4 mt-3">
+            <div className="mb-3 mt-4">
               <i>Answer: </i>
-              <p dangerouslySetInnerHTML={{ __html: answer }} />
+              {answer}
             </div>
           )}
           {data && (
-            <Col lg="12" className="answers mt-5">
+            <Col lg="12" className="mt-5">
               {data.length > 1 && answerType === "bar" && (
                 <BarChart
                   width={1100}

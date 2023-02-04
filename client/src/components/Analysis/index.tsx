@@ -1,7 +1,7 @@
 // @ts-nocheck
-import React, { useEffect, FunctionComponent, useState } from "react";
+import React, { useEffect, FunctionComponent, useState, useRef } from "react";
 import { usePanel } from "store/panels";
-import { Form, Button, Col, Row, Accordion } from "react-bootstrap";
+import { Button, Col, Row } from "react-bootstrap";
 import { Satyrn } from "statement-mananger";
 import { useNotify } from "../Notifications";
 import "./style.scss";
@@ -9,7 +9,8 @@ import Answers from "./Answers";
 import Parameters from "./Parameters";
 import Statements from "./Statements";
 import _ from "lodash";
-import appendQuery from "append-query";
+// import appendQuery from "append-query";
+import ConfirmModal from "components/SharedElements/ConfirmModal";
 
 type Props = {
   panelId: string;
@@ -26,6 +27,8 @@ const Analysis: FunctionComponent<Props> = ({ panelId, ring, info }) => {
     setPanelAnalysisStatement,
     filters,
   } = usePanel(panelId);
+
+  const [selectedAnalysisId, setSelectedAnalysisId] = useState(null);
   const [selectedStatement, setSelectedStatement] = useState(null);
   const [selectedParameter, setSelectedParameter] = useState(null);
   const [statements, setStatements] = useState([]);
@@ -122,6 +125,18 @@ const Analysis: FunctionComponent<Props> = ({ panelId, ring, info }) => {
     }
   };
 
+  const oldSelectedStatement = useRef(null);
+  const oldSelectedParameter = useRef(null);
+
+  useEffect(() => {
+    const freshStatement = selectedStatement !== oldSelectedStatement;
+    const freshParameter = selectedParameter !== oldSelectedParameter;
+
+    if (selectedStatement && (freshStatement || freshParameter)) {
+      getAnswers(parameters, selectedStatement, selectedParameter);
+    }
+  }, [selectedStatement, selectedParameter, parameters]);
+
   const fetchAutocompleteSuggestions = async (type, query) => {
     setLoadingAutosuggestions(true);
     setAutoCompleteSuggestions([]);
@@ -149,11 +164,16 @@ const Analysis: FunctionComponent<Props> = ({ panelId, ring, info }) => {
     }
   };
 
+  const handleRemoveAnalysis = () => {
+    removePanelAnalysis(selectedAnalysisId);
+    setSelectedAnalysisId(null);
+  };
+
   return (
     <div className="analysis">
       {analysis.length > 0 ? (
         analysis.map(({ id }) => (
-          <Row key={id} className="analysis-item">
+          <Row key={id} className="analysis-item" style={{ padding: "16px" }}>
             <Col lg="11">
               <Statements
                 statements={statements}
@@ -170,24 +190,12 @@ const Analysis: FunctionComponent<Props> = ({ panelId, ring, info }) => {
                 fetchAutocompleteSuggestions={fetchAutocompleteSuggestions}
                 loadingAutosuggestions={loadingAutosuggestions}
               />
-              {selectedStatement && (
-                <Button
-                  className="text-white"
-                  onClick={() =>
-                    getAnswers(parameters, selectedStatement, selectedParameter)
-                  }
-                >
-                  Generate Answer
-                </Button>
-              )}
             </Col>
             <Col lg="1" className="text-end">
               <Button
                 size="sm"
                 variant="outline-danger"
-                onClick={() => {
-                  removePanelAnalysis(id);
-                }}
+                onClick={() => setSelectedAnalysisId(id)}
               >
                 Remove
               </Button>
@@ -205,6 +213,12 @@ const Analysis: FunctionComponent<Props> = ({ panelId, ring, info }) => {
       ) : (
         <div>No analysis added.</div>
       )}
+      <ConfirmModal
+        itemName="analysis"
+        open={!!selectedAnalysisId}
+        setOpen={setSelectedAnalysisId}
+        onConfirm={handleRemoveAnalysis}
+      />
     </div>
   );
 };

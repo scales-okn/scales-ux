@@ -303,6 +303,7 @@ const Ring: React.FC = () => {
         </Form>
       </Loader>
       <ConfirmModal
+        itemName="ring"
         open={confirmVisible}
         setOpen={setConfirmVisible}
         onConfirm={() => deleteRing(ring.rid)}

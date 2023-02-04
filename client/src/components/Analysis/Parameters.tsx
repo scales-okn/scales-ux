@@ -1,7 +1,7 @@
 import React, { FunctionComponent } from "react";
 import { AsyncTypeahead, Typeahead } from "react-bootstrap-typeahead";
 import uniqid from "uniqid";
-import { Form, Button, Col, Row, Accordion } from "react-bootstrap";
+import { Form, Col, Row } from "react-bootstrap";
 
 type Props = {
   parameters: any[];
@@ -46,7 +46,12 @@ const Parameters: FunctionComponent<Props> = ({
                     }
                     options={autoCompleteSuggestions?.map(String)}
                     placeholder="Search or select a statement..."
-                    selectHintOnEnter={true}
+                    shouldSelect={(shouldSelect, e) => {
+                      // Select the hint if the user hits 'enter' or ','
+                      return (
+                        e.keyCode === 13 || e.keyCode === 188 || shouldSelect
+                      );
+                    }}
                     defaultInputValue={""}
                     loading={loadingAutosuggestions}
                   />

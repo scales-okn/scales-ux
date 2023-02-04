@@ -5,14 +5,20 @@ type ConfirmModalProps = {
   open: boolean;
   setOpen: (arg: boolean) => void;
   onConfirm: () => void;
+  itemName: string;
 };
 
-const ConfirmModal: FC<ConfirmModalProps> = ({ open, setOpen, onConfirm }) => {
+const ConfirmModal: FC<ConfirmModalProps> = ({
+  open,
+  setOpen,
+  onConfirm,
+  itemName,
+}) => {
   const handleClose = () => setOpen(false);
 
   return (
     <Modal show={open} onHide={handleClose} animation>
-      <Modal.Body>Are you sure you want to delete this ring?</Modal.Body>
+      <Modal.Body>Are you sure you want to delete this {itemName}?</Modal.Body>
       <Modal.Footer>
         <Button
           variant="secondary"

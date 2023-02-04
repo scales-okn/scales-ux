@@ -105,12 +105,12 @@ const Panel: FunctionComponent<PanelProps> = ({ panelId }) => {
   useEffect(() => {
     if (!ring || ring.info || loadingRingInfo) return;
     getRingInfo(ring.version);
-  }, [ring, loadingRingInfo, getRingInfo]);
+  }, [ring]); // eslint-disable-line react-hooks/exhaustive-deps
 
   useEffect(() => {
     if (!info || collapsed || loadingPanelResults) return;
     getPanelResults();
-  }, [collapsed, info, loadingPanelResults, getPanelResults]);
+  }, [collapsed, info]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const rows = results?.results?.map((result) => ({
     ...result,
@@ -170,6 +170,7 @@ const Panel: FunctionComponent<PanelProps> = ({ panelId }) => {
                 }}
                 placeholder="Your Panel Description Here"
                 onChange={(event) => {
+                  console.log(event);
                   setPanelDescription(event.target.value);
                 }}
                 value={panel?.description}
@@ -222,7 +223,8 @@ const Panel: FunctionComponent<PanelProps> = ({ panelId }) => {
                               )}
                             </div>
                             <div className="p-3">
-                              Displaying 1-10 of {results?.totalCount} Dockets
+                              {results?.totalCount?.toLocaleString()} Dockets
+                              Found
                               <ResultsToggler
                                 eventKey="results-summary"
                                 callback={() =>
@@ -237,7 +239,7 @@ const Panel: FunctionComponent<PanelProps> = ({ panelId }) => {
                         <Accordion.Collapse eventKey="results-summary">
                           <div className="p-3">
                             Available data based on filters:{" "}
-                            {results?.totalCount} Dockets
+                            {results?.totalCount?.toLocaleString()} Dockets
                             <ResultsToggler
                               eventKey="results"
                               callback={() =>
@@ -278,6 +280,7 @@ const Panel: FunctionComponent<PanelProps> = ({ panelId }) => {
         </Accordion.Collapse>
       </Card>
       <ConfirmModal
+        itemName="panel"
         open={confirmVisible}
         setOpen={setConfirmVisible}
         onConfirm={deletePanel}

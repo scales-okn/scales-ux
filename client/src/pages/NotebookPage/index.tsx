@@ -9,7 +9,7 @@ import {
   notebookSelector,
   notebookActions,
 } from "../../store/notebook";
-import { panelsActions } from "../../store/panels";
+// import { panelsActions } from "../../store/panels";
 
 type Params = {
   notebookId: string | null;
@@ -25,7 +25,7 @@ const NotebookPage: FunctionComponent = () => {
     if (notebookId !== "new") {
       dispatch(fetchNotebook(notebookId));
     }
-  }, [notebookId]);
+  }, [notebookId]); // eslint-disable-line react-hooks/exhaustive-deps
 
   return (
     <PageLayout>

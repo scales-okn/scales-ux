@@ -94,11 +94,11 @@ export default (sequelize, options) => {
           C3 Lab @ Northwestern University<br />
           <a href="https://c3lab.northwestern.edu">c3lab.northwestern.edu</a>`,
         },
-        (error, info) => console.log(error, info)
+        (error, info) => console.warn(error, info)
       );
       await user.save();
     } catch (error) {
-      console.log({ error });
+      console.warn({ error });
     }
   });
 
