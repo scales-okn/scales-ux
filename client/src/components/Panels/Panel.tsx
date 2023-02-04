@@ -83,7 +83,7 @@ const AccordionToggleButton = ({
 
 const Panel: FunctionComponent<PanelProps> = ({ panelId }) => {
   const {
-    filters,
+    // filters,
     panel,
     deletePanel,
     // updatePanel,
@@ -101,17 +101,16 @@ const Panel: FunctionComponent<PanelProps> = ({ panelId }) => {
   const { ring, info, getRingInfo, loadingRingInfo } = useRing(panel?.ringId);
 
   const [confirmVisible, setConfirmVisible] = useState(false);
-  const handleShow = () => setConfirmVisible(true);
 
   useEffect(() => {
     if (!ring || ring.info || loadingRingInfo) return;
     getRingInfo(ring.version);
-  }, [ring]);
+  }, [ring, loadingRingInfo, getRingInfo]);
 
   useEffect(() => {
     if (!info || collapsed || loadingPanelResults) return;
     getPanelResults();
-  }, [collapsed, info]);
+  }, [collapsed, info, loadingPanelResults, getPanelResults]);
 
   const rows = results?.results?.map((result) => ({
     ...result,
@@ -150,7 +149,7 @@ const Panel: FunctionComponent<PanelProps> = ({ panelId }) => {
             <Button
               variant="outline-danger"
               size="sm"
-              onClick={handleShow}
+              onClick={() => setConfirmVisible(true)}
               className="me-1"
             >
               Delete

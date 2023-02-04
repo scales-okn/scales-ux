@@ -10,6 +10,7 @@ import { useAuthHeader, useUser } from "store/auth";
 import { useNotify } from "components/Notifications";
 import { useHistory, useParams } from "react-router-dom";
 import { useRing } from "store/rings";
+import ConfirmModal from "components/SharedElements/ConfirmModal";
 
 type Params = {
   ringId: string | null;
@@ -23,6 +24,8 @@ const Ring: React.FC = () => {
   const user = useUser();
   const { notify } = useNotify();
   const history = useHistory();
+
+  const [confirmVisible, setConfirmVisible] = useState(false);
 
   const formik = useFormik({
     initialValues: {
@@ -138,11 +141,7 @@ const Ring: React.FC = () => {
                 <Button
                   variant="danger"
                   type="button"
-                  onClick={() =>
-                    window.confirm(
-                      "Are you sure you want to delete this ring?",
-                    ) && deleteRing(ring.rid)
-                  }
+                  onClick={() => setConfirmVisible(true)}
                   className="float-end"
                 >
                   Delete Ring
@@ -303,6 +302,11 @@ const Ring: React.FC = () => {
           </Row>
         </Form>
       </Loader>
+      <ConfirmModal
+        open={confirmVisible}
+        setOpen={setConfirmVisible}
+        onConfirm={() => deleteRing(ring.rid)}
+      />
     </PageLayout>
   );
 };

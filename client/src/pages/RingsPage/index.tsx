@@ -15,7 +15,7 @@ const RingsPage: React.FC = () => {
     if (loadingRings) return null;
 
     getRings();
-  }, []);
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   return (
     <PageLayout>
@@ -93,7 +93,7 @@ const RingsPage: React.FC = () => {
                       variant="danger"
                       className="text-white text-decoration-none"
                       onClick={() => {
-                        console.log("delete");
+                        // TODO: unfinished
                       }}
                     >
                       <i className="fas fa-trash-alt"></i>
@@ -102,6 +102,7 @@ const RingsPage: React.FC = () => {
                 ),
               },
             ]}
+            rowsPerPageOptions={[5]}
             pageSize={5}
             checkboxSelection={false}
             className="bg-white p-0"

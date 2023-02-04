@@ -1,5 +1,5 @@
 import React, { FunctionComponent, useState, useEffect } from "react";
-import { Col, Container, Row, Button, Form, Modal } from "react-bootstrap";
+import { Col, Container, Row, Button, Form } from "react-bootstrap";
 import Loader from "components/Loader";
 import Panels from "components/Panels";
 import { useSelector } from "react-redux";
@@ -24,7 +24,7 @@ const Notebook: FunctionComponent = () => {
     loadingNotebook,
     savingNotebook,
     deletingNotebook,
-    hasErrors,
+    // hasErrors,
   } = useSelector(notebookSelector);
 
   const [confirmVisible, setConfirmVisible] = useState(false);
@@ -41,13 +41,13 @@ const Notebook: FunctionComponent = () => {
 
   useEffect(() => {
     getRings();
-  }, []);
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   useEffect(() => {
     if (notebook) {
       dispatch(getPanels(notebook.id));
     }
-  }, [notebook]);
+  }, [notebook]); // eslint-disable-line react-hooks/exhaustive-deps
 
   return (
     <Loader animation="border" isVisible={loadingNotebook}>

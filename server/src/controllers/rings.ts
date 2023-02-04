@@ -142,8 +142,9 @@ export const deleteRing = async (req: Request, res: Response) => {
   try {
     const { ringId } = req.params;
     const result = await sequelize.models.Ring.destroy({
-      where: { id: ringId },
+      where: { rid: ringId },
     });
+
     if (result) {
       return res.send_ok("Ring has been deleted successfully!");
     }
