@@ -227,9 +227,7 @@ export const update = async (req: Request, res: Response) => {
 export const deleteNotebook = async (req: Request, res: Response) => {
   try {
     const { notebookId } = req.params;
-    //@ts-ignore
-    const { role, id: userId } = req.user;
-    console.log(userId);
+    // const { role, id: userId } = req.user;
     const result = await sequelize.models.Notebook.update(
       {
         deleted: true,

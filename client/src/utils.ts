@@ -1,4 +1,3 @@
-
 export const authorizationHeader = (token = "") => {
   if (!token) {
     return {};

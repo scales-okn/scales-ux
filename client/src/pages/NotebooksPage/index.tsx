@@ -1,8 +1,4 @@
-import React, {
-  FunctionComponent,
-  useEffect,
-  useState,
-} from "react";
+import React, { FunctionComponent, useEffect, useState } from "react";
 import PageLayout from "../../components/PageLayout";
 import Loader from "../../components/Loader";
 import { DataGrid, GridCellParams } from "@material-ui/data-grid";
@@ -23,7 +19,6 @@ const NotebooksPage: FunctionComponent = () => {
   const { fetchNotebooks, notebooks, loadingNotebooks } = useNotebooks();
 
   // const handleOnEditCellChangeCommitted = async (values, event) => {
-  //   console.log(values);
   //   await updateNotebook(values.id, {
   //     [values.field]:
   //       values.field === "collaborators"
@@ -58,7 +53,7 @@ const NotebooksPage: FunctionComponent = () => {
       (notebook) =>
         notebook.title
           .toLowerCase()
-          .search(filterNotebooks.toLocaleLowerCase()) > -1
+          .search(filterNotebooks.toLocaleLowerCase()) > -1,
     );
 
   return (
@@ -128,10 +123,7 @@ const NotebooksPage: FunctionComponent = () => {
                     width: 250,
                     editable: true,
                     renderCell: (params: GridCellParams) => (
-                      <Link
-                        to={`/notebooks/${params.row.id}`}
-                        className="ms-2"
-                      >
+                      <Link to={`/notebooks/${params.row.id}`} className="ms-2">
                         {params.row.title}
                       </Link>
                     ),

@@ -8,7 +8,7 @@ const Statements = ({
   setSelectedStatement,
   selectedStatement,
   setParameters,
-  getStatement
+  getStatement,
 }) => {
   return (
     <Form.Group className="mb-3" as={Row}>
@@ -39,13 +39,15 @@ const Statements = ({
           maxHeight="200px"
           placeholder="Search or select a statement..."
           filterBy={(option, props) =>
-            props.text.toLowerCase().split(" ").every(text => option.statement.toLowerCase().includes(text))
+            props.text
+              .toLowerCase()
+              .split(" ")
+              .every((text) => option.statement.toLowerCase().includes(text))
           }
         />
       </Col>
     </Form.Group>
   );
-}
-
+};
 
 export default Statements;

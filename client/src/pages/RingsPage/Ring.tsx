@@ -68,11 +68,11 @@ const Ring: React.FC = () => {
               history.push("/rings");
             }
           } catch (error) {
-            console.warn(error);
+            console.warn(error); // eslint-disable-line no-console
             notify(error.message, "error");
           }
         })
-        .catch((error) => console.warn(error))
+        .catch((error) => console.warn(error)) // eslint-disable-line no-console
         .finally(() => setLoading(false));
     },
   });
@@ -99,11 +99,11 @@ const Ring: React.FC = () => {
               break;
           }
         } catch (error) {
-          console.warn(error);
+          console.warn(error); // eslint-disable-line no-console
           notify(error.message, "error");
         }
       })
-      .catch((error) => console.warn(error))
+      .catch((error) => console.warn(error)) // eslint-disable-line no-console
       .finally(() => setLoading(false));
   };
 
@@ -266,7 +266,7 @@ const Ring: React.FC = () => {
                   try {
                     formik.setFieldValue("dataSource", e.jsObject);
                   } catch (error) {
-                    console.warn(error);
+                    console.warn(error); // eslint-disable-line no-console
                   }
                 }}
               />
@@ -289,7 +289,7 @@ const Ring: React.FC = () => {
                   try {
                     formik.setFieldValue("ontology", e.jsObject);
                   } catch (error) {
-                    console.warn(error);
+                    console.warn(error); // eslint-disable-line no-console
                   }
                 }}
               />

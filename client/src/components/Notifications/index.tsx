@@ -56,7 +56,7 @@ export const useNotify = () => {
   return {
     notify: (message: string, status: Status) =>
       dispatch(notify(message, status)),
-  }
-}
+  };
+};
 
 export default Notifications;

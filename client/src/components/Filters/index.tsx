@@ -8,7 +8,7 @@ import { usePanel } from "../../store/panels";
 
 type FiltersProps = {
   panelId: string;
-}
+};
 
 const Filters: FunctionComponent<FiltersProps> = ({ panelId }) => {
   const { filters = [], setPanelFilters, getPanelResults } = usePanel(panelId);
@@ -40,7 +40,7 @@ const Filters: FunctionComponent<FiltersProps> = ({ panelId }) => {
           <>Add a filter</>
         )}
       </div>
-    </div >
+    </div>
   );
 };
 
