@@ -4,23 +4,33 @@ import Loader from "../Loader";
 import { usePanel } from "../../store/panels";
 import { useRing, useRings } from "../../store/rings";
 import "./Dataset.scss";
-import { BsNodeMinusFill } from "react-icons/bs";
 
 type DatasetProps = {
   panelId: string;
 };
 
 const Dataset: FunctionComponent<DatasetProps> = ({ panelId }) => {
-  const { panel, updatePanel, setPanelCollapsed, getPanelResults } = usePanel(panelId);
+  // getPanelResults, panel
+  const { updatePanel, setPanelCollapsed } = usePanel(panelId);
   const { rings, loadingRings } = useRings();
   const [selectedRing, setSelectedRing] = useState(null);
-  const { ring, loadingRingInfo, info, getRingInfo } = useRing(selectedRing?.id);
+  const { ring, loadingRingInfo, info, getRingInfo } = useRing(
+    selectedRing?.id,
+  );
 
   useEffect(() => {
-    if (!ring || info) return
-    console.log(ring);
+    const defaultRing = rings.reduce((prev, curr) => {
+      return prev.id < curr.id ? prev : curr;
+    });
+    if (defaultRing) {
+      setSelectedRing(defaultRing);
+    }
+  }, [rings]);
+
+  useEffect(() => {
+    if (!ring || info) return;
     getRingInfo(ring.version);
-  }, [selectedRing]);
+  }, [selectedRing, ring, info, getRingInfo]);
 
   return (
     <Loader animation="border" isVisible={loadingRings}>

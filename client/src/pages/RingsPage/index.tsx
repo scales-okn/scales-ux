@@ -3,7 +3,7 @@ import PageLayout from "components/PageLayout";
 import Loader from "components/Loader";
 import { useRings } from "store/rings";
 import { DataGrid } from "@material-ui/data-grid";
-import { Row, OverlayTrigger, Tooltip, Button } from "react-bootstrap";
+import { Row, Button } from "react-bootstrap";
 import dayjs from "dayjs";
 import { GridCellParams } from "@material-ui/data-grid";
 import { Link } from "react-router-dom";
@@ -47,13 +47,13 @@ const RingsPage: React.FC = () => {
               },
               {
                 field: "rid",
-                headerName: "RID",
-                width: 300,
+                headerName: "Ring ID",
+                width: 200,
               },
               {
                 field: "description",
                 headerName: "Description",
-                width: 300,
+                width: 200,
               },
               {
                 field: "createdAt",
@@ -75,31 +75,6 @@ const RingsPage: React.FC = () => {
                 field: "visibility",
                 headerName: "Visibility",
                 width: 150,
-              },
-              {
-                field: "delete",
-                headerName: "Actions",
-                width: 50,
-                renderCell: (params: GridCellParams) => (
-                  <OverlayTrigger
-                    placement="top"
-                    overlay={
-                      <Tooltip id="tooltip-top">
-                        <strong>Delete</strong>
-                      </Tooltip>
-                    }
-                  >
-                    <Button
-                      variant="danger"
-                      className="text-white text-decoration-none"
-                      onClick={() => {
-                        // TODO: unfinished
-                      }}
-                    >
-                      <i className="fas fa-trash-alt"></i>
-                    </Button>
-                  </OverlayTrigger>
-                ),
               },
             ]}
             rowsPerPageOptions={[5]}
