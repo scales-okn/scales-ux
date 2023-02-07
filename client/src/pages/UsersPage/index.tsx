@@ -17,7 +17,7 @@ const AdminUsersPages: FunctionComponent = () => {
   const [rows, setRows] = useState([]);
   const authorizationHeader = useAuthHeader();
   const { role, id } = useSelector(userSelector);
-  const isAdmin = role === 'admin';
+  const isAdmin = role === "admin";
 
   const columns: GridColDef[] = [
     // { field: "id", headerName: "ID", width: 100 },
@@ -28,7 +28,8 @@ const AdminUsersPages: FunctionComponent = () => {
       sortable: false,
       width: 200,
       valueGetter: (params: GridValueGetterParams) =>
-        `${params.getValue(params.id, "firstName") || ""} ${params.getValue(params.id, "lastName") || ""
+        `${params.getValue(params.id, "firstName") || ""} ${
+          params.getValue(params.id, "lastName") || ""
         }`,
     },
     { field: "email", headerName: "Email", width: 240 },
@@ -74,17 +75,19 @@ const AdminUsersPages: FunctionComponent = () => {
 
   if (isAdmin) {
     columns.push({
-      field: "admin", headerName: "Admin", width: 140,
+      field: "admin",
+      headerName: "Admin",
+      width: 140,
       renderCell: (params: GridCellParams) => {
         return (
           <UserFieldToggle
             disabled={params.row.id === id}
             userId={params.row.id}
             fieldName="role"
-            value={params.row.role === 'admin'}
+            value={params.row.role === "admin"}
           />
         );
-      }
+      },
     });
     columns.push({
       field: "delete",
@@ -94,7 +97,7 @@ const AdminUsersPages: FunctionComponent = () => {
         return (
           <DeleteUser userId={params.row.id} disabled={params.row.id === id} />
         );
-      }
+      },
     });
   }
 

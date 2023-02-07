@@ -21,7 +21,7 @@ export const create = async (req: Request, res: Response) => {
 
     return res.send_ok("Panel created succesfully!", { panel });
   } catch (error) {
-    console.log(error);
+    console.warn(error);
 
     return res.send_internalServerError("An error occured, please try again!");
   }
@@ -37,7 +37,7 @@ export const findAll = async (req: Request, res: Response) => {
 
     return res.send_ok("", { panels });
   } catch (error) {
-    console.log(error);
+    console.warn(error);
 
     return res.send_internalServerError("An error occured, please try again!");
   }
@@ -56,7 +56,7 @@ export const findById = async (req: Request, res: Response) => {
       panel: panel.dataValues,
     });
   } catch (error) {
-    console.log(error);
+    console.warn(error);
 
     return res.send_internalServerError("An error occured, please try again!");
   }
@@ -86,7 +86,7 @@ export const update = async (req: Request, res: Response) => {
 
     return res.send_ok(`Panel ${id} has been updated!`, { panel });
   } catch (error) {
-    console.log(error);
+    console.warn(error);
 
     return res.send_internalServerError("An error occured, please try again!");
   }
@@ -109,7 +109,7 @@ export const deletePanel = async (req: Request, res: Response) => {
     }
     return res.send_internalServerError("Failed to delete panel!");
   } catch (error) {
-    console.log(error);
+    console.warn(error);
 
     return res.send_internalServerError("Failed to delete panel!");
   }

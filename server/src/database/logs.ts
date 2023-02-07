@@ -20,7 +20,7 @@ export default (sequelize) => {
 
       log.save();
     } catch (error) {
-      console.log(error);
+      console.warn(error);
     }
   };
 

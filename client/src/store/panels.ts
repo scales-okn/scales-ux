@@ -1,3 +1,5 @@
+/* eslint-disable  @typescript-eslint/no-explicit-any */
+
 import { createSlice } from "@reduxjs/toolkit";
 import type { RootState, AppDispatch } from "store";
 import { authSelector } from "store/auth";
@@ -55,7 +57,7 @@ const panelsSlice = createSlice({
         panels: payload
           .map((panel) => ({
             ...PanelInitialState,
-            ...state.panels.find((p) => p.id == panel.id),
+            ...state.panels.find((p) => p.id === panel.id),
             ...panel,
           }))
           .reverse(),
@@ -283,7 +285,9 @@ export const panelsActions = panelsSlice.actions;
 // Selectors
 export const panelsSelector = (state: RootState, notebookId) => ({
   ...state.panels,
-  panels: state.panels.panels.filter((panel) => panel.notebookId == notebookId),
+  panels: state.panels.panels.filter(
+    (panel) => panel.notebookId === notebookId,
+  ),
 });
 export const panelSelector = (state: RootState, panelId: string) => {
   return state?.panels?.panels?.find((panel) => panel.id === panelId);
@@ -410,7 +414,8 @@ export const deletePanel =
         },
       });
 
-      const { data, message } = await response.json();
+      // const { data, message } = await response.json();
+      const { message } = await response.json();
       if (response.status === 200) {
         dispatch(notify(message, "success"));
         dispatch(panelsActions.deletePanelSuccess(panelId));
@@ -427,8 +432,8 @@ export const getPanelResults =
   (panelId, filters = [], page = 0, batchSize = 10) =>
   async (dispatch: AppDispatch, getState) => {
     try {
-      const { token } = authSelector(getState());
-      const authHeader = authorizationHeader(token);
+      // const { token } = authSelector(getState());
+      // const authHeader = authorizationHeader(token);
       const panel = panelSelector(getState(), panelId);
       const { filters, ringId } = panel;
       // @ts-ignore
@@ -452,7 +457,6 @@ export const getPanelResults =
         ),
       );
       const data = await response.json();
-      console.log(data);
       if (response.status === 200) {
         dispatch(
           panelsActions.getPanelResultsSuccess({
@@ -465,7 +469,7 @@ export const getPanelResults =
         dispatch(panelsActions.getPanelResultsFailure({ panelId }));
       }
     } catch (error) {
-      console.log(error);
+      console.warn(error);
       dispatch(notify("Error fetching results", "error"));
       dispatch(panelsActions.getPanelResultsFailure({ panelId }));
     }

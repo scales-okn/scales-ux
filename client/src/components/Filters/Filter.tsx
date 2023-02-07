@@ -23,11 +23,14 @@ type Props = {
 };
 
 const Filter: FunctionComponent<Props> = ({ panelId, filter }) => {
-  const { panel, filters, setPanelFilters, getPanelResults } = usePanel(panelId);
+  const { panel, filters, setPanelFilters, getPanelResults } =
+    usePanel(panelId);
   const { ring, info } = useRing(panel.ringId);
   const { type, id, value } = filter;
   const [isLoading, setIsLoading] = useState<boolean>(false);
-  const [autoCompleteSuggestions, setAutoCompleteSuggestions] = useState<string[]>([]);
+  const [autoCompleteSuggestions, setAutoCompleteSuggestions] = useState<
+    string[]
+  >([]);
   const [dateValue, setDateValue] = useState<string>("");
   const { notify } = useNotify();
 
@@ -35,24 +38,21 @@ const Filter: FunctionComponent<Props> = ({ panelId, filter }) => {
     try {
       const newFilters = [
         ...filters.filter(
-          (prevFilterInput: Filter) =>
-            prevFilterInput.id !== filter.id
+          (prevFilterInput: Filter) => prevFilterInput.id !== filter.id,
         ),
         { ...filter },
       ];
       setPanelFilters(newFilters);
     } catch (error) {
-      console.log(error);
+      console.warn(error);
     }
   };
 
   const getFilterInputById = (id: string) => {
     try {
-      return filters?.find(
-        (filter: Filter) => filter.id === id
-      );
+      return filters?.find((filter: Filter) => filter.id === id);
     } catch (error) {
-      console.log(error);
+      console.warn(error);
     }
   };
 
@@ -60,15 +60,17 @@ const Filter: FunctionComponent<Props> = ({ panelId, filter }) => {
     try {
       return info?.columns?.find((column) => column.key == key);
     } catch (error) {
-      console.log(error);
+      console.warn(error);
     }
   };
 
   const getFilterOptionsByKey = (key) => {
+    if (!key) return null;
+
     try {
       return info?.filters?.find((filter) => filter.includes(key))[1];
     } catch (error) {
-      console.log(error);
+      console.warn(error);
     }
   };
 
@@ -78,7 +80,7 @@ const Filter: FunctionComponent<Props> = ({ panelId, filter }) => {
         .map((filter) => ({ key: filter[0], ...filter[1] }))
         .sort((a, b) => a.key.localeCompare(b.key));
     } catch (error) {
-      console.log(error);
+      console.warn(error);
     }
   };
 
@@ -89,7 +91,7 @@ const Filter: FunctionComponent<Props> = ({ panelId, filter }) => {
     setIsLoading(true);
     try {
       const response = await fetch(
-        `/proxy/autocomplete/${ring.rid}/1/${info?.defaultEntity}/${type}?query=${query}`
+        `/proxy/autocomplete/${ring.rid}/1/${info?.defaultEntity}/${type}?query=${query}`,
       );
       if (response.status === 200) {
         const data = await response.json();
@@ -99,7 +101,7 @@ const Filter: FunctionComponent<Props> = ({ panelId, filter }) => {
         notify("Could not fetch autocomplete suggestions", "error");
       }
     } catch (error) {
-      console.log(error);
+      console.warn(error);
       notify("Could not fetch autocomplete suggestions", "error");
     } finally {
       setIsLoading(false);
@@ -190,16 +192,15 @@ const Filter: FunctionComponent<Props> = ({ panelId, filter }) => {
             getFilterOptionsByKey={getFilterOptionsByKey}
             filters={filters}
             getFiltersNormalized={getFiltersNormalized}
-            setFilter={setFilter} />
+            setFilter={setFilter}
+          />
         </InputGroup.Text>
         {filterTypeRender(filterOptions?.type, value)}
         <InputGroup.Text
           className="cursor-pointer bg-transparent"
           onClick={async () => {
             const newFilters = [
-              ...filters.filter(
-                (filter: Filter) => filter.id !== id
-              ),
+              ...filters.filter((filter: Filter) => filter.id !== id),
             ];
             setPanelFilters(newFilters);
             getPanelResults(newFilters);

@@ -7,7 +7,7 @@ import { LinkContainer } from "react-router-bootstrap";
 import "./PageLayout.scss";
 import { userSelector, logout } from "../../store/auth";
 import { useDispatch } from "react-redux";
-import Avatar from 'react-avatar';
+import Avatar from "react-avatar";
 import Copyright from "components/Copyright";
 
 type Props = {
@@ -52,7 +52,12 @@ const PageLayout: FunctionComponent<Props> = (props) => {
             <Nav>
               <Dropdown>
                 <Dropdown.Toggle variant="link" className="profile-toggler">
-                  <Avatar name={`${user?.firstName} ${user?.lastName}`} size="36" round={true} email={user?.email} />
+                  <Avatar
+                    name={`${user?.firstName} ${user?.lastName}`}
+                    size="36"
+                    round={true}
+                    email={user?.email}
+                  />
                   <span className="ms-2">{user?.email}</span>
                 </Dropdown.Toggle>
 
@@ -61,7 +66,8 @@ const PageLayout: FunctionComponent<Props> = (props) => {
                     style={{
                       minWidth: "280px",
                     }}
-                    onClick={() => dispatch(logout())}>
+                    onClick={() => dispatch(logout())}
+                  >
                     Sign Out
                   </Dropdown.Item>
                 </Dropdown.Menu>
@@ -70,7 +76,7 @@ const PageLayout: FunctionComponent<Props> = (props) => {
           </Navbar.Collapse>
         </Container>
       </Navbar>
-      <Container id="main" className="main"> 
+      <Container id="main" className="main">
         {pageTitle && <h4>{pageTitle}</h4>}
         {children}
       </Container>

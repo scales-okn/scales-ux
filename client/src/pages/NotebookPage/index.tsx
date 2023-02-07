@@ -4,8 +4,12 @@ import Notebook from "../../components/Notebook";
 import PageLayout from "../../components/PageLayout";
 import Loader from "../../components/Loader";
 import { useDispatch, useSelector } from "react-redux";
-import { fetchNotebook, notebookSelector, notebookActions } from "../../store/notebook";
-import { panelsActions } from "../../store/panels";
+import {
+  fetchNotebook,
+  notebookSelector,
+  notebookActions,
+} from "../../store/notebook";
+// import { panelsActions } from "../../store/panels";
 
 type Params = {
   notebookId: string | null;
@@ -21,7 +25,7 @@ const NotebookPage: FunctionComponent = () => {
     if (notebookId !== "new") {
       dispatch(fetchNotebook(notebookId));
     }
-  }, [notebookId]);
+  }, [notebookId]); // eslint-disable-line react-hooks/exhaustive-deps
 
   return (
     <PageLayout>

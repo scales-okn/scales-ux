@@ -8,7 +8,7 @@ type AddPanelProps = {
   notebookId: string | null;
 };
 
-const AddPanel: FunctionComponent<AddPanelProps> = ({notebookId}) => {
+const AddPanel: FunctionComponent<AddPanelProps> = ({ notebookId }) => {
   const { notebook } = useNotebook();
   const { createPanel } = usePanels(notebookId);
 

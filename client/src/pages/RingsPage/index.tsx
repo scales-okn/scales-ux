@@ -3,7 +3,7 @@ import PageLayout from "components/PageLayout";
 import Loader from "components/Loader";
 import { useRings } from "store/rings";
 import { DataGrid } from "@material-ui/data-grid";
-import { Row, OverlayTrigger, Tooltip, Button } from "react-bootstrap";
+import { Row, Button } from "react-bootstrap";
 import dayjs from "dayjs";
 import { GridCellParams } from "@material-ui/data-grid";
 import { Link } from "react-router-dom";
@@ -15,18 +15,19 @@ const RingsPage: React.FC = () => {
     if (loadingRings) return null;
 
     getRings();
-  }, []);
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   return (
     <PageLayout>
       <Loader animation="border" isVisible={loadingRings}>
-        <Button variant="primary" className="mb-3 text-white float-end me-3"
-        style={{
-          minWidth: "200px",
-        }}>
-          <Link
-            to="/rings/create"
-            className="text-white text-decoration-none">
+        <Button
+          variant="primary"
+          className="mb-3 text-white float-end me-3"
+          style={{
+            minWidth: "200px",
+          }}
+        >
+          <Link to="/rings/create" className="text-white text-decoration-none">
             Create Ring
           </Link>
         </Button>
@@ -46,13 +47,13 @@ const RingsPage: React.FC = () => {
               },
               {
                 field: "rid",
-                headerName: "RID",
-                width: 300,
+                headerName: "Ring ID",
+                width: 200,
               },
               {
                 field: "description",
                 headerName: "Description",
-                width: 300,
+                width: 200,
               },
               {
                 field: "createdAt",
@@ -61,45 +62,22 @@ const RingsPage: React.FC = () => {
                 renderCell: (params: GridCellParams) => (
                   <>{dayjs(params.row.createdAt).format("M/D/YYYY")}</>
                 ),
-              }, {
+              },
+              {
                 field: "updatedAt",
                 headerName: "Updated at",
                 width: 200,
                 renderCell: (params: GridCellParams) => (
                   <>{dayjs(params.row.updatedAt).format("M/D/YYYY")}</>
                 ),
-              }, {
+              },
+              {
                 field: "visibility",
                 headerName: "Visibility",
                 width: 150,
               },
-              {
-                field: "delete",
-                headerName: "Actions",
-                width: 50,
-                renderCell: (params: GridCellParams) => (
-                  <OverlayTrigger
-                    placement="top"
-                    overlay={
-                      <Tooltip id="tooltip-top">
-                        <strong>Delete</strong>
-                      </Tooltip>
-                    }
-                  >
-                    <Button
-                      variant="danger"
-                      className="text-white text-decoration-none"
-                      onClick={() => {
-                        console.log("delete");
-                      }
-                      }
-                    >
-                      <i className="fas fa-trash-alt"></i>
-                    </Button>
-                  </OverlayTrigger>
-                )
-              }
             ]}
+            rowsPerPageOptions={[5]}
             pageSize={5}
             checkboxSelection={false}
             className="bg-white p-0"
@@ -108,6 +86,6 @@ const RingsPage: React.FC = () => {
       </Loader>
     </PageLayout>
   );
-}
+};
 
 export default RingsPage;

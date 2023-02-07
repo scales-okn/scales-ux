@@ -28,7 +28,6 @@ describe("sign-in page", () => {
     cy.get("[type=submit]").click();
 
     cy.window().then((win) => {
-      console.log(win.store);
       if (win.store) {
         win.store.dispatch("persist/PERSIST");
       }

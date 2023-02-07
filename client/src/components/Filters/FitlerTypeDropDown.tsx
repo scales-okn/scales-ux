@@ -12,14 +12,16 @@ type FilterTypeProps = {
   setFilter: any;
   getFiltersNormalized: any;
   getFilterOptionsByKey: any;
-}
+};
 
 const FilterTypeDropDown: FunctionComponent<FilterTypeProps> = (props) => {
-  const { filter,
+  const {
+    filter,
     filters,
     getFiltersNormalized,
     getFilterOptionsByKey,
-    setFilter } = props;
+    setFilter,
+  } = props;
   const { id, type } = filter;
 
   const filterOptions = getFilterOptionsByKey(type);
@@ -35,7 +37,7 @@ const FilterTypeDropDown: FunctionComponent<FilterTypeProps> = (props) => {
         setFilter({ ...filter, type: filterInput.key });
       }
     } catch (error) {
-      console.log(error);
+      console.warn(error);
     }
   }, [filterInput]);
 
@@ -61,7 +63,7 @@ const FilterTypeDropDown: FunctionComponent<FilterTypeProps> = (props) => {
         {filterInput?.nicename || ""}
       </Dropdown.Toggle>
 
-      <Dropdown.Menu>
+      <Dropdown.Menu style={{ maxHeight: "70vh", overflowY: "auto" }}>
         <Dropdown.ItemText className="text-muted fs-6 ms-3">
           <small>Select a filter type...</small>
         </Dropdown.ItemText>

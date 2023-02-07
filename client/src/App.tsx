@@ -1,7 +1,7 @@
 import React, { FunctionComponent } from "react";
 import { BrowserRouter, Redirect, Route, Switch } from "react-router-dom";
 import { Button } from "react-bootstrap";
-import { ErrorBoundary } from 'react-error-boundary'
+import { ErrorBoundary } from "react-error-boundary";
 import HomePage from "pages/HomePage";
 import UsersPage from "pages/UsersPage";
 import SignInPage from "pages/SignInPage";
@@ -24,8 +24,8 @@ const ErrorFallback = ({ error, resetErrorBoundary }) => {
       <pre>{error.message}</pre>
       <Button onClick={resetErrorBoundary}>Try again</Button>
     </div>
-  )
-}
+  );
+};
 
 const App: FunctionComponent = () => {
   return (
@@ -40,25 +40,13 @@ const App: FunctionComponent = () => {
         <BrowserRouter>
           <Switch>
             <ProtectedRoute exact path="/" component={HomePage} />
-            <ProtectedRoute
-              exact
-              path="/users"
-              component={UsersPage}
-            />
-            <ProtectedRoute
-              exact
-              path="/rings"
-              component={RingsPage}
-            />
+            <ProtectedRoute exact path="/users" component={UsersPage} />
+            <ProtectedRoute exact path="/rings" component={RingsPage} />
             <ProtectedRoute exact path="/profile" component={ProfilePage} />
             <ProtectedRoute exact path="/notebooks" component={NotebooksPage} />
             <ProtectedRoute exact path="/rings" component={NotebooksPage} />
             <ProtectedRoute exact path="/rings/create" component={Ring} />
-            <ProtectedRoute
-              exact
-              path="/rings/:ringId"
-              component={Ring}
-            />
+            <ProtectedRoute exact path="/rings/:ringId" component={Ring} />
             <ProtectedRoute
               exact
               path="/notebooks/:notebookId"
@@ -67,7 +55,10 @@ const App: FunctionComponent = () => {
             <Route path="/sign-in" component={SignInPage} />
             <Route path="/sign-up" component={SignUpPage} />
             <Route path="/forgot-password" component={ForgotPasswordPage} />
-            <Route path="/reset-password/:token" component={ResetPasswordPage} />
+            <Route
+              path="/reset-password/:token"
+              component={ResetPasswordPage}
+            />
             <Route
               path="/verify-email/:token"
               component={EmailVerificationPage}

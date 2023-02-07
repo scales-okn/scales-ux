@@ -30,13 +30,13 @@ export const UserSignUpValidationSchema = UserSignInValidationSchema.concat(
       .required("Password is required")
       .matches(
         /^.*(?=.{8,})((?=.*[!@#$%^&*()\-_=+{};:,<.>]){1})(?=.*\d)((?=.*[a-z]){1})((?=.*[A-Z]){1}).*$/,
-        "Password must contain at least 8 characters, one uppercase, one number and one special case character"
+        "Password must contain at least 8 characters, one uppercase, one number and one special case character",
       ),
     tos: yup
       .boolean()
       .required("The terms and conditions must be accepted.")
       .oneOf([true], "The terms and conditions must be accepted."),
-  })
+  }),
 );
 
 const SignUpPage: FunctionComponent = () => {
@@ -84,10 +84,11 @@ const SignUpPage: FunctionComponent = () => {
               }
             }
           } catch (error) {
-            console.log(error);
+            console.warn(error);
           }
-        }).catch((error) => {
-          console.log(error);
+        })
+        .catch((error) => {
+          console.warn(error);
         })
         .finally(() => {
           setIsLoading(false);
@@ -100,14 +101,22 @@ const SignUpPage: FunctionComponent = () => {
       <Row className="h-100 justify-content-center align-items-center text-center">
         <Col md="7">
           <FontAwesomeIcon icon={faBalanceScale} size="3x" className="mb-4" />
-          <h1 className="h3 mb-5 fw-normal">{message ? "Registered Successfully" : "Please register for beta access"}</h1>
+          <h1 className="h3 mb-5 fw-normal">
+            {message
+              ? "Registered Successfully"
+              : "Please register for beta access"}
+          </h1>
 
-          <Loader animation="border" isVisible={isLoading} contentHeight="700px">
-            {message ?
+          <Loader
+            animation="border"
+            isVisible={isLoading}
+            contentHeight="700px"
+          >
+            {message ? (
               <p>{message}</p>
-              : <Form noValidate onSubmit={formik.handleSubmit}>
+            ) : (
+              <Form noValidate onSubmit={formik.handleSubmit}>
                 <Row className="mb-3">
-
                   <Col>
                     <div className="form-floating">
                       <Form.Control
@@ -123,14 +132,15 @@ const SignUpPage: FunctionComponent = () => {
                         }
                       />
                       <Form.Label>First Name</Form.Label>
-                      {
-                        formik.touched.firstName &&
+                      {formik.touched.firstName &&
                         Boolean(formik.errors?.firstName) && (
-                          <Form.Control.Feedback type="invalid" className="text-start d-block">
+                          <Form.Control.Feedback
+                            type="invalid"
+                            className="text-start d-block"
+                          >
                             {formik.errors.firstName}
                           </Form.Control.Feedback>
-                        )
-                      }
+                        )}
                     </div>
                   </Col>
                   <Col>
@@ -148,14 +158,15 @@ const SignUpPage: FunctionComponent = () => {
                         }
                       />
                       <Form.Label>Last Name</Form.Label>
-                      {
-                        formik.touched.lastName &&
+                      {formik.touched.lastName &&
                         Boolean(formik.errors?.lastName) && (
-                          <Form.Control.Feedback type="invalid" className="text-start d-block">
+                          <Form.Control.Feedback
+                            type="invalid"
+                            className="text-start d-block"
+                          >
                             {formik.errors.lastName}
                           </Form.Control.Feedback>
-                        )
-                      }
+                        )}
                     </div>
                   </Col>
                 </Row>
@@ -173,13 +184,14 @@ const SignUpPage: FunctionComponent = () => {
                     }
                   />
                   <Form.Label>Email address</Form.Label>
-                  {
-                    formik.touched.email &&
-                    Boolean(formik.errors?.email) &&
-                    <Form.Control.Feedback type="invalid" className="text-start d-block">
+                  {formik.touched.email && Boolean(formik.errors?.email) && (
+                    <Form.Control.Feedback
+                      type="invalid"
+                      className="text-start d-block"
+                    >
                       {formik.errors.email}
                     </Form.Control.Feedback>
-                  }
+                  )}
                 </div>
                 <div className="form-floating mb-3">
                   <Form.Control
@@ -190,20 +202,26 @@ const SignUpPage: FunctionComponent = () => {
                     onChange={formik.handleChange}
                     onBlur={formik.handleBlur}
                     isInvalid={
-                      formik.touched.password && Boolean(formik.errors?.password)
+                      formik.touched.password &&
+                      Boolean(formik.errors?.password)
                     }
                   />
                   <Form.Label>Password</Form.Label>
-                  {
-                    formik.touched.password &&
-                    Boolean(formik.errors?.password) &&
-                    <Form.Control.Feedback type="invalid" className="text-start d-block">
+                  {formik.touched.password && Boolean(formik.errors?.password) && (
+                    <Form.Control.Feedback
+                      type="invalid"
+                      className="text-start d-block"
+                    >
                       {formik.errors.password}
                     </Form.Control.Feedback>
-                  }
+                  )}
                 </div>
                 <div className="form-floating mb-3">
-                  <p className="text-start">In a sentence or two, let us know the types of research you intend to explore with the SCALES dataset within the Satyrn platform:</p>
+                  <p className="text-start">
+                    In a sentence or two, let us know the types of research you
+                    intend to explore with the SCALES dataset within the Satyrn
+                    platform:
+                  </p>
                   <Form.Control
                     as="textarea"
                     rows={3}
@@ -218,13 +236,14 @@ const SignUpPage: FunctionComponent = () => {
                     }
                   />
                   <Form.Label></Form.Label>
-                  {
-                    formik.touched.usage &&
-                    Boolean(formik.errors?.usage) &&
-                    <Form.Control.Feedback type="invalid" className="text-start d-block">
+                  {formik.touched.usage && Boolean(formik.errors?.usage) && (
+                    <Form.Control.Feedback
+                      type="invalid"
+                      className="text-start d-block"
+                    >
                       {formik.errors.usage}
                     </Form.Control.Feedback>
-                  }
+                  )}
                 </div>
                 {/* <Form.Group className="mb-4">
               <Form.Check
@@ -257,12 +276,12 @@ const SignUpPage: FunctionComponent = () => {
               </Col>
             </Row> */}
               </Form>
-            }
+            )}
           </Loader>
         </Col>
         <Copyright />
       </Row>
-    </Container >
+    </Container>
   );
 };
 

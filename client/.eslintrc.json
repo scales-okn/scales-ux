@@ -10,9 +10,7 @@
     "react/prop-types": "off",
     "@typescript-eslint/ban-ts-comment": "off",
     "@typescript-eslint/ban-types": "off",
-    "prettier/prettier": [
-      "warn"
-    ],
+    "prettier/prettier": ["warn"],
     "react/display-name": "off"
   },
   "extends": [
@@ -26,11 +24,7 @@
   ],
   "parser": "@typescript-eslint/parser",
   "root": true,
-  "plugins": [
-    "react",
-    "@typescript-eslint",
-    "prettier"
-  ],
+  "plugins": ["react", "@typescript-eslint", "prettier"],
   "parserOptions": {
     "ecmaVersion": 11,
     "ecmaFeatures": {

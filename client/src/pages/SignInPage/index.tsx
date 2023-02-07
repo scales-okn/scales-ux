@@ -1,14 +1,9 @@
 import * as yup from "yup";
 
 import { Button, Col, Container, Form, Row } from "react-bootstrap";
-import { Link, useHistory } from "react-router-dom";
-import React, {
-  FunctionComponent,
-  SyntheticEvent,
-  useEffect,
-  useState,
-} from "react";
-import { authSelector, login, userSelector } from "store/auth";
+import { useHistory } from "react-router-dom";
+import React, { FunctionComponent, useEffect } from "react";
+import { authSelector, login } from "store/auth";
 import { useDispatch, useSelector } from "react-redux";
 
 import Copyright from "components/Copyright";
@@ -31,7 +26,8 @@ export const UserSignInValidationSchema = yup.object({
 
 const SignInPage: FunctionComponent = () => {
   const history = useHistory();
-  const { loading, user, hasErrors, errors } = useSelector(authSelector);
+  const { user, errors } = useSelector(authSelector);
+  // const { loading, user, hasErrors, errors } = useSelector(authSelector);
   const dispatch = useDispatch();
 
   useEffect(() => {

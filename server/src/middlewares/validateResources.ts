@@ -18,7 +18,7 @@ const validateResource =
         }
         return accumulator;
       }, {});
-      console.log(error);
+      console.warn(error);
       return res.send_badRequest("Field errors!", errors);
     }
   };

@@ -10,6 +10,7 @@ import { useAuthHeader, useUser } from "store/auth";
 import { useNotify } from "components/Notifications";
 import { useHistory, useParams } from "react-router-dom";
 import { useRing } from "store/rings";
+import ConfirmModal from "components/SharedElements/ConfirmModal";
 
 type Params = {
   ringId: string | null;
@@ -18,11 +19,13 @@ type Params = {
 const Ring: React.FC = () => {
   const { ringId = null } = useParams<Params>();
   const { ring } = useRing(Number(ringId));
-  const [loading, setLoading] = useState(false)
+  const [loading, setLoading] = useState(false);
   const authHeader = useAuthHeader();
   const user = useUser();
   const { notify } = useNotify();
   const history = useHistory();
+
+  const [confirmVisible, setConfirmVisible] = useState(false);
 
   const formik = useFormik({
     initialValues: {
@@ -35,7 +38,7 @@ const Ring: React.FC = () => {
       ontology: {},
       visibility: "public",
       userId: user.id,
-      ...ring
+      ...ring,
     },
     validationSchema: yup.object({
       rid: yup.string().required("RID is required"),
@@ -48,7 +51,7 @@ const Ring: React.FC = () => {
       visibility: yup.string().required("Visibility is required"),
     }),
     onSubmit: async (values) => {
-      setLoading(true)
+      setLoading(true);
       fetch(`/api/rings/create`, {
         method: ringId ? "PUT" : "POST",
         body: JSON.stringify(values),
@@ -65,24 +68,25 @@ const Ring: React.FC = () => {
               history.push("/rings");
             }
           } catch (error) {
-            console.log(error);
+            console.warn(error); // eslint-disable-line no-console
             notify(error.message, "error");
           }
         })
-        .catch((error) => console.log(error))
-        .finally(() => setLoading(false))
-    }
+        .catch((error) => console.warn(error)) // eslint-disable-line no-console
+        .finally(() => setLoading(false));
+    },
   });
 
   const deleteRing = async (rid) => {
-    setLoading(true)
+    setLoading(true);
     fetch(`/api/rings/${rid}`, {
       method: "DELETE",
       headers: {
         ...authHeader,
         "Content-Type": "application/json",
       },
-    }).then((response) => response.json())
+    })
+      .then((response) => response.json())
       .then((response) => {
         try {
           switch (response?.code) {
@@ -95,15 +99,16 @@ const Ring: React.FC = () => {
               break;
           }
         } catch (error) {
-          console.log(error);
+          console.warn(error); // eslint-disable-line no-console
           notify(error.message, "error");
         }
-      }).catch((error) => console.log(error))
-      .finally(() => setLoading(false))
-  }
+      })
+      .catch((error) => console.warn(error)) // eslint-disable-line no-console
+      .finally(() => setLoading(false));
+  };
 
   const sanitizeData = (data) => {
-    let output = {}
+    let output = {};
 
     if (typeof data === "string") {
       output = JSON.parse(data);
@@ -114,7 +119,7 @@ const Ring: React.FC = () => {
     }
 
     return output;
-  }
+  };
 
   return (
     <PageLayout>
@@ -122,27 +127,26 @@ const Ring: React.FC = () => {
         <Form onSubmit={formik.handleSubmit}>
           <Row className="mb-3">
             <Col>
-              <h3 className="mb-3">
-                {
-                  ring ? "Edit Ring" : "Create Ring"
-                }
-              </h3>
+              <h3 className="mb-3">{ring ? "Edit Ring" : "Create Ring"}</h3>
             </Col>
             <Col>
-              <Button variant="primary" type="submit" className="text-white float-end ms-2">
+              <Button
+                variant="primary"
+                type="submit"
+                className="text-white float-end ms-2"
+              >
                 Submit
               </Button>
-              {
-                ring && (
-                  <Button
-                    variant="danger"
-                    type="button"
-                    onClick={() => window.confirm("Are you sure you want to delete this ring?") && deleteRing(ring.rid)}
-                    className="float-end">
-                    Delete Ring
-                  </Button>
-                )
-              }
+              {ring && (
+                <Button
+                  variant="danger"
+                  type="button"
+                  onClick={() => setConfirmVisible(true)}
+                  className="float-end"
+                >
+                  Delete Ring
+                </Button>
+              )}
             </Col>
           </Row>
           <Row>
@@ -157,7 +161,9 @@ const Ring: React.FC = () => {
                 onBlur={formik.handleBlur}
               />
               {formik.touched.name && formik.errors.name ? (
-                <Form.Text className="text-danger">{formik.errors.name}</Form.Text>
+                <Form.Text className="text-danger">
+                  {formik.errors.name}
+                </Form.Text>
               ) : null}
             </Form.Group>
             <Form.Group controlId="formRID" className="mb-2" as={Col}>
@@ -171,7 +177,9 @@ const Ring: React.FC = () => {
                 onBlur={formik.handleBlur}
               />
               {formik.touched.rid && formik.errors.rid ? (
-                <Form.Text className="text-danger">{formik.errors.rid}</Form.Text>
+                <Form.Text className="text-danger">
+                  {formik.errors.rid}
+                </Form.Text>
               ) : null}
             </Form.Group>
           </Row>
@@ -258,7 +266,7 @@ const Ring: React.FC = () => {
                   try {
                     formik.setFieldValue("dataSource", e.jsObject);
                   } catch (error) {
-                    console.log(error);
+                    console.warn(error); // eslint-disable-line no-console
                   }
                 }}
               />
@@ -281,9 +289,8 @@ const Ring: React.FC = () => {
                   try {
                     formik.setFieldValue("ontology", e.jsObject);
                   } catch (error) {
-                    console.log(error);
+                    console.warn(error); // eslint-disable-line no-console
                   }
-
                 }}
               />
               {formik.touched.ontology && formik.errors.ontology ? (
@@ -295,8 +302,14 @@ const Ring: React.FC = () => {
           </Row>
         </Form>
       </Loader>
+      <ConfirmModal
+        itemName="ring"
+        open={confirmVisible}
+        setOpen={setConfirmVisible}
+        onConfirm={() => deleteRing(ring.rid)}
+      />
     </PageLayout>
   );
-}
+};
 
 export default Ring;

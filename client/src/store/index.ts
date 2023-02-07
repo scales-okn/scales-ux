@@ -1,5 +1,6 @@
 import { configureStore } from "@reduxjs/toolkit";
-import { combineReducers, applyMiddleware } from "redux";
+// import { combineReducers, applyMiddleware } from "redux";
+import { combineReducers } from "redux";
 import { TypedUseSelectorHook, useDispatch, useSelector } from "react-redux";
 import { persistReducer, persistStore } from "redux-persist";
 import storage from "redux-persist/lib/storage";
@@ -14,7 +15,7 @@ import notebook from "store/notebook";
 import panels from "store/panels";
 
 // Middlewares
-import { authMiddleware } from "store/auth";
+// import { authMiddleware } from "store/auth";
 
 // Root reducer
 const reducers = combineReducers({
