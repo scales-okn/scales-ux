@@ -1,8 +1,8 @@
 import React, { FunctionComponent, ReactNode } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faBalanceScale, faSearch } from "@fortawesome/free-solid-svg-icons";
+import { faBalanceScale } from "@fortawesome/free-solid-svg-icons";
 import { useSelector } from "react-redux";
-import { Navbar, Container, Nav, NavDropdown, Dropdown } from "react-bootstrap";
+import { Navbar, Container, Nav, Dropdown } from "react-bootstrap";
 import { LinkContainer } from "react-router-bootstrap";
 import "./PageLayout.scss";
 import { userSelector, logout } from "../../store/auth";
@@ -32,10 +32,10 @@ const PageLayout: FunctionComponent<Props> = (props) => {
           <Navbar.Toggle aria-controls="responsive-navbar-nav" />
           <Navbar.Collapse id="responsive-navbar-nav">
             <Nav className="me-auto">
-              <LinkContainer to="/">
+              {/* <LinkContainer to="/">
                 <Nav.Link>Dashboard</Nav.Link>
-              </LinkContainer>
-              <LinkContainer to="/notebooks">
+              </LinkContainer> */}
+              <LinkContainer to="/">
                 <Nav.Link>Notebooks</Nav.Link>
               </LinkContainer>
               {isAdmin && (

@@ -40,7 +40,7 @@ const Answers = ({
     if (!data || !statement || !plan || !satyrn) return;
     setAnswerType(getAnswersDisplayType(plan, data.results));
 
-    const formatedFilters = filters
+    const formattedFilters = filters
       ? filters.reduce((acc, { type, value }) => {
           if (!type || !value) return acc;
           if (type === "dateFiled") {
@@ -56,7 +56,7 @@ const Answers = ({
       : {};
 
     setAnswer(
-      satyrn.responseManager.generate(formatedFilters, statement?.plan, data),
+      satyrn.responseManager.generate(formattedFilters, statement?.plan, data),
     );
   }, [data, plan, satyrn, statement, filters]);
 

@@ -2,7 +2,7 @@ import React, { FunctionComponent } from "react";
 import { BrowserRouter, Redirect, Route, Switch } from "react-router-dom";
 import { Button } from "react-bootstrap";
 import { ErrorBoundary } from "react-error-boundary";
-import HomePage from "pages/HomePage";
+// import HomePage from "pages/HomePage";
 import UsersPage from "pages/UsersPage";
 import SignInPage from "pages/SignInPage";
 import SignUpPage from "pages/SignUpPage";
@@ -39,11 +39,11 @@ const App: FunctionComponent = () => {
         <Notifications />
         <BrowserRouter>
           <Switch>
-            <ProtectedRoute exact path="/" component={HomePage} />
+            <ProtectedRoute exact path="/" component={NotebooksPage} />
             <ProtectedRoute exact path="/users" component={UsersPage} />
             <ProtectedRoute exact path="/rings" component={RingsPage} />
             <ProtectedRoute exact path="/profile" component={ProfilePage} />
-            <ProtectedRoute exact path="/notebooks" component={NotebooksPage} />
+            {/* <ProtectedRoute exact path="/notebooks" component={NotebooksPage} /> */}
             <ProtectedRoute exact path="/rings" component={NotebooksPage} />
             <ProtectedRoute exact path="/rings/create" component={Ring} />
             <ProtectedRoute exact path="/rings/:ringId" component={Ring} />

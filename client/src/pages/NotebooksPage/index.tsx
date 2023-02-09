@@ -190,6 +190,7 @@ const NotebooksPage: FunctionComponent = () => {
                   // },
                 ]}
                 pageSize={10}
+                rowsPerPageOptions={[10]}
                 hideFooter={notebooks?.length <= 10 ? true : false}
                 rowCount={notebooks?.length}
                 checkboxSelection={false}
