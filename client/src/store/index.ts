@@ -8,14 +8,11 @@ import thunk from "redux-thunk";
 import { reducer as notificationsReducer } from "reapop";
 
 // Reducers
-import auth from "store/auth";
+import auth, { authMiddleware } from "store/auth";
 import rings from "store/rings";
 import notebooks from "store/notebooks";
 import notebook from "store/notebook";
 import panels from "store/panels";
-
-// Middlewares
-// import { authMiddleware } from "store/auth";
 
 // Root reducer
 const reducers = combineReducers({
@@ -38,7 +35,7 @@ const persistConfig = {
 const store = configureStore({
   reducer: persistReducer(persistConfig, reducers),
   devTools: process.env.NODE_ENV !== "production",
-  middleware: [thunk],
+  middleware: [thunk, authMiddleware],
 });
 
 // Persisted store
