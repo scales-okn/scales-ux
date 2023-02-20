@@ -1,7 +1,8 @@
-import React, { FunctionComponent } from "react";
+import React, { FunctionComponent, useState } from "react";
 import { Button } from "react-bootstrap";
 import { useAuthHeader } from "store/auth";
 import { useNotify } from "components/Notifications";
+import ConfirmModal from "components/SharedElements/ConfirmModal";
 
 type Props = {
   userId: number;
@@ -11,43 +12,52 @@ type Props = {
 const DeleteUser: FunctionComponent<Props> = ({ userId, disabled = false }) => {
   const authHeader = useAuthHeader();
   const { notify } = useNotify();
+  const [confirmVisible, setConfirmVisible] = useState(false);
 
   const deleteUser = () => {
-    window.confirm("Are you sure you want to delete this user?") &&
-      fetch(`/api/users/${userId}`, {
-        method: "DELETE",
-        headers: {
-          ...authHeader,
-          "Content-Type": "application/json",
-        },
-      })
-        .then((response) => response.json())
-        .then((response) => {
-          try {
-            switch (response.code) {
-              case 200:
-                notify(response.message, "success");
-                window.location.reload();
-                break;
-              default:
-                notify(response.message, "error");
-            }
-          } catch (error) {
-            console.warn(error);
+    fetch(`/api/users/${userId}`, {
+      method: "DELETE",
+      headers: {
+        ...authHeader,
+        "Content-Type": "application/json",
+      },
+    })
+      .then((response) => response.json())
+      .then((response) => {
+        try {
+          switch (response.code) {
+            case 200:
+              notify(response.message, "success");
+              window.location.reload(); // TODO: No need to reload, right?
+              break;
+            default:
+              notify(response.message, "error");
           }
-        })
-        .catch((error) => console.warn(error));
+        } catch (error) {
+          console.warn(error);
+        }
+      })
+      .catch((error) => console.warn(error));
   };
 
   return (
-    <Button
-      variant="outline-danger"
-      size="sm"
-      onClick={deleteUser}
-      disabled={disabled}
-    >
-      Delete
-    </Button>
+    <>
+      <Button
+        className="text-white float-end me-2"
+        variant="danger"
+        onClick={() => setConfirmVisible(true)}
+        disabled={disabled}
+        size="sm"
+      >
+        Delete
+      </Button>
+      <ConfirmModal
+        itemName="user"
+        open={confirmVisible}
+        setOpen={setConfirmVisible}
+        onConfirm={deleteUser}
+      />
+    </>
   );
 };
 

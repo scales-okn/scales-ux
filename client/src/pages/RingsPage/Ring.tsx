@@ -134,6 +134,10 @@ const Ring: React.FC = () => {
                 variant="primary"
                 type="submit"
                 className="text-white float-end ms-2"
+                style={{
+                  background: "var(--sea-green)",
+                  border: "none",
+                }}
               >
                 Submit
               </Button>
@@ -143,6 +147,9 @@ const Ring: React.FC = () => {
                   type="button"
                   onClick={() => setConfirmVisible(true)}
                   className="float-end"
+                  style={{
+                    border: "none",
+                  }}
                 >
                   Delete Ring
                 </Button>

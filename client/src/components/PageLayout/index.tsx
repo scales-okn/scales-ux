@@ -1,12 +1,14 @@
 import React, { FunctionComponent, ReactNode } from "react";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faBalanceScale } from "@fortawesome/free-solid-svg-icons";
-import { useSelector } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
+import { useLocation } from "react-router-dom";
+
+import { userSelector, logout } from "../../store/auth";
+
+import styled from "styled-components";
 import { Navbar, Container, Nav, Dropdown } from "react-bootstrap";
 import { LinkContainer } from "react-router-bootstrap";
 import "./PageLayout.scss";
-import { userSelector, logout } from "../../store/auth";
-import { useDispatch } from "react-redux";
+
 import Avatar from "react-avatar";
 import Copyright from "components/Copyright";
 
@@ -20,31 +22,64 @@ const PageLayout: FunctionComponent<Props> = (props) => {
   const { id = "", children, pageTitle } = props;
   const user = useSelector(userSelector);
   const dispatch = useDispatch();
+  const location = useLocation();
+  const { pathname } = location;
   const isAdmin = user.role === "admin";
+
+  const NavItem = styled.div`
+    color: white;
+    text-transform: uppercase;
+    font-size: 15px;
+    letter-spacing: 0.09em;
+    text-transform: uppercase;
+    font-weight: 400;
+    font-family: "Esteban", Serif;
+    margin-right: 50px;
+    cursor: pointer;
+    &:hover {
+      color: #e2d8f2;
+    }
+    &:after {
+      content: "";
+      display: block;
+      height: ${(props) => (props.active ? "2px" : "0")};
+      width: calc(100% - 2px);
+      border-radius: 2px;
+      background: white;
+      transition: 0.2s all;
+      &:hover {
+        color: #e2d8f2;
+      }
+    }
+  `;
+
+  const Logo = styled.img`
+    max-height: 75px;
+  `;
 
   return (
     <div className="app-page" id={id}>
-      <Navbar bg="white" className="mb-4 py-3">
-        <Container>
+      <Navbar
+        style={{ backgroundColor: "var(--main-purple)", maxHeight: "80px" }}
+        className="mb-4 py-3"
+      >
+        <Container style={{ maxWidth: "1148px" }}>
           <Navbar.Brand href="/">
-            <FontAwesomeIcon icon={faBalanceScale} /> &nbsp; SCALES
+            <Logo src="/ScalesLogo.png" />
           </Navbar.Brand>
           <Navbar.Toggle aria-controls="responsive-navbar-nav" />
           <Navbar.Collapse id="responsive-navbar-nav">
             <Nav className="me-auto">
-              {/* <LinkContainer to="/">
-                <Nav.Link>Dashboard</Nav.Link>
-              </LinkContainer> */}
               <LinkContainer to="/">
-                <Nav.Link>Notebooks</Nav.Link>
+                <NavItem active={pathname === "/"}>Notebooks</NavItem>
               </LinkContainer>
               {isAdmin && (
                 <>
                   <LinkContainer to="/rings">
-                    <Nav.Link>Rings</Nav.Link>
+                    <NavItem active={pathname === "/rings"}>Rings</NavItem>
                   </LinkContainer>
                   <LinkContainer to="/users">
-                    <Nav.Link>Users</Nav.Link>
+                    <NavItem active={pathname === "/users"}>Users</NavItem>
                   </LinkContainer>
                 </>
               )}
@@ -58,7 +93,6 @@ const PageLayout: FunctionComponent<Props> = (props) => {
                     round={true}
                     email={user?.email}
                   />
-                  <span className="ms-2">{user?.email}</span>
                 </Dropdown.Toggle>
 
                 <Dropdown.Menu>
@@ -70,6 +104,7 @@ const PageLayout: FunctionComponent<Props> = (props) => {
                   >
                     Sign Out
                   </Dropdown.Item>
+                  {/* TODO: Fix this dropdown */}
                 </Dropdown.Menu>
               </Dropdown>
             </Nav>

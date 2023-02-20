@@ -11,6 +11,14 @@ body {
   height: 100vh;
 }
 
+:root {
+  --main-purple: #4e2a84;
+  --light-green: #a2cd61;
+  --dark-green: #60842a;
+  --sea-green: #2a844e;
+  --baby-blue: #84ffff;
+}
+
 .cursor-pointer {
   cursor: pointer;
 }
@@ -20,7 +28,7 @@ body {
 }
 .MuiDataGrid-footerContainer {
   border-top: 1px solid rgba(224, 224, 224, 1);
-  background: #F9F9F9;
+  background: #f9f9f9;
 }
 .MuiDataGrid-root .MuiDataGrid-window {
   overflow-x: hidden !important;

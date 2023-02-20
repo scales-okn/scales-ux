@@ -25,6 +25,8 @@ const RingsPage: React.FC = () => {
           className="mb-3 text-white float-end me-3"
           style={{
             minWidth: "200px",
+            background: "var(--sea-green)",
+            border: "none",
           }}
         >
           <Link to="/rings/create" className="text-white text-decoration-none">

@@ -111,6 +111,10 @@ const Notebook: FunctionComponent = () => {
                     }
                   }}
                   disabled={savingNotebook}
+                  style={{
+                    background: "var(--sea-green)",
+                    border: "none",
+                  }}
                 >
                   {savingNotebook ? "Loading…" : "Create"}
                 </Button>

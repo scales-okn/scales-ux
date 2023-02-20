@@ -97,10 +97,10 @@ const NotebooksPage: FunctionComponent = () => {
               <Button
                 className="text-white float-end px-5"
                 variant="primary"
-                // style={{
-                //   backgroundColor: "#7DC142",
-                //   borderColor: "#7DC142",
-                // }}
+                style={{
+                  background: "var(--sea-green)",
+                  border: "none",
+                }}
               >
                 <Link
                   to="/notebooks/new"
