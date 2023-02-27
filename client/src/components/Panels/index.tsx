@@ -13,7 +13,7 @@ const Panels: FunctionComponent<PanelsProps> = ({ notebookId }) => {
   useEffect(() => {
     if (!notebookId || loadingPanels) return;
     getPanels(notebookId);
-  }, [notebookId]);
+  }, [notebookId]); // eslint-disable-line react-hooks/exhaustive-deps
 
   return (
     <Loader animation="border" isVisible={loadingPanels}>

@@ -38,7 +38,7 @@ export const create = async (req: Request, res: Response) => {
       { user }
     );
   } catch (error) {
-    console.warn(error);
+    console.warn(error); // eslint-disable-line no-console
 
     return res.send_internalServerError("An error occured, please try again!");
   }
@@ -57,7 +57,7 @@ export const login = async (req: Request, res: Response) => {
 
     // Check if user exists
     if (!user) {
-      console.log("User not found!", { email, password });
+      console.warn("User not found!", { email, password });
       return res.send_badRequest("Something went wrong. Please try again."); // We will send bad request in this case to not have a user checking breach.
     }
     const {
@@ -105,7 +105,7 @@ export const login = async (req: Request, res: Response) => {
       password: "Credentials are not correct!",
     });
   } catch (error) {
-    console.warn(error);
+    console.warn(error); // eslint-disable-line no-console
 
     return res.send_internalServerError("An error occured, please try again!");
   }
@@ -127,7 +127,7 @@ export const findAllUsers = async (req: Request, res: Response) => {
 
     return res.send_ok("", { users });
   } catch (error) {
-    console.warn(error);
+    console.warn(error); // eslint-disable-line no-console
 
     return res.send_internalServerError("An error occured, please try again!");
   }
@@ -156,7 +156,7 @@ export const findById = async (req: Request, res: Response) => {
       user: permisionsFieldsFilter(user.dataValues, permission),
     });
   } catch (error) {
-    console.warn(error);
+    console.warn(error); // eslint-disable-line no-console
     return res.send_internalServerError("An error occured, please try again!");
   }
 };
@@ -210,7 +210,7 @@ export const update = async (req: Request, res: Response) => {
       user: permisionsFieldsFilter(updatedUser, permission),
     });
   } catch (error) {
-    console.warn(error);
+    console.warn(error); // eslint-disable-line no-console
     return res.send_internalServerError("An error occured, please try again!");
   }
 };
@@ -232,7 +232,7 @@ export const deleteUser = async (req: Request, res: Response) => {
     }
     return res.send_internalServerError("Failed to delete user!");
   } catch (error) {
-    console.warn(error);
+    console.warn(error); // eslint-disable-line no-console
 
     return res.send_internalServerError("Failed to delete user!");
   }
@@ -283,7 +283,7 @@ export const verifyEmail = async (req: Request, res: Response) => {
       );
     }
   } catch (error) {
-    console.warn(error);
+    console.warn(error); // eslint-disable-line no-console
 
     return res.send_internalServerError("Failed to verify your email!");
   }
@@ -326,7 +326,7 @@ export const forgotPassword = async (req: Request, res: Response) => {
       return res.send_badRequest("Email not found!");
     }
   } catch (error) {
-    console.warn(error);
+    console.warn(error); // eslint-disable-line no-console
 
     return res.send_internalServerError("Failed to reset your password!");
   }
@@ -362,7 +362,7 @@ export const resetPassword = async (req: Request, res: Response) => {
       return res.send_internalServerError("Failed to reset your password!");
     }
   } catch (error) {
-    console.warn(error);
+    console.warn(error); // eslint-disable-line no-console
 
     return res.send_internalServerError("Failed to reset your password!");
   }

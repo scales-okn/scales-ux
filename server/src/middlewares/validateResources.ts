@@ -18,7 +18,7 @@ const validateResource =
         }
         return accumulator;
       }, {});
-      console.warn(error);
+      console.warn(error); // eslint-disable-line no-console
       return res.send_badRequest("Field errors!", errors);
     }
   };

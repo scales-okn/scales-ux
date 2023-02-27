@@ -65,7 +65,7 @@ export function fetchNotebooks() {
 
       dispatch(notebooksActions.fetchNotebooksSuccess(data.notebooks));
     } catch (error) {
-      console.warn(error);
+      console.warn(error); // eslint-disable-line no-console
       dispatch(notebooksActions.fetchNotebooksFailure());
     }
   };

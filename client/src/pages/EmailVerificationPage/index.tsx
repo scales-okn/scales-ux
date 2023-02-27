@@ -1,7 +1,7 @@
 import React, { FunctionComponent, useState } from "react";
 import { useEffect, useCallback } from "react";
-import { useHistory, useParams } from "react-router-dom";
-import { useNotify } from "../../components/Notifications";
+import { useParams } from "react-router-dom";
+// import { useNotify } from "../../components/Notifications";
 import { Container, Row, Col } from "react-bootstrap";
 import Loader from "components/Loader";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -14,8 +14,8 @@ interface Params {
 
 const EmailVerificationPage: FunctionComponent = () => {
   const { token } = useParams<Params>();
-  const history = useHistory();
-  const { notify } = useNotify();
+  // const history = useHistory();
+  // const { notify } = useNotify();
   const [isLoading, setIsLoading] = useState(true);
   const [message, setMessage] = useState("");
   const verifyEmail = useCallback(async () => {
@@ -29,7 +29,8 @@ const EmailVerificationPage: FunctionComponent = () => {
           token,
         }),
       });
-      const { data, code, message, errors } = await response.json();
+      // const { data, code, message, errors } = await response.json();
+      const { message } = await response.json();
       setIsLoading(false);
       setMessage(message);
       // switch (code) {
@@ -43,7 +44,7 @@ const EmailVerificationPage: FunctionComponent = () => {
       //   }
       // }
     } catch (error) {
-      console.warn(error);
+      console.warn(error); // eslint-disable-line no-console
     }
 
     // history.push("/");

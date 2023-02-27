@@ -20,11 +20,11 @@ type Props = {
 
 const Analysis: FunctionComponent<Props> = ({ panelId, ring, info }) => {
   const {
-    panel,
+    // panel,
     analysis,
-    addPanelAnalysis,
+    // addPanelAnalysis,
     removePanelAnalysis,
-    setPanelAnalysisStatement,
+    // setPanelAnalysisStatement,
     filters,
   } = usePanel(panelId);
 
@@ -54,7 +54,7 @@ const Analysis: FunctionComponent<Props> = ({ panelId, ring, info }) => {
     );
     setSatyrn(satyrn);
     setStatements(satyrn.planManager.generate());
-  }, [info]);
+  }, [info]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const getStatement = (statement) => {
     return statements.find((s) => s.statement === statement);
@@ -118,7 +118,7 @@ const Analysis: FunctionComponent<Props> = ({ panelId, ring, info }) => {
       setData(data);
       setAnswersLoading(false);
     } catch (error) {
-      console.warn(error);
+      console.warn(error); // eslint-disable-line no-console
       setData(null);
       setAnswersLoading(false);
       notify("Could not fetch results", "error");
@@ -135,7 +135,7 @@ const Analysis: FunctionComponent<Props> = ({ panelId, ring, info }) => {
     if (selectedStatement && (freshStatement || freshParameter)) {
       getAnswers(parameters, selectedStatement, selectedParameter);
     }
-  }, [selectedStatement, selectedParameter, parameters]);
+  }, [selectedStatement, selectedParameter, parameters]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const fetchAutocompleteSuggestions = async (type, query) => {
     setLoadingAutosuggestions(true);
@@ -157,7 +157,7 @@ const Analysis: FunctionComponent<Props> = ({ panelId, ring, info }) => {
         notify("Could not fetch autocomplete suggestions", "error");
       }
     } catch (error) {
-      console.warn(error);
+      console.warn(error); // eslint-disable-line no-console
       notify("Could not fetch autocomplete suggestions", "error");
     } finally {
       setLoadingAutosuggestions(false);

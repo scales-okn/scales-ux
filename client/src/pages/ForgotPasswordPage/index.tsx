@@ -55,7 +55,7 @@ const ForgotPassword: FunctionComponent = () => {
               }
             }
           } catch (error) {
-            console.warn(error);
+            console.warn(error); // eslint-disable-line no-console
           }
         });
     },

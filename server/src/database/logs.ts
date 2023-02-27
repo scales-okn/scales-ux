@@ -20,7 +20,7 @@ export default (sequelize) => {
 
       log.save();
     } catch (error) {
-      console.warn(error);
+      console.warn(error); // eslint-disable-line no-console
     }
   };
 

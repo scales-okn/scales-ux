@@ -1,9 +1,10 @@
-import React, { FunctionComponent, useEffect, useState } from "react";
+import React, { FunctionComponent, useState } from "react";
 import PageLayout from "../../components/PageLayout";
 import Loader from "../../components/Loader";
 import { DataGrid, GridCellParams } from "@material-ui/data-grid";
 import { Link } from "react-router-dom";
 import { Form, Row, Col, Button, InputGroup } from "react-bootstrap";
+import { useEffectOnce } from "react-use";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faSearch } from "@fortawesome/free-solid-svg-icons";
 import dayjs from "dayjs";
@@ -28,9 +29,9 @@ const NotebooksPage: FunctionComponent = () => {
   //   });
   // };
 
-  useEffect(() => {
+  useEffectOnce(() => {
     fetchNotebooks();
-  }, []);
+  });
 
   const notebooksData = notebooks
     .filter((notebook) => {

@@ -44,25 +44,25 @@ const Filter: FunctionComponent<Props> = ({ panelId, filter }) => {
       ];
       setPanelFilters(newFilters);
     } catch (error) {
-      console.warn(error);
+      console.warn(error); // eslint-disable-line no-console
     }
   };
 
-  const getFilterInputById = (id: string) => {
-    try {
-      return filters?.find((filter: Filter) => filter.id === id);
-    } catch (error) {
-      console.warn(error);
-    }
-  };
+  // const getFilterInputById = (id: string) => {
+  //   try {
+  //     return filters?.find((filter: Filter) => filter.id === id);
+  //   } catch (error) {
+  //     console.warn(error); // eslint-disable-line no-console
+  //   }
+  // };
 
-  const getFilterColumnByKey = (key: string) => {
-    try {
-      return info?.columns?.find((column) => column.key == key);
-    } catch (error) {
-      console.warn(error);
-    }
-  };
+  // const getFilterColumnByKey = (key: string) => {
+  //   try {
+  //     return info?.columns?.find((column) => column.key === key);
+  //   } catch (error) {
+  //     console.warn(error); // eslint-disable-line no-console
+  //   }
+  // };
 
   const getFilterOptionsByKey = (key) => {
     if (!key) return null;
@@ -70,7 +70,7 @@ const Filter: FunctionComponent<Props> = ({ panelId, filter }) => {
     try {
       return info?.filters?.find((filter) => filter.includes(key))[1];
     } catch (error) {
-      console.warn(error);
+      console.warn(error); // eslint-disable-line no-console
     }
   };
 
@@ -80,11 +80,11 @@ const Filter: FunctionComponent<Props> = ({ panelId, filter }) => {
         .map((filter) => ({ key: filter[0], ...filter[1] }))
         .sort((a, b) => a.key.localeCompare(b.key));
     } catch (error) {
-      console.warn(error);
+      console.warn(error); // eslint-disable-line no-console
     }
   };
 
-  const filterColumn = getFilterColumnByKey(type);
+  // const filterColumn = getFilterColumnByKey(type);
   const filterOptions = getFilterOptionsByKey(type);
 
   const fetchAutocompleteSuggestions = async (type, query) => {
@@ -101,7 +101,7 @@ const Filter: FunctionComponent<Props> = ({ panelId, filter }) => {
         notify("Could not fetch autocomplete suggestions", "error");
       }
     } catch (error) {
-      console.warn(error);
+      console.warn(error); // eslint-disable-line no-console
       notify("Could not fetch autocomplete suggestions", "error");
     } finally {
       setIsLoading(false);

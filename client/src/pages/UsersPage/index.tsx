@@ -1,10 +1,11 @@
-import React, { FunctionComponent, useState, useEffect } from "react";
+import React, { FunctionComponent, useState } from "react";
 import {
   DataGrid,
   GridColDef,
   GridValueGetterParams,
   GridCellParams,
 } from "@material-ui/data-grid";
+import { useEffectOnce } from "react-use";
 import { Tooltip, Typography } from "@material-ui/core";
 import PageLayout from "../../components/PageLayout";
 import NotAuthorized from "../../components/NotAuthorized";
@@ -101,7 +102,7 @@ const AdminUsersPages: FunctionComponent = () => {
     });
   }
 
-  useEffect(() => {
+  useEffectOnce(() => {
     fetch(`/api/users`, {
       headers: {
         ...authorizationHeader,
@@ -112,7 +113,7 @@ const AdminUsersPages: FunctionComponent = () => {
       .then((response) => {
         setRows(response.data.users);
       });
-  }, []);
+  });
 
   return (
     <PageLayout>

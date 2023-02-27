@@ -1,5 +1,5 @@
 import React, { FunctionComponent } from "react";
-import { AsyncTypeahead, Typeahead } from "react-bootstrap-typeahead";
+import { AsyncTypeahead } from "react-bootstrap-typeahead";
 import uniqid from "uniqid";
 import { Form, Col, Row } from "react-bootstrap";
 

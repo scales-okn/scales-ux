@@ -34,10 +34,10 @@ const DeleteUser: FunctionComponent<Props> = ({ userId, disabled = false }) => {
               notify(response.message, "error");
           }
         } catch (error) {
-          console.warn(error);
+          console.warn(error); // eslint-disable-line no-console
         }
       })
-      .catch((error) => console.warn(error));
+      .catch((error) => console.warn(error)); // eslint-disable-line no-console
   };
 
   return (

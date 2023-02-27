@@ -1,5 +1,4 @@
-import React, { ChangeEvent, FunctionComponent, useState } from "react";
-import { useHistory } from "react-router-dom";
+import React, { FunctionComponent, useState } from "react";
 import { useFormik } from "formik";
 import * as yup from "yup";
 import Copyright from "components/Copyright";
@@ -7,7 +6,6 @@ import { UserSignInFields, UserSignInValidationSchema } from "../SignInPage";
 import { Container, Form, Button, Col, Row } from "react-bootstrap";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faBalanceScale } from "@fortawesome/free-solid-svg-icons";
-import { useNotify } from "components/Notifications";
 import Loader from "components/Loader";
 
 interface UserSignUpFields extends UserSignInFields {
@@ -40,8 +38,8 @@ export const UserSignUpValidationSchema = UserSignInValidationSchema.concat(
 );
 
 const SignUpPage: FunctionComponent = () => {
-  const history = useHistory();
-  const { notify } = useNotify();
+  // const history = useHistory();
+  // const { notify } = useNotify();
   const [isLoading, setIsLoading] = useState(false);
   const [message, setMessage] = useState("");
 
@@ -84,11 +82,11 @@ const SignUpPage: FunctionComponent = () => {
               }
             }
           } catch (error) {
-            console.warn(error);
+            console.warn(error); // eslint-disable-line no-console
           }
         })
         .catch((error) => {
-          console.warn(error);
+          console.warn(error); // eslint-disable-line no-console
         })
         .finally(() => {
           setIsLoading(false);

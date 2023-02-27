@@ -469,7 +469,7 @@ export const getPanelResults =
         dispatch(panelsActions.getPanelResultsFailure({ panelId }));
       }
     } catch (error) {
-      console.warn(error);
+      console.warn(error); // eslint-disable-line no-console
       dispatch(notify("Error fetching results", "error"));
       dispatch(panelsActions.getPanelResultsFailure({ panelId }));
     }

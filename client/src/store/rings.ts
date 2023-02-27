@@ -93,7 +93,7 @@ export const getRings = () => {
         dispatch(ringsActions.getRingsFailure());
       }
     } catch (error) {
-      console.warn(error);
+      console.warn(error); // eslint-disable-line no-console
       dispatch(ringsActions.getRingsFailure());
     }
   };

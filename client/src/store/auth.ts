@@ -93,7 +93,7 @@ export const login = (email: string, password: string) => {
           break;
       }
     } catch (error) {
-      console.warn(error);
+      console.warn(error); // eslint-disable-line no-console
       dispatch(notify(useUnknownErrorNotificationMessage, "error"));
       dispatch(authActions.signInFailure(error));
     }

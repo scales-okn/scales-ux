@@ -1,5 +1,6 @@
 import React, { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
+import { useEffectOnce } from "react-use";
 import NotificationsSystem, {
   bootstrapTheme,
   dismissNotification,
@@ -35,10 +36,10 @@ const Notifications: React.FC = () => {
     });
   }, []);
 
-  useEffect(() => {
+  useEffectOnce(() => {
     window.addEventListener("error", onError);
     return () => window.removeEventListener("error", onError);
-  }, []);
+  });
 
   return (
     <div>

@@ -24,7 +24,7 @@ const checkAuth = async (req: Request, res: Response, next: NextFunction) => {
       }
     )(req, res, next);
   } catch (error) {
-    console.warn(error);
+    console.warn(error); // eslint-disable-line no-console
     return res.send_internalServerError("An error occurred, please try again!");
   }
 };

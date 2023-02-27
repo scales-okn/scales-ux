@@ -22,7 +22,7 @@ const FilterTypeDropDown: FunctionComponent<FilterTypeProps> = (props) => {
     getFilterOptionsByKey,
     setFilter,
   } = props;
-  const { id, type } = filter;
+  const { type } = filter;
 
   const filterOptions = getFilterOptionsByKey(type);
 
@@ -37,9 +37,9 @@ const FilterTypeDropDown: FunctionComponent<FilterTypeProps> = (props) => {
         setFilter({ ...filter, type: filterInput.key });
       }
     } catch (error) {
-      console.warn(error);
+      console.warn(error); // eslint-disable-line no-console
     }
-  }, [filterInput]);
+  }, [filterInput]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const filtersToRender = getFiltersNormalized()?.map((filterInput) => {
     const { allowMultiple, key } = filterInput;

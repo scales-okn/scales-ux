@@ -58,7 +58,7 @@ const Answers = ({
     setAnswer(
       satyrn.responseManager.generate(formattedFilters, statement?.plan, data),
     );
-  }, [data, plan, satyrn, statement, filters]);
+  }, [data, plan, satyrn, statement, filters]); // eslint-disable-line react-hooks/exhaustive-deps
 
   return (
     <div className="answers">

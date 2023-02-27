@@ -170,7 +170,6 @@ const Panel: FunctionComponent<PanelProps> = ({ panelId }) => {
                 }}
                 placeholder="Your Panel Description Here"
                 onChange={(event) => {
-                  console.log(event);
                   setPanelDescription(event.target.value);
                 }}
                 value={panel?.description}
