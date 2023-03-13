@@ -23,7 +23,7 @@ export const create = async (req: Request, res: Response) => {
   } catch (error) {
     console.warn(error); // eslint-disable-line no-console
 
-    return res.send_internalServerError("An error occured, please try again!");
+    return res.send_internalServerError("An error occurred, please try again!");
   }
 };
 
@@ -39,7 +39,7 @@ export const findAll = async (req: Request, res: Response) => {
   } catch (error) {
     console.warn(error); // eslint-disable-line no-console
 
-    return res.send_internalServerError("An error occured, please try again!");
+    return res.send_internalServerError("An error occurred, please try again!");
   }
 };
 
@@ -58,7 +58,7 @@ export const findById = async (req: Request, res: Response) => {
   } catch (error) {
     console.warn(error); // eslint-disable-line no-console
 
-    return res.send_internalServerError("An error occured, please try again!");
+    return res.send_internalServerError("An error occurred, please try again!");
   }
 };
 
@@ -88,7 +88,7 @@ export const update = async (req: Request, res: Response) => {
   } catch (error) {
     console.warn(error); // eslint-disable-line no-console
 
-    return res.send_internalServerError("An error occured, please try again!");
+    return res.send_internalServerError("An error occurred, please try again!");
   }
 };
 

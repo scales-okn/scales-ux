@@ -1,12 +1,13 @@
-import React, { FunctionComponent, ReactNode } from "react";
+import React, { FunctionComponent, ReactNode, useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { useLocation } from "react-router-dom";
 
 import { userSelector, logout } from "../../store/auth";
 
-import styled from "styled-components";
-import { Navbar, Container, Nav, Dropdown } from "react-bootstrap";
+import * as S from "./styles";
+import { Navbar, Container, Nav, Dropdown, Modal } from "react-bootstrap";
 import { LinkContainer } from "react-router-bootstrap";
+
 import "./PageLayout.scss";
 
 import Avatar from "react-avatar";
@@ -24,99 +25,86 @@ const PageLayout: FunctionComponent<Props> = (props) => {
   const dispatch = useDispatch();
   const location = useLocation();
   const { pathname } = location;
-  const isAdmin = user.role === "admin";
-
-  const NavItem = styled.div`
-    color: white;
-    text-transform: uppercase;
-    font-size: 15px;
-    letter-spacing: 0.09em;
-    text-transform: uppercase;
-    font-weight: 400;
-    font-family: "Esteban", Serif;
-    margin-right: 50px;
-    cursor: pointer;
-    &:hover {
-      color: #e2d8f2;
-    }
-    &:after {
-      content: "";
-      display: block;
-      height: ${(props) => (props.active ? "2px" : "0")};
-      width: calc(100% - 2px);
-      border-radius: 2px;
-      background: white;
-      transition: 0.2s all;
-      &:hover {
-        color: #e2d8f2;
-      }
-    }
-  `;
-
-  const Logo = styled.img`
-    max-height: 75px;
-  `;
+  const isAdmin = user?.role === "admin";
+  const [feedbackModalOpen, setFeedbackModalOpen] = useState(false);
 
   return (
-    <div className="app-page" id={id}>
-      <Navbar
-        style={{ backgroundColor: "var(--main-purple)", maxHeight: "80px" }}
-        className="mb-4 py-3"
-      >
-        <Container style={{ maxWidth: "1148px" }}>
-          <Navbar.Brand href="/">
-            <Logo src="/ScalesLogo.png" />
-          </Navbar.Brand>
-          <Navbar.Toggle aria-controls="responsive-navbar-nav" />
-          <Navbar.Collapse id="responsive-navbar-nav">
-            <Nav className="me-auto">
-              <LinkContainer to="/">
-                <NavItem active={pathname === "/"}>Notebooks</NavItem>
-              </LinkContainer>
-              {isAdmin && (
-                <>
-                  <LinkContainer to="/rings">
-                    <NavItem active={pathname === "/rings"}>Rings</NavItem>
+    <>
+      <div className="app-page" id={id}>
+        <Navbar
+          style={{ backgroundColor: "var(--main-purple)", maxHeight: "80px" }}
+          className="mb-4 py-3"
+        >
+          <Container style={{ maxWidth: "1148px" }}>
+            <Navbar.Brand href="/">
+              <S.Logo
+                src="/ScalesLogo.png"
+                style={{ width: 247, height: 75 }}
+              />
+            </Navbar.Brand>
+            <Navbar.Toggle aria-controls="responsive-navbar-nav" />
+            {user && (
+              <Navbar.Collapse id="responsive-navbar-nav">
+                <Nav className="me-auto">
+                  <LinkContainer to="/">
+                    <S.NavItem active={pathname === "/"}>Notebooks</S.NavItem>
                   </LinkContainer>
-                  <LinkContainer to="/users">
-                    <NavItem active={pathname === "/users"}>Users</NavItem>
-                  </LinkContainer>
-                </>
-              )}
-            </Nav>
-            <Nav>
-              <Dropdown>
-                <Dropdown.Toggle variant="link" className="profile-toggler">
-                  <Avatar
-                    name={`${user?.firstName} ${user?.lastName}`}
-                    size="36"
-                    round={true}
-                    email={user?.email}
-                  />
-                </Dropdown.Toggle>
+                  {isAdmin && (
+                    <>
+                      <LinkContainer to="/rings">
+                        <S.NavItem active={pathname === "/rings"}>
+                          Rings
+                        </S.NavItem>
+                      </LinkContainer>
+                      <LinkContainer to="/users">
+                        <S.NavItem active={pathname === "/users"}>
+                          Users
+                        </S.NavItem>
+                      </LinkContainer>
+                    </>
+                  )}
+                </Nav>
+                <Nav>
+                  <Dropdown>
+                    <Dropdown.Toggle variant="link" className="profile-toggler">
+                      <Avatar
+                        name={`${user?.firstName} ${user?.lastName}`}
+                        size="36"
+                        round={true}
+                        email={user?.email}
+                      />
+                    </Dropdown.Toggle>
 
-                <Dropdown.Menu>
-                  <Dropdown.Item
-                    style={{
-                      minWidth: "280px",
-                    }}
-                    onClick={() => dispatch(logout())}
-                  >
-                    Sign Out
-                  </Dropdown.Item>
-                  {/* TODO: Fix this dropdown */}
-                </Dropdown.Menu>
-              </Dropdown>
-            </Nav>
-          </Navbar.Collapse>
+                    <Dropdown.Menu>
+                      <Dropdown.Item
+                        style={{
+                          minWidth: "280px",
+                        }}
+                        onClick={() => dispatch(logout())}
+                      >
+                        Sign Out
+                      </Dropdown.Item>
+                      {/* TODO: Fix this dropdown */}
+                    </Dropdown.Menu>
+                  </Dropdown>
+                </Nav>
+              </Navbar.Collapse>
+            )}
+          </Container>
+        </Navbar>
+        <Container id="main" className="main">
+          {pageTitle && <h4>{pageTitle}</h4>}
+          {children}
         </Container>
-      </Navbar>
-      <Container id="main" className="main">
-        {pageTitle && <h4>{pageTitle}</h4>}
-        {children}
-      </Container>
-      <Copyright />
-    </div>
+        <Copyright />
+      </div>
+      <S.FeedbackWidget onClick={() => setFeedbackModalOpen(true)}>
+        Feedback
+      </S.FeedbackWidget>
+      <Modal show={false}>
+        <div>{`Tell us how we're doing`}</div>
+      </Modal>
+    </>
   );
 };
 

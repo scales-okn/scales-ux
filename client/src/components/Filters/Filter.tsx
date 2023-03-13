@@ -11,14 +11,14 @@ import { useRing } from "../../store/rings";
 import { DATE_FORMAT } from "../../constants";
 import { useNotify } from "../../components/Notifications";
 
-export type Filter = {
+export type FilterT = {
   id: string;
   value: string | number;
   type: string;
 };
 
 type Props = {
-  filter: Filter;
+  filter: FilterT;
   panelId: string;
 };
 
@@ -34,11 +34,11 @@ const Filter: FunctionComponent<Props> = ({ panelId, filter }) => {
   const [dateValue, setDateValue] = useState<string>("");
   const { notify } = useNotify();
 
-  const setFilter = (filter: Filter) => {
+  const setFilter = (filter: FilterT) => {
     try {
       const newFilters = [
         ...filters.filter(
-          (prevFilterInput: Filter) => prevFilterInput.id !== filter.id,
+          (prevFilterInput: FilterT) => prevFilterInput.id !== filter.id,
         ),
         { ...filter },
       ];
@@ -200,7 +200,7 @@ const Filter: FunctionComponent<Props> = ({ panelId, filter }) => {
           className="cursor-pointer bg-transparent"
           onClick={async () => {
             const newFilters = [
-              ...filters.filter((filter: Filter) => filter.id !== id),
+              ...filters.filter((filter: FilterT) => filter.id !== id),
             ];
             setPanelFilters(newFilters);
             getPanelResults(newFilters);

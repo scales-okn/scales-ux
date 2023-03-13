@@ -134,16 +134,7 @@ export const authMiddleware =
   (store: Store) => (next: Dispatch) => (action: Action) => {
     next(action);
     if (action.type === "auth/signOut") {
-      setTimeout(
-        () =>
-          store.dispatch(
-            notify(
-              "You've been logged off. Your session has expired.",
-              "warning",
-            ),
-          ),
-        300,
-      );
+      setTimeout(() => store.dispatch(notify("You have been logged out")), 300);
     } else {
       const { exp, iat } = store.getState().auth;
       if (exp && iat) {

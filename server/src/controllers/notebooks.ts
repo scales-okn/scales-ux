@@ -29,11 +29,11 @@ export const create = async (req: Request, res: Response) => {
       parent,
     });
 
-    return res.send_ok("Notebook created succesfully!", { notebook });
+    return res.send_ok("Notebook created successfully!", { notebook });
   } catch (error) {
     console.warn(error); // eslint-disable-line no-console
 
-    return res.send_internalServerError("An error occured, please try again!");
+    return res.send_internalServerError("An error occurred, please try again!");
   }
 };
 
@@ -48,16 +48,21 @@ export const findAll = async (req: Request, res: Response) => {
       return res.send_forbidden("Not allowed!");
     }
 
-    let where = {};
+    let where = { deleted: false };
     if (role !== "admin") {
-      where = {
-        deleted: false,
-        [Op.or]: [
-          { visibility: "public" },
-          { collaborators: { [Op.contains]: [userId] } },
-          { userId },
-        ],
-      };
+      where[Op.or] = [
+        { visibility: "public" },
+        { collaborators: { [Op.contains]: [userId] } },
+        { userId },
+      ];
+      // where = {
+      //   deleted: false,
+      //   [Op.or]: [
+      //     { visibility: "public" },
+      //     { collaborators: { [Op.contains]: [userId] } },
+      //     { userId },
+      //   ],
+      // };
     }
     const notebooks = await sequelize.models.Notebook.findAll({
       where,
@@ -68,7 +73,7 @@ export const findAll = async (req: Request, res: Response) => {
   } catch (error) {
     console.warn(error); // eslint-disable-line no-console
 
-    return res.send_internalServerError("An error occured, please try again!");
+    return res.send_internalServerError("An error occurred, please try again!");
   }
 };
 
@@ -108,7 +113,7 @@ export const findById = async (req: Request, res: Response) => {
   } catch (error) {
     console.warn(error); // eslint-disable-line no-console
 
-    return res.send_internalServerError("An error occured, please try again!");
+    return res.send_internalServerError("An error occurred, please try again!");
   }
 };
 
@@ -136,7 +141,7 @@ export const history = async (req: Request, res: Response) => {
   } catch (error) {
     console.warn(error); // eslint-disable-line no-console
 
-    return res.send_internalServerError("An error occured, please try again!");
+    return res.send_internalServerError("An error occurred, please try again!");
   }
 };
 
@@ -219,7 +224,7 @@ export const update = async (req: Request, res: Response) => {
   } catch (error) {
     console.warn(error); // eslint-disable-line no-console
 
-    return res.send_internalServerError("An error occured, please try again!");
+    return res.send_internalServerError("An error occurred, please try again!");
   }
 };
 
@@ -279,6 +284,6 @@ export const panels = async (req: Request, res: Response) => {
   } catch (error) {
     console.warn(error); // eslint-disable-line no-console
 
-    return res.send_internalServerError("An error occured, please try again!");
+    return res.send_internalServerError("An error occurred, please try again!");
   }
 };
