@@ -95,29 +95,30 @@ const Answers = ({
                   <Bar dataKey={data.units.results[1]} fill="#82ca9d" />
                 </BarChart>
               )}
-
               {answerType === "line" && (
                 <LineChart
                   width={1000}
                   height={600}
-                  data={data.results.map((result) => ({
-                    name: result?.[1],
-                    [data.units.results[1]]: result?.[1],
-                    [data.units.results[2]]: result?.[2],
-                  }))}
+                  data={data.results.map((result) => {
+                    return {
+                      name: result?.[1],
+                      [data.units.results?.[0]?.[0]]: result?.[0],
+                      [data.units.results?.[1]?.[0]]: result?.[1],
+                    };
+                  })}
                 >
-                  <XAxis dataKey={data.units.results[1]} />
+                  <XAxis dataKey={data.units.results[0]?.[0]} />
                   <YAxis />
                   <Tooltip />
                   <CartesianGrid stroke="#eee" strokeDasharray="5 5" />
                   <Line
                     type="monotone"
-                    dataKey={data.units.results[2]}
+                    dataKey={data.units.results[1]?.[0]}
                     stroke="#82ca9d"
                   />
                   <Line
                     type="monotone"
-                    dataKey={data.units.results[1]}
+                    dataKey={data.units.results[0]?.[0]}
                     stroke="#82ca9d"
                   />
                 </LineChart>
