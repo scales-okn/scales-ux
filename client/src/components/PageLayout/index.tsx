@@ -1,17 +1,17 @@
-import React, { FunctionComponent, ReactNode, useState } from "react";
+import React, { FunctionComponent, ReactNode } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { useLocation } from "react-router-dom";
 
 import { userSelector, logout } from "../../store/auth";
 
 import * as S from "./styles";
-import { Navbar, Container, Nav, Dropdown, Modal } from "react-bootstrap";
+import { Navbar, Container, Nav, Dropdown } from "react-bootstrap";
+import FeedbackWidget from "./FeedbackWidget";
 import { LinkContainer } from "react-router-bootstrap";
 
 import "./PageLayout.scss";
 
 import Avatar from "react-avatar";
-import Copyright from "components/Copyright";
 
 type Props = {
   pageTitle?: string;
@@ -26,7 +26,6 @@ const PageLayout: FunctionComponent<Props> = (props) => {
   const location = useLocation();
   const { pathname } = location;
   const isAdmin = user?.role === "admin";
-  const [feedbackModalOpen, setFeedbackModalOpen] = useState(false);
 
   return (
     <>
@@ -35,7 +34,7 @@ const PageLayout: FunctionComponent<Props> = (props) => {
           style={{ backgroundColor: "var(--main-purple)", maxHeight: "80px" }}
           className="mb-4 py-3"
         >
-          <Container style={{ maxWidth: "1148px" }}>
+          <Container>
             <Navbar.Brand href="/">
               <S.Logo
                 src="/ScalesLogo.png"
@@ -96,14 +95,9 @@ const PageLayout: FunctionComponent<Props> = (props) => {
           {pageTitle && <h4>{pageTitle}</h4>}
           {children}
         </Container>
-        <Copyright />
       </div>
-      <S.FeedbackWidget onClick={() => setFeedbackModalOpen(true)}>
-        Feedback
-      </S.FeedbackWidget>
-      <Modal show={false}>
-        <div>{`Tell us how we're doing`}</div>
-      </Modal>
+
+      <FeedbackWidget />
     </>
   );
 };

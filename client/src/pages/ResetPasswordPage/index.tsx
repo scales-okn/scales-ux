@@ -3,7 +3,6 @@ import { useHistory, useParams } from "react-router-dom";
 import { useFormik } from "formik";
 import * as yup from "yup";
 
-import Copyright from "../../components/Copyright";
 import { useNotify } from "components/Notifications";
 
 import { Button, Col, Container, Form, Row } from "react-bootstrap";
@@ -124,7 +123,6 @@ const ResetPassword: FunctionComponent = () => {
                 <a href="/sign-in" className="small">{`Sing in`}</a>
               </Col>
             </Row>
-            <Copyright />
           </Form>
         </Col>
       </Row>

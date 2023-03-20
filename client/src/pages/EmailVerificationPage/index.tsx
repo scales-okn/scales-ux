@@ -6,7 +6,6 @@ import { Container, Row, Col } from "react-bootstrap";
 import Loader from "components/Loader";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faBalanceScale } from "@fortawesome/free-solid-svg-icons";
-import Copyright from "components/Copyright";
 
 interface Params {
   token: string;
@@ -64,7 +63,6 @@ const EmailVerificationPage: FunctionComponent = () => {
             <p>{message}</p>
           </Loader>
         </Col>
-        <Copyright />
       </Row>
     </Container>
   );
