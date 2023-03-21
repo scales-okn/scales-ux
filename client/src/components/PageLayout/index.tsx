@@ -6,7 +6,7 @@ import { userSelector, logout } from "../../store/auth";
 
 import * as S from "./styles";
 import { Navbar, Container, Nav, Dropdown } from "react-bootstrap";
-import FeedbackWidget from "./FeedbackWidget";
+// import FeedbackWidget from "./FeedbackWidget";
 import { LinkContainer } from "react-router-bootstrap";
 
 import "./PageLayout.scss";
@@ -97,7 +97,7 @@ const PageLayout: FunctionComponent<Props> = (props) => {
         </Container>
       </div>
 
-      <FeedbackWidget />
+      {/* <FeedbackWidget /> */}
     </>
   );
 };
