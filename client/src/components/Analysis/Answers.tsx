@@ -102,8 +102,8 @@ const Answers = ({
                   data={data.results.map((result) => {
                     return {
                       name: result?.[1],
-                      [data.units.results?.[0]?.[0]]: result?.[0],
-                      [data.units.results?.[1]?.[0]]: result?.[1],
+                      [data.units.results?.[0]?.[0]]: parseInt(result?.[0]),
+                      [data.units.results?.[1]?.[0]]: parseInt(result?.[1]),
                     };
                   })}
                 >
@@ -116,11 +116,12 @@ const Answers = ({
                     dataKey={data.units.results[1]?.[0]}
                     stroke="#82ca9d"
                   />
-                  <Line
+                  {/* the below was plotting x-values (e.g. years) as y-values; not sure what the intended outcome was */}
+                  {/* <Line
                     type="monotone"
                     dataKey={data.units.results[0]?.[0]}
                     stroke="#82ca9d"
-                  />
+                  /> */}
                 </LineChart>
               )}
             </Col>
