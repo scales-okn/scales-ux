@@ -17,6 +17,7 @@ import Loader from "components/Loader";
 import { usePanel } from "store/panels";
 import dayjs from "dayjs";
 import { isEmpty } from "lodash";
+import renderHTML from "helpers/renderHTML";
 
 const Answers = ({
   panelId,
@@ -67,7 +68,7 @@ const Answers = ({
           {answer && (
             <div className="mb-3 mt-4">
               <i>Answer: </i>
-              {answer}
+              {renderHTML(answer)}
             </div>
           )}
           {data && (
