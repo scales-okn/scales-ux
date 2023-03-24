@@ -13,6 +13,7 @@ import usersRouter from "./routes/users";
 import ringsRouter from "./routes/rings";
 import panelsRouter from "./routes/panels";
 import notebooksRouter from "./routes/notebooks";
+import feedbackRouter from "./routes/feedback";
 
 const app = express();
 
@@ -64,6 +65,9 @@ app.use("/api/rings", ringsRouter);
 
 // Notebooks Router
 app.use("/api/notebooks", notebooksRouter);
+
+// Feedback Router
+app.use("/api/feedback", feedbackRouter);
 
 // Panels Router
 app.use("/api/panels", panelsRouter);

@@ -4,6 +4,7 @@ import { Button } from "react-bootstrap";
 import { ErrorBoundary } from "react-error-boundary";
 // import HomePage from "pages/HomePage";
 import UsersPage from "pages/UsersPage";
+import FeedbackPage from "pages/FeedbackPage";
 import SignInPage from "pages/SignInPage";
 import SignUpPage from "pages/SignUpPage";
 import ProfilePage from "pages/ProfilePage";
@@ -41,6 +42,7 @@ const App: FunctionComponent = () => {
           <Switch>
             <ProtectedRoute exact path="/" component={NotebooksPage} />
             <ProtectedRoute exact path="/users" component={UsersPage} />
+            <ProtectedRoute exact path="/feedback" component={FeedbackPage} />
             <ProtectedRoute exact path="/rings" component={RingsPage} />
             <ProtectedRoute exact path="/profile" component={ProfilePage} />
             {/* <ProtectedRoute exact path="/notebooks" component={NotebooksPage} /> */}

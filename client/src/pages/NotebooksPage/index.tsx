@@ -57,6 +57,73 @@ const NotebooksPage: FunctionComponent = () => {
           .search(filterNotebooks.toLocaleLowerCase()) > -1,
     );
 
+  const columns = [
+    {
+      field: "title",
+      headerName: "Name",
+      width: 250,
+      editable: true,
+      renderCell: (params: GridCellParams) => (
+        <Link to={`/notebooks/${params.row.id}`} className="ms-2">
+          {params.row.title}
+        </Link>
+      ),
+    },
+    {
+      field: "updatedAt",
+      headerName: "Last Modified",
+      width: 200,
+      editable: false,
+      renderCell: (params: GridCellParams) => (
+        <>{dayjs(params.row.createdAt).format("M/D/YYYY")}</>
+      ),
+    },
+    {
+      field: "createdAt",
+      headerName: "Created On",
+      width: 200,
+      editable: false,
+      renderCell: (params: GridCellParams) => (
+        <>{dayjs(params.row.createdAt).format("M/D/YYYY")}</>
+      ),
+    },
+    {
+      field: "visibility",
+      headerName: "Visibility",
+      width: 160,
+    },
+    {
+      field: "userId",
+      headerName: "Owned By",
+      width: 150,
+      renderCell: (params: GridCellParams) => {
+        if (params.row.userId === user.id) {
+          return <>You</>;
+        }
+        // TODO: Users Initials call.
+      },
+    },
+
+    {
+      field: "collaborators",
+      headerName: "Shared With",
+      width: 160,
+      editable: true,
+      renderCell: (params: GridCellParams) => {
+        if (params.row.collaborators.length === 0) {
+          return <>Nobody</>;
+        }
+        if (params.row.collaborators.includes(1)) {
+          return <span className="user-initials-pill">AT</span>;
+        }
+        if (params.row.collaborators.includes(user.id)) {
+          return <>You</>;
+        }
+        return <>{params.row.collaborators}</>;
+      },
+    },
+  ];
+
   return (
     <PageLayout>
       <Loader animation="border" isVisible={loadingNotebooks}>
@@ -117,79 +184,7 @@ const NotebooksPage: FunctionComponent = () => {
               <DataGrid
                 rows={notebooksData}
                 // onEditCellChangeCommitted={handleOnEditCellChangeCommitted}
-                columns={[
-                  {
-                    field: "title",
-                    headerName: "Name",
-                    width: 250,
-                    editable: true,
-                    renderCell: (params: GridCellParams) => (
-                      <Link to={`/notebooks/${params.row.id}`} className="ms-2">
-                        {params.row.title}
-                      </Link>
-                    ),
-                  },
-                  {
-                    field: "updatedAt",
-                    headerName: "Last Modified",
-                    width: 200,
-                    editable: false,
-                    renderCell: (params: GridCellParams) => (
-                      <>{dayjs(params.row.createdAt).format("M/D/YYYY")}</>
-                    ),
-                  },
-                  {
-                    field: "createdAt",
-                    headerName: "Created On",
-                    width: 200,
-                    editable: false,
-                    renderCell: (params: GridCellParams) => (
-                      <>{dayjs(params.row.createdAt).format("M/D/YYYY")}</>
-                    ),
-                  },
-                  {
-                    field: "visibility",
-                    headerName: "Visibility",
-                    width: 160,
-                  },
-                  {
-                    field: "userId",
-                    headerName: "Owned By",
-                    width: 150,
-                    renderCell: (params: GridCellParams) => {
-                      if (params.row.userId === user.id) {
-                        return <>You</>;
-                      }
-                      // TODO: Users Initials call.
-                    },
-                  },
-
-                  {
-                    field: "collaborators",
-                    headerName: "Shared With",
-                    width: 160,
-                    editable: true,
-                    renderCell: (params: GridCellParams) => {
-                      if (params.row.collaborators.length === 0) {
-                        return <>Nobody</>;
-                      }
-                      if (params.row.collaborators.includes(1)) {
-                        return <span className="user-initials-pill">AT</span>;
-                      }
-                      if (params.row.collaborators.includes(user.id)) {
-                        return <>You</>;
-                      }
-                      return <>{params.row.collaborators}</>;
-                    },
-                  },
-                  // {
-                  //   field: "",
-                  //   headerName: " ",
-                  //   width: 100,
-                  //   sortable: false,
-                  //   renderCell: (params: GridCellParams) => <span>...</span>,
-                  // },
-                ]}
+                columns={columns}
                 pageSize={10}
                 rowsPerPageOptions={[10]}
                 hideFooter={notebooks?.length <= 10 ? true : false}

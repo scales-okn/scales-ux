@@ -1,7 +1,9 @@
 # satyrn-ux
+
 The frontend repo for public-facing version of Satyrn's UX
 
 ## Dependencies
+
 NodeJs - https://nodejs.org/en/
 
 NPM
@@ -14,13 +16,15 @@ For local development make sure to have a Postgres instance up and running.
 https://www.codecademy.com/article/installing-and-using-postgresql-locally
 
 ### Configuration
+
 Create a file called .env in ./sever/.env
 
 Copy and complete the .env.example variables
 
 ### Running
+
 ```
-cd server 
+cd server
 npm install
 npm run start
 ```
@@ -29,13 +33,14 @@ npm run start
 
 ### Configuration
 
-Create a file callend .env in ./client/.env
+Create a file called .env in ./client/.env
 
 Copy and complete the .env.example variables
 
 ### Running
+
 ```
-cd client 
+cd client
 npm install
 npm run start
 ```
@@ -50,13 +55,13 @@ Admin: admin@testing.test:Pass-word-25
 
 The API currently supports six primary views, five of which are documented below.
 
-1. __/api/__
+1. **/api/**
 
 This is just a basic health check, though we can repurpose as necessary.
 
- ----
+---
 
-2. __/api/info/__
+2. **/api/info/**
 
 This is an endpoint for passing metadata about how the UI should be built/behave on init. The contents are automatically generated from the contents of the satconf file. Includes: 1) the available filters and their types, 2) the column names/order/widths as well as which ones are sortable and the default sort, and 3) the analysis space components (for dynamic generation of analysis statements on the frontend). Additional documentation TBD.
 
@@ -126,9 +131,9 @@ An example follows:
 }
 ```
 
- ----
+---
 
-3. __/api/results/__
+3. **/api/results/**
 
 This is the primary search endpoint, and it takes a list of search params (or none to browse all available cases). The available search space is defined by the config (as noted above, see satyrn-templates for examples and docs).
 
@@ -147,29 +152,31 @@ This will return objects that look like:
 ```
 
 Examples (which work with the SCALES ring, but are included for reference):
- - `/api/results/?dateFiled=[2013-10-10,2013-12-15]`
- - `/api/results/?judgeName=Gotsch&caseName=Moton&sortBy=caseName&sortDir=asc`
- - `/api/results/?attorneys=Baldwin&attorneys=Dana&caseName=National%20Mutual`
 
- ----
+- `/api/results/?dateFiled=[2013-10-10,2013-12-15]`
+- `/api/results/?judgeName=Gotsch&caseName=Moton&sortBy=caseName&sortDir=asc`
+- `/api/results/?attorneys=Baldwin&attorneys=Dana&caseName=National%20Mutual`
 
-4. __/api/autocomplete/__
+---
+
+4. **/api/autocomplete/**
 
 An autocomplete endpoint. It takes a `type=[relevant key from config]` and an optional `query=[partial string to be shown options for]`. The query param only works on functions that have implemented support for it. See `searchSpace.py` for how they're mapped to types, and then `autocompleters.py` for the functions themselves.
 
 Examples (from the SCALES ring):
- - `/api/autocomplete/?type=districts` (note: no query param supported at this endpoint)
- - `/api/autocomplete/?type=judgeName&query=abr`
 
- ----
+- `/api/autocomplete/?type=districts` (note: no query param supported at this endpoint)
+- `/api/autocomplete/?type=judgeName&query=abr`
 
-5. __/api/result/<item_id>__
+---
+
+5. **/api/result/<item_id>**
 
 An endpoint to view results that have a `get_clean_html` method on their target model. Takes the same set of get parameters as /results/, and highlights elements on page accordingly.
 
 Example (from SCALES ring): `/api/result/1-13-cv-07293%7C%7C%7C1:13-cv-07293?caseName=Nationwide%20Mutual&attorneys=Baldwin&attorneys=Kanellakes`
 
-6. __/api/analysis/__
+6. **/api/analysis/**
 
 #TODO
 

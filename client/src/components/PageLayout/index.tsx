@@ -6,7 +6,7 @@ import { userSelector, logout } from "../../store/auth";
 
 import * as S from "./styles";
 import { Navbar, Container, Nav, Dropdown } from "react-bootstrap";
-// import FeedbackWidget from "./FeedbackWidget";
+import FeedbackWidget from "./FeedbackWidget";
 import { LinkContainer } from "react-router-bootstrap";
 
 import "./PageLayout.scss";
@@ -60,6 +60,11 @@ const PageLayout: FunctionComponent<Props> = (props) => {
                           Users
                         </S.NavItem>
                       </LinkContainer>
+                      <LinkContainer to="/feedback">
+                        <S.NavItem active={pathname === "/feedback"}>
+                          Feedback
+                        </S.NavItem>
+                      </LinkContainer>
                     </>
                   )}
                 </Nav>
@@ -74,7 +79,7 @@ const PageLayout: FunctionComponent<Props> = (props) => {
                       />
                     </Dropdown.Toggle>
 
-                    <Dropdown.Menu>
+                    <Dropdown.Menu align="end" rootCloseEvent="mousedown">
                       <Dropdown.Item
                         style={{
                           minWidth: "280px",
@@ -96,8 +101,7 @@ const PageLayout: FunctionComponent<Props> = (props) => {
           {children}
         </Container>
       </div>
-
-      {/* <FeedbackWidget /> */}
+      <FeedbackWidget />
     </>
   );
 };

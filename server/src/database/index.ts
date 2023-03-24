@@ -3,6 +3,7 @@ import Version from "sequelize-version";
 import UserModel from "../models/User";
 import PanelModel from "../models/Panel";
 import NotebookModel from "../models/Notebook";
+import FeedbackModel from "../models/Feedback";
 import RingModel from "../models/Ring";
 import LogModel from "../models/Log";
 import logs from "./logs";
@@ -45,6 +46,7 @@ const database = async () => {
     const Panel = PanelModel(sequelize, { hooks: logHooks });
     const Notebook = NotebookModel(sequelize, { hooks: logHooks });
     const Ring = RingModel(sequelize, { hooks: logHooks });
+    const Feedback = FeedbackModel(sequelize, { hooks: logHooks });
 
     // Associate Models
     Panel.associate({
@@ -63,6 +65,7 @@ const database = async () => {
       Ring,
       Notebook,
     });
+    Feedback.associate({});
 
     // Logs
     LogModel(sequelize);
@@ -98,7 +101,7 @@ const database = async () => {
   // Sync
   try {
     await sequelize.sync({ force: false }); // "{ force: true }" will drop the table if it already exits
-    console.log("Sync succesfully!");
+    console.log("Sync successfully!");
   } catch (error) {
     console.error("Sync Failed:", error);
   }
