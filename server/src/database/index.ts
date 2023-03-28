@@ -46,7 +46,7 @@ const database = async () => {
     const Panel = PanelModel(sequelize, { hooks: logHooks });
     const Notebook = NotebookModel(sequelize, { hooks: logHooks });
     const Ring = RingModel(sequelize, { hooks: logHooks });
-    const Feedback = FeedbackModel(sequelize, { hooks: logHooks });
+    FeedbackModel(sequelize, { hooks: logHooks });
 
     // Associate Models
     Panel.associate({
@@ -65,7 +65,6 @@ const database = async () => {
       Ring,
       Notebook,
     });
-    Feedback.associate({});
 
     // Logs
     LogModel(sequelize);
