@@ -48,6 +48,9 @@ const Notebook: FunctionComponent = () => {
     if (notebook) {
       dispatch(getPanels(notebook.id));
     }
+    return () => {
+      setNotebookTitle("");
+    };
   }, [notebook]); // eslint-disable-line react-hooks/exhaustive-deps
 
   return (
@@ -59,7 +62,7 @@ const Notebook: FunctionComponent = () => {
               <Form.Control
                 size="lg"
                 type="text"
-                placeholder="Your Notebook Title Here"
+                placeholder="Notebook Title"
                 isInvalid={!notebookTitleIsValid}
                 onChange={(event) => {
                   setNotebookTitle(event.target.value);

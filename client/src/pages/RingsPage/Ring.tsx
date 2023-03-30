@@ -52,7 +52,7 @@ const Ring: React.FC = () => {
     }),
     onSubmit: async (values) => {
       setLoading(true);
-      fetch(`/api/rings/create`, {
+      fetch(`/api/rings/${ringId || "create"}`, {
         method: ringId ? "PUT" : "POST",
         body: JSON.stringify(values),
         headers: {

@@ -254,7 +254,7 @@ const SignUpPage: FunctionComponent = () => {
                   <Form.Group className="mb-4">
                     <Form.Check
                       type="switch"
-                      label="I agree with the TOS."
+                      label="Accept Terms of Service"
                       className="text-start"
                       onChange={(event: React.ChangeEvent<HTMLInputElement>) =>
                         formik.setFieldValue("tos", event.target.checked)

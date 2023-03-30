@@ -108,7 +108,7 @@ export const update = async (req: Request, res: Response) => {
     const { ringId } = req.params;
 
     const ring = await sequelize.models.Ring.findOne({
-      where: { rid: ringId },
+      where: { id: ringId },
     });
 
     // Inject req for saveLog

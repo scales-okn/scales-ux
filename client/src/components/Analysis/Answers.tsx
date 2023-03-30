@@ -2,13 +2,13 @@ import React, { memo, useEffect, useState } from "react";
 import {
   BarChart,
   Bar,
-  // Cell,
+  Label,
   XAxis,
   YAxis,
   CartesianGrid,
   Tooltip,
   Legend,
-  // ResponsiveContainer,
+  ResponsiveContainer,
   LineChart,
   Line,
 } from "recharts";
@@ -61,6 +61,17 @@ const Answers = ({
     );
   }, [data, plan, satyrn, statement, filters]); // eslint-disable-line react-hooks/exhaustive-deps
 
+  const xUnits = data.units.results?.[0]?.[0];
+  const yUnits = data.units.results?.[1]?.[0];
+
+  const formatData = (result) => {
+    return {
+      name: result?.[1],
+      [xUnits]: parseInt(result?.[0]),
+      [yUnits]: parseInt(result?.[1]),
+    };
+  };
+
   return (
     <div className="answers">
       <Loader isVisible={loadingAnswers} animation="border">
@@ -97,33 +108,43 @@ const Answers = ({
                 </BarChart>
               )}
               {answerType === "line" && (
-                <LineChart
-                  width={1000}
-                  height={600}
-                  data={data.results.map((result) => {
-                    return {
-                      name: result?.[1],
-                      [data.units.results?.[0]?.[0]]: parseInt(result?.[0]),
-                      [data.units.results?.[1]?.[0]]: parseInt(result?.[1]),
-                    };
-                  })}
-                >
-                  <XAxis dataKey={data.units.results[0]?.[0]} />
-                  <YAxis />
-                  <Tooltip />
-                  <CartesianGrid stroke="#eee" strokeDasharray="5 5" />
-                  <Line
-                    type="monotone"
-                    dataKey={data.units.results[1]?.[0]}
-                    stroke="#82ca9d"
-                  />
-                  {/* the below was plotting x-values (e.g. years) as y-values; not sure what the intended outcome was */}
-                  {/* <Line
+                <ResponsiveContainer width="100%" height="80%">
+                  <LineChart
+                    // width={1000}
+                    // height={600}
+                    data={data.results.map((result) => {
+                      return formatData(result);
+                    })}
+                  >
+                    <XAxis dataKey={data.units.results[0]?.[0]} height={80}>
+                      <Label angle={0} value={xUnits} />
+                    </XAxis>
+                    <YAxis width={150}>
+                      <Label
+                        // style={{
+                        //   textAnchor: "middle",
+                        //   fontSize: "130%",
+                        //   fill: "white",
+                        // }} TODO: Style further
+                        angle={270}
+                        value={yUnits}
+                      />
+                    </YAxis>
+                    <Tooltip />
+                    <CartesianGrid stroke="#eee" strokeDasharray="5 5" />
+                    <Line
+                      type="monotone"
+                      dataKey={data.units.results[1]?.[0]}
+                      stroke="#82ca9d"
+                    />
+                    {/* the below was plotting x-values (e.g. years) as y-values; not sure what the intended outcome was */}
+                    {/* <Line
                     type="monotone"
                     dataKey={data.units.results[0]?.[0]}
                     stroke="#82ca9d"
                   /> */}
-                </LineChart>
+                  </LineChart>
+                </ResponsiveContainer>
               )}
             </Col>
           )}

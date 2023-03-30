@@ -85,13 +85,14 @@ const SignInPage: FunctionComponent = () => {
                 />
                 <Form.Label>Password</Form.Label>
               </div>
-              <Form.Group className="mb-4">
+              {/* TODO: Readd with functionality */}
+              {/* <Form.Group className="mb-4">
                 <Form.Check
                   type="checkbox"
                   label="Remember me"
                   className="text-start"
                 />
-              </Form.Group>
+              </Form.Group> */}
               <Button
                 type="submit"
                 className="w-100 mb-3 text-white"
