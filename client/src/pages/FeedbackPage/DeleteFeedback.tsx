@@ -44,7 +44,10 @@ const DeleteFeedback: FunctionComponent<Props> = ({ feedbackId }) => {
       <Button
         className="text-white float-end me-2"
         variant="danger"
-        onClick={() => setConfirmVisible(true)}
+        onClick={(e) => {
+          e.stopPropagation();
+          setConfirmVisible(true);
+        }}
         size="sm"
       >
         Delete

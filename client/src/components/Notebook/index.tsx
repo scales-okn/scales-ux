@@ -42,15 +42,16 @@ const Notebook: FunctionComponent = () => {
 
   useEffectOnce(() => {
     getRings();
+
+    return () => {
+      setNotebookTitle("");
+    };
   });
 
   useEffect(() => {
     if (notebook) {
       dispatch(getPanels(notebook.id));
     }
-    return () => {
-      setNotebookTitle("");
-    };
   }, [notebook]); // eslint-disable-line react-hooks/exhaustive-deps
 
   return (

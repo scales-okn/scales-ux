@@ -20,19 +20,19 @@ const RingsPage: React.FC = () => {
   return (
     <PageLayout>
       <Loader animation="border" isVisible={loadingRings}>
-        <Button
-          variant="primary"
-          className="mb-3 text-white float-end me-3"
-          style={{
-            minWidth: "200px",
-            background: "var(--sea-green)",
-            border: "none",
-          }}
-        >
-          <Link to="/rings/create" className="text-white text-decoration-none">
+        <Link to="/rings/create" className="text-white text-decoration-none">
+          <Button
+            variant="primary"
+            className="mb-3 text-white float-end me-3"
+            style={{
+              minWidth: "200px",
+              background: "var(--sea-green)",
+              border: "none",
+            }}
+          >
             Create Ring
-          </Link>
-        </Button>
+          </Button>
+        </Link>
         <Row style={{ height: 400, width: "100%" }}>
           <DataGrid
             rows={rings}

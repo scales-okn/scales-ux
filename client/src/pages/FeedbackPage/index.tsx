@@ -2,13 +2,14 @@ import React, { FunctionComponent, useState } from "react";
 import {
   DataGrid,
   GridColDef,
-  GridValueGetterParams,
+  // GridValueGetterParams,
   GridCellParams,
 } from "@material-ui/data-grid";
 import { useEffectOnce } from "react-use";
 import PageLayout from "../../components/PageLayout";
 import NotAuthorized from "../../components/NotAuthorized";
-import UserFieldToggle from "./UserFieldToggle";
+import FeedbackDetailModal from "./FeedbackDetailModal";
+// import UserFieldToggle from "./UserFieldToggle";
 import { Row } from "react-bootstrap";
 import { useAuthHeader, userSelector } from "store/auth";
 import { useSelector } from "react-redux";
@@ -16,6 +17,7 @@ import DeleteFeedback from "./DeleteFeedback";
 
 const AdminFeedbackPage: FunctionComponent = () => {
   const [rows, setRows] = useState([]);
+  const [feedbackDetail, setFeedbackDetail] = useState(null);
   const authorizationHeader = useAuthHeader();
 
   const { role } = useSelector(userSelector);
@@ -56,6 +58,12 @@ const AdminFeedbackPage: FunctionComponent = () => {
 
   return (
     <PageLayout>
+      {feedbackDetail && (
+        <FeedbackDetailModal
+          feedbackDetail={feedbackDetail.row.body}
+          closeModal={setFeedbackDetail}
+        />
+      )}
       {!isAdmin ? (
         <NotAuthorized />
       ) : (
@@ -63,6 +71,7 @@ const AdminFeedbackPage: FunctionComponent = () => {
           <DataGrid
             rows={rows}
             columns={columns}
+            onRowClick={(row) => setFeedbackDetail(row)}
             pageSize={5}
             checkboxSelection={false}
             className="bg-white p-0"

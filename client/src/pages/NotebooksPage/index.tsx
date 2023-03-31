@@ -162,21 +162,21 @@ const NotebooksPage: FunctionComponent = () => {
               </InputGroup>
             </Col>
             <Col>
-              <Button
-                className="text-white float-end px-5"
-                variant="primary"
-                style={{
-                  background: "var(--sea-green)",
-                  border: "none",
-                }}
+              <Link
+                to="/notebooks/new"
+                className="text-white text-decoration-none"
               >
-                <Link
-                  to="/notebooks/new"
-                  className="text-white text-decoration-none"
+                <Button
+                  className="text-white float-end px-5"
+                  variant="primary"
+                  style={{
+                    background: "var(--sea-green)",
+                    border: "none",
+                  }}
                 >
                   Create Notebook
-                </Link>
-              </Button>
+                </Button>
+              </Link>
             </Col>
           </Row>
           <Row>
