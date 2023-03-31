@@ -61,8 +61,8 @@ const Answers = ({
     );
   }, [data, plan, satyrn, statement, filters]); // eslint-disable-line react-hooks/exhaustive-deps
 
-  const xUnits = data.units.results?.[0]?.[0];
-  const yUnits = data.units.results?.[1]?.[0];
+  const xUnits = data?.units?.results?.[0]?.[0];
+  const yUnits = data?.units?.results?.[1]?.[0];
 
   const formatData = (result) => {
     return {
@@ -110,22 +110,27 @@ const Answers = ({
               {answerType === "line" && (
                 <ResponsiveContainer width="100%" height="80%">
                   <LineChart
-                    // width={1000}
-                    // height={600}
                     data={data.results.map((result) => {
                       return formatData(result);
                     })}
                   >
                     <XAxis dataKey={data.units.results[0]?.[0]} height={80}>
-                      <Label angle={0} value={xUnits} />
+                      <Label
+                        style={{
+                          textTransform: "capitalize",
+                        }}
+                        angle={0}
+                        value={xUnits}
+                        position="insideBottom"
+                      />
                     </XAxis>
                     <YAxis width={150}>
                       <Label
-                        // style={{
-                        //   textAnchor: "middle",
-                        //   fontSize: "130%",
-                        //   fill: "white",
-                        // }} TODO: Style further
+                        style={{
+                          textAnchor: "middle",
+                          textTransform: "capitalize",
+                        }}
+                        position="insideLeft"
                         angle={270}
                         value={yUnits}
                       />

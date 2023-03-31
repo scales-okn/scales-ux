@@ -3,7 +3,7 @@ import Modal from "react-bootstrap/Modal";
 
 type FeedbackDetailModalT = {
   feedbackDetail: string;
-  closeModal: any;
+  closeModal: (arg: null) => void;
 };
 
 const FeedbackDetailModal: FunctionComponent<FeedbackDetailModalT> = ({
