@@ -101,8 +101,19 @@ const Answers = ({
                 >
                   <CartesianGrid strokeDasharray="3 3" />
                   <XAxis dataKey="name" />
-                  <YAxis />
-                  <Tooltip />
+                  <YAxis
+                    tickFormatter={(value) =>
+                      new Intl.NumberFormat("en-US", {
+                        notation: "compact",
+                        compactDisplay: "short",
+                      }).format(value)
+                    }
+                  />
+                  <Tooltip
+                    formatter={(value) =>
+                      new Intl.NumberFormat("en").format(value)
+                    }
+                  />
                   <Legend />
                   <Bar dataKey={data.units.results[1]} fill="#82ca9d" />
                 </BarChart>
@@ -124,7 +135,15 @@ const Answers = ({
                         position="insideBottom"
                       />
                     </XAxis>
-                    <YAxis width={150}>
+                    <YAxis
+                      tickFormatter={(value) =>
+                        new Intl.NumberFormat("en-US", {
+                          notation: "compact",
+                          compactDisplay: "short",
+                        }).format(value)
+                      }
+                      width={100}
+                    >
                       <Label
                         style={{
                           textAnchor: "middle",
@@ -135,7 +154,11 @@ const Answers = ({
                         value={yUnits}
                       />
                     </YAxis>
-                    <Tooltip />
+                    <Tooltip
+                      formatter={(value) =>
+                        new Intl.NumberFormat("en").format(value)
+                      }
+                    />
                     <CartesianGrid stroke="#eee" strokeDasharray="5 5" />
                     <Line
                       type="monotone"
