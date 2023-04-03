@@ -81,6 +81,7 @@ export default (sequelize, options) => {
       );
       user.emailVerificationToken = emailVerificationToken;
       await user.save();
+
       mailer.sendMail(
         {
           from: `Satyrn <${process.env.SENDGRID_FROM_SENDER}>`,
@@ -94,7 +95,19 @@ export default (sequelize, options) => {
           C3 Lab @ Northwestern University<br />
           <a href="https://c3lab.northwestern.edu">c3lab.northwestern.edu</a>`,
         },
-        (error, info) => console.warn(error, info)
+        (error, info) => {
+          const errorsArray = error?.response?.body?.errors;
+          if (errorsArray) {
+            errorsArray.map((ea) => {
+              console.log("*********************");
+              console.log("message: ", ea.message);
+              console.log("field: ", ea.field);
+              console.log("help: ", ea.help);
+              console.log("*********************");
+            });
+          }
+          console.warn("info: ", info);
+        }
       );
       await user.save();
     } catch (error) {
