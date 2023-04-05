@@ -3,6 +3,7 @@ import { BrowserRouter, Redirect, Route, Switch } from "react-router-dom";
 import { Button } from "react-bootstrap";
 import { ErrorBoundary } from "react-error-boundary";
 // import HomePage from "pages/HomePage";
+import DocumentPage from "pages/DocumentPage";
 import UsersPage from "pages/UsersPage";
 import FeedbackPage from "pages/FeedbackPage";
 import SignInPage from "pages/SignInPage";
@@ -53,6 +54,11 @@ const App: FunctionComponent = () => {
               exact
               path="/notebooks/:notebookId"
               component={NotebookPage}
+            />
+            <ProtectedRoute
+              exact
+              path="/document/:ringId/:ringVersion/:entityType/:docId"
+              component={DocumentPage}
             />
             <Route path="/sign-in" component={SignInPage} />
             <Route path="/sign-up" component={SignUpPage} />

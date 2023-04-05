@@ -28,7 +28,7 @@ const DeleteUser: FunctionComponent<Props> = ({ userId, disabled = false }) => {
           switch (response.code) {
             case 200:
               notify(response.message, "success");
-              window.location.reload(); // TODO: No need to reload, right?
+              window.location.reload();
               break;
             default:
               notify(response.message, "error");
