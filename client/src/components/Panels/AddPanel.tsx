@@ -15,6 +15,7 @@ const AddPanel: FunctionComponent<AddPanelProps> = ({ notebookId }) => {
   return (
     <Button
       className="add-panel-btn w-100"
+      style={{ marginBottom: "80px" }}
       size="lg"
       variant="link"
       disabled={!notebook}

@@ -62,13 +62,13 @@ export const tokenSelector = (state: RootState) => state.auth?.token;
 export default authSlice.reducer;
 
 // Asynchronous thunk actions
-export const login = (email: string, password: string) => {
+export const login = (email: string, password: string, rememberMe = false) => {
   return async (dispatch: AppDispatch) => {
     dispatch(authActions.signIn());
     try {
       const response = await fetch(`/api/users/login`, {
         method: "POST",
-        body: JSON.stringify({ email, password }),
+        body: JSON.stringify({ email, password, rememberMe }),
         headers: {
           "Content-Type": "application/json",
         },

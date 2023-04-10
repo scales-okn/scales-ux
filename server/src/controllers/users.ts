@@ -47,7 +47,7 @@ export const create = async (req: Request, res: Response) => {
 // User Login
 export const login = async (req: Request, res: Response) => {
   try {
-    const { email, password } = req.body;
+    const { email, password, rememberMe } = req.body;
 
     const user = await sequelize.models.User.findOne({
       where: {
@@ -91,13 +91,17 @@ export const login = async (req: Request, res: Response) => {
       user.dataValues.password
     );
     if (passwordsMatch) {
+      const expiry = rememberMe
+        ? process.env.JWT_EXP_LONG
+        : process.env.JWT_EXP;
+
       const token = jwt.sign(
         { user: { id, email, role, firstName, lastName, blocked, approved } },
         process.env.JWT_SECRET,
-        { expiresIn: process.env.JWT_EXP }
+        { expiresIn: expiry }
       );
 
-      return res.send_ok("Login Succesfull!", {
+      return res.send_ok("Login Successful!", {
         token,
       });
     }

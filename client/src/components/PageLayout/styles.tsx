@@ -35,7 +35,7 @@ export const FeedbackWidget = styled.button`
   display: flex;
   justify-content: center;
   align-items: center;
-  position: sticky;
+  position: fixed;
   bottom: 16px;
   left: 16px;
   height: 32px;

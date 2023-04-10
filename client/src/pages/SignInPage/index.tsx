@@ -1,4 +1,4 @@
-import React, { FunctionComponent, useEffect } from "react";
+import React, { FunctionComponent, useEffect, useState } from "react";
 
 import * as yup from "yup";
 import { Button, Col, Container, Form, Row } from "react-bootstrap";
@@ -27,6 +27,7 @@ const SignInPage: FunctionComponent = () => {
   const { user, errors } = useSelector(authSelector);
   // const { loading, user, hasErrors, errors } = useSelector(authSelector);
   const dispatch = useDispatch();
+  const [rememberMe, setRememberMe] = useState(false);
 
   useEffect(() => {
     if (user) {
@@ -41,7 +42,7 @@ const SignInPage: FunctionComponent = () => {
     },
     validationSchema: UserSignInValidationSchema,
     onSubmit: async (values: UserSignInFields, { setErrors }) => {
-      dispatch(login(values.email, values.password));
+      dispatch(login(values.email, values.password, rememberMe));
       if (errors) {
         setErrors(errors);
       }
@@ -52,7 +53,7 @@ const SignInPage: FunctionComponent = () => {
     <PageLayout>
       <Container className="h-100">
         <Row className="h-100 justify-content-center align-items-center text-center">
-          <Col md="5">
+          <Col lg="6" xs="10">
             <Form noValidate onSubmit={formik.handleSubmit}>
               <div
                 className="form-floating"
@@ -85,14 +86,15 @@ const SignInPage: FunctionComponent = () => {
                 />
                 <Form.Label>Password</Form.Label>
               </div>
-              {/* TODO: Readd with functionality */}
-              {/* <Form.Group className="mb-4">
+              <Form.Group className="mb-4">
                 <Form.Check
                   type="checkbox"
-                  label="Remember me"
+                  label="Remember Me"
+                  name="rememberMe"
+                  onChange={() => setRememberMe(!rememberMe)}
                   className="text-start"
                 />
-              </Form.Group> */}
+              </Form.Group>
               <Button
                 type="submit"
                 className="w-100 mb-3 text-white"
