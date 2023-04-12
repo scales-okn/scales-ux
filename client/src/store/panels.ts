@@ -460,7 +460,7 @@ export const getPanelResults =
           ) {
             const start = dayjs(filter.value[0]).format("YYYY-M-DD");
             const end = dayjs(filter.value[1]).format("YYYY-M-DD");
-            return `${filter.type}_start=${start}&${filter.type}_end=${end}`;
+            return `${filter.type}=${start},${end}`;
           }
 
           return `${filter.type}=${encodeURIComponent(filter.value)}`;
