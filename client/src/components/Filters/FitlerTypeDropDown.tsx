@@ -41,17 +41,19 @@ const FilterTypeDropDown: FunctionComponent<FilterTypeProps> = (props) => {
     }
   }, [filterInput]); // eslint-disable-line react-hooks/exhaustive-deps
 
-  const filtersToRender = getFiltersNormalized()?.map((filterInput) => {
-    const { allowMultiple, key } = filterInput;
-    if (
-      allowMultiple === false &&
-      filters.some((filter: any) => filter.type === key)
-    ) {
-      return { ...filterInput, disabled: true };
-    }
+  const filtersToRender = getFiltersNormalized()
+    ?.map((filterInput) => {
+      const { allowMultiple, key } = filterInput;
+      if (
+        allowMultiple === false &&
+        filters.some((filter: any) => filter.type === key)
+      ) {
+        return { ...filterInput, disabled: true };
+      }
 
-    return filterInput;
-  });
+      return filterInput;
+    })
+    .sort((a, b) => a.nicename.localeCompare(b.nicename));
 
   return (
     <Dropdown className="filter-type-dropdown">

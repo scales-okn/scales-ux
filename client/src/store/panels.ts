@@ -436,23 +436,41 @@ export const getPanelResults =
       // const authHeader = authorizationHeader(token);
       const panel = panelSelector(getState(), panelId);
       const { filters, ringId } = panel;
+      console.log(filters);
       // @ts-ignore
       const { rid, info, version } = ringSelector(getState(), ringId);
       dispatch(panelsActions.getPanelResults({ panelId }));
 
+      // const filterParams = filters?.reduce((acc, filterInput: FilterInput) => {
+      //   acc[filterInput.type] =
+      //     filterInput.type === "dateFiled"
+      //       ? `[${filterInput.value?.map((date) =>
+      //           dayjs(date).format("YYYY-M-DD"),
+      //         )}]`
+      //       : filterInput.value;
+
+      //   return acc;
+      // }, {});
+
+      const newFilters = filters
+        ?.map((filter) => {
+          if (
+            filter.type === "filing_date" ||
+            filter.type === "terminating_date"
+          ) {
+            const start = dayjs(filter.value[0]).format("YYYY-M-DD");
+            const end = dayjs(filter.value[1]).format("YYYY-M-DD");
+            return `${filter.type}_start=${start}&${filter.type}_end=${end}`;
+          }
+
+          return `${filter.type}=${encodeURIComponent(filter.value)}`;
+        })
+        .join("&");
+
       const response = await fetch(
         appendQuery(
           `/proxy/results/${rid}/${version}/${info.defaultEntity}?page=${page}&batchSize=${batchSize}&sortBy=dateFiled&sortDirection=desc`,
-          filters?.reduce((acc, filterInput: FilterInput) => {
-            acc[filterInput.type] =
-              filterInput.type === "dateFiled"
-                ? `[${filterInput.value?.map((date) =>
-                    dayjs(date).format("YYYY-M-DD"),
-                  )}]`
-                : filterInput.value;
-
-            return acc;
-          }, {}),
+          newFilters,
           { encodeComponents: false },
         ),
       );
