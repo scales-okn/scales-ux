@@ -64,10 +64,11 @@ const Answers = ({
   const xUnits = data?.units?.results?.[0]?.[0];
   const yUnits = data?.units?.results?.[1]?.[0];
 
+  //unsure why result?.[1] is returned twice, & how non-ints (e.g. dates) are handled, but ignoring for now & just adding carveout for str x-vals
   const formatData = (result) => {
     return {
       name: result?.[1],
-      [xUnits]: parseInt(result?.[0]),
+      [xUnits]: /^[a-zA-Z ]+$/.test(result?.[0]) ? result?.[0] : parseInt(result?.[0]),
       [yUnits]: parseInt(result?.[1]),
     };
   };
