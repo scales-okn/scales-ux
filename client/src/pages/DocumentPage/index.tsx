@@ -1,8 +1,8 @@
-import React, { FunctionComponent, useEffect } from "react";
+import React, { FunctionComponent } from "react";
 import { useParams } from "react-router";
-import { authSelector, login } from "store/auth";
+import { authSelector } from "store/auth";
 import { authorizationHeader } from "utils";
-import { useDispatch, useSelector } from "react-redux";
+import { useSelector } from "react-redux";
 import PageLayout from "../../components/PageLayout";
 import Loader from "../../components/Loader";
 import { useEffectOnce } from "react-use";
@@ -24,7 +24,8 @@ const DocumentPage: FunctionComponent = () => {
   } = useParams<Params>();
   const { token } = useSelector(authSelector);
   const authHeader = authorizationHeader(token);
-  const docUrl = `/proxy/api/document/${ringId}/${ringVersion}/${entityType}/${docId}`;
+  const docUrl = `/proxy/document/${ringId}/${ringVersion}/${entityType}/${docId}`;
+
   const fetchDocument = async () => {
     try {
       const response = await fetch(docUrl, {
@@ -35,20 +36,16 @@ const DocumentPage: FunctionComponent = () => {
         },
       });
 
-      console.log("RESPONSE", response);
       if (response.status === 200) {
         const html = await response.text();
         return html;
       } else {
-        console.log("ERROr,", response);
         return "<div>There was an error retrieving this document.</div>";
       }
     } catch (error) {
-      console.log("ERROr,", error);
       return "<div>There was an error retrieving this document.</div>";
     }
   };
-  //
 
   useEffectOnce(() => {
     fetchDocument();

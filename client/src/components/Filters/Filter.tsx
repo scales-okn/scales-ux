@@ -152,7 +152,9 @@ const Filter: FunctionComponent<Props> = ({ panelId, filter }) => {
                 filterBy={() => true}
                 isLoading={isLoading}
                 labelKey={null}
-                minLength={['ontology_labels', 'case_type'].includes(filter.type) ? 1 : 3}
+                minLength={
+                  ["ontology_labels", "case_type"].includes(filter.type) ? 1 : 3
+                }
                 onSearch={(query) =>
                   fetchAutocompleteSuggestions(filter.type, query)
                 }

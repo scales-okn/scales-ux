@@ -1,17 +1,5 @@
 import React, { memo, useEffect, useState } from "react";
-import {
-  BarChart,
-  Bar,
-  Label,
-  XAxis,
-  YAxis,
-  CartesianGrid,
-  Tooltip,
-  Legend,
-  ResponsiveContainer,
-  LineChart,
-  Line,
-} from "recharts";
+import { BarChart, Bar, Label, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, LineChart, Line } from "recharts";
 import { Col } from "react-bootstrap";
 import Loader from "components/Loader";
 import { usePanel } from "store/panels";
@@ -19,14 +7,7 @@ import dayjs from "dayjs";
 import { isEmpty } from "lodash";
 import renderHTML from "helpers/renderHTML";
 
-const Answers = ({
-  panelId,
-  data,
-  satyrn,
-  loadingAnswers,
-  statement,
-  plan,
-}) => {
+const Answers = ({ panelId, data, satyrn, loadingAnswers, statement, plan }) => {
   const [answerType, setAnswerType] = useState("bar");
   const [answer, setAnswer] = useState(null);
   const { filters } = usePanel(panelId);
@@ -45,9 +26,7 @@ const Answers = ({
       ? filters.reduce((acc, { type, value }) => {
           if (!type || !value) return acc;
           if (type === "dateFiled") {
-            acc[type] = `[${value?.map((date) =>
-              dayjs(date).format("YYYY-M-DD"),
-            )}]`;
+            acc[type] = `[${value?.map((date) => dayjs(date).format("YYYY-M-DD"))}]`;
           } else {
             acc[type] = value;
           }
@@ -56,9 +35,7 @@ const Answers = ({
         }, {})
       : {};
 
-    setAnswer(
-      satyrn.responseManager.generate(formattedFilters, statement?.plan, data),
-    );
+    setAnswer(satyrn.responseManager.generate(formattedFilters, statement?.plan, data));
   }, [data, plan, satyrn, statement, filters]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const xUnits = data?.units?.results?.[0]?.[0];
@@ -71,6 +48,11 @@ const Answers = ({
       [xUnits]: /^[a-zA-Z ]+$/.test(result?.[0]) ? result?.[0] : parseInt(result?.[0]),
       [yUnits]: parseInt(result?.[1]),
     };
+  };
+
+  const scaleType = () => {
+    const isYearType = data.fieldNames.some((fieldName) => fieldName.dateTransform === "year");
+    return isYearType ? "time" : "auto";
   };
 
   return (
@@ -110,11 +92,7 @@ const Answers = ({
                       }).format(value)
                     }
                   />
-                  <Tooltip
-                    formatter={(value) =>
-                      new Intl.NumberFormat("en").format(value)
-                    }
-                  />
+                  <Tooltip formatter={(value) => new Intl.NumberFormat("en").format(value)} />
                   <Legend />
                   <Bar dataKey={data.units.results[1]} fill="#82ca9d" />
                 </BarChart>
@@ -126,7 +104,7 @@ const Answers = ({
                       return formatData(result);
                     })}
                   >
-                    <XAxis dataKey={data.units.results[0]?.[0]} height={80}>
+                    <XAxis height={80} scale={scaleType()} dataKey={data.units.results[0]?.[0]}>
                       <Label
                         style={{
                           textTransform: "capitalize",
@@ -155,17 +133,9 @@ const Answers = ({
                         value={yUnits}
                       />
                     </YAxis>
-                    <Tooltip
-                      formatter={(value) =>
-                        new Intl.NumberFormat("en").format(value)
-                      }
-                    />
+                    <Tooltip formatter={(value) => new Intl.NumberFormat("en").format(value)} />
                     <CartesianGrid stroke="#eee" strokeDasharray="5 5" />
-                    <Line
-                      type="monotone"
-                      dataKey={data.units.results[1]?.[0]}
-                      stroke="#82ca9d"
-                    />
+                    <Line type="monotone" dataKey={data.units.results[1]?.[0]} stroke="#82ca9d" />
                     {/* the below was plotting x-values (e.g. years) as y-values; not sure what the intended outcome was */}
                     {/* <Line
                     type="monotone"
