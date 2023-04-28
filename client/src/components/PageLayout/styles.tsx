@@ -3,10 +3,8 @@ import styled from "styled-components";
 export const NavItem = styled.div`
   color: white;
   text-transform: uppercase;
-  font-size: 15px;
   letter-spacing: 0.09em;
   text-transform: uppercase;
-  font-weight: 400;
   font-family: "Esteban", Serif;
   margin-right: 50px;
   cursor: pointer;
@@ -29,6 +27,13 @@ export const NavItem = styled.div`
 
 export const Logo = styled.img`
   max-height: 75px;
+`;
+
+export const Divider = styled.div`
+  height: 1px;
+  width: 100%;
+  background: white;
+  margin: 24px 0;
 `;
 
 export const FeedbackWidget = styled.button`
