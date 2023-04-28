@@ -113,19 +113,19 @@ const Panel: FunctionComponent<PanelProps> = ({ panelId }) => {
         sortable: column.sortable,
       })) || [];
 
-    // out.unshift({
-    //   field: "button",
-    //   headerName: " ",
-    //   sortable: false,
-    //   width: 100,
-    //   renderCell: (item) => {
-    //     return (
-    //       <Link to={`/document/${ring.id}/${ring.version}/${item.row.case_id}/${item.id}`}>
-    //         <DetailButton>Details</DetailButton>
-    //       </Link>
-    //     );
-    //   },
-    // });
+    out.unshift({
+      field: "button",
+      headerName: " ",
+      sortable: false,
+      width: 100,
+      renderCell: (item) => {
+        return (
+          <Link to={`/document/${ring.id}/${ring.version}/Case/${item.row.__uniqueId.ucid}`}>
+            <DetailButton>Details</DetailButton>
+          </Link>
+        );
+      },
+    });
 
     return out;
   }, [info, ring]);

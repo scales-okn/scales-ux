@@ -16,12 +16,7 @@ type Params = {
 };
 
 const DocumentPage: FunctionComponent = () => {
-  const {
-    ringId = null,
-    ringVersion = null,
-    entityType = null,
-    docId = null,
-  } = useParams<Params>();
+  const { ringId = null, ringVersion = null, entityType = null, docId = null } = useParams<Params>();
   const { token } = useSelector(authSelector);
   const authHeader = authorizationHeader(token);
   const docUrl = `/proxy/document/${ringId}/${ringVersion}/${entityType}/${docId}`;
@@ -54,7 +49,7 @@ const DocumentPage: FunctionComponent = () => {
   return (
     <PageLayout>
       <Loader animation="border" isVisible={false}>
-        <iframe dangerouslySetInnerHTML={{ __html: "fffff" }}></iframe>
+        <iframe title="title" dangerouslySetInnerHTML={{ __html: "fffff" }}></iframe>
       </Loader>
     </PageLayout>
   );
