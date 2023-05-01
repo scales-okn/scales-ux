@@ -5,6 +5,7 @@ import {
   // GridValueGetterParams,
   GridCellParams,
 } from "@material-ui/data-grid";
+import dayjs from "dayjs";
 import { useEffectOnce } from "react-use";
 import PageLayout from "../../components/PageLayout";
 import NotAuthorized from "../../components/NotAuthorized";
@@ -45,6 +46,17 @@ const AdminFeedbackPage: FunctionComponent = () => {
       sortable: false,
       minWidth: 200,
       flex: 1,
+    },
+    {
+      field: "createdAt",
+      headerName: "Created At",
+      description: "This column has a value getter and is not sortable.",
+      sortable: false,
+      minWidth: 200,
+      flex: 1,
+      renderCell: (params: GridCellParams) => {
+        return <div>{dayjs(params.row.createdAt).format("dddd, MMMM D YYYY")}</div>;
+      },
     },
     {
       field: "delete",
