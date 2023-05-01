@@ -42,21 +42,10 @@ const DeleteUser: FunctionComponent<Props> = ({ userId, disabled = false }) => {
 
   return (
     <>
-      <Button
-        className="text-white float-end me-2"
-        variant="danger"
-        onClick={() => setConfirmVisible(true)}
-        disabled={disabled}
-        size="sm"
-      >
+      <Button className="text-white float-end me-2" variant="danger" onClick={() => setConfirmVisible(true)} disabled={disabled} size="sm">
         Delete
       </Button>
-      <ConfirmModal
-        itemName="user"
-        open={confirmVisible}
-        setOpen={setConfirmVisible}
-        onConfirm={deleteUser}
-      />
+      <ConfirmModal itemName="user" open={confirmVisible} setOpen={setConfirmVisible} onConfirm={deleteUser} />
     </>
   );
 };

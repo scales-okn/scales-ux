@@ -17,12 +17,7 @@ const Panels: FunctionComponent<PanelsProps> = ({ notebookId }) => {
 
   return (
     <Loader animation="border" isVisible={loadingPanels}>
-      <>
-        {panels?.length > 0 &&
-          panels.map((panel, index) => (
-            <Panel key={index} panelId={panel.id} />
-          ))}
-      </>
+      <>{panels?.length > 0 && panels.map((panel, index) => <Panel key={index} panelId={panel.id} />)}</>
     </Loader>
   );
 };

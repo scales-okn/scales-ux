@@ -60,32 +60,15 @@ const FeedbackWidget = () => {
 
   return (
     <>
-      <S.FeedbackWidget onClick={() => setFeedbackModalOpen(true)}>
-        Feedback
-      </S.FeedbackWidget>
-      <Modal
-        show={feedbackModalOpen}
-        onHide={() => setFeedbackModalOpen(false)}
-      >
+      <S.FeedbackWidget onClick={() => setFeedbackModalOpen(true)}>Feedback</S.FeedbackWidget>
+      <Modal show={feedbackModalOpen} onHide={() => setFeedbackModalOpen(false)}>
         <Form noValidate onSubmit={formik.handleSubmit}>
-          <Modal.Header
-            closeButton
-            style={{ background: "var(--main-purple-light)" }}
-          >
-            <Modal.Title style={{ color: "white" }}>
-              Let Us Know What You Think!
-            </Modal.Title>
+          <Modal.Header closeButton style={{ background: "var(--main-purple-light)" }}>
+            <Modal.Title style={{ color: "white" }}>Let Us Know What You Think!</Modal.Title>
           </Modal.Header>
           <Modal.Body>
             <Form.Group className="mb-3" controlId="formBasicEmail">
-              <Form.Control
-                as="textarea"
-                name="body"
-                aria-label="With textarea"
-                style={{ minHeight: "250px" }}
-                onChange={formik.handleChange}
-                isInvalid={formik.touched.body && Boolean(formik.errors?.body)}
-              />
+              <Form.Control as="textarea" name="body" aria-label="With textarea" style={{ minHeight: "250px" }} onChange={formik.handleChange} isInvalid={formik.touched.body && Boolean(formik.errors?.body)} />
             </Form.Group>
 
             <div

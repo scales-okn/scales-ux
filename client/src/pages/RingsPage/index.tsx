@@ -61,17 +61,13 @@ const RingsPage: React.FC = () => {
                 field: "createdAt",
                 headerName: "Created at",
                 width: 200,
-                renderCell: (params: GridCellParams) => (
-                  <>{dayjs(params.row.createdAt).format("M/D/YYYY")}</>
-                ),
+                renderCell: (params: GridCellParams) => <>{dayjs(params.row.createdAt).format("M/D/YYYY")}</>,
               },
               {
                 field: "updatedAt",
                 headerName: "Updated at",
                 width: 200,
-                renderCell: (params: GridCellParams) => (
-                  <>{dayjs(params.row.updatedAt).format("M/D/YYYY")}</>
-                ),
+                renderCell: (params: GridCellParams) => <>{dayjs(params.row.updatedAt).format("M/D/YYYY")}</>,
               },
               {
                 field: "visibility",

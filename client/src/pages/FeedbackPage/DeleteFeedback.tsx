@@ -52,12 +52,7 @@ const DeleteFeedback: FunctionComponent<Props> = ({ feedbackId }) => {
       >
         Delete
       </Button>
-      <ConfirmModal
-        itemName="feedback"
-        open={confirmVisible}
-        setOpen={setConfirmVisible}
-        onConfirm={DeleteFeedback}
-      />
+      <ConfirmModal itemName="feedback" open={confirmVisible} setOpen={setConfirmVisible} onConfirm={DeleteFeedback} />
     </>
   );
 };

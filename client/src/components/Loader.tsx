@@ -8,15 +8,7 @@ interface ILoaderProps extends SpinnerProps {
   contentHeight?: string;
 }
 
-const Loader: FunctionComponent<ILoaderProps> = ({
-  isVisible = false,
-  animation = "border",
-  variant,
-  size = null,
-  children,
-  contentHeight,
-  loaderContent,
-}) => {
+const Loader: FunctionComponent<ILoaderProps> = ({ isVisible = false, animation = "border", variant, size = null, children, contentHeight, loaderContent }) => {
   if (isVisible) {
     return (
       <>
@@ -29,12 +21,7 @@ const Loader: FunctionComponent<ILoaderProps> = ({
               height: contentHeight || "100%",
             }}
           >
-            <Spinner
-              className="align-self-center"
-              animation={animation}
-              variant={variant}
-              size={size}
-            />
+            <Spinner className="align-self-center" animation={animation} variant={variant} size={size} />
           </div>
         )}
       </>

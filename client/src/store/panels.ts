@@ -85,28 +85,16 @@ const panelsSlice = createSlice({
     }),
     updatePanel: (state, { payload }) => ({
       ...state,
-      panels: state.panels.map((panel) =>
-        panel.id === payload.panelId
-          ? { ...panel, updatingPanel: true }
-          : panel,
-      ),
+      panels: state.panels.map((panel) => (panel.id === payload.panelId ? { ...panel, updatingPanel: true } : panel)),
     }),
     updatePanelSuccess: (state, { payload }) => ({
       ...state,
-      panels: state.panels.map((panel) =>
-        panel.id === payload.id
-          ? { ...panel, ...payload, updatingPanel: false }
-          : panel,
-      ),
+      panels: state.panels.map((panel) => (panel.id === payload.id ? { ...panel, ...payload, updatingPanel: false } : panel)),
       hasErrors: false,
     }),
     updatePanelFailure: (state, { payload }) => ({
       ...state,
-      panels: state.panels.map((panel) =>
-        panel.id === payload.panelId
-          ? { ...panel, updatingPanel: false, hasErrors: true }
-          : panel,
-      ),
+      panels: state.panels.map((panel) => (panel.id === payload.panelId ? { ...panel, updatingPanel: false, hasErrors: true } : panel)),
     }),
     deletePanel: (state) => ({
       ...state,
@@ -133,11 +121,7 @@ const panelsSlice = createSlice({
     }),
     getPanelResults: (state, { payload }) => ({
       ...state,
-      panels: state.panels.map((panel) =>
-        panel.id === payload.panelId
-          ? { ...panel, loadingPanelResults: true }
-          : panel,
-      ),
+      panels: state.panels.map((panel) => (panel.id === payload.panelId ? { ...panel, loadingPanelResults: true } : panel)),
     }),
     getPanelResultsSuccess: (state, { payload }) => ({
       ...state,
@@ -166,17 +150,11 @@ const panelsSlice = createSlice({
     }),
     setPanelFilters: (state, { payload }) => ({
       ...state,
-      panels: state.panels.map((panel) =>
-        panel.id === payload.panelId
-          ? { ...panel, filters: payload.filters }
-          : panel,
-      ),
+      panels: state.panels.map((panel) => (panel.id === payload.panelId ? { ...panel, filters: payload.filters } : panel)),
     }),
     clearPanelFilters: (state, { payload }) => ({
       ...state,
-      panels: state.panels.map((panel) =>
-        panel.id === payload.panelId ? { ...panel, filters: [] } : panel,
-      ),
+      panels: state.panels.map((panel) => (panel.id === payload.panelId ? { ...panel, filters: [] } : panel)),
     }),
     clearPanel: (state, { payload }) => ({
       ...state,
@@ -189,27 +167,15 @@ const panelsSlice = createSlice({
     }),
     setPanelCollapsed: (state, { payload }) => ({
       ...state,
-      panels: state.panels.map((panel) =>
-        panel.id === payload.panelId
-          ? { ...panel, collapsed: payload.collapsed }
-          : panel,
-      ),
+      panels: state.panels.map((panel) => (panel.id === payload.panelId ? { ...panel, collapsed: payload.collapsed } : panel)),
     }),
     setPanelResultsCollapsed: (state, { payload }) => ({
       ...state,
-      panels: state.panels.map((panel) =>
-        panel.id === payload.panelId
-          ? { ...panel, resultsCollapsed: payload.collapsed }
-          : panel,
-      ),
+      panels: state.panels.map((panel) => (panel.id === payload.panelId ? { ...panel, resultsCollapsed: payload.collapsed } : panel)),
     }),
     setPanelDescription: (state, { payload }) => ({
       ...state,
-      panels: state.panels.map((panel) =>
-        panel.id === payload.panelId
-          ? { ...panel, description: payload.description }
-          : panel,
-      ),
+      panels: state.panels.map((panel) => (panel.id === payload.panelId ? { ...panel, description: payload.description } : panel)),
     }),
     addPanelAnalysis: (state, { payload }) => ({
       ...state,
@@ -217,10 +183,7 @@ const panelsSlice = createSlice({
         panel.id === payload.panelId
           ? {
               ...panel,
-              analysis: [
-                ...panel.analysis,
-                { ...initialStateAnalysisItem, ...payload.analysis },
-              ],
+              analysis: [...panel.analysis, { ...initialStateAnalysisItem, ...payload.analysis }],
             }
           : panel,
       ),
@@ -231,9 +194,7 @@ const panelsSlice = createSlice({
         panel.id === payload.panelId
           ? {
               ...panel,
-              analysis: panel.analysis.filter(
-                (analysis) => analysis.id !== payload.analysisId,
-              ),
+              analysis: panel.analysis.filter((analysis) => analysis.id !== payload.analysisId),
             }
           : panel,
       ),
@@ -266,9 +227,7 @@ const panelsSlice = createSlice({
                 analysis.id === payload.analysisId
                   ? {
                       ...analysis,
-                      statements: analysis.statements.filter(
-                        (statement) => statement.id !== payload.statementId,
-                      ),
+                      statements: analysis.statements.filter((statement) => statement.id !== payload.statementId),
                     }
                   : analysis,
               ),
@@ -285,9 +244,7 @@ export const panelsActions = panelsSlice.actions;
 // Selectors
 export const panelsSelector = (state: RootState, notebookId) => ({
   ...state.panels,
-  panels: state.panels.panels.filter(
-    (panel) => panel.notebookId === notebookId,
-  ),
+  panels: state.panels.panels.filter((panel) => panel.notebookId === notebookId),
 });
 export const panelSelector = (state: RootState, panelId: string) => {
   return state?.panels?.panels?.find((panel) => panel.id === panelId);
@@ -399,34 +356,33 @@ export const updatePanel =
     }
   };
 
-export const deletePanel =
-  (panelId) => async (dispatch: AppDispatch, getState) => {
-    try {
-      const { token } = authSelector(getState());
-      const authHeader = authorizationHeader(token);
-      dispatch(panelsActions.deletePanel());
+export const deletePanel = (panelId) => async (dispatch: AppDispatch, getState) => {
+  try {
+    const { token } = authSelector(getState());
+    const authHeader = authorizationHeader(token);
+    dispatch(panelsActions.deletePanel());
 
-      const response = await fetch(`/api/panels/${panelId}`, {
-        method: "DELETE",
-        headers: {
-          ...authHeader,
-          "Content-Type": "application/json",
-        },
-      });
+    const response = await fetch(`/api/panels/${panelId}`, {
+      method: "DELETE",
+      headers: {
+        ...authHeader,
+        "Content-Type": "application/json",
+      },
+    });
 
-      // const { data, message } = await response.json();
-      const { message } = await response.json();
-      if (response.status === 200) {
-        dispatch(notify(message, "success"));
-        dispatch(panelsActions.deletePanelSuccess(panelId));
-      } else {
-        dispatch(notify(message, "error"));
-        dispatch(panelsActions.deletePanelFailure());
-      }
-    } catch (error) {
+    // const { data, message } = await response.json();
+    const { message } = await response.json();
+    if (response.status === 200) {
+      dispatch(notify(message, "success"));
+      dispatch(panelsActions.deletePanelSuccess(panelId));
+    } else {
+      dispatch(notify(message, "error"));
       dispatch(panelsActions.deletePanelFailure());
     }
-  };
+  } catch (error) {
+    dispatch(panelsActions.deletePanelFailure());
+  }
+};
 
 export const getPanelResults =
   (panelId, filters = [], page = 0, batchSize = 10) =>
@@ -454,10 +410,7 @@ export const getPanelResults =
 
       const newFilters = filters
         ?.map((filter) => {
-          if (
-            filter.type === "filing_date" ||
-            filter.type === "terminating_date"
-          ) {
+          if (filter.type === "filing_date" || filter.type === "terminating_date") {
             const start = dayjs(filter.value[0]).format("YYYY-M-DD");
             const end = dayjs(filter.value[1]).format("YYYY-M-DD");
             return `${filter.type}=${start},${end}`;
@@ -467,13 +420,7 @@ export const getPanelResults =
         })
         .join("&");
 
-      const response = await fetch(
-        appendQuery(
-          `/proxy/results/${rid}/${version}/${info.defaultEntity}?page=${page}&batchSize=${batchSize}&sortBy=dateFiled&sortDirection=desc`,
-          newFilters,
-          { encodeComponents: false },
-        ),
-      );
+      const response = await fetch(appendQuery(`/proxy/results/${rid}/${version}/${info.defaultEntity}?page=${page}&batchSize=${batchSize}&sortBy=dateFiled&sortDirection=desc`, newFilters, { encodeComponents: false }));
       const data = await response.json();
       if (response.status === 200) {
         dispatch(
@@ -495,11 +442,10 @@ export const getPanelResults =
 
 // Hooks
 export const usePanels = (notebookId) => {
-  const { panels, loadingPanels, hasErrors, creatingPanel, deletingPanel } =
-    useSelector((state: RootState) => ({
-      ...state.panels,
-      ...panelsSelector(state, notebookId),
-    }));
+  const { panels, loadingPanels, hasErrors, creatingPanel, deletingPanel } = useSelector((state: RootState) => ({
+    ...state.panels,
+    ...panelsSelector(state, notebookId),
+  }));
   const dispatch = useDispatch();
 
   return {
@@ -517,26 +463,12 @@ export const usePanels = (notebookId) => {
 };
 
 export const usePanel = (panelId: string) => {
-  const panel = useSelector((state: RootState) =>
-    panelSelector(state, panelId),
-  );
-  const results = useSelector((state: RootState) =>
-    panelResultsSelector(state, panelId),
-  );
-  const filters = useSelector((state: RootState) =>
-    panelFiltersSelector(state, panelId),
-  );
-  const analysis = useSelector((state: RootState) =>
-    panelAnalysisSelector(state, panelId),
-  );
+  const panel = useSelector((state: RootState) => panelSelector(state, panelId));
+  const results = useSelector((state: RootState) => panelResultsSelector(state, panelId));
+  const filters = useSelector((state: RootState) => panelFiltersSelector(state, panelId));
+  const analysis = useSelector((state: RootState) => panelAnalysisSelector(state, panelId));
 
-  const {
-    loadingPanelResults,
-    resultsCollapsed,
-    collapsed,
-    updatingPanel,
-    hasErrors,
-  } = panel;
+  const { loadingPanelResults, resultsCollapsed, collapsed, updatingPanel, hasErrors } = panel;
   const dispatch = useDispatch();
 
   return {
@@ -549,26 +481,18 @@ export const usePanel = (panelId: string) => {
     updatingPanel,
     hasErrors,
     analysis,
-    addPanelAnalysis: (analysis) =>
-      dispatch(panelsActions.addPanelAnalysis({ panelId, analysis })),
-    removePanelAnalysis: (id) =>
-      dispatch(panelsActions.removePanelAnalysis({ panelId, analysisId: id })),
-    addPanelAnalysisStatement: (payload) =>
-      dispatch(panelsActions.addPanelAnalysisStatement(payload)),
-    removePanelAnalysisStatement: (payload) =>
-      dispatch(panelsActions.removePanelAnalysisStatement(payload)),
-    setPanelDescription: (description) =>
-      dispatch(panelsActions.setPanelDescription({ panelId, description })),
-    setPanelCollapsed: (collapsed: boolean) =>
-      dispatch(panelsActions.setPanelCollapsed({ panelId, collapsed })),
-    setPanelResultsCollapsed: (collapsed: boolean) =>
-      dispatch(panelsActions.setPanelResultsCollapsed({ panelId, collapsed })),
+    addPanelAnalysis: (analysis) => dispatch(panelsActions.addPanelAnalysis({ panelId, analysis })),
+    removePanelAnalysis: (id) => dispatch(panelsActions.removePanelAnalysis({ panelId, analysisId: id })),
+    addPanelAnalysisStatement: (payload) => dispatch(panelsActions.addPanelAnalysisStatement(payload)),
+    removePanelAnalysisStatement: (payload) => dispatch(panelsActions.removePanelAnalysisStatement(payload)),
+    setPanelDescription: (description) => dispatch(panelsActions.setPanelDescription({ panelId, description })),
+    setPanelCollapsed: (collapsed: boolean) => dispatch(panelsActions.setPanelCollapsed({ panelId, collapsed })),
+    setPanelResultsCollapsed: (collapsed: boolean) => dispatch(panelsActions.setPanelResultsCollapsed({ panelId, collapsed })),
     setPanelFilters: (filters: any = {}) => {
       dispatch(panelsActions.setPanelFilters({ panelId, filters }));
     },
     updatePanel: (payload: any = {}) => dispatch(updatePanel(panelId, payload)),
     deletePanel: () => dispatch(deletePanel(panelId)),
-    getPanelResults: (filters = [], page = 0, batchSize = 10) =>
-      dispatch(getPanelResults(panelId, filters, page, batchSize)),
+    getPanelResults: (filters = [], page = 0, batchSize = 10) => dispatch(getPanelResults(panelId, filters, page, batchSize)),
   };
 };

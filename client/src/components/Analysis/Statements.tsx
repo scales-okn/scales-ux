@@ -3,13 +3,7 @@ import uniqid from "uniqid";
 import { Form, Col, Row } from "react-bootstrap";
 import { Typeahead } from "react-bootstrap-typeahead";
 
-const Statements = ({
-  statements,
-  setSelectedStatement,
-  selectedStatement,
-  setParameters,
-  getStatement,
-}) => {
+const Statements = ({ statements, setSelectedStatement, selectedStatement, setParameters, getStatement }) => {
   const onStatementChange = (selected) => {
     const selectedStatement = selected[0]?.statement;
     if (!selectedStatement) return;

@@ -17,8 +17,6 @@ import "./PageLayout.scss";
 
 import Avatar from "react-avatar";
 
-type Anchor = "top" | "left" | "bottom" | "right";
-
 type Props = {
   pageTitle?: string;
   id?: string;

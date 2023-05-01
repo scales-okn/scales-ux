@@ -15,13 +15,7 @@ type FilterTypeProps = {
 };
 
 const FilterTypeDropDown: FunctionComponent<FilterTypeProps> = (props) => {
-  const {
-    filter,
-    filters,
-    getFiltersNormalized,
-    getFilterOptionsByKey,
-    setFilter,
-  } = props;
+  const { filter, filters, getFiltersNormalized, getFilterOptionsByKey, setFilter } = props;
   const { type } = filter;
 
   const filterOptions = getFilterOptionsByKey(type);
@@ -44,10 +38,7 @@ const FilterTypeDropDown: FunctionComponent<FilterTypeProps> = (props) => {
   const filtersToRender = getFiltersNormalized()
     ?.map((filterInput) => {
       const { allowMultiple, key } = filterInput;
-      if (
-        allowMultiple === false &&
-        filters.some((filter: any) => filter.type === key)
-      ) {
+      if (allowMultiple === false && filters.some((filter: any) => filter.type === key)) {
         return { ...filterInput, disabled: true };
       }
 
@@ -57,11 +48,7 @@ const FilterTypeDropDown: FunctionComponent<FilterTypeProps> = (props) => {
 
   return (
     <Dropdown className="filter-type-dropdown">
-      <Dropdown.Toggle
-        size="sm"
-        variant="link"
-        className="shadow-none text-decoration-none small"
-      >
+      <Dropdown.Toggle size="sm" variant="link" className="shadow-none text-decoration-none small">
         {filterInput?.nicename || ""}
       </Dropdown.Toggle>
 
@@ -72,13 +59,8 @@ const FilterTypeDropDown: FunctionComponent<FilterTypeProps> = (props) => {
         {filtersToRender?.map(({ key, nicename, desc, disabled }) => (
           <React.Fragment key={key}>
             <Dropdown.Divider />
-            <Dropdown.Item
-              onClick={() => setFilterInput({ key, nicename })}
-              disabled={disabled}
-            >
-              <Dropdown.ItemText className={disabled ? "text-muted" : ""}>
-                {nicename}
-              </Dropdown.ItemText>
+            <Dropdown.Item onClick={() => setFilterInput({ key, nicename })} disabled={disabled}>
+              <Dropdown.ItemText className={disabled ? "text-muted" : ""}>{nicename}</Dropdown.ItemText>
               {desc && (
                 <Dropdown.ItemText className="text-muted fs-6">
                   <small>{desc}</small>

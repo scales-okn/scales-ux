@@ -23,25 +23,17 @@ type Props = {
 };
 
 const Filter: FunctionComponent<Props> = ({ panelId, filter }) => {
-  const { panel, filters, setPanelFilters, getPanelResults } =
-    usePanel(panelId);
+  const { panel, filters, setPanelFilters, getPanelResults } = usePanel(panelId);
   const { ring, info } = useRing(panel.ringId);
   const { type, id, value } = filter;
   const [isLoading, setIsLoading] = useState<boolean>(false);
-  const [autoCompleteSuggestions, setAutoCompleteSuggestions] = useState<
-    string[]
-  >([]);
+  const [autoCompleteSuggestions, setAutoCompleteSuggestions] = useState<string[]>([]);
   const [dateValue, setDateValue] = useState<string>("");
   const { notify } = useNotify();
 
   const setFilter = (filter: FilterT) => {
     try {
-      const newFilters = [
-        ...filters.filter(
-          (prevFilterInput: FilterT) => prevFilterInput.id !== filter.id,
-        ),
-        { ...filter },
-      ];
+      const newFilters = [...filters.filter((prevFilterInput: FilterT) => prevFilterInput.id !== filter.id), { ...filter }];
       setPanelFilters(newFilters);
     } catch (error) {
       console.warn(error); // eslint-disable-line no-console
@@ -76,9 +68,7 @@ const Filter: FunctionComponent<Props> = ({ panelId, filter }) => {
 
   const getFiltersNormalized = () => {
     try {
-      return info?.filters
-        .map((filter) => ({ key: filter[0], ...filter[1] }))
-        .sort((a, b) => a.key.localeCompare(b.key));
+      return info?.filters.map((filter) => ({ key: filter[0], ...filter[1] })).sort((a, b) => a.key.localeCompare(b.key));
     } catch (error) {
       console.warn(error); // eslint-disable-line no-console
     }
@@ -90,9 +80,7 @@ const Filter: FunctionComponent<Props> = ({ panelId, filter }) => {
   const fetchAutocompleteSuggestions = async (type, query) => {
     setIsLoading(true);
     try {
-      const response = await fetch(
-        `/proxy/autocomplete/${ring.rid}/1/${info?.defaultEntity}/${type}?query=${query}`,
-      );
+      const response = await fetch(`/proxy/autocomplete/${ring.rid}/1/${info?.defaultEntity}/${type}?query=${query}`);
       if (response.status === 200) {
         const data = await response.json();
         setAutoCompleteSuggestions(data);
@@ -110,19 +98,9 @@ const Filter: FunctionComponent<Props> = ({ panelId, filter }) => {
 
   const filterTypeRange = (
     <>
-      <FormControl
-        placeholder="min"
-        min="0"
-        type="number"
-        className="filter-range-input"
-      />
+      <FormControl placeholder="min" min="0" type="number" className="filter-range-input" />
       <InputGroup.Text>-</InputGroup.Text>
-      <FormControl
-        placeholder="max"
-        type="number"
-        max="99999"
-        className="filter-range-input"
-      />
+      <FormControl placeholder="max" type="number" max="99999" className="filter-range-input" />
     </>
   );
 
@@ -147,24 +125,7 @@ const Filter: FunctionComponent<Props> = ({ panelId, filter }) => {
         return (
           <>
             {filterOptions?.autocomplete ? (
-              <AsyncTypeahead
-                id={uniqid()}
-                filterBy={() => true}
-                isLoading={isLoading}
-                labelKey={null}
-                minLength={
-                  ["ontology_labels", "case_type"].includes(filter.type) ? 1 : 3
-                }
-                onSearch={(query) =>
-                  fetchAutocompleteSuggestions(filter.type, query)
-                }
-                options={autoCompleteSuggestions.map(String)}
-                placeholder="Search..."
-                defaultInputValue={value}
-                onBlur={(event) =>
-                  setFilter({ ...filter, value: event.target.value })
-                }
-              />
+              <AsyncTypeahead id={uniqid()} filterBy={() => true} isLoading={isLoading} labelKey={null} minLength={["ontology_labels", "case_type"].includes(filter.type) ? 1 : 3} onSearch={(query) => fetchAutocompleteSuggestions(filter.type, query)} options={autoCompleteSuggestions.map(String)} placeholder="Search..." defaultInputValue={value} onBlur={(event) => setFilter({ ...filter, value: event.target.value })} />
             ) : filter.type === "causeOfAction" ? (
               filterTypeRange
             ) : (
@@ -189,21 +150,13 @@ const Filter: FunctionComponent<Props> = ({ panelId, filter }) => {
     <div className="d-inline-block me-3">
       <InputGroup className="mb-3">
         <InputGroup.Text className="bg-white">
-          <FilterTypeDropDown
-            filter={filter}
-            getFilterOptionsByKey={getFilterOptionsByKey}
-            filters={filters}
-            getFiltersNormalized={getFiltersNormalized}
-            setFilter={setFilter}
-          />
+          <FilterTypeDropDown filter={filter} getFilterOptionsByKey={getFilterOptionsByKey} filters={filters} getFiltersNormalized={getFiltersNormalized} setFilter={setFilter} />
         </InputGroup.Text>
         {filterTypeRender(filterOptions?.type, value)}
         <InputGroup.Text
           className="cursor-pointer bg-transparent"
           onClick={async () => {
-            const newFilters = [
-              ...filters.filter((filter: FilterT) => filter.id !== id),
-            ];
+            const newFilters = [...filters.filter((filter: FilterT) => filter.id !== id)];
             setPanelFilters(newFilters);
             getPanelResults(newFilters);
           }}

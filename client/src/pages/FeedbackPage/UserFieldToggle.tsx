@@ -13,25 +13,14 @@ type Props = {
   disabled?: boolean;
 };
 
-const UserFieldToggle: FunctionComponent<Props> = ({
-  userId,
-  fieldName,
-  label,
-  value,
-  disabled,
-}) => {
+const UserFieldToggle: FunctionComponent<Props> = ({ userId, fieldName, label, value, disabled }) => {
   const [checked, setChecked] = useState(value);
   const authHeader = useAuthHeader();
   const { notify } = useNotify();
 
   const handleChange = (event: ChangeEvent<HTMLInputElement>) => {
     if (event.target.checked !== checked) {
-      const fieldValue =
-        fieldName === "role"
-          ? event.target.checked
-            ? "admin"
-            : "user"
-          : !checked;
+      const fieldValue = fieldName === "role" ? (event.target.checked ? "admin" : "user") : !checked;
       fetch(`/api/users/${userId}`, {
         method: "PUT",
         body: JSON.stringify({
@@ -65,18 +54,7 @@ const UserFieldToggle: FunctionComponent<Props> = ({
 
   return (
     <FormGroup row>
-      <FormControlLabel
-        control={
-          <Switch
-            disabled={disabled}
-            checked={checked}
-            onChange={handleChange}
-            color="primary"
-            name={fieldName}
-          />
-        }
-        label={label}
-      />
+      <FormControlLabel control={<Switch disabled={disabled} checked={checked} onChange={handleChange} color="primary" name={fieldName} />} label={label} />
     </FormGroup>
   );
 };

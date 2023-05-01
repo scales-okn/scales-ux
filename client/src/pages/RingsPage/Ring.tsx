@@ -159,104 +159,38 @@ const Ring: React.FC = () => {
           <Row>
             <Form.Group controlId="formName" className="mb-2" as={Col}>
               <Form.Label>Name</Form.Label>
-              <Form.Control
-                type="text"
-                name="name"
-                placeholder="Name"
-                value={formik.values.name}
-                onChange={formik.handleChange}
-                onBlur={formik.handleBlur}
-              />
-              {formik.touched.name && formik.errors.name ? (
-                <Form.Text className="text-danger">
-                  {formik.errors.name}
-                </Form.Text>
-              ) : null}
+              <Form.Control type="text" name="name" placeholder="Name" value={formik.values.name} onChange={formik.handleChange} onBlur={formik.handleBlur} />
+              {formik.touched.name && formik.errors.name ? <Form.Text className="text-danger">{formik.errors.name}</Form.Text> : null}
             </Form.Group>
             <Form.Group controlId="formRID" className="mb-2" as={Col}>
               <Form.Label>RID</Form.Label>
-              <Form.Control
-                type="text"
-                name="rid"
-                placeholder="Ring Id"
-                value={formik.values.rid}
-                onChange={formik.handleChange}
-                onBlur={formik.handleBlur}
-              />
-              {formik.touched.rid && formik.errors.rid ? (
-                <Form.Text className="text-danger">
-                  {formik.errors.rid}
-                </Form.Text>
-              ) : null}
+              <Form.Control type="text" name="rid" placeholder="Ring Id" value={formik.values.rid} onChange={formik.handleChange} onBlur={formik.handleBlur} />
+              {formik.touched.rid && formik.errors.rid ? <Form.Text className="text-danger">{formik.errors.rid}</Form.Text> : null}
             </Form.Group>
           </Row>
           <Form.Group controlId="formDescription" className="mb-2">
             <Form.Label>Description</Form.Label>
-            <Form.Control
-              as="textarea"
-              rows={3}
-              name="description"
-              placeholder="Description"
-              value={formik.values.description}
-              onChange={formik.handleChange}
-              onBlur={formik.handleBlur}
-            />
-            {formik.touched.description && formik.errors.description ? (
-              <Form.Text className="text-danger">
-                {formik.errors.description}
-              </Form.Text>
-            ) : null}
+            <Form.Control as="textarea" rows={3} name="description" placeholder="Description" value={formik.values.description} onChange={formik.handleChange} onBlur={formik.handleBlur} />
+            {formik.touched.description && formik.errors.description ? <Form.Text className="text-danger">{formik.errors.description}</Form.Text> : null}
           </Form.Group>
           <Row>
             <Form.Group controlId="formVersion" className="mb-2" as={Col}>
               <Form.Label>Version</Form.Label>
-              <Form.Control
-                type="number"
-                name="version"
-                placeholder="Version"
-                value={formik.values.version}
-                onChange={formik.handleChange}
-                onBlur={formik.handleBlur}
-              />
-              {formik.touched.version && formik.errors.version ? (
-                <Form.Text className="text-danger">
-                  {formik.errors.version}
-                </Form.Text>
-              ) : null}
+              <Form.Control type="number" name="version" placeholder="Version" value={formik.values.version} onChange={formik.handleChange} onBlur={formik.handleBlur} />
+              {formik.touched.version && formik.errors.version ? <Form.Text className="text-danger">{formik.errors.version}</Form.Text> : null}
             </Form.Group>
             <Form.Group controlId="formSchemaVersion" className="mb-2" as={Col}>
               <Form.Label>Schema Version</Form.Label>
-              <Form.Control
-                type="number"
-                name="schemaVersion"
-                placeholder="Schema Version"
-                value={formik.values.schemaVersion}
-                onChange={formik.handleChange}
-                onBlur={formik.handleBlur}
-              />
-              {formik.touched.schemaVersion && formik.errors.schemaVersion ? (
-                <Form.Text className="text-danger">
-                  {formik.errors.schemaVersion}
-                </Form.Text>
-              ) : null}
+              <Form.Control type="number" name="schemaVersion" placeholder="Schema Version" value={formik.values.schemaVersion} onChange={formik.handleChange} onBlur={formik.handleBlur} />
+              {formik.touched.schemaVersion && formik.errors.schemaVersion ? <Form.Text className="text-danger">{formik.errors.schemaVersion}</Form.Text> : null}
             </Form.Group>
             <Form.Group controlId="formVisibility" className="mb-3" as={Col}>
               <Form.Label>Visibility</Form.Label>
-              <Form.Control
-                as="select"
-                name="visibility"
-                value={formik.values.visibility}
-                onChange={formik.handleChange}
-                onBlur={formik.handleBlur}
-              >
+              <Form.Control as="select" name="visibility" value={formik.values.visibility} onChange={formik.handleChange} onBlur={formik.handleBlur}>
                 <option value="public">Public</option>
                 <option value="private">Private</option>
               </Form.Control>
-              {formik.touched.visibility && formik.errors.visibility ? (
-                <Form.Text className="text-danger">
-                  {formik.errors.visibility}
-                </Form.Text>
-              ) : null}
+              {formik.touched.visibility && formik.errors.visibility ? <Form.Text className="text-danger">{formik.errors.visibility}</Form.Text> : null}
             </Form.Group>
           </Row>
           <Row className="mb-5">
@@ -277,11 +211,7 @@ const Ring: React.FC = () => {
                   }
                 }}
               />
-              {formik.touched.dataSource && formik.errors.dataSource ? (
-                <Form.Text className="text-danger">
-                  {formik.errors.dataSource}
-                </Form.Text>
-              ) : null}
+              {formik.touched.dataSource && formik.errors.dataSource ? <Form.Text className="text-danger">{formik.errors.dataSource}</Form.Text> : null}
             </Form.Group>
             <Form.Group controlId="formOntology" className="mb-2" as={Col}>
               <Form.Label>Ontology</Form.Label>
@@ -300,21 +230,12 @@ const Ring: React.FC = () => {
                   }
                 }}
               />
-              {formik.touched.ontology && formik.errors.ontology ? (
-                <Form.Text className="text-danger">
-                  {formik.errors.ontology}
-                </Form.Text>
-              ) : null}
+              {formik.touched.ontology && formik.errors.ontology ? <Form.Text className="text-danger">{formik.errors.ontology}</Form.Text> : null}
             </Form.Group>
           </Row>
         </Form>
       </Loader>
-      <ConfirmModal
-        itemName="ring"
-        open={confirmVisible}
-        setOpen={setConfirmVisible}
-        onConfirm={() => deleteRing(ring.rid)}
-      />
+      <ConfirmModal itemName="ring" open={confirmVisible} setOpen={setConfirmVisible} onConfirm={() => deleteRing(ring.rid)} />
     </PageLayout>
   );
 };

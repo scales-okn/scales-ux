@@ -50,27 +50,13 @@ const App: FunctionComponent = () => {
             <ProtectedRoute exact path="/rings" component={NotebooksPage} />
             <ProtectedRoute exact path="/rings/create" component={Ring} />
             <ProtectedRoute exact path="/rings/:ringId" component={Ring} />
-            <ProtectedRoute
-              exact
-              path="/notebooks/:notebookId"
-              component={NotebookPage}
-            />
-            <ProtectedRoute
-              exact
-              path="/document/:ringId/:ringVersion/:entityType/:docId"
-              component={DocumentPage}
-            />
+            <ProtectedRoute exact path="/notebooks/:notebookId" component={NotebookPage} />
+            <ProtectedRoute exact path="/document/:ringId/:ringVersion/:entityType/:docId" component={DocumentPage} />
             <Route path="/sign-in" component={SignInPage} />
             <Route path="/sign-up" component={SignUpPage} />
             <Route path="/forgot-password" component={ForgotPasswordPage} />
-            <Route
-              path="/reset-password/:token"
-              component={ResetPasswordPage}
-            />
-            <Route
-              path="/verify-email/:token"
-              component={EmailVerificationPage}
-            />
+            <Route path="/reset-password/:token" component={ResetPasswordPage} />
+            <Route path="/verify-email/:token" component={EmailVerificationPage} />
             <Route component={() => <Redirect to="/" />} />
           </Switch>
         </BrowserRouter>

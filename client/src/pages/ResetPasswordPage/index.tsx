@@ -22,13 +22,8 @@ const ResetPasswordValidationSchema = yup.object({
   password: yup
     .string()
     .required()
-    .matches(
-      /^.*(?=.{8,})((?=.*[!@#$%^&*()\-_=+{};:,<.>]){1})(?=.*\d)((?=.*[a-z]){1})((?=.*[A-Z]){1}).*$/,
-      "Password must contain at least 8 characters, one uppercase, one number and one special case character",
-    ),
-  repassword: yup
-    .string()
-    .oneOf([yup.ref("password"), null], "Passwords must match"),
+    .matches(/^.*(?=.{8,})((?=.*[!@#$%^&*()\-_=+{};:,<.>]){1})(?=.*\d)((?=.*[a-z]){1})((?=.*[A-Z]){1}).*$/, "Password must contain at least 8 characters, one uppercase, one number and one special case character"),
+  repassword: yup.string().oneOf([yup.ref("password"), null], "Passwords must match"),
 });
 
 const ResetPassword: FunctionComponent = () => {
@@ -82,40 +77,14 @@ const ResetPassword: FunctionComponent = () => {
             <FontAwesomeIcon icon={faBalanceScale} size="3x" className="mb-4" />
             <h1 className="h3 mb-3 fw-normal">Please sign in</h1>
             <div className="form-floating">
-              <Form.Control
-                type="password"
-                name="password"
-                placeholder="Password"
-                className="rounded-0 rounded-top"
-                value={formik.values.password}
-                onChange={formik.handleChange}
-                isInvalid={
-                  formik.touched.password && Boolean(formik.errors?.password)
-                }
-              />
+              <Form.Control type="password" name="password" placeholder="Password" className="rounded-0 rounded-top" value={formik.values.password} onChange={formik.handleChange} isInvalid={formik.touched.password && Boolean(formik.errors?.password)} />
               <Form.Label>Password</Form.Label>
             </div>
             <div className="form-floating mb-3">
-              <Form.Control
-                type="password"
-                name="repassword"
-                placeholder="Confirm Password"
-                className="rounded-0 rounded-bottom border-top-0"
-                value={formik.values.repassword}
-                onChange={formik.handleChange}
-                isInvalid={
-                  formik.touched.repassword &&
-                  Boolean(formik.errors?.repassword)
-                }
-              />
+              <Form.Control type="password" name="repassword" placeholder="Confirm Password" className="rounded-0 rounded-bottom border-top-0" value={formik.values.repassword} onChange={formik.handleChange} isInvalid={formik.touched.repassword && Boolean(formik.errors?.repassword)} />
               <Form.Label>Confirm Password</Form.Label>
             </div>
-            <Button
-              variant="primary"
-              type="submit"
-              className="w-100 mb-3 text-white"
-              size="lg"
-            >
+            <Button variant="primary" type="submit" className="w-100 mb-3 text-white" size="lg">
               Reset Password
             </Button>
             <Row className="mb-5">

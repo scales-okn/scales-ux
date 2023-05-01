@@ -3,15 +3,7 @@ import "../../node_modules/cypress-localstorage-commands";
 
 const COMMAND_DELAY = 500;
 
-for (const command of [
-  "visit",
-  "click",
-  "trigger",
-  "type",
-  "clear",
-  "reload",
-  "contains",
-]) {
+for (const command of ["visit", "click", "trigger", "type", "clear", "reload", "contains"]) {
   Cypress.Commands.overwrite(command, (originalFn, ...args) => {
     const origVal = originalFn(...args);
 

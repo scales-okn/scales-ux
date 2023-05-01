@@ -13,14 +13,7 @@ const AddPanel: FunctionComponent<AddPanelProps> = ({ notebookId }) => {
   const { createPanel } = usePanels(notebookId);
 
   return (
-    <Button
-      className="add-panel-btn w-100"
-      style={{ marginBottom: "80px" }}
-      size="lg"
-      variant="link"
-      disabled={!notebook}
-      onClick={() => createPanel()}
-    >
+    <Button className="add-panel-btn w-100" style={{ marginBottom: "80px" }} size="lg" variant="link" disabled={!notebook} onClick={() => createPanel()}>
       Add Panel
     </Button>
   );

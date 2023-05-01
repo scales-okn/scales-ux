@@ -34,11 +34,8 @@ const Analysis: FunctionComponent<Props> = ({ panelId, ring, info }) => {
   const [statements, setStatements] = useState([]);
   const [parameters, setParameters] = useState([]);
   const [loadingAnswers, setAnswersLoading] = useState(false);
-  const [loadingAutosuggestions, setLoadingAutosuggestions] =
-    useState<boolean>(false);
-  const [autoCompleteSuggestions, setAutoCompleteSuggestions] = useState<
-    string[]
-  >([]);
+  const [loadingAutosuggestions, setLoadingAutosuggestions] = useState<boolean>(false);
+  const [autoCompleteSuggestions, setAutoCompleteSuggestions] = useState<string[]>([]);
   const { notify } = useNotify();
   const [data, setData] = useState(null);
   const [satyrn, setSatyrn] = useState(null);
@@ -46,12 +43,7 @@ const Analysis: FunctionComponent<Props> = ({ panelId, ring, info }) => {
 
   useEffect(() => {
     if (!info) return;
-    const satyrn = new Satyrn(
-      info.defaultEntity,
-      info.operations,
-      info.analysisSpace,
-      ring,
-    );
+    const satyrn = new Satyrn(info.defaultEntity, info.operations, info.analysisSpace, ring);
     setSatyrn(satyrn);
     setStatements(satyrn.planManager.generate());
   }, [info]); // eslint-disable-line react-hooks/exhaustive-deps
@@ -76,12 +68,7 @@ const Analysis: FunctionComponent<Props> = ({ panelId, ring, info }) => {
 
       const queryFilters = filters
         ? filters?.reduce((acc, filterInput: FilterInput) => {
-            acc[filterInput.type] =
-              filterInput.type === "dateFiled"
-                ? `[${filterInput.value?.map((date) =>
-                    dayjs(date).format("YYYY-M-DD"),
-                  )}]`
-                : filterInput.value;
+            acc[filterInput.type] = filterInput.type === "dateFiled" ? `[${filterInput.value?.map((date) => dayjs(date).format("YYYY-M-DD"))}]` : filterInput.value;
 
             return acc;
           }, {})
@@ -106,14 +93,11 @@ const Analysis: FunctionComponent<Props> = ({ panelId, ring, info }) => {
       }
 
       setPlan(plan);
-      const response = await fetch(
-        `/proxy/analysis/${ring.rid}/${ring.version}/${info?.defaultEntity}/`,
-        {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(plan),
-        },
-      );
+      const response = await fetch(`/proxy/analysis/${ring.rid}/${ring.version}/${info?.defaultEntity}/`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(plan),
+      });
       const data = await response.json();
       setData(data);
       setAnswersLoading(false);
@@ -141,17 +125,11 @@ const Analysis: FunctionComponent<Props> = ({ panelId, ring, info }) => {
     setLoadingAutosuggestions(true);
     setAutoCompleteSuggestions([]);
     try {
-      const response = await fetch(
-        `/proxy/autocomplete/${ring.rid}/${ring.version}/${info?.defaultEntity}/${type}?query=${query}`,
-      );
+      const response = await fetch(`/proxy/autocomplete/${ring.rid}/${ring.version}/${info?.defaultEntity}/${type}?query=${query}`);
       if (response.status === 200) {
         const data = await response.json();
         data instanceof Array && setAutoCompleteSuggestions(data);
-        data?.success === false &&
-          notify(
-            data?.message || "Could not fetch autocomplete suggestions",
-            "error",
-          );
+        data?.success === false && notify(data?.message || "Could not fetch autocomplete suggestions", "error");
         setLoadingAutosuggestions(false);
       } else {
         notify("Could not fetch autocomplete suggestions", "error");
@@ -175,50 +153,21 @@ const Analysis: FunctionComponent<Props> = ({ panelId, ring, info }) => {
         analysis.map(({ id }) => (
           <Row key={id} className="analysis-item" style={{ padding: "16px" }}>
             <Col lg="11">
-              <Statements
-                statements={statements}
-                setSelectedStatement={setSelectedStatement}
-                selectedStatement={selectedStatement}
-                setParameters={setParameters}
-                getStatement={getStatement}
-              />
-              <Parameters
-                autoCompleteSuggestions={autoCompleteSuggestions}
-                parameters={parameters}
-                selectedParameter={selectedParameter}
-                setSelectedParameter={setSelectedParameter}
-                fetchAutocompleteSuggestions={fetchAutocompleteSuggestions}
-                loadingAutosuggestions={loadingAutosuggestions}
-              />
+              <Statements statements={statements} setSelectedStatement={setSelectedStatement} selectedStatement={selectedStatement} setParameters={setParameters} getStatement={getStatement} />
+              <Parameters autoCompleteSuggestions={autoCompleteSuggestions} parameters={parameters} selectedParameter={selectedParameter} setSelectedParameter={setSelectedParameter} fetchAutocompleteSuggestions={fetchAutocompleteSuggestions} loadingAutosuggestions={loadingAutosuggestions} />
             </Col>
             <Col lg="1" className="text-end">
-              <Button
-                size="sm"
-                variant="outline-danger"
-                onClick={() => setSelectedAnalysisId(id)}
-              >
+              <Button size="sm" variant="outline-danger" onClick={() => setSelectedAnalysisId(id)}>
                 Remove
               </Button>
             </Col>
-            <Answers
-              panelId={panelId}
-              plan={plan}
-              statement={getStatement(selectedStatement)}
-              data={data}
-              satyrn={satyrn}
-              loadingAnswers={loadingAnswers}
-            />
+            <Answers panelId={panelId} plan={plan} statement={getStatement(selectedStatement)} data={data} satyrn={satyrn} loadingAnswers={loadingAnswers} />
           </Row>
         ))
       ) : (
         <div>No analysis added.</div>
       )}
-      <ConfirmModal
-        itemName="analysis"
-        open={!!selectedAnalysisId}
-        setOpen={setSelectedAnalysisId}
-        onConfirm={handleRemoveAnalysis}
-      />
+      <ConfirmModal itemName="analysis" open={!!selectedAnalysisId} setOpen={setSelectedAnalysisId} onConfirm={handleRemoveAnalysis} />
     </div>
   );
 };

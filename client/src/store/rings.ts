@@ -45,9 +45,7 @@ const ringsSlice = createSlice({
     }),
     getRingInfoSuccess: (state, { payload }) => ({
       ...state,
-      rings: state.rings.map((ring) =>
-        ring.rid === payload.rid ? { ...ring, info: payload.info } : ring,
-      ),
+      rings: state.rings.map((ring) => (ring.rid === payload.rid ? { ...ring, info: payload.info } : ring)),
       loadingRingInfo: false,
       hasErrors: false,
     }),
@@ -64,10 +62,8 @@ export const ringsActions = ringsSlice.actions;
 
 // Selectors
 export const ringsSelector = (state: RootState) => state?.rings;
-export const ringSelector = (state: RootState, id: string) =>
-  state?.rings?.rings?.find((ring) => ring.id === id);
-export const ringInfoSelector = (state: RootState, id: string) =>
-  state?.rings?.rings?.find((ring) => ring.id === id)?.info;
+export const ringSelector = (state: RootState, id: string) => state?.rings?.rings?.find((ring) => ring.id === id);
+export const ringInfoSelector = (state: RootState, id: string) => state?.rings?.rings?.find((ring) => ring.id === id)?.info;
 
 // The reducer
 export default ringsSlice.reducer;
@@ -101,9 +97,7 @@ export const getRings = () => {
 
 export const getRingInfo = (rid: string, version: number) => {
   return async (dispatch: AppDispatch) => {
-    const failedToGetRingInfoNotification = (
-      message = "Failed to get ring info!",
-    ) => dispatch(notify(message, "error"));
+    const failedToGetRingInfoNotification = (message = "Failed to get ring info!") => dispatch(notify(message, "error"));
 
     try {
       dispatch(ringsActions.getRingInfo());
@@ -112,9 +106,7 @@ export const getRingInfo = (rid: string, version: number) => {
       if (response.status === 200 && info?.success !== false) {
         dispatch(ringsActions.getRingInfoSuccess({ rid, info }));
       } else {
-        failedToGetRingInfoNotification(
-          info?.message || "Failed to get ring info!",
-        );
+        failedToGetRingInfoNotification(info?.message || "Failed to get ring info!");
         dispatch(ringsActions.getRingInfoFailure());
       }
     } catch (error) {
@@ -126,8 +118,7 @@ export const getRingInfo = (rid: string, version: number) => {
 
 // Hooks
 export const useRings = () => {
-  const { rings, loadingRings, hasErrors, loadingRingInfo } =
-    useSelector(ringsSelector);
+  const { rings, loadingRings, hasErrors, loadingRingInfo } = useSelector(ringsSelector);
   const dispatch = useDispatch();
 
   return {
@@ -137,8 +128,7 @@ export const useRings = () => {
     loadingRingInfo,
     hasErrors,
     getRings: () => dispatch(getRings()),
-    getRingInfo: (rid: string, version: number) =>
-      dispatch(getRingInfo(rid, version)),
+    getRingInfo: (rid: string, version: number) => dispatch(getRingInfo(rid, version)),
   };
 };
 

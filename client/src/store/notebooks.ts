@@ -72,8 +72,7 @@ export function fetchNotebooks() {
 }
 
 export const useNotebooks = () => {
-  const { loadingNotebooks, hasErrors, notebooks } =
-    useSelector(notebooksSelector);
+  const { loadingNotebooks, hasErrors, notebooks } = useSelector(notebooksSelector);
   const dispatch = useDispatch();
 
   return {

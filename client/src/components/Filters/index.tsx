@@ -29,11 +29,7 @@ const Filters: FunctionComponent<FiltersProps> = ({ panelId }) => {
           <FontAwesomeIcon icon={faPlus} />
         </Button>
         {filters?.length > 0 ? (
-          <Button
-            variant="primary"
-            className="text-white"
-            onClick={() => getPanelResults(filters)}
-          >
+          <Button variant="primary" className="text-white" onClick={() => getPanelResults(filters)}>
             Update Results
           </Button>
         ) : (

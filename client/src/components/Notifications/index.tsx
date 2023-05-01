@@ -1,21 +1,13 @@
 import React, { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useEffectOnce } from "react-use";
-import NotificationsSystem, {
-  bootstrapTheme,
-  dismissNotification,
-  setUpNotifications,
-  notify,
-  Status,
-} from "reapop";
+import NotificationsSystem, { bootstrapTheme, dismissNotification, setUpNotifications, notify, Status } from "reapop";
 
-export const useUnknownErrorNotificationMessage =
-  "An unknown error occurred. Please try again or refresh the page.";
+export const useUnknownErrorNotificationMessage = "An unknown error occurred. Please try again or refresh the page.";
 
 export const useUnknownErrorNotification = () => {
   const dispatch = useDispatch();
-  const onError = () =>
-    dispatch(notify(useUnknownErrorNotificationMessage, "error"));
+  const onError = () => dispatch(notify(useUnknownErrorNotificationMessage, "error"));
 
   return onError;
 };
@@ -43,11 +35,7 @@ const Notifications: React.FC = () => {
 
   return (
     <div>
-      <NotificationsSystem
-        notifications={notifications}
-        dismissNotification={(id) => dispatch(dismissNotification(id))}
-        theme={bootstrapTheme}
-      />
+      <NotificationsSystem notifications={notifications} dismissNotification={(id) => dispatch(dismissNotification(id))} theme={bootstrapTheme} />
     </div>
   );
 };
@@ -55,8 +43,7 @@ const Notifications: React.FC = () => {
 export const useNotify = () => {
   const dispatch = useDispatch();
   return {
-    notify: (message: string, status: Status) =>
-      dispatch(notify(message, status)),
+    notify: (message: string, status: Status) => dispatch(notify(message, status)),
   };
 };
 

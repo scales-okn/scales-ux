@@ -6,10 +6,7 @@ type FeedbackDetailModalT = {
   closeModal: (arg: null) => void;
 };
 
-const FeedbackDetailModal: FunctionComponent<FeedbackDetailModalT> = ({
-  closeModal,
-  feedbackDetail,
-}) => {
+const FeedbackDetailModal: FunctionComponent<FeedbackDetailModalT> = ({ closeModal, feedbackDetail }) => {
   return (
     <Modal show onHide={() => closeModal(null)}>
       <Modal.Body>

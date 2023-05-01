@@ -1,10 +1,5 @@
 import React, { FunctionComponent, useState } from "react";
-import {
-  DataGrid,
-  GridColDef,
-  GridValueGetterParams,
-  GridCellParams,
-} from "@material-ui/data-grid";
+import { DataGrid, GridColDef, GridValueGetterParams, GridCellParams } from "@material-ui/data-grid";
 import { useEffectOnce } from "react-use";
 import { Tooltip, Typography } from "@material-ui/core";
 import PageLayout from "../../components/PageLayout";
@@ -29,10 +24,7 @@ const AdminUsersPages: FunctionComponent = () => {
       description: "This column has a value getter and is not sortable.",
       sortable: false,
       width: 200,
-      valueGetter: (params: GridValueGetterParams) =>
-        `${params.getValue(params.id, "firstName") || ""} ${
-          params.getValue(params.id, "lastName") || ""
-        }`,
+      valueGetter: (params: GridValueGetterParams) => `${params.getValue(params.id, "firstName") || ""} ${params.getValue(params.id, "lastName") || ""}`,
     },
     { field: "email", headerName: "Email", width: 240 },
     {
@@ -51,27 +43,13 @@ const AdminUsersPages: FunctionComponent = () => {
       field: "approved",
       headerName: "Approved",
       width: 140,
-      renderCell: (params: GridCellParams) => (
-        <UserFieldToggle
-          userId={params.row.id}
-          fieldName="approved"
-          value={params.row.approved}
-          disabled={params.row.id === id}
-        />
-      ),
+      renderCell: (params: GridCellParams) => <UserFieldToggle userId={params.row.id} fieldName="approved" value={params.row.approved} disabled={params.row.id === id} />,
     },
     {
       field: "blocked",
       headerName: "Blocked",
       width: 140,
-      renderCell: (params: GridCellParams) => (
-        <UserFieldToggle
-          userId={params.row.id}
-          fieldName="blocked"
-          value={params.row.blocked}
-          disabled={params.row.id === id}
-        />
-      ),
+      renderCell: (params: GridCellParams) => <UserFieldToggle userId={params.row.id} fieldName="blocked" value={params.row.blocked} disabled={params.row.id === id} />,
     },
   ];
 
@@ -81,14 +59,7 @@ const AdminUsersPages: FunctionComponent = () => {
       headerName: "Admin",
       width: 140,
       renderCell: (params: GridCellParams) => {
-        return (
-          <UserFieldToggle
-            disabled={params.row.id === id}
-            userId={params.row.id}
-            fieldName="role"
-            value={params.row.role === "admin"}
-          />
-        );
+        return <UserFieldToggle disabled={params.row.id === id} userId={params.row.id} fieldName="role" value={params.row.role === "admin"} />;
       },
     });
     columns.push({
@@ -96,9 +67,7 @@ const AdminUsersPages: FunctionComponent = () => {
       headerName: "Delete",
       width: 150,
       renderCell: (params: GridCellParams) => {
-        return (
-          <DeleteUser userId={params.row.id} disabled={params.row.id === id} />
-        );
+        return <DeleteUser userId={params.row.id} disabled={params.row.id === id} />;
       },
     });
   }
@@ -122,13 +91,7 @@ const AdminUsersPages: FunctionComponent = () => {
         <NotAuthorized />
       ) : (
         <Row style={{ height: 400, width: "100%" }}>
-          <DataGrid
-            rows={rows}
-            columns={columns}
-            pageSize={5}
-            checkboxSelection={false}
-            className="bg-white p-0"
-          />
+          <DataGrid rows={rows} columns={columns} pageSize={5} checkboxSelection={false} className="bg-white p-0" />
         </Row>
       )}
     </PageLayout>

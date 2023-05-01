@@ -8,20 +8,10 @@ interface Props {
   [key: string]: any;
 }
 
-const ProtectedRoute: FunctionComponent<Props> = ({
-  component: Component,
-  ...restOfProps
-}) => {
+const ProtectedRoute: FunctionComponent<Props> = ({ component: Component, ...restOfProps }) => {
   const { user } = useSelector(authSelector);
 
-  return (
-    <Route
-      {...restOfProps}
-      render={(props) =>
-        user ? <Component {...props} /> : <Redirect to="/sign-up" />
-      }
-    />
-  );
+  return <Route {...restOfProps} render={(props) => (user ? <Component {...props} /> : <Redirect to="/sign-up" />)} />;
 };
 
 export default ProtectedRoute;
