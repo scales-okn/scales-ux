@@ -10,7 +10,7 @@
     "react/prop-types": "off",
     "@typescript-eslint/ban-ts-comment": "off",
     "@typescript-eslint/ban-types": "off",
-    "prettier/prettier": ["warn"],
+    "prettier/prettier": ["off"],
     "react/display-name": "off"
   },
   "extends": ["react-app", "react-app/jest", "eslint:recommended", "plugin:react/recommended", "plugin:@typescript-eslint/recommended", "plugin:react-hooks/recommended", "prettier"],

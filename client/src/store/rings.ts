@@ -45,7 +45,9 @@ const ringsSlice = createSlice({
     }),
     getRingInfoSuccess: (state, { payload }) => ({
       ...state,
-      rings: state.rings.map((ring) => (ring.rid === payload.rid ? { ...ring, info: payload.info } : ring)),
+      rings: state.rings.map((ring) => {
+        return ring.rid === payload.rid ? { ...ring, info: payload.info } : ring;
+      }),
       loadingRingInfo: false,
       hasErrors: false,
     }),
@@ -62,8 +64,12 @@ export const ringsActions = ringsSlice.actions;
 
 // Selectors
 export const ringsSelector = (state: RootState) => state?.rings;
-export const ringSelector = (state: RootState, id: string) => state?.rings?.rings?.find((ring) => ring.id === id);
-export const ringInfoSelector = (state: RootState, id: string) => state?.rings?.rings?.find((ring) => ring.id === id)?.info;
+export const ringSelector = (state: RootState, id: string) => {
+  return state?.rings?.rings?.find((ring) => ring.id === id);
+};
+export const ringInfoSelector = (state: RootState, id: string) => {
+  return state?.rings?.rings?.find((ring) => ring.id === id)?.info;
+};
 
 // The reducer
 export default ringsSlice.reducer;
@@ -128,7 +134,9 @@ export const useRings = () => {
     loadingRingInfo,
     hasErrors,
     getRings: () => dispatch(getRings()),
-    getRingInfo: (rid: string, version: number) => dispatch(getRingInfo(rid, version)),
+    getRingInfo: (rid: string, version: number) => {
+      return dispatch(getRingInfo(rid, version));
+    },
   };
 };
 
