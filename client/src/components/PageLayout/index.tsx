@@ -75,48 +75,54 @@ const PageLayout: FunctionComponent<Props> = (props) => {
           <div style={{ width: "100%", display: "flex", justifyContent: "space-between", padding: "0 18px" }}>
             <Navbar.Brand style={{ marginRight: isTablet ? "2rem" : "1rem" }}>{brand}</Navbar.Brand>
             <Navbar.Toggle aria-controls="responsive-navbar-nav" />
-            {user && (
-              <Navbar.Collapse id="responsive-navbar-nav" style={{ justifyContent: "flex-end" }}>
-                {!isTablet && (
-                  <Nav className="me-auto">
-                    <LinkContainer to="/">
-                      <S.NavItem active={pathname === "/"}>Notebooks</S.NavItem>
-                    </LinkContainer>
-                    {isAdmin && (
-                      <>
-                        <LinkContainer to="/rings">
-                          <S.NavItem active={pathname === "/rings"}>Rings</S.NavItem>
-                        </LinkContainer>
-                        <LinkContainer to="/users">
-                          <S.NavItem active={pathname === "/users"}>Users</S.NavItem>
-                        </LinkContainer>
-                        <LinkContainer to="/feedback">
-                          <S.NavItem active={pathname === "/feedback"}>Feedback</S.NavItem>
-                        </LinkContainer>
-                      </>
-                    )}
-                  </Nav>
-                )}
-                <Nav>
-                  <Dropdown>
-                    <Dropdown.Toggle variant="link" className="profile-toggler">
-                      <Avatar name={`${user?.firstName} ${user?.lastName}`} size="36" round={true} email={user?.email} />
-                    </Dropdown.Toggle>
+            <Navbar.Collapse id="responsive-navbar-nav" style={{ justifyContent: "flex-end" }}>
+              {user ? (
+                <>
+                  {!isTablet && (
+                    <Nav className="me-auto">
+                      <LinkContainer to="/">
+                        <S.NavItem active={pathname === "/"}>Notebooks</S.NavItem>
+                      </LinkContainer>
+                      {isAdmin && (
+                        <>
+                          <LinkContainer to="/rings">
+                            <S.NavItem active={pathname === "/rings"}>Rings</S.NavItem>
+                          </LinkContainer>
+                          <LinkContainer to="/users">
+                            <S.NavItem active={pathname === "/users"}>Users</S.NavItem>
+                          </LinkContainer>
+                          <LinkContainer to="/feedback">
+                            <S.NavItem active={pathname === "/feedback"}>Feedback</S.NavItem>
+                          </LinkContainer>
+                        </>
+                      )}
+                    </Nav>
+                  )}
+                  <Nav>
+                    <Dropdown>
+                      <Dropdown.Toggle variant="link" className="profile-toggler">
+                        <Avatar name={`${user?.firstName} ${user?.lastName}`} size="36" round={true} email={user?.email} />
+                      </Dropdown.Toggle>
 
-                    <Dropdown.Menu align="end" rootCloseEvent="mousedown">
-                      <Dropdown.Item
-                        style={{
-                          minWidth: "280px",
-                        }}
-                        onClick={() => dispatch(logout())}
-                      >
-                        Sign Out
-                      </Dropdown.Item>
-                    </Dropdown.Menu>
-                  </Dropdown>
-                </Nav>
-              </Navbar.Collapse>
-            )}
+                      <Dropdown.Menu align="end" rootCloseEvent="mousedown">
+                        <Dropdown.Item
+                          style={{
+                            minWidth: "280px",
+                          }}
+                          onClick={() => dispatch(logout())}
+                        >
+                          Sign Out
+                        </Dropdown.Item>
+                      </Dropdown.Menu>
+                    </Dropdown>
+                  </Nav>
+                </>
+              ) : (
+                <LinkContainer to="/sign-in">
+                  <S.NavItem active={pathname === "/feedback"}>Sign In</S.NavItem>
+                </LinkContainer>
+              )}
+            </Navbar.Collapse>
           </div>
         </Navbar>
         <Container id="main" className="main">
