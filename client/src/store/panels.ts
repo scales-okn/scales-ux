@@ -392,7 +392,6 @@ export const getPanelResults =
       // const authHeader = authorizationHeader(token);
       const panel = panelSelector(getState(), panelId);
       const { filters, ringId } = panel;
-      console.log(filters);
       // @ts-ignore
       const { rid, info, version } = ringSelector(getState(), ringId);
       dispatch(panelsActions.getPanelResults({ panelId }));

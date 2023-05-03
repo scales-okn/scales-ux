@@ -128,7 +128,7 @@ const Panel: FunctionComponent<PanelProps> = ({ panelId }) => {
     });
 
     return out;
-  }, [info, ring]);
+  }, [info, ring]); // eslint-disable-line react-hooks/exhaustive-deps
 
   if (!panel?.ringId) return <Dataset panelId={panel.id} />;
 
