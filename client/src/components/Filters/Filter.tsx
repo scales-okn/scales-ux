@@ -1,4 +1,4 @@
-import React, { FunctionComponent, useState } from "react";
+import React, { useMemo, useState } from "react";
 import { FormControl, InputGroup } from "react-bootstrap";
 import DateTimeRangePicker from "@wojtekmaj/react-datetimerange-picker";
 import FilterTypeDropDown from "./FitlerTypeDropDown";
@@ -22,10 +22,11 @@ type Props = {
   panelId: string;
 };
 
-const Filter: FunctionComponent<Props> = ({ panelId, filter }) => {
+const Filter = ({ panelId, filter }: Props) => {
   const { panel, filters, setPanelFilters, getPanelResults } = usePanel(panelId);
   const { ring, info } = useRing(panel.ringId);
   const { type, id, value } = filter;
+
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [autoCompleteSuggestions, setAutoCompleteSuggestions] = useState<string[]>([]);
   const [dateValue, setDateValue] = useState<string>("");
@@ -125,7 +126,7 @@ const Filter: FunctionComponent<Props> = ({ panelId, filter }) => {
         return (
           <>
             {filterOptions?.autocomplete ? (
-              <AsyncTypeahead id={uniqid()} filterBy={() => true} isLoading={isLoading} labelKey={null} minLength={["ontology_labels", "case_type"].includes(filter.type) ? 1 : 3} onSearch={(query) => fetchAutocompleteSuggestions(filter.type, query)} options={autoCompleteSuggestions.map(String)} placeholder="Search..." defaultInputValue={value} onBlur={(event) => setFilter({ ...filter, value: event.target.value })} />
+              <AsyncTypeahead id={uniqid()} filterBy={() => true} isLoading={isLoading} labelKey={(option) => option} minLength={["ontology_labels", "case_type"].includes(filter.type) ? 1 : 3} onSearch={(query) => fetchAutocompleteSuggestions(filter.type, query)} options={autoCompleteSuggestions.map(String)} placeholder="Search..." defaultInputValue={value} onBlur={(event) => setFilter({ ...filter, value: event.target.value })} />
             ) : filter.type === "causeOfAction" ? (
               filterTypeRange
             ) : (

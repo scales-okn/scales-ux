@@ -1,4 +1,4 @@
-import React, { FunctionComponent } from "react";
+import React, { useMemo } from "react";
 import { Button } from "react-bootstrap";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faPlus } from "@fortawesome/free-solid-svg-icons";
@@ -10,14 +10,24 @@ type FiltersProps = {
   panelId: string;
 };
 
-const Filters: FunctionComponent<FiltersProps> = ({ panelId }) => {
+const Filters = ({ panelId }: FiltersProps) => {
   const { filters = [], setPanelFilters, getPanelResults } = usePanel(panelId);
+
+  const renderedFilters = useMemo(() => {
+    const out = [];
+    if (filters) {
+      out.push(
+        filters?.map((filter) => {
+          return <Filter key={filter.id} panelId={panelId} filter={filter} />;
+        }),
+      );
+    }
+    return out;
+  }, [filters]); // eslint-disable-line
 
   return (
     <div className="notebook-filters bg-white p-3 pt-4 mx-0">
-      {filters?.map((filter, key) => (
-        <Filter key={key} panelId={panelId} filter={filter} />
-      ))}
+      {renderedFilters}
       <div className="d-inline-block">
         <Button
           variant="outline-dark"
