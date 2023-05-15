@@ -51,6 +51,9 @@ const SignInPage: FunctionComponent = () => {
       <Container className="h-100">
         <Row className="h-100 justify-content-center align-items-center text-center">
           <Col lg="6" xs="10">
+            <h6 className="h6" style={{ color: "crimson", fontStyle: "italic" }}>
+              Official launch in fall 2023, beta user onboarding begins mid-June.
+            </h6>
             <Form noValidate onSubmit={formik.handleSubmit}>
               <div className="form-floating" style={{ marginTop: "50px", marginBottom: "16px" }}>
                 <Form.Control type="email" name="email" placeholder="name@example.com" className="rounded-0 rounded-top" value={formik.values.email} onChange={formik.handleChange} isInvalid={formik.touched.email && Boolean(formik.errors?.email)} />
@@ -63,6 +66,7 @@ const SignInPage: FunctionComponent = () => {
               <Form.Group className="mb-4">
                 <Form.Check type="checkbox" label="Remember Me" name="rememberMe" onChange={() => setRememberMe(!rememberMe)} className="text-start" />
               </Form.Group>
+
               <Button
                 type="submit"
                 className="w-100 mb-3 text-white"

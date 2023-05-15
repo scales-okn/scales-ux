@@ -97,7 +97,10 @@ const SignUpPage: FunctionComponent = () => {
       <Container className="h-100">
         <Row className="h-100 justify-content-center align-items-center text-center">
           <Col md="7">
-            <h1 className="h3 mb-5 fw-normal">{message ? "Registered Successfully" : "Please register for beta access"}</h1>
+            <h1 className="h3 mb-3 fw-normal">{message ? "Registered Successfully" : "Please register for beta access"}</h1>
+            <h6 className="h6 mb-5" style={{ color: "crimson", fontStyle: "italic" }}>
+              Official launch in fall 2023, beta user onboarding begins mid-June.
+            </h6>
 
             <Loader animation="border" isVisible={isLoading} contentHeight="700px">
               {message ? (
