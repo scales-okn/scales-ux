@@ -1,10 +1,9 @@
-import React, { useMemo } from "react";
+import React from "react";
 import { Button } from "react-bootstrap";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faPlus } from "@fortawesome/free-solid-svg-icons";
-import Filter from "./Filter";
-import uniqid from "uniqid";
+
+import FilterRow from "./FilterRow";
 import { usePanel } from "../../store/panels";
+import * as S from "./styles";
 
 type FiltersProps = {
   panelId: string;
@@ -13,40 +12,38 @@ type FiltersProps = {
 const Filters = ({ panelId }: FiltersProps) => {
   const { filters = [], setPanelFilters, getPanelResults } = usePanel(panelId);
 
-  const renderedFilters = useMemo(() => {
-    const out = [];
-    if (filters) {
-      out.push(
-        filters?.map((filter) => {
-          return <Filter key={filter.id} panelId={panelId} filter={filter} />;
-        }),
-      );
-    }
-    return out;
-  }, [filters]); // eslint-disable-line
+  const rowMock = [0, 1, 2];
 
   return (
-    <div className="notebook-filters bg-white p-3 pt-4 mx-0">
-      {renderedFilters}
-      <div className="d-inline-block">
-        <Button
-          variant="outline-dark"
-          className="me-2"
-          onClick={() => {
-            setPanelFilters([...(filters || []), { id: uniqid(), value: "" }]);
-          }}
-        >
-          <FontAwesomeIcon icon={faPlus} />
-        </Button>
-        {filters?.length > 0 ? (
+    <S.Section>
+      <S.UpdateButtonContainer>
+        {filters?.length > 0 && (
           <Button variant="primary" className="text-white" onClick={() => getPanelResults(filters)}>
             Update Results
           </Button>
-        ) : (
-          <>Add a filter</>
         )}
-      </div>
-    </div>
+      </S.UpdateButtonContainer>
+      {rowMock.map((row) => {
+        return (
+          <div key={row}>
+            <FilterRow panelId={panelId} />
+            {row !== rowMock[rowMock.length - 1] ? (
+              <S.AndLineContainer>
+                <S.AndLine />
+                <span>AND</span>
+                <S.AndLine />
+              </S.AndLineContainer>
+            ) : (
+              <S.AndLineContainer>
+                <Button variant="outline-dark" onClick={() => null}>
+                  Add Row
+                </Button>
+              </S.AndLineContainer>
+            )}
+          </div>
+        );
+      })}
+    </S.Section>
   );
 };
 
