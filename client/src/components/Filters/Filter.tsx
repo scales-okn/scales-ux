@@ -148,8 +148,8 @@ const Filter = ({ panelId, filter }: Props) => {
   };
 
   return (
-    <div className="d-inline-block">
-      <InputGroup>
+    <div className="d-inline-block me-3">
+      <InputGroup className="mb-3">
         <InputGroup.Text className="bg-white">
           <FilterTypeDropDown filter={filter} getFilterOptionsByKey={getFilterOptionsByKey} filters={filters} getFiltersNormalized={getFiltersNormalized} setFilter={setFilter} />
         </InputGroup.Text>
