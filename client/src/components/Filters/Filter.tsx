@@ -4,8 +4,9 @@ import DateTimeRangePicker from "@wojtekmaj/react-datetimerange-picker";
 import FilterTypeDropDown from "./FitlerTypeDropDown";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faTimesCircle } from "@fortawesome/free-regular-svg-icons";
-import { AsyncTypeahead } from "react-bootstrap-typeahead";
-import uniqid from "uniqid";
+import { debounce } from "lodash";
+import Autocomplete from "@mui/material/Autocomplete";
+import TextField from "@mui/material/TextField";
 import { usePanel } from "../../store/panels";
 import { useRing } from "../../store/rings";
 import { DATE_FORMAT } from "../../constants";
@@ -78,10 +79,10 @@ const Filter = ({ panelId, filter }: Props) => {
   // const filterColumn = getFilterColumnByKey(type);
   const filterOptions = getFilterOptionsByKey(type);
 
-  const fetchAutocompleteSuggestions = async (type, query) => {
+  const fetchAutocompleteSuggestions = async (query) => {
     setIsLoading(true);
     try {
-      const response = await fetch(`/proxy/autocomplete/${ring.rid}/1/${info?.defaultEntity}/${type}?query=${query}`);
+      const response = await fetch(`/proxy/autocomplete/${ring.rid}/1/${info?.defaultEntity}/${filter.type}?query=${query}`);
       if (response.status === 200) {
         const data = await response.json();
         setAutoCompleteSuggestions(data);
@@ -97,6 +98,14 @@ const Filter = ({ panelId, filter }: Props) => {
     }
   };
 
+  const debouncedSearch = debounce((value) => fetchAutocompleteSuggestions(value), 200);
+
+  const handleClear = async () => {
+    const newFilters = [...filters.filter((filter: FilterT) => filter.id !== id)];
+    setPanelFilters(newFilters);
+    getPanelResults(newFilters);
+  };
+
   const filterTypeRange = (
     <>
       <FormControl placeholder="min" min="0" type="number" className="filter-range-input" />
@@ -105,8 +114,8 @@ const Filter = ({ panelId, filter }: Props) => {
     </>
   );
 
-  const filterTypeRender = (filterType: string, value: string | number) => {
-    switch (filterType) {
+  const filterTypeRender = () => {
+    switch (filterOptions?.type) {
       case "range":
         return filterTypeRange;
 
@@ -124,15 +133,48 @@ const Filter = ({ panelId, filter }: Props) => {
 
       default:
         return (
-          <>
+          <div>
             {filterOptions?.autocomplete ? (
-              <AsyncTypeahead id={uniqid()} filterBy={() => true} isLoading={isLoading} labelKey={(option) => option} minLength={["ontology_labels", "case_type"].includes(filter.type) ? 1 : 3} onSearch={(query) => fetchAutocompleteSuggestions(filter.type, query)} options={autoCompleteSuggestions.map(String)} placeholder="Search..." defaultInputValue={value} onBlur={(event) => setFilter({ ...filter, value: event.target.value })} />
+              <Autocomplete
+                multiple
+                options={autoCompleteSuggestions || []}
+                getOptionLabel={(option) => option}
+                renderInput={(params) => <TextField {...params} variant="outlined" label={filterOptions?.nicename} />}
+                onInputChange={(_, value) => debouncedSearch(value)}
+                disableClearable
+                onChange={(_, fieldValue) => {
+                  if (!filter) {
+                    return false;
+                  }
+                  setFilter({ ...filter, value: fieldValue.join("|") });
+                }}
+                sx={{
+                  minWidth: "250px",
+
+                  "& .MuiInputBase-root": {
+                    borderRadius: "0",
+                  },
+                  "& .MuiAutocomplete-endAdornment": {
+                    display: "none",
+                    top: "unset",
+                  },
+                  "& .MuiOutlinedInput-notchedOutline": {
+                    height: "calc(100% + 5px)",
+                  },
+                  "& .MuiChip-root": {
+                    background: "rgba(0, 0, 0, 0.1)",
+                    borderRadius: "25px",
+                    textTransform: "capitalize",
+                  },
+                }}
+              />
             ) : filter.type === "causeOfAction" ? (
               filterTypeRange
             ) : (
               <FormControl
                 className="border-end-0"
                 size="sm"
+                style={{ height: "56px" }}
                 onChange={(event) => {
                   if (!filter) {
                     return false;
@@ -142,7 +184,7 @@ const Filter = ({ panelId, filter }: Props) => {
                 value={value}
               />
             )}
-          </>
+          </div>
         );
     }
   };
@@ -153,15 +195,8 @@ const Filter = ({ panelId, filter }: Props) => {
         <InputGroup.Text className="bg-white">
           <FilterTypeDropDown filter={filter} getFilterOptionsByKey={getFilterOptionsByKey} filters={filters} getFiltersNormalized={getFiltersNormalized} setFilter={setFilter} />
         </InputGroup.Text>
-        {filterTypeRender(filterOptions?.type, value)}
-        <InputGroup.Text
-          className="cursor-pointer bg-transparent"
-          onClick={async () => {
-            const newFilters = [...filters.filter((filter: FilterT) => filter.id !== id)];
-            setPanelFilters(newFilters);
-            getPanelResults(newFilters);
-          }}
-        >
+        {filterTypeRender()}
+        <InputGroup.Text className="cursor-pointer bg-transparent" onClick={handleClear}>
           <FontAwesomeIcon icon={faTimesCircle} className="text-muted" />
         </InputGroup.Text>
       </InputGroup>

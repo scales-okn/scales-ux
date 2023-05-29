@@ -5,6 +5,7 @@ import { faPlus } from "@fortawesome/free-solid-svg-icons";
 import Filter from "./Filter";
 import uniqid from "uniqid";
 import { usePanel } from "../../store/panels";
+import * as S from "./styles";
 
 type FiltersProps = {
   panelId: string;
@@ -13,7 +14,7 @@ type FiltersProps = {
 const Filters = ({ panelId }: FiltersProps) => {
   const { filters = [], setPanelFilters, getPanelResults } = usePanel(panelId);
 
-  const renderedFilters = useMemo(() => {
+  const filterElements = useMemo(() => {
     const out = [];
     if (filters) {
       out.push(
@@ -26,8 +27,8 @@ const Filters = ({ panelId }: FiltersProps) => {
   }, [filters]); // eslint-disable-line
 
   return (
-    <div className="notebook-filters bg-white p-3 pt-4 mx-0">
-      {renderedFilters}
+    <S.FilterContainer>
+      {filterElements}
       <div className="d-inline-block">
         <Button
           variant="outline-dark"
@@ -46,7 +47,7 @@ const Filters = ({ panelId }: FiltersProps) => {
           <>Add a filter</>
         )}
       </div>
-    </div>
+    </S.FilterContainer>
   );
 };
 
