@@ -37,8 +37,8 @@ const FilterTypeDropDown: FunctionComponent<FilterTypeProps> = (props) => {
 
   const filtersToRender = getFiltersNormalized()
     ?.map((filterInput) => {
-      const { key } = filterInput;
-      if (filters.some((filter: any) => filter.type === key)) {
+      const { allowMultiple, key } = filterInput;
+      if (allowMultiple === false && filters.some((filter: any) => filter.type === key)) {
         return { ...filterInput, disabled: true };
       }
 
