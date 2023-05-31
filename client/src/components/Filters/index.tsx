@@ -28,23 +28,24 @@ const Filters = ({ panelId }: FiltersProps) => {
 
   return (
     <S.FilterContainer>
-      {filterElements}
-      <div className="d-inline-block">
-        <Button
-          variant="outline-dark"
-          className="me-2"
-          onClick={() => {
-            setPanelFilters([...(filters || []), { id: uniqid(), value: "" }]);
-          }}
-        >
-          <FontAwesomeIcon icon={faPlus} />
-        </Button>
-        {!filters?.length && <>Add a filter</>}
-
-        <Button variant="primary" className="text-white" onClick={() => getPanelResults(filters)} style={{ position: "absolute", right: "24px", top: "24px" }}>
-          Update Results
-        </Button>
-      </div>
+      <S.Filters>
+        {filterElements}
+        <div className="d-inline-block">
+          <Button
+            variant="outline-dark"
+            className="me-2"
+            onClick={() => {
+              setPanelFilters([...(filters || []), { id: uniqid(), value: "" }]);
+            }}
+          >
+            <FontAwesomeIcon icon={faPlus} />
+          </Button>
+          {!filters?.length && <>Add a filter</>}
+          <Button variant="primary" className="text-white" onClick={() => getPanelResults(filters)} style={{ position: "absolute", right: "24px", top: "24px" }}>
+            Update Results
+          </Button>
+        </div>
+      </S.Filters>
     </S.FilterContainer>
   );
 };
