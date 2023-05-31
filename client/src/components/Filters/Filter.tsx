@@ -184,6 +184,7 @@ const Filter = ({ panelId, filter }: Props) => {
               filterTypeRange
             ) : (
               <FormControl
+                disabled={!filterOptions?.type}
                 className="border-end-0"
                 size="sm"
                 style={{ height: "56px" }}
@@ -200,7 +201,7 @@ const Filter = ({ panelId, filter }: Props) => {
         );
     }
   };
-
+  console.log(filter);
   return (
     <div className="d-inline-block me-3">
       <InputGroup className="mb-3">

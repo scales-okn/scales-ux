@@ -1,4 +1,4 @@
-import React, { useMemo } from "react";
+import React, { useMemo, useEffect } from "react";
 import { Button } from "react-bootstrap";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faPlus } from "@fortawesome/free-solid-svg-icons";
@@ -39,13 +39,11 @@ const Filters = ({ panelId }: FiltersProps) => {
         >
           <FontAwesomeIcon icon={faPlus} />
         </Button>
-        {filters?.length > 0 ? (
-          <Button variant="primary" className="text-white" onClick={() => getPanelResults(filters)}>
-            Update Results
-          </Button>
-        ) : (
-          <>Add a filter</>
-        )}
+        {!filters?.length && <>Add a filter</>}
+
+        <Button variant="primary" className="text-white" onClick={() => getPanelResults(filters)} style={{ position: "absolute", right: "24px", top: "24px" }}>
+          Update Results
+        </Button>
       </div>
     </S.FilterContainer>
   );
