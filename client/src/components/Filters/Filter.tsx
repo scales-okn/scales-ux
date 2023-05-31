@@ -6,6 +6,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faTimesCircle } from "@fortawesome/free-regular-svg-icons";
 import { debounce } from "lodash";
 import Autocomplete from "@mui/material/Autocomplete";
+import CircularProgress from "@mui/material/CircularProgress";
 import TextField from "@mui/material/TextField";
 import { usePanel } from "../../store/panels";
 import { useRing } from "../../store/rings";
@@ -29,6 +30,7 @@ const Filter = ({ panelId, filter }: Props) => {
   const { type, id, value } = filter;
 
   const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [autocompleteOpen, setAutocompleteOpen] = useState<boolean>(false);
   const [autoCompleteSuggestions, setAutoCompleteSuggestions] = useState<string[]>([]);
   const [dateValue, setDateValue] = useState<string>("");
   const { notify } = useNotify();
@@ -136,12 +138,22 @@ const Filter = ({ panelId, filter }: Props) => {
           <div>
             {filterOptions?.autocomplete ? (
               <Autocomplete
+                open={autocompleteOpen}
+                noOptionsText={isLoading ? <CircularProgress /> : <>No Results Found</>}
                 multiple
                 options={autoCompleteSuggestions || []}
                 getOptionLabel={(option) => option}
                 renderInput={(params) => <TextField {...params} variant="outlined" label={filterOptions?.nicename} />}
-                onInputChange={(_, value) => debouncedSearch(value)}
                 disableClearable
+                onInputChange={(_, value) => {
+                  debouncedSearch(value);
+                  if (value.length === 0) {
+                    if (autocompleteOpen) setAutocompleteOpen(false);
+                  } else {
+                    if (!autocompleteOpen) setAutocompleteOpen(true);
+                  }
+                }}
+                onClose={() => setAutocompleteOpen(false)}
                 onChange={(_, fieldValue) => {
                   if (!filter) {
                     return false;
