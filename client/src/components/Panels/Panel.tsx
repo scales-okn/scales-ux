@@ -115,7 +115,7 @@ const Panel: FunctionComponent<PanelProps> = ({ panelId }) => {
 
     out.unshift({
       field: "button",
-      headerName: " ",
+      headerName: "Details",
       sortable: false,
       width: 100,
       renderCell: (item) => {

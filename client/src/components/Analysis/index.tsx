@@ -10,7 +10,6 @@ import Parameters from "./Parameters";
 import Statements from "./Statements";
 import _ from "lodash";
 // import appendQuery from "append-query";
-import ConfirmModal from "components/SharedElements/ConfirmModal";
 
 type Props = {
   panelId: string;
@@ -20,7 +19,7 @@ type Props = {
 
 const Analysis: FunctionComponent<Props> = ({ panelId, ring, info }) => {
   const {
-    // panel,
+    panel,
     analysis,
     // addPanelAnalysis,
     removePanelAnalysis,
@@ -115,11 +114,10 @@ const Analysis: FunctionComponent<Props> = ({ panelId, ring, info }) => {
   useEffect(() => {
     const freshStatement = selectedStatement !== oldSelectedStatement;
     const freshParameter = selectedParameter !== oldSelectedParameter;
-
     if (selectedStatement && (freshStatement || freshParameter)) {
       getAnswers(parameters, selectedStatement, selectedParameter);
     }
-  }, [selectedStatement, selectedParameter, parameters]); // eslint-disable-line react-hooks/exhaustive-deps
+  }, [selectedStatement, selectedParameter, parameters, panel.results]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const fetchAutocompleteSuggestions = async (type, query) => {
     setLoadingAutosuggestions(true);
@@ -157,7 +155,7 @@ const Analysis: FunctionComponent<Props> = ({ panelId, ring, info }) => {
               <Parameters autoCompleteSuggestions={autoCompleteSuggestions} parameters={parameters} selectedParameter={selectedParameter} setSelectedParameter={setSelectedParameter} fetchAutocompleteSuggestions={fetchAutocompleteSuggestions} loadingAutosuggestions={loadingAutosuggestions} />
             </Col>
             <Col lg="1" className="text-end">
-              <Button size="sm" variant="outline-danger" onClick={() => setSelectedAnalysisId(id)}>
+              <Button size="sm" variant="outline-danger" onClick={handleRemoveAnalysis}>
                 Remove
               </Button>
             </Col>
@@ -167,7 +165,6 @@ const Analysis: FunctionComponent<Props> = ({ panelId, ring, info }) => {
       ) : (
         <div>No analysis added.</div>
       )}
-      <ConfirmModal itemName="analysis" open={!!selectedAnalysisId} setOpen={setSelectedAnalysisId} onConfirm={handleRemoveAnalysis} />
     </div>
   );
 };

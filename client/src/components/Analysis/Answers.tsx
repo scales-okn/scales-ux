@@ -13,7 +13,6 @@ const Answers = ({ panelId, data, satyrn, loadingAnswers, statement, plan }) => 
   const { filters } = usePanel(panelId);
 
   const getAnswersDisplayType = (plan, results) => {
-    // TODO(JS): by year graphs not displaying
     if (isEmpty(plan) || isEmpty(results)) return null;
     return satyrn.responseManager.pickVisType(plan, results);
   };
@@ -50,9 +49,13 @@ const Answers = ({ panelId, data, satyrn, loadingAnswers, statement, plan }) => 
     };
   };
 
-  const scaleType = () => {
-    const isYearType = data.fieldNames.some((fieldName) => fieldName.dateTransform === "year");
-    return isYearType ? "time" : "auto";
+  // const isYearType = data.fieldNames.some((fieldName) => fieldName.dateTransform === "year");
+  // const scaleType = () => {
+  //   return isYearType ? "time" : "auto";
+  // };
+
+  const dateFormatter = (something: string, index: number) => {
+    return dayjs(something, "YYYY/MM").toDate().valueOf();
   };
 
   return (
@@ -104,7 +107,7 @@ const Answers = ({ panelId, data, satyrn, loadingAnswers, statement, plan }) => 
                       return formatData(result);
                     })}
                   >
-                    <XAxis height={80} scale={scaleType()} dataKey={data.units.results[0]?.[0]}>
+                    <XAxis height={80} scale="auto" dataKey={data.units.results[0]?.[0]}>
                       <Label
                         style={{
                           textTransform: "capitalize",
