@@ -76,18 +76,34 @@ const Analysis: FunctionComponent<Props> = ({ panelId, ring, info }) => {
       if (Object.keys(queryFilters).length > 0) {
         const entity = info.defaultEntity;
         plan.query = {
+
+          /* beware of changing this, as it needs to match convertFilters in viewHelpers.py on the backend :/ */
           AND: [
             ...Object.keys(queryFilters).map((key) => {
-              return [
+              return queryFilters[key].includes('|') ? {
+                OR: [
+                  ...queryFilters[key].split('|').filter(i=>i).map((or_filter) => {
+                    return [
+                      {
+                        entity,
+                        field: key,
+                      },
+                      key==="ontology_labels" ? "|"+or_filter+"|" : or_filter,
+                      "contains",
+                    ];
+                  }),
+                ],
+              } : [
                 {
                   entity,
                   field: key,
                 },
-                queryFilters[key],
+                key==="ontology_labels" ? "|"+queryFilters[key]+"|" : queryFilters[key],
                 "contains",
               ];
             }),
           ],
+
         };
       }
 
