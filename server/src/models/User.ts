@@ -110,35 +110,36 @@ export default (sequelize, options) => {
     }
   });
 
-  User.addHook("afterBulkUpdate", "sendUserApproveEmail", async (updated) => {
-    try {
-      const { fields, attributes, where } = updated;
+  // // we're no longer doing manual approval
+  // User.addHook("afterBulkUpdate", "sendUserApproveEmail", async (updated) => {
+  //   try {
+  //     const { fields, attributes, where } = updated;
 
-      if (fields.includes("approved") && attributes?.approved === true) {
-        const user = await User.findOne({ where });
-        const { firstName, lastName, email } = user.dataValues;
-        mailer.sendMail(
-          {
-            from: `Satyrn <${process.env.SENDGRID_FROM_SENDER}>`,
-            to: `${firstName} ${lastName} <${email}>`,
-            subject: "Welcome to the Satyrn Beta!",
-            html: `Hello ${firstName}, <br> <br> 
-            Your account has been approved and you can now access Satyrn! You can sign in <a href="${process.env.UX_CLIENT_MAILER_URL}/sign-in">here</a>. <br />
-            Please feel free to reach out to us at <EMAIL ADDRESS> with any questions or bug reports as you begin using the system. <br />
-            If you’re looking for a good place to get started, see <a href=”<LINK TO FUTURE POST”>this post</a> for more details about using the system.<br /> <br/>
-            Thanks! <br/>
-            <br />
-            SCALES OKN<br />
-            www.scales-okn.org
-            `,
-          },
-          (error, info) => console.log(error, info)
-        );
-      }
-    } catch (error) {
-      console.log({ error });
-    }
-  });
+  //     if (fields.includes("approved") && attributes?.approved === true) {
+  //       const user = await User.findOne({ where });
+  //       const { firstName, lastName, email } = user.dataValues;
+  //       mailer.sendMail(
+  //         {
+  //           from: `Satyrn <${process.env.SENDGRID_FROM_SENDER}>`,
+  //           to: `${firstName} ${lastName} <${email}>`,
+  //           subject: "Welcome to the Satyrn Beta!",
+  //           html: `Hello ${firstName}, <br> <br> 
+  //           Your account has been approved and you can now access Satyrn! You can sign in <a href="${process.env.UX_CLIENT_MAILER_URL}/sign-in">here</a>. <br />
+  //           Please feel free to reach out to us at <EMAIL ADDRESS> with any questions or bug reports as you begin using the system. <br />
+  //           If you’re looking for a good place to get started, see <a href=”<LINK TO FUTURE POST”>this post</a> for more details about using the system.<br /> <br/>
+  //           Thanks! <br/>
+  //           <br />
+  //           SCALES OKN<br />
+  //           www.scales-okn.org
+  //           `,
+  //         },
+  //         (error, info) => console.log(error, info)
+  //       );
+  //     }
+  //   } catch (error) {
+  //     console.log({ error });
+  //   }
+  // });
 
   return User;
 };

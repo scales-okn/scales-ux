@@ -6,6 +6,7 @@ import { Container, Row, Col } from "react-bootstrap";
 import Loader from "components/Loader";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faBalanceScale } from "@fortawesome/free-solid-svg-icons";
+import renderHTML from "helpers/renderHTML";
 
 interface Params {
   token: string;
@@ -60,7 +61,7 @@ const EmailVerificationPage: FunctionComponent = () => {
           <FontAwesomeIcon icon={faBalanceScale} size="3x" className="mb-4" />
           <h1 className="h3 mb-5 fw-normal">Email Verification</h1>
           <Loader animation="border" isVisible={isLoading}>
-            <p>{message}</p>
+            <p>{renderHTML(message)}</p>
           </Loader>
         </Col>
       </Row>

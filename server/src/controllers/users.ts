@@ -65,9 +65,10 @@ export const login = async (req: Request, res: Response) => {
       return res.send_forbidden("Access restricted! Please verify your email before signing in.");
     }
 
-    if (!approved) {
-      return res.send_forbidden("Access restricted! Please wait for approval email!");
-    }
+    // // we're no longer doing manual approval
+    // if (!approved) {
+    //   return res.send_forbidden("Access restricted! Please wait for approval email!");
+    // }
 
     const passwordsMatch = await bcrypt.compare(password, user.dataValues.password);
     if (passwordsMatch) {
@@ -231,29 +232,29 @@ export const verifyEmail = async (req: Request, res: Response) => {
       });
       const { firstName, lastName, email } = user;
       if (updated) {
-        mailer.sendMail(
-          {
-            from: `Satyrn <${process.env.SENDGRID_FROM_SENDER}>`,
-            to: `${firstName} ${lastName} <${email}>`,
-            subject: "Satyrn Beta Access",
-            html: `
-                Hello ${firstName}, <br /><br />
-                Thanks for registering for access to Satyrn. 
-                During our closed beta, we’re letting in a limited number of users, but will be expanding access over the coming months.<br /> 
-                Now that your email address has been verified, you have been added to our approval queue.<br /> Once your account is approved, 
-                you will receive an email to let you know you can log in to Satyrn. <br /><br />
-                Thanks! <br />
-                <br />
-                SCALES OKN<br />
-          www.scales-okn.org`,
-          },
-          //@ts-ignore
-          (error, info) => console.log(error, info)
-        );
-        return res.send_ok("Thanks for registering your interest in trying out Satyrn with the SCALES dataset! We’ll let you know when you’ve been granted access.");
+        // mailer.sendMail(
+        //   {
+        //     from: `Satyrn <${process.env.SENDGRID_FROM_SENDER}>`,
+        //     to: `${firstName} ${lastName} <${email}>`,
+        //     subject: "Satyrn Beta Access",
+        //     html: `
+        //         Hello ${firstName}, <br /><br />
+        //         Thanks for registering for access to Satyrn. 
+        //         During our closed beta, we’re letting in a limited number of users, but will be expanding access over the coming months.<br /> 
+        //         Now that your email address has been verified, you have been added to our approval queue.<br /> Once your account is approved, 
+        //         you will receive an email to let you know you can log in to Satyrn. <br /><br />
+        //         Thanks! <br />
+        //         <br />
+        //         SCALES OKN<br />
+        //   www.scales-okn.org`,
+        //   },
+        //   //@ts-ignore
+        //   (error, info) => console.log(error, info)
+        // );
+        return res.send_ok(`Your account has been approved and you can now access Satyrn! You can sign in <a href="${process.env.UX_CLIENT_MAILER_URL}/sign-in">here</a>.`);
       }
     } else {
-      return res.send_badRequest("Invalid email verification code or is already verified.");
+      return res.send_badRequest("Invalid email verification code, or email is already verified.");
     }
   } catch (error) {
     console.warn(error); // eslint-disable-line no-console
