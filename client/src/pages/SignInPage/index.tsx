@@ -63,9 +63,10 @@ const SignInPage: FunctionComponent = () => {
                 <Form.Control type="password" name="password" placeholder="Password" className="rounded-0 rounded-bottom" value={formik.values.password} onChange={formik.handleChange} isInvalid={formik.touched.password && Boolean(formik.errors?.password)} />
                 <Form.Label>Password</Form.Label>
               </div>
-              <Form.Group className="mb-4">
+              {/* remember-me functionality is buggy; hiding this option until it's fixed */}
+              {/* <Form.Group className="mb-4">
                 <Form.Check type="checkbox" label="Remember Me" name="rememberMe" onChange={() => setRememberMe(!rememberMe)} className="text-start" />
-              </Form.Group>
+              </Form.Group> */}
 
               <Button
                 type="submit"
