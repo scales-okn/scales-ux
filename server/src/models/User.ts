@@ -74,11 +74,7 @@ export default (sequelize, options) => {
   User.addHook("afterCreate", "verifyEmail", async (user) => {
     try {
       const { firstName, lastName, email } = user;
-      const emailVerificationToken = jwt.sign(
-        { email },
-        process.env.JWT_SECRET,
-        { expiresIn: process.env.JWT_EXP }
-      );
+      const emailVerificationToken = jwt.sign({ email }, process.env.JWT_SECRET, { expiresIn: process.env.JWT_EXP });
       user.emailVerificationToken = emailVerificationToken;
       await user.save();
 
@@ -89,11 +85,10 @@ export default (sequelize, options) => {
           subject: "Satyrn - Please verify your email address",
           html: `Hello ${firstName}, <br /><br />
           Thank you for signing up for access to Satyrn.<br />
-          Please <a href="${process.env.UX_CLIENT_URL}/verify-email/${emailVerificationToken}">click here to verify this email address</a>. <br /><br />
+          Please <a href="${process.env.UX_CLIENT_MAILER_URL}/verify-email/${emailVerificationToken}">click here to verify this email address</a>. <br /><br />
           <br />
-          The Satyrn Team<br />
-          C3 Lab @ Northwestern University<br />
-          <a href="https://c3lab.northwestern.edu">c3lab.northwestern.edu</a>`,
+          SCALES OKN<br />
+          www.scales-okn.org`,
         },
         (error, info) => {
           const errorsArray = error?.response?.body?.errors;
@@ -128,7 +123,7 @@ export default (sequelize, options) => {
             to: `${firstName} ${lastName} <${email}>`,
             subject: "Welcome to the Satyrn Beta!",
             html: `Hello ${firstName}, <br> <br> 
-            Your account has been approved and you can now access Satyrn! You can sign in <a href="${process.env.UX_CLIENT_URL}/sign-in">here</a>. <br />
+            Your account has been approved and you can now access Satyrn! You can sign in <a href="${process.env.UX_CLIENT_MAILER_URL}/sign-in">here</a>. <br />
             Please feel free to reach out to us at <EMAIL ADDRESS> with any questions or bug reports as you begin using the system. <br />
             If you’re looking for a good place to get started, see <a href=”<LINK TO FUTURE POST”>this post</a> for more details about using the system.<br /> <br/>
             Thanks! <br/>

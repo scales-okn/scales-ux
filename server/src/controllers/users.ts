@@ -3,9 +3,7 @@ import jwt from "jsonwebtoken";
 import { Request, Response } from "express";
 import { sequelize } from "../database";
 import mailer from "../services/mail";
-import accessControl, {
-  permisionsFieldsFilter,
-} from "../services/accesscontrol";
+import accessControl, { permisionsFieldsFilter } from "../services/accesscontrol";
 
 // Resources validations are made with validateResources middleware and validations schemas
 // server/middlewares/validateResources.ts
@@ -33,10 +31,7 @@ export const create = async (req: Request, res: Response) => {
       password: hash,
     });
 
-    return res.send_ok(
-      "Thanks for signing up for beta access! Please confirm your email address via the link we just sent you.",
-      { user }
-    );
+    return res.send_ok("Thanks for signing up for beta access! Please confirm your email address via the link we just sent you.", { user });
   } catch (error) {
     console.warn(error); // eslint-disable-line no-console
 
@@ -60,46 +55,25 @@ export const login = async (req: Request, res: Response) => {
       console.warn("User not found!", { email, password });
       return res.send_badRequest("Something went wrong. Please try again."); // We will send bad request in this case to not have a user checking breach.
     }
-    const {
-      id,
-      role,
-      firstName,
-      lastName,
-      blocked,
-      approved,
-      emailIsVerified,
-    } = user.dataValues;
+    const { id, role, firstName, lastName, blocked, approved, emailIsVerified } = user.dataValues;
 
     if (blocked) {
       return res.send_forbidden("Access restricted!");
     }
 
     if (!emailIsVerified) {
-      return res.send_forbidden(
-        "Access restricted! Please verify your email before signing in."
-      );
+      return res.send_forbidden("Access restricted! Please verify your email before signing in.");
     }
 
     if (!approved) {
-      return res.send_forbidden(
-        "Access restricted! Please wait for approval email!"
-      );
+      return res.send_forbidden("Access restricted! Please wait for approval email!");
     }
 
-    const passwordsMatch = await bcrypt.compare(
-      password,
-      user.dataValues.password
-    );
+    const passwordsMatch = await bcrypt.compare(password, user.dataValues.password);
     if (passwordsMatch) {
-      const expiry = rememberMe
-        ? process.env.JWT_EXP_LONG
-        : process.env.JWT_EXP;
+      const expiry = rememberMe ? process.env.JWT_EXP_LONG : process.env.JWT_EXP;
 
-      const token = jwt.sign(
-        { user: { id, email, role, firstName, lastName, blocked, approved } },
-        process.env.JWT_SECRET,
-        { expiresIn: expiry }
-      );
+      const token = jwt.sign({ user: { id, email, role, firstName, lastName, blocked, approved } }, process.env.JWT_SECRET, { expiresIn: expiry });
 
       return res.send_ok("Login Successful!", {
         token,
@@ -270,21 +244,16 @@ export const verifyEmail = async (req: Request, res: Response) => {
                 you will receive an email to let you know you can log in to Satyrn. <br /><br />
                 Thanks! <br />
                 <br />
-                The Satyrn Team<br />
-                C3 Lab @ Northwestern University<br />
-                <a href="https://c3lab.northwestern.edu">c3lab.northwestern.edu</a>`,
+                SCALES OKN<br />
+          www.scales-okn.org`,
           },
           //@ts-ignore
           (error, info) => console.log(error, info)
         );
-        return res.send_ok(
-          "Thanks for registering your interest in trying out Satyrn with the SCALES dataset! We’ll let you know when you’ve been granted access."
-        );
+        return res.send_ok("Thanks for registering your interest in trying out Satyrn with the SCALES dataset! We’ll let you know when you’ve been granted access.");
       }
     } else {
-      return res.send_badRequest(
-        "Invalid email verification code or is already verified."
-      );
+      return res.send_badRequest("Invalid email verification code or is already verified.");
     }
   } catch (error) {
     console.warn(error); // eslint-disable-line no-console
@@ -313,9 +282,9 @@ export const forgotPassword = async (req: Request, res: Response) => {
           to: `${firstName} ${lastName} <${email}>`,
           subject: "Satyrn: Password reset request",
           html: `Hello ${firstName}, <br> 
-          You are receiving this email because of a password reset request received at <a href="${process.env.UX_CLIENT_URL}">Satyrn</a>. <br />
+          You are receiving this email because of a password reset request received at <a href="${process.env.UX_CLIENT_MAILER_URL}">Satyrn</a>. <br />
           If you did not request a password reset, then please ignore this email and contact us at {EMAIL ADDRESS} to let us know. <br />
-          Otherwise, <a href="${process.env.UX_CLIENT_URL}/reset-password/${passwordResetToken}">click here to reset your password.</a> <br /><br />
+          Otherwise, <a href="${process.env.UX_CLIENT_MAILER_URL}/reset-password/${passwordResetToken}">click here to reset your password.</a> <br /><br />
           Thanks! <br />
           <br />
           The Satyrn Team<br />
@@ -359,9 +328,7 @@ export const resetPassword = async (req: Request, res: Response) => {
         { where: { id: userId } }
       );
 
-      return res.send_ok(
-        "Password succesfully reseted. You can now sign in using it."
-      );
+      return res.send_ok("Password succesfully reseted. You can now sign in using it.");
     } else {
       return res.send_internalServerError("Failed to reset your password!");
     }
