@@ -128,9 +128,8 @@ export default (sequelize, options) => {
             If you’re looking for a good place to get started, see <a href=”<LINK TO FUTURE POST”>this post</a> for more details about using the system.<br /> <br/>
             Thanks! <br/>
             <br />
-            The Satyrn Team<br />
-            C3 Lab @ Northwestern University<br />
-            <a href="https://c3lab.northwestern.edu">c3lab.northwestern.edu</a>
+            SCALES OKN<br />
+            www.scales-okn.org
             `,
           },
           (error, info) => console.log(error, info)

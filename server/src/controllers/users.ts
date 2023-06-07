@@ -287,9 +287,8 @@ export const forgotPassword = async (req: Request, res: Response) => {
           Otherwise, <a href="${process.env.UX_CLIENT_MAILER_URL}/reset-password/${passwordResetToken}">click here to reset your password.</a> <br /><br />
           Thanks! <br />
           <br />
-          The Satyrn Team<br />
-          C3 Lab @ Northwestern University<br />
-          <a href="https://c3lab.northwestern.edu">c3lab.northwestern.edu</a>`,
+          SCALES OKN<br />
+          www.scales-okn.org`,
         },
         //@ts-ignore
         (error, info) => console.log(error, info)
