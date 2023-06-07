@@ -37,6 +37,10 @@ const FilterTypeDropDown: FunctionComponent<FilterTypeProps> = (props) => {
 
   const filtersToRender = getFiltersNormalized()
     ?.map((filterInput) => {
+      if (filterInput.nicename === "Case ID") {
+        filterInput.nicename = "Docket Number";
+      }
+
       const { allowMultiple, key } = filterInput;
       if (allowMultiple === false && filters.some((filter: any) => filter.type === key)) {
         return { ...filterInput, disabled: true };
@@ -51,7 +55,6 @@ const FilterTypeDropDown: FunctionComponent<FilterTypeProps> = (props) => {
       <Dropdown.Toggle size="sm" variant="link" className="shadow-none text-decoration-none small">
         {filterInput?.nicename || ""}
       </Dropdown.Toggle>
-
       <Dropdown.Menu style={{ maxHeight: "70vh", overflowY: "auto" }}>
         <Dropdown.ItemText className="text-muted fs-6 ms-3">
           <small>Select a filter type...</small>
