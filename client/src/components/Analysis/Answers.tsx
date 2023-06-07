@@ -37,11 +37,22 @@ const Answers = ({ panelId, data, satyrn, loadingAnswers, statement, plan }) => 
     setAnswer(satyrn.responseManager.generate(formattedFilters, statement?.plan, data));
   }, [data, plan, satyrn, statement, filters]); // eslint-disable-line react-hooks/exhaustive-deps
 
-  const xUnits = data?.units?.results?.[0]?.[0];
-  const yUnits = data?.units?.results?.[1]?.[0];
+
+
+  // for multiline, assumes the order of unit names is line label, x, y
+  const xUnits = data?.units?.results?.[answerType=='multiline' ? 1 : 0]?.[0];
+  let yUnits = data?.units?.results?.[answerType=='multiline' ? 2 : 1]?.[1];
+  if (yUnits=='Case' || yUnits=='Judge') yUnits += 's'; // unlike attributes, entities seem not to have nicenames
+
+  const formatBarData = (result) => {
+    return {
+      name: String(result?.[0]),
+      [yUnits]: result?.[1],
+    };
+  };
 
   //unsure why result?.[1] is returned twice, & how non-ints (e.g. dates) are handled, but ignoring for now & just adding carveout for str x-vals
-  const formatData = (result) => {
+  const formatLineData = (result) => {
     return {
       name: result?.[1],
       [xUnits]: /^[a-zA-Z ]+$/.test(result?.[0]) ? result?.[0] : parseInt(result?.[0]),
@@ -57,6 +68,22 @@ const Answers = ({ panelId, data, satyrn, loadingAnswers, statement, plan }) => 
   const dateFormatter = (something: string, index: number) => {
     return dayjs(something, "YYYY/MM").toDate().valueOf();
   };
+  
+  const formatMultilineData = (result, label) => {
+    return {
+      name: result?.[1],
+      [xUnits]: /^[a-zA-Z ]+$/.test(result?.[0]) ? result?.[0] : parseInt(result?.[0]),
+      [label]: parseInt(result?.[1]),
+    }
+  }
+
+  const getColor = () => { // from stackoverflow.com/questions/43193341/how-to-generate-random-pastel-or-brighter-color-in-javascript
+    return "hsl(" + 360 * Math.random() + ',' +
+               (20 + 75 * Math.random()) + '%,' + 
+               (10 + 60 * Math.random()) + '%)'
+  }
+
+
 
   return (
     <div className="answers">
@@ -70,14 +97,14 @@ const Answers = ({ panelId, data, satyrn, loadingAnswers, statement, plan }) => 
           )}
           {data && (
             <Col lg="12" className="mt-5">
+            
               {data.length > 1 && answerType === "bar" && (
                 <BarChart
                   width={1100}
                   height={600}
-                  data={data.results.map((result) => ({
-                    name: result?.[0],
-                    [data.units.results[1]]: result?.[1],
-                  }))}
+                  data={data.results.map((result) => {
+                    return formatBarData(result);
+                  })}
                   margin={{
                     top: 5,
                     right: 30,
@@ -97,17 +124,18 @@ const Answers = ({ panelId, data, satyrn, loadingAnswers, statement, plan }) => 
                   />
                   <Tooltip formatter={(value) => new Intl.NumberFormat("en").format(value)} />
                   <Legend />
-                  <Bar dataKey={data.units.results[1]} fill="#82ca9d" />
+                  <Bar dataKey={yUnits} fill="#82ca9d" />
                 </BarChart>
               )}
+
               {answerType === "line" && (
                 <ResponsiveContainer width="100%" height="80%">
                   <LineChart
                     data={data.results.map((result) => {
-                      return formatData(result);
+                      return formatLineData(result);
                     })}
                   >
-                    <XAxis height={80} scale="auto" dataKey={data.units.results[0]?.[0]}>
+                    <XAxis height={80} scale="auto" dataKey={xUnits}>
                       <Label
                         style={{
                           textTransform: "capitalize",
@@ -138,7 +166,7 @@ const Answers = ({ panelId, data, satyrn, loadingAnswers, statement, plan }) => 
                     </YAxis>
                     <Tooltip formatter={(value) => new Intl.NumberFormat("en").format(value)} />
                     <CartesianGrid stroke="#eee" strokeDasharray="5 5" />
-                    <Line type="monotone" dataKey={data.units.results[1]?.[0]} stroke="#82ca9d" />
+                    <Line type="monotone" dataKey={yUnits} stroke="#82ca9d" />
                     {/* the below was plotting x-values (e.g. years) as y-values; not sure what the intended outcome was */}
                     {/* <Line
                     type="monotone"
@@ -148,6 +176,52 @@ const Answers = ({ panelId, data, satyrn, loadingAnswers, statement, plan }) => 
                   </LineChart>
                 </ResponsiveContainer>
               )}
+
+              {answerType === "multiline" && (
+                <ResponsiveContainer width="100%" height="80%">
+                 <LineChart>
+                    {/* not sure why all these props are needed when plotting multiple lines despite not being needed above */}
+                    <XAxis height={80} scale="auto" dataKey={xUnits}
+                      type={'number'} domain={['dataMin', 'dataMax']} interval={0} allowDuplicatedCategory={false}>
+                      <Label
+                        style={{
+                          textTransform: "capitalize",
+                        }}
+                        angle={0}
+                        value={xUnits}
+                        position="insideBottom"
+                      />
+                    </XAxis>
+                    <YAxis
+                      tickFormatter={(value) =>
+                        new Intl.NumberFormat("en-US", {
+                          notation: "compact",
+                          compactDisplay: "short",
+                        }).format(value)
+                      }
+                      width={100}
+                    >
+                      <Label
+                        style={{
+                          textAnchor: "middle",
+                          textTransform: "capitalize",
+                        }}
+                        position="insideLeft"
+                        angle={270}
+                        value={yUnits}
+                      />
+                    </YAxis>
+                    <Tooltip formatter={(value) => new Intl.NumberFormat("en").format(value)} />
+                    <CartesianGrid stroke="#eee" strokeDasharray="5 5" />
+                    {data.results?.map((line_data) => {
+                      return (<Line key={line_data.label}
+                        data={line_data.series?.map((result) => {return formatMultilineData(result, line_data.label);})}
+                        type="monotone" dataKey={line_data.label} stroke={getColor()} />);
+                    })}
+                  </LineChart>
+                </ResponsiveContainer>
+              )}
+
             </Col>
           )}
         </>
