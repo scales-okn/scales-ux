@@ -51,7 +51,10 @@ const Parameters: FunctionComponent<Props> = ({ parameters, fetchAutocompleteSug
                   <Col lg="8">
                     <Form.Label>{parameter.prompt}</Form.Label>
                     <Form.Select value={selectedParameter} multiple={parameter.allowMultiple} onChange={(e) => setSelectedParameter(e.target.value)}>
-                      {parameter?.options?.map((param, index) => (
+                      {/* default value was "day-over-day" but year-over-year was displaying; simplest hack I could think of, sorry for ugliness! */}
+                      {(parameter?.options?.length==6 ?
+                        parameter?.options.slice(0,3).toReversed().concat(parameter?.options.slice(3)) :
+                        parameter?.options)?.map((param, index) => (
                         <option key={index} value={param.value ? param.value : param}>
                           {param.label ? param.label : param}
                         </option>
