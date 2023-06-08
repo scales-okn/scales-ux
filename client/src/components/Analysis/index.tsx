@@ -1,7 +1,10 @@
 // @ts-nocheck
 import React, { useEffect, FunctionComponent, useState, useRef } from "react";
 import { usePanel } from "store/panels";
-import { Button, Col, Row } from "react-bootstrap";
+import { Button, Col, Row, Card } from "react-bootstrap";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faPlus } from "@fortawesome/free-solid-svg-icons";
+import uniqid from "uniqid";
 import { Satyrn } from "statement-mananger";
 import { useNotify } from "../Notifications";
 import "./style.scss";
@@ -21,7 +24,7 @@ const Analysis: FunctionComponent<Props> = ({ panelId, ring, info }) => {
   const {
     panel,
     analysis,
-    // addPanelAnalysis,
+    addPanelAnalysis,
     removePanelAnalysis,
     // setPanelAnalysisStatement,
     filters,
@@ -180,7 +183,20 @@ const Analysis: FunctionComponent<Props> = ({ panelId, ring, info }) => {
           </Row>
         ))
       ) : (
-        <div>No analysis added.</div>
+        <Card.Footer className="d-flex align-items-center py-3">
+          <Button
+            variant="outline-dark"
+            className="me-2"
+            onClick={() => {
+              addPanelAnalysis({
+                id: uniqid(),
+              });
+            }}
+          >
+            <FontAwesomeIcon icon={faPlus} />
+          </Button>{" "}
+          Add Analysis
+        </Card.Footer>
       )}
     </div>
   );

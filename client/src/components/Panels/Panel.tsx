@@ -215,7 +215,7 @@ const Panel: FunctionComponent<PanelProps> = ({ panelId }) => {
                 </Col>
               </div>
             </Card.Body>
-            {/* not currently working, so removing for now */}
+            {/* not currently working, so moving to index.tsx */}
             {/* <Card.Footer className="d-flex align-items-center py-3">
               <Button
                 variant="outline-dark"
