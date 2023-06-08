@@ -215,7 +215,8 @@ const Panel: FunctionComponent<PanelProps> = ({ panelId }) => {
                 </Col>
               </div>
             </Card.Body>
-            <Card.Footer className="d-flex align-items-center py-3">
+            {/* not currently working, so removing for now */}
+            {/* <Card.Footer className="d-flex align-items-center py-3">
               <Button
                 variant="outline-dark"
                 className="me-2"
@@ -228,7 +229,7 @@ const Panel: FunctionComponent<PanelProps> = ({ panelId }) => {
                 <FontAwesomeIcon icon={faPlus} />
               </Button>{" "}
               Add Analysis
-            </Card.Footer>
+            </Card.Footer> */}
           </>
         </Accordion.Collapse>
       </Card>

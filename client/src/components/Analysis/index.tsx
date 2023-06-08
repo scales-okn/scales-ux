@@ -170,11 +170,12 @@ const Analysis: FunctionComponent<Props> = ({ panelId, ring, info }) => {
               <Statements statements={statements} setSelectedStatement={setSelectedStatement} selectedStatement={selectedStatement} setParameters={setParameters} getStatement={getStatement} />
               <Parameters autoCompleteSuggestions={autoCompleteSuggestions} parameters={parameters} selectedParameter={selectedParameter} setSelectedParameter={setSelectedParameter} fetchAutocompleteSuggestions={fetchAutocompleteSuggestions} loadingAutosuggestions={loadingAutosuggestions} />
             </Col>
-            <Col lg="1" className="text-end">
+            {/* not currently working, so removing for now */}
+            {/* <Col lg="1" className="text-end">
               <Button size="sm" variant="outline-danger" onClick={handleRemoveAnalysis}>
                 Remove
               </Button>
-            </Col>
+            </Col> */}
             <Answers panelId={panelId} plan={plan} statement={getStatement(selectedStatement)} data={data} satyrn={satyrn} loadingAnswers={loadingAnswers} />
           </Row>
         ))
