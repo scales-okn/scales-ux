@@ -46,7 +46,7 @@ const Answers = ({ panelId, data, satyrn, loadingAnswers, statement, plan }) => 
 
   const formatBarData = (result) => {
     return {
-      name: String(result?.[0]),
+      name: result?.[0] == -1 ? 'criminal' : String(result?.[0]),
       [yUnits]: result?.[1],
     };
   };
@@ -54,7 +54,7 @@ const Answers = ({ panelId, data, satyrn, loadingAnswers, statement, plan }) => 
   //unsure why result?.[1] is returned twice, & how non-ints (eg dates) are handled, but ignoring for now & just adding carveout for str x-vals
   const formatLineData = (result) => {
     return {
-      name: result?.[1],
+      name: result?.[1] == -1 ? 'criminal' : String(result?.[0]),
       [xUnits]: /^[a-zA-Z ]+$/.test(result?.[0]) ? result?.[0] : parseInt(result?.[0]),
       [yUnits]: parseInt(result?.[1]),
     };
@@ -114,7 +114,7 @@ const Answers = ({ panelId, data, satyrn, loadingAnswers, statement, plan }) => 
                 >
                   <CartesianGrid strokeDasharray="3 3" />
                   <XAxis dataKey="name" />
-                  <YAxis
+                  <YAxis domain={[0, Math.max( ...data.results.map((i)=>parseInt(i[1])) )]}
                     tickFormatter={(value) =>
                       new Intl.NumberFormat("en-US", {
                         notation: "compact",
@@ -219,6 +219,9 @@ const Answers = ({ panelId, data, satyrn, loadingAnswers, statement, plan }) => 
                     dayjs(value).format("M/YYYY") : value} /> {/* hack */}
                     <CartesianGrid stroke="#eee" strokeDasharray="5 5" />
                     {data.results?.map((line_data) => {
+                      if (line_data.label == -1) {
+                        line_data.label = 'criminal';
+                      }
                       if (typeof line_data.label == "boolean") {
                         line_data.label = String(line_data.label);
                       }
