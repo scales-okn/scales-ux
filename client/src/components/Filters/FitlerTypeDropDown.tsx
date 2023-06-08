@@ -36,11 +36,9 @@ const FilterTypeDropDown: FunctionComponent<FilterTypeProps> = (props) => {
   }, [filterInput]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const filtersToRender = getFiltersNormalized()
-    ?.map((filterInput) => {
-      if (filterInput.nicename === "Case ID") {
-        filterInput.nicename = "Docket Number";
-      }
-
+    ?.filter((x) => x.nicename!='Docket HTML' &&
+      x.nicename!='Case Name') /* hack due to complaints from the docket-preview pane when i tried to change these fields' ring settings */
+    .map((filterInput) => {
       const { allowMultiple, key } = filterInput;
       if (allowMultiple === false && filters.some((filter: any) => filter.type === key)) {
         return { ...filterInput, disabled: true };
