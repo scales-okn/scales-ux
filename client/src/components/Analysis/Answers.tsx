@@ -51,7 +51,7 @@ const Answers = ({ panelId, data, satyrn, loadingAnswers, statement, plan }) => 
     };
   };
 
-  //unsure why result?.[1] is returned twice, & how non-ints (e.g. dates) are handled, but ignoring for now & just adding carveout for str x-vals
+  //unsure why result?.[1] is returned twice, & how non-ints (eg dates) are handled, but ignoring for now & just adding carveout for str x-vals
   const formatLineData = (result) => {
     return {
       name: result?.[1],
@@ -65,14 +65,14 @@ const Answers = ({ panelId, data, satyrn, loadingAnswers, statement, plan }) => 
   //   return isYearType ? "time" : "auto";
   // };
 
-  const dateFormatter = (something: string, index: number) => {
-    return dayjs(something, "YYYY/MM").toDate().valueOf();
+  const convertDate = (dateString: string) => {
+    return dayjs(dateString, "YYYY/MM").toDate().valueOf();
   };
   
   const formatMultilineData = (result, label) => {
     return {
       name: result?.[1],
-      [xUnits]: /^[a-zA-Z ]+$/.test(result?.[0]) ? result?.[0] : parseInt(result?.[0]),
+      [xUnits]:/^[a-zA-Z ]+$/.test(result?.[0]) ? result?.[0] : (result?.[0].includes('/') ? convertDate(result?.[0]) : parseInt(result?.[0])),
       [label]: parseInt(result?.[1]),
     }
   }
@@ -181,8 +181,11 @@ const Answers = ({ panelId, data, satyrn, loadingAnswers, statement, plan }) => 
                 <ResponsiveContainer width="100%" height="80%">
                  <LineChart>
                     {/* not sure why all these props are needed when plotting multiple lines despite not being needed above */}
-                    <XAxis height={80} scale="auto" dataKey={xUnits}
-                      type={'number'} domain={['dataMin', 'dataMax']} interval={0} allowDuplicatedCategory={false}>
+                    <XAxis height={80} scale="auto" dataKey={xUnits} interval={0}
+                    type={/^[a-zA-Z ]+$/.test(data.results?.[0]?.series?.[0][0]) ? 'category' : 'number'} /* hack */
+                    domain={/^[a-zA-Z ]+$/.test(data.results?.[0]?.series?.[0][0]) ? undefined : ['dataMin', 'dataMax']} /* hack */
+                    allowDuplicatedCategory={false} tickFormatter={(value) => data.results?.[0]?.series?.[0][0]?.includes('/') ? /* hack */
+                    dayjs(value).format("M/YYYY") : value}>
                       <Label
                         style={{
                           textTransform: "capitalize",
@@ -211,10 +214,12 @@ const Answers = ({ panelId, data, satyrn, loadingAnswers, statement, plan }) => 
                         value={yUnits}
                       />
                     </YAxis>
-                    <Tooltip formatter={(value) => new Intl.NumberFormat("en").format(value)} />
+                    <Tooltip formatter={(value) => new Intl.NumberFormat("en").format(value)} 
+                    labelFormatter={(value) => data.results?.[0]?.series?.[0][0]?.includes('/') ?
+                    dayjs(value).format("M/YYYY") : value} /> {/* hack */}
                     <CartesianGrid stroke="#eee" strokeDasharray="5 5" />
                     {data.results?.map((line_data) => {
-                      return (<Line key={line_data.label}
+                      return (<Line key={line_data.label} dot={!data.results?.[0]?.series?.[0][0]?.includes('/')} /* hack */
                         data={line_data.series?.map((result) => {return formatMultilineData(result, line_data.label);})}
                         type="monotone" dataKey={line_data.label} stroke={getColor()} />);
                     })}
