@@ -219,6 +219,9 @@ const Answers = ({ panelId, data, satyrn, loadingAnswers, statement, plan }) => 
                     dayjs(value).format("M/YYYY") : value} /> {/* hack */}
                     <CartesianGrid stroke="#eee" strokeDasharray="5 5" />
                     {data.results?.map((line_data) => {
+                      if (typeof line_data.label == "boolean") {
+                        line_data.label = String(line_data.label);
+                      }
                       return (<Line key={line_data.label} dot={!data.results?.[0]?.series?.[0][0]?.includes('/')} /* hack */
                         data={line_data.series?.map((result) => {return formatMultilineData(result, line_data.label);})}
                         type="monotone" dataKey={line_data.label} stroke={getColor()} />);
