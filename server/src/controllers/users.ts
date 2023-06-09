@@ -72,9 +72,10 @@ export const login = async (req: Request, res: Response) => {
 
     const passwordsMatch = await bcrypt.compare(password, user.dataValues.password);
     if (passwordsMatch) {
+      const defaultExpiry = "1d";
       const expiry = rememberMe ? process.env.JWT_EXP_LONG : process.env.JWT_EXP;
 
-      const token = jwt.sign({ user: { id, email, role, firstName, lastName, blocked, approved } }, process.env.JWT_SECRET, { expiresIn: expiry });
+      const token = jwt.sign({ user: { id, email, role, firstName, lastName, blocked, approved } }, process.env.JWT_SECRET, { expiresIn: expiry || defaultExpiry });
 
       return res.send_ok("Login Successful!", {
         token,
@@ -239,9 +240,9 @@ export const verifyEmail = async (req: Request, res: Response) => {
         //     subject: "Satyrn Beta Access",
         //     html: `
         //         Hello ${firstName}, <br /><br />
-        //         Thanks for registering for access to Satyrn. 
-        //         During our closed beta, we’re letting in a limited number of users, but will be expanding access over the coming months.<br /> 
-        //         Now that your email address has been verified, you have been added to our approval queue.<br /> Once your account is approved, 
+        //         Thanks for registering for access to Satyrn.
+        //         During our closed beta, we’re letting in a limited number of users, but will be expanding access over the coming months.<br />
+        //         Now that your email address has been verified, you have been added to our approval queue.<br /> Once your account is approved,
         //         you will receive an email to let you know you can log in to Satyrn. <br /><br />
         //         Thanks! <br />
         //         <br />
