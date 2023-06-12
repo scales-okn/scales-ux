@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useCallback } from "react";
 import { FormControl, InputGroup } from "react-bootstrap";
 import DateTimeRangePicker from "@wojtekmaj/react-datetimerange-picker";
 import FilterTypeDropDown from "./FitlerTypeDropDown";
@@ -82,25 +82,27 @@ const Filter = ({ panelId, filter }: Props) => {
   const filterOptions = getFilterOptionsByKey(type);
 
   const fetchAutocompleteSuggestions = async (query) => {
-    setIsLoading(true);
-    try {
-      const response = await fetch(`/proxy/autocomplete/${ring.rid}/1/${info?.defaultEntity}/${filter.type}?query=${query}`);
-      if (response.status === 200) {
-        const data = await response.json();
-        setAutoCompleteSuggestions(data);
-        setIsLoading(false);
-      } else {
+    if (query.length > 2) {
+      setIsLoading(true);
+      try {
+        const response = await fetch(`/proxy/autocomplete/${ring.rid}/1/${info?.defaultEntity}/${filter.type}?query=${query}`);
+        if (response.status === 200) {
+          const data = await response.json();
+          setAutoCompleteSuggestions(data);
+          setIsLoading(false);
+        } else {
+          notify("Could not fetch autocomplete suggestions", "error");
+        }
+      } catch (error) {
+        console.warn(error); // eslint-disable-line no-console
         notify("Could not fetch autocomplete suggestions", "error");
+      } finally {
+        setIsLoading(false);
       }
-    } catch (error) {
-      console.warn(error); // eslint-disable-line no-console
-      notify("Could not fetch autocomplete suggestions", "error");
-    } finally {
-      setIsLoading(false);
     }
   };
 
-  const debouncedSearch = debounce((value) => fetchAutocompleteSuggestions(value), 200);
+  const debouncedSearch = debounce(fetchAutocompleteSuggestions, 1500);
 
   const handleClear = async () => {
     const newFilters = [...filters.filter((filter: FilterT) => filter.id !== id)];

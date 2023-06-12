@@ -27,7 +27,7 @@ const Statements = ({ statements, setSelectedStatement, selectedStatement, setPa
           onSearch={() => {
             setParameters([]);
           }}
-          options={statements.filter(stmt => !stmt.statement.includes('filing year'))} /* hack due to some problem when doing this via ring */
+          options={statements.filter((stmt) => !stmt.statement.includes("filing year"))} /* hack due to some problem when doing this via ring */
           shouldSelect={(shouldSelect, e) => {
             // Select the hint if the user hits 'enter' or ','
             return e.keyCode === 13 || e.keyCode === 188 || shouldSelect;
