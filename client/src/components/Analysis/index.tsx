@@ -94,7 +94,7 @@ const Analysis: FunctionComponent<Props> = ({ panelId, ring, info }) => {
                               entity,
                               field: key,
                             },
-                            key === "ontology_labels" ? "|" + or_filter + "|" : or_filter,
+                            key==="ontology_labels" ? "|"+or_filter+"|" : (key==="case_type" ? {'civil':'cv', 'criminal':'cr'}[or_filter] : or_filter),
                             "contains",
                           ];
                         }),
@@ -105,7 +105,7 @@ const Analysis: FunctionComponent<Props> = ({ panelId, ring, info }) => {
                       entity,
                       field: key,
                     },
-                    key === "ontology_labels" ? "|" + queryFilters[key] + "|" : queryFilters[key],
+                    key==="ontology_labels" ? "|"+queryFilters[key]+"|" : (key==="case_type" ? {'civil':'cv', 'criminal':'cr'}[queryFilters[key]] : queryFilters[key]),
                     "contains",
                   ];
             }),
