@@ -149,6 +149,9 @@ const Filter = ({ panelId, filter }: Props) => {
                 disableClearable
                 onInputChange={(_, value) => {
                   debouncedSearch(value);
+                  if (value.length > 2) {
+                    setIsLoading(true);
+                  }
                   if (value.length === 0) {
                     if (autocompleteOpen) setAutocompleteOpen(false);
                   } else {
