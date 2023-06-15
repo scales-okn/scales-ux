@@ -69,32 +69,33 @@ const Analysis: FunctionComponent<Props> = ({ panelId, ring, info }) => {
       });
 
       const queryFilters = filters
-        ? filters?.reduce((acc, filterInput: FilterInput) => {
-            acc[filterInput.type] = filterInput.type === "dateFiled" ? `[${filterInput.value?.map((date) => dayjs(date).format("YYYY-M-DD"))}]` : filterInput.value;
-
-            return acc;
-          }, {})
+        ? filters?.map((filter) => {
+            if (filter.type === "dateFiled") { /* this will need to change once we implement multiple dateFiled filters */
+              filter.value = `[${filter.value?.map((date) => dayjs(date).format("YYYY-M-DD"))}]`
+            }
+            return filter;
+          })
         : {};
 
-      if (Object.keys(queryFilters).length > 0) {
+      if (queryFilters.length > 0) {
         const entity = info.defaultEntity;
         plan.query = {
           /* beware of changing this, as it needs to match convertFilters in viewHelpers.py on the backend :/ */
           AND: [
-            ...Object.keys(queryFilters).map((key) => {
-              return queryFilters[key].includes("|")
+            ...queryFilters.map((filter) => {
+              return filter.value.includes("|")
                 ? {
                     OR: [
-                      ...queryFilters[key]
+                      ...filter.value
                         .split("|")
                         .filter((i) => i)
-                        .map((or_filter) => {
+                        .map((or_filter_value) => {
                           return [
                             {
                               entity,
-                              field: key,
+                              field: filter.type,
                             },
-                            (key==="ontology_labels" && or_filter!=='') ? "|"+or_filter+"|" : (key==="case_type" ? {'civil':'cv', 'criminal':'cr', '':''}[or_filter] : or_filter),
+                            (filter.type==="ontology_labels" && or_filter_value!=='') ? "|"+or_filter_value+"|" : (filter.type==="case_type" ? {'civil':'cv', 'criminal':'cr', '':''}[or_filter_value] : or_filter_value),
                             "contains",
                           ];
                         }),
@@ -103,9 +104,9 @@ const Analysis: FunctionComponent<Props> = ({ panelId, ring, info }) => {
                 : [
                     {
                       entity,
-                      field: key,
+                      field: filter.type,
                     },
-                    (key==="ontology_labels" && queryFilters[key]!=='') ? "|"+queryFilters[key]+"|" : (key==="case_type" ? {'civil':'cv', 'criminal':'cr', '':''}[queryFilters[key]] : queryFilters[key]),
+                    (filter.type==="ontology_labels" && filter.value!=='') ? "|"+filter.value+"|" : (filter.type==="case_type" ? {'civil':'cv', 'criminal':'cr', '':''}[filter.value] : filter.value),
                     "contains",
                   ];
             }),
