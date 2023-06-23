@@ -27,9 +27,8 @@ const Analysis: FunctionComponent<Props> = ({ panelId }) => {
   const [selectedParameter, setSelectedParameter] = useState(null);
 
   const [statements, setStatements] = useState([]);
-  // const [parameters, setParameters] = useState([]);
 
-  const [loadingAnswers, setAnswersLoading] = useState(false);
+  const [answersLoading, setAnswersLoading] = useState(false);
   const [loadingAutosuggestions, setLoadingAutosuggestions] = useState<boolean>(false);
   const [autoCompleteSuggestions, setAutoCompleteSuggestions] = useState<string[]>([]);
 
@@ -53,7 +52,7 @@ const Analysis: FunctionComponent<Props> = ({ panelId }) => {
   const getAnswers = async (statement, id) => {
     try {
       setData(null);
-      setAnswersLoading(true);
+      setAnswersLoading({ ...answersLoading, [id]: true });
       const statementSrc = getStatement(statement.statement); // probably unnecessary
       const resPlan = statementSrc?.plan;
       resPlan.rings = [ring.rid];
@@ -74,6 +73,10 @@ const Analysis: FunctionComponent<Props> = ({ panelId }) => {
           })
         : {};
 
+      const filterFunc = (filterValue) => {
+        return filter.type === "ontology_labels" && filterValue !== "" ? "|" + filterValue + "|" : filter.type === "case_type" ? { civil: "cv", criminal: "cr", "": "" }[filterValue] : filterValue;
+      };
+
       if (queryFilters.length > 0) {
         const entity = info.defaultEntity;
         resPlan.query = {
@@ -92,7 +95,7 @@ const Analysis: FunctionComponent<Props> = ({ panelId }) => {
                               entity,
                               field: filter.type,
                             },
-                            filter.type === "ontology_labels" && or_filter_value !== "" ? "|" + or_filter_value + "|" : filter.type === "case_type" ? { civil: "cv", criminal: "cr", "": "" }[or_filter_value] : or_filter_value,
+                            filterFunc(or_filter_value),
                             "contains",
                           ];
                         }),
@@ -103,7 +106,7 @@ const Analysis: FunctionComponent<Props> = ({ panelId }) => {
                       entity,
                       field: filter.type,
                     },
-                    filter.type === "ontology_labels" && filter.value !== "" ? "|" + filter.value + "|" : filter.type === "case_type" ? { civil: "cv", criminal: "cr", "": "" }[filter.value] : filter.value,
+                    filterFunc(filter.value),
                     "contains",
                   ];
             }),
@@ -120,26 +123,14 @@ const Analysis: FunctionComponent<Props> = ({ panelId }) => {
       });
       const resData = await response.json();
       setData({ ...data, [id]: resData });
-      setAnswersLoading(false);
+      setAnswersLoading({ ...answersLoading, [id]: false });
     } catch (error) {
       console.warn(error); // eslint-disable-line no-console
       setData(null);
-      setAnswersLoading(false);
+      setAnswersLoading({ ...answersLoading, [id]: false });
       notify("Could not fetch results", "error");
     }
   };
-
-  // const oldSelectedStatement = useRef(null);
-  // const oldSelectedParameter = useRef(null);
-
-  // useEffect(() => {
-  //   // TODO: Readd check
-  //   // const freshStatement = selectedStatement !== oldSelectedStatement;
-  //   // const freshParameter = selectedParameter !== oldSelectedParameter;
-  //   // if (selectedStatement && (freshStatement || freshParameter)) {
-  //   // getAnswers(parameters, selectedStatement, selectedParameter);
-  //   // }
-  // }, [selectedStatement, selectedParameter, parameters, panel.results]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const fetchAutocompleteSuggestions = async (type, query) => {
     setLoadingAutosuggestions(true);
@@ -186,7 +177,7 @@ const Analysis: FunctionComponent<Props> = ({ panelId }) => {
               Remove
             </Button>
           </Col>
-          <Answers panelId={panelId} plan={plans[id]} statement={selectedStatements[id]} data={data?.[id]} satyrn={satyrn} loadingAnswers={loadingAnswers} />
+          <Answers panelId={panelId} plan={plans[id]} statement={selectedStatements[id]} data={data?.[id]} satyrn={satyrn} loadingAnswers={answersLoading[id]} />
         </Row>
       ))}
 
