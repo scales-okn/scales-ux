@@ -8,8 +8,8 @@ import Loader from "../Loader";
 
 import Dataset from "../Dataset";
 
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faPlus } from "@fortawesome/free-solid-svg-icons";
+// import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+// import { faPlus } from "@fortawesome/free-solid-svg-icons";
 
 import uniqid from "uniqid";
 
@@ -211,7 +211,7 @@ const Panel: FunctionComponent<PanelProps> = ({ panelId }) => {
 
               <div className="bg-white p-3">
                 <Col>
-                  <Analysis panelId={panelId} ring={ring} info={info} />
+                  <Analysis panelId={panelId} />
                 </Col>
               </div>
             </Card.Body>

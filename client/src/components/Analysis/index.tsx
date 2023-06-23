@@ -8,40 +8,36 @@ import uniqid from "uniqid";
 import { Satyrn } from "statement-mananger";
 import { useNotify } from "../Notifications";
 import "./style.scss";
+import { useRing } from "../../store/rings";
 import Answers from "./Answers";
 import Parameters from "./Parameters";
 import Statements from "./Statements";
 import _ from "lodash";
-// import appendQuery from "append-query";
 
 type Props = {
   panelId: string;
-  ring: IRing;
-  info: IRingInfo;
 };
 
-const Analysis: FunctionComponent<Props> = ({ panelId, ring, info }) => {
-  const {
-    panel,
-    analysis,
-    addPanelAnalysis,
-    removePanelAnalysis,
-    // setPanelAnalysisStatement,
-    filters,
-  } = usePanel(panelId);
+const Analysis: FunctionComponent<Props> = ({ panelId }) => {
+  const { panel, analysis, addPanelAnalysis, removePanelAnalysis, filters } = usePanel(panelId);
 
-  const [selectedAnalysisId, setSelectedAnalysisId] = useState(null);
-  const [selectedStatement, setSelectedStatement] = useState(null);
+  const { ring, info } = useRing(panel?.ringId);
+
+  const [selectedStatements, setSelectedStatements] = useState([]);
   const [selectedParameter, setSelectedParameter] = useState(null);
+
   const [statements, setStatements] = useState([]);
-  const [parameters, setParameters] = useState([]);
+  // const [parameters, setParameters] = useState([]);
+
   const [loadingAnswers, setAnswersLoading] = useState(false);
   const [loadingAutosuggestions, setLoadingAutosuggestions] = useState<boolean>(false);
   const [autoCompleteSuggestions, setAutoCompleteSuggestions] = useState<string[]>([]);
-  const { notify } = useNotify();
+
   const [data, setData] = useState(null);
   const [satyrn, setSatyrn] = useState(null);
-  const [plan, setPlan] = useState(null);
+  const [plans, setPlans] = useState([]);
+
+  const { notify } = useNotify();
 
   useEffect(() => {
     if (!info) return;
@@ -54,24 +50,25 @@ const Analysis: FunctionComponent<Props> = ({ panelId, ring, info }) => {
     return statements.find((s) => s.statement === statement);
   };
 
-  const getAnswers = async (parameters, statement, value) => {
+  const getAnswers = async (statement, id) => {
     try {
       setData(null);
       setAnswersLoading(true);
-      const statementSrc = getStatement(statement);
-      const plan = statementSrc?.plan;
-      plan.rings = [ring.rid];
+      const statementSrc = getStatement(statement.statement); // probably unnecessary
+      const resPlan = statementSrc?.plan;
+      resPlan.rings = [ring.rid];
       // inject value on param slot path
-      parameters.forEach((param) => {
-        if (param.slot instanceof Array && param.slot.length > 0 && value) {
-          _.set(plan, `${param.slot.join(".")}`, value);
+      statement.parameters?.forEach((param) => {
+        if (param.slot instanceof Array && param.slot.length > 0 && selectedParameter) {
+          _.set(resPlan, `${param.slot.join(".")}`, selectedParameter);
         }
       });
 
       const queryFilters = filters
         ? filters?.map((filter) => {
-            if (filter.type === "dateFiled") { /* this will need to change once we implement multiple dateFiled filters */
-              filter.value = `[${filter.value?.map((date) => dayjs(date).format("YYYY-M-DD"))}]`
+            if (filter.type === "dateFiled") {
+              /* this will need to change once we implement multiple dateFiled filters */
+              filter.value = `[${filter.value?.map((date) => dayjs(date).format("YYYY-M-DD"))}]`;
             }
             return filter;
           })
@@ -79,7 +76,7 @@ const Analysis: FunctionComponent<Props> = ({ panelId, ring, info }) => {
 
       if (queryFilters.length > 0) {
         const entity = info.defaultEntity;
-        plan.query = {
+        resPlan.query = {
           /* beware of changing this, as it needs to match convertFilters in viewHelpers.py on the backend :/ */
           AND: [
             ...queryFilters.map((filter) => {
@@ -95,7 +92,7 @@ const Analysis: FunctionComponent<Props> = ({ panelId, ring, info }) => {
                               entity,
                               field: filter.type,
                             },
-                            (filter.type==="ontology_labels" && or_filter_value!=='') ? "|"+or_filter_value+"|" : (filter.type==="case_type" ? {'civil':'cv', 'criminal':'cr', '':''}[or_filter_value] : or_filter_value),
+                            filter.type === "ontology_labels" && or_filter_value !== "" ? "|" + or_filter_value + "|" : filter.type === "case_type" ? { civil: "cv", criminal: "cr", "": "" }[or_filter_value] : or_filter_value,
                             "contains",
                           ];
                         }),
@@ -106,25 +103,23 @@ const Analysis: FunctionComponent<Props> = ({ panelId, ring, info }) => {
                       entity,
                       field: filter.type,
                     },
-                    (filter.type==="ontology_labels" && filter.value!=='') ? "|"+filter.value+"|" : (filter.type==="case_type" ? {'civil':'cv', 'criminal':'cr', '':''}[filter.value] : filter.value),
+                    filter.type === "ontology_labels" && filter.value !== "" ? "|" + filter.value + "|" : filter.type === "case_type" ? { civil: "cv", criminal: "cr", "": "" }[filter.value] : filter.value,
                     "contains",
                   ];
             }),
           ],
         };
+      } else {
+        resPlan.query = {};
       }
-      else {
-        plan.query = {}
-      }
-
-      setPlan(plan);
+      setPlans({ ...plans, [id]: resPlan });
       const response = await fetch(`/proxy/analysis/${ring.rid}/${ring.version}/${info?.defaultEntity}/`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(plan),
+        body: JSON.stringify(resPlan),
       });
-      const data = await response.json();
-      setData(data);
+      const resData = await response.json();
+      setData({ ...data, [id]: resData });
       setAnswersLoading(false);
     } catch (error) {
       console.warn(error); // eslint-disable-line no-console
@@ -134,16 +129,17 @@ const Analysis: FunctionComponent<Props> = ({ panelId, ring, info }) => {
     }
   };
 
-  const oldSelectedStatement = useRef(null);
-  const oldSelectedParameter = useRef(null);
+  // const oldSelectedStatement = useRef(null);
+  // const oldSelectedParameter = useRef(null);
 
-  useEffect(() => {
-    const freshStatement = selectedStatement !== oldSelectedStatement;
-    const freshParameter = selectedParameter !== oldSelectedParameter;
-    if (selectedStatement && (freshStatement || freshParameter)) {
-      getAnswers(parameters, selectedStatement, selectedParameter);
-    }
-  }, [selectedStatement, selectedParameter, parameters, panel.results]); // eslint-disable-line react-hooks/exhaustive-deps
+  // useEffect(() => {
+  //   // TODO: Readd check
+  //   // const freshStatement = selectedStatement !== oldSelectedStatement;
+  //   // const freshParameter = selectedParameter !== oldSelectedParameter;
+  //   // if (selectedStatement && (freshStatement || freshParameter)) {
+  //   // getAnswers(parameters, selectedStatement, selectedParameter);
+  //   // }
+  // }, [selectedStatement, selectedParameter, parameters, panel.results]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const fetchAutocompleteSuggestions = async (type, query) => {
     setLoadingAutosuggestions(true);
@@ -151,9 +147,9 @@ const Analysis: FunctionComponent<Props> = ({ panelId, ring, info }) => {
     try {
       const response = await fetch(`/proxy/autocomplete/${ring.rid}/${ring.version}/${info?.defaultEntity}/${type}?query=${query}`);
       if (response.status === 200) {
-        const data = await response.json();
-        data instanceof Array && setAutoCompleteSuggestions(data);
-        data?.success === false && notify(data?.message || "Could not fetch autocomplete suggestions", "error");
+        const resData = await response.json();
+        resData instanceof Array && setAutoCompleteSuggestions(resData);
+        resData?.success === false && notify(resData?.message || "Could not fetch autocomplete suggestions", "error");
         setLoadingAutosuggestions(false);
       } else {
         notify("Could not fetch autocomplete suggestions", "error");
@@ -166,44 +162,48 @@ const Analysis: FunctionComponent<Props> = ({ panelId, ring, info }) => {
     }
   };
 
-  const handleRemoveAnalysis = () => {
-    removePanelAnalysis(selectedAnalysisId);
-    setSelectedAnalysisId(null);
+  const handleRemoveAnalysis = (id) => {
+    removePanelAnalysis(id);
   };
 
   return (
     <div className="analysis">
-      {analysis.length > 0 ? (
-        analysis.map(({ id }) => (
-          <Row key={id} className="analysis-item" style={{ padding: "16px" }}>
-            <Col lg="11">
-              <Statements statements={statements} setSelectedStatement={setSelectedStatement} selectedStatement={selectedStatement} setParameters={setParameters} getStatement={getStatement} />
-              <Parameters autoCompleteSuggestions={autoCompleteSuggestions} parameters={parameters} selectedParameter={selectedParameter} setSelectedParameter={setSelectedParameter} fetchAutocompleteSuggestions={fetchAutocompleteSuggestions} loadingAutosuggestions={loadingAutosuggestions} />
-            </Col>
-            {/* <Col lg="1" className="text-end">
-              <Button size="sm" variant="outline-danger" onClick={handleRemoveAnalysis}>
-                Remove
-              </Button>
-            </Col> */}
-            <Answers panelId={panelId} plan={plan} statement={getStatement(selectedStatement)} data={data} satyrn={satyrn} loadingAnswers={loadingAnswers} />
-          </Row>
-        ))
-      ) : (
-        <Card.Footer className="d-flex align-items-center py-3">
-          <Button
-            variant="outline-dark"
-            className="me-2"
-            onClick={() => {
-              addPanelAnalysis({
-                id: uniqid(),
-              });
-            }}
-          >
-            <FontAwesomeIcon icon={faPlus} />
-          </Button>{" "}
-          Add Analysis
-        </Card.Footer>
-      )}
+      {analysis.map(({ id }) => (
+        <Row key={id} className="analysis-item" style={{ padding: "16px" }}>
+          <Col lg="11">
+            <Statements
+              statements={statements}
+              setSelectedStatement={(statement) => {
+                setSelectedStatements({ ...selectedStatements, [id]: statement });
+                getAnswers(statement, id);
+              }}
+              selectedStatement={selectedStatements[id]?.statement}
+            />
+            <Parameters autoCompleteSuggestions={autoCompleteSuggestions} parameters={selectedStatements[id]?.parameters} selectedParameter={selectedParameter} setSelectedParameter={setSelectedParameter} fetchAutocompleteSuggestions={fetchAutocompleteSuggestions} loadingAutosuggestions={loadingAutosuggestions} />
+          </Col>
+          <Col lg="1" className="text-end">
+            <Button size="sm" variant="outline-danger" onClick={() => handleRemoveAnalysis(id)}>
+              Remove
+            </Button>
+          </Col>
+          <Answers panelId={panelId} plan={plans[id]} statement={selectedStatements[id]} data={data?.[id]} satyrn={satyrn} loadingAnswers={loadingAnswers} />
+        </Row>
+      ))}
+
+      <Card.Footer className="d-flex align-items-center py-3">
+        <Button
+          variant="outline-dark"
+          className="me-2"
+          onClick={() => {
+            addPanelAnalysis({
+              id: uniqid(),
+            });
+          }}
+        >
+          <FontAwesomeIcon icon={faPlus} />
+        </Button>
+        Add Analysis
+      </Card.Footer>
     </div>
   );
 };

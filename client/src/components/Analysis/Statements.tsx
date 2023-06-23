@@ -3,16 +3,13 @@ import uniqid from "uniqid";
 import { Form, Col, Row } from "react-bootstrap";
 import { Typeahead } from "react-bootstrap-typeahead";
 
-const Statements = ({ statements, setSelectedStatement, selectedStatement, setParameters, getStatement }) => {
+const Statements = ({ statements, setSelectedStatement, selectedStatement }) => {
   const onStatementChange = (selected) => {
     const selectedStatement = selected[0]?.statement;
     if (!selectedStatement) return;
-    setSelectedStatement(selectedStatement);
-    const statement = getStatement(selectedStatement);
-    if (statement.parameters) {
-      setParameters(statement.parameters);
-    }
+    setSelectedStatement(selected[0]);
   };
+
   return (
     <Form.Group className="mb-3" as={Row}>
       <Col lg="8">
@@ -25,7 +22,7 @@ const Statements = ({ statements, setSelectedStatement, selectedStatement, setPa
           multiple={false}
           onChange={onStatementChange}
           onSearch={() => {
-            setParameters([]);
+            // setParameters([]);
           }}
           options={statements.filter((stmt) => !stmt.statement.includes("filing year"))} /* hack due to some problem when doing this via ring */
           shouldSelect={(shouldSelect, e) => {
