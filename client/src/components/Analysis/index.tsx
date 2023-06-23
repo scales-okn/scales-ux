@@ -18,13 +18,14 @@ type Props = {
   panelId: string;
 };
 
+// TODO: Update results on filter change
+
 const Analysis: FunctionComponent<Props> = ({ panelId }) => {
   const { panel, analysis, addPanelAnalysis, removePanelAnalysis, filters } = usePanel(panelId);
 
   const { ring, info } = useRing(panel?.ringId);
 
   const [selectedStatements, setSelectedStatements] = useState([]);
-  const [selectedParameter, setSelectedParameter] = useState(null);
 
   const [statements, setStatements] = useState([]);
 
@@ -58,8 +59,8 @@ const Analysis: FunctionComponent<Props> = ({ panelId }) => {
       resPlan.rings = [ring.rid];
       // inject value on param slot path
       statement.parameters?.forEach((param) => {
-        if (param.slot instanceof Array && param.slot.length > 0 && selectedParameter) {
-          _.set(resPlan, `${param.slot.join(".")}`, selectedParameter);
+        if (param.slot instanceof Array && param.slot.length > 0 && statement.selectedParameter) {
+          _.set(resPlan, `${param.slot.join(".")}`, statement.selectedParameter);
         }
       });
 
@@ -170,7 +171,18 @@ const Analysis: FunctionComponent<Props> = ({ panelId }) => {
               }}
               selectedStatement={selectedStatements[id]?.statement}
             />
-            <Parameters autoCompleteSuggestions={autoCompleteSuggestions} parameters={selectedStatements[id]?.parameters} selectedParameter={selectedParameter} setSelectedParameter={setSelectedParameter} fetchAutocompleteSuggestions={fetchAutocompleteSuggestions} loadingAutosuggestions={loadingAutosuggestions} />
+            <Parameters
+              autoCompleteSuggestions={autoCompleteSuggestions}
+              parameters={selectedStatements[id]?.parameters}
+              selectedParameter={selectedStatements[id]?.parameters}
+              setSelectedParameter={(params) => {
+                const newStatement = { ...selectedStatements[id], selectedParameter: params };
+                setSelectedStatements({ ...selectedStatements, [id]: newStatement });
+                getAnswers(newStatement, id);
+              }}
+              fetchAutocompleteSuggestions={fetchAutocompleteSuggestions}
+              loadingAutosuggestions={loadingAutosuggestions}
+            />
           </Col>
           <Col lg="1" className="text-end">
             <Button size="sm" variant="outline-danger" onClick={() => handleRemoveAnalysis(id)}>
