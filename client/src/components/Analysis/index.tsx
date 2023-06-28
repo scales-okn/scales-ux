@@ -46,6 +46,13 @@ const Analysis: FunctionComponent<Props> = ({ panelId }) => {
     setStatements(satyrn.planManager.generate());
   }, [info]); // eslint-disable-line react-hooks/exhaustive-deps
 
+  // useEffect(() => {
+  //   if (panel?.results?.results) {
+  //     // if results change, loop through selected statements and requery
+  //     console.log(":aqui", selectedStatements);
+  //   }
+  // }, [panel?.results?.results]); // eslint-disable-line react-hooks/exhaustive-deps
+
   const getStatement = (statement) => {
     return statements.find((s) => s.statement === statement);
   };
@@ -74,8 +81,11 @@ const Analysis: FunctionComponent<Props> = ({ panelId }) => {
           })
         : {};
 
-      const filterFunc = (filterValue) => {
-        return filter.type === "ontology_labels" && filterValue !== "" ? "|" + filterValue + "|" : filter.type === "case_type" ? { civil: "cv", criminal: "cr", "": "" }[filterValue] : filterValue;
+      const filterFunc = (filterType, filterValue) => {
+        const ontologyType = filterType === "ontology_labels";
+        const notEmptyString = filterValue !== "";
+
+        return ontologyType && notEmptyString ? "|" + filterValue + "|" : filterType === "case_type" ? { civil: "cv", criminal: "cr", "": "" }[filterValue] : filterValue;
       };
 
       if (queryFilters.length > 0) {
@@ -96,7 +106,7 @@ const Analysis: FunctionComponent<Props> = ({ panelId }) => {
                               entity,
                               field: filter.type,
                             },
-                            filterFunc(or_filter_value),
+                            filterFunc(filter.type, or_filter_value),
                             "contains",
                           ];
                         }),
@@ -107,7 +117,7 @@ const Analysis: FunctionComponent<Props> = ({ panelId }) => {
                       entity,
                       field: filter.type,
                     },
-                    filterFunc(filter.value),
+                    filterFunc(filter.type, filter.value),
                     "contains",
                   ];
             }),
@@ -116,6 +126,7 @@ const Analysis: FunctionComponent<Props> = ({ panelId }) => {
       } else {
         resPlan.query = {};
       }
+
       setPlans({ ...plans, [id]: resPlan });
       const response = await fetch(`/proxy/analysis/${ring.rid}/${ring.version}/${info?.defaultEntity}/`, {
         method: "POST",
