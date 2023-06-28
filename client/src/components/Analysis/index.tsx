@@ -1,5 +1,5 @@
 // @ts-nocheck
-import React, { useEffect, FunctionComponent, useState, useRef } from "react";
+import React, { useEffect, FunctionComponent, useState } from "react";
 import { usePanel } from "store/panels";
 import { Button, Col, Row, Card } from "react-bootstrap";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -46,21 +46,24 @@ const Analysis: FunctionComponent<Props> = ({ panelId }) => {
     setStatements(satyrn.planManager.generate());
   }, [info]); // eslint-disable-line react-hooks/exhaustive-deps
 
-  // useEffect(() => {
-  //   if (panel?.results?.results) {
-  //     // if results change, loop through selected statements and requery
-  //     console.log(":aqui", selectedStatements);
-  //   }
-  // }, [panel?.results?.results]); // eslint-disable-line react-hooks/exhaustive-deps
+  useEffect(() => {
+    const allTrue = Object.fromEntries(Object.entries(answersLoading).map(([key, value]) => [key, true]));
+    setAnswersLoading(allTrue);
+
+    Object.keys(selectedStatements).map((statementId) => {
+      getAnswers(selectedStatements[statementId], statementId, true);
+      return null;
+    });
+  }, [panel?.results?.results]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const getStatement = (statement) => {
     return statements.find((s) => s.statement === statement);
   };
 
-  const getAnswers = async (statement, id) => {
+  const getAnswers = async (statement, id, withoutLoading = false) => {
     try {
       setData(null);
-      setAnswersLoading({ ...answersLoading, [id]: true });
+      if (!withoutLoading) setAnswersLoading({ ...answersLoading, [id]: true });
       const statementSrc = getStatement(statement.statement); // probably unnecessary
       const resPlan = statementSrc?.plan;
       resPlan.rings = [ring.rid];
