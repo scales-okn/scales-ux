@@ -120,7 +120,7 @@ const Panel: FunctionComponent<PanelProps> = ({ panelId }) => {
       width: 100,
       renderCell: (item) => {
         return (
-          <Link to={`/document/${ring.rid}/${ring.version}/Case/${item.row.__uniqueId.ucid}`}>
+          <Link to={`/document/${ring.rid}/${ring.version}/Case/${item.row.__uniqueId.ucid}`} target="_blank" rel="noopener noreferrer">
             <DetailButton>Details</DetailButton>
           </Link>
         );
