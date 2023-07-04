@@ -131,7 +131,8 @@ const Analysis: FunctionComponent<Props> = ({ panelId }) => {
       }
 
       setPlans({ ...plans, [id]: resPlan });
-      const response = await fetch(`/proxy/analysis/${ring.rid}/${ring.version}/${info?.defaultEntity}/`, {
+      const fetchStem = process.env.REACT_APP_SATYRN_ENV==='development' ? 'http://127.0.0.1:5000/api' : '/proxy';
+      const response = await fetch(`${fetchStem}/analysis/${ring.rid}/${ring.version}/${info?.defaultEntity}/`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(resPlan),
