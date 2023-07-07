@@ -24,10 +24,16 @@ const Answers = ({ panelId, data, satyrn, loadingAnswers, statement, plan }) => 
     const formattedFilters = filters
       ? filters.reduce((acc, { type, value }) => {
           if (!type || !value) return acc;
+
+          let out = value;
           if (type === "dateFiled") {
-            acc[type] = `[${value?.map((date) => dayjs(date).format("YYYY-M-DD"))}]`;
+            out = `[${value?.map((date) => dayjs(date).format("YYYY-M-DD"))}]`;
+          }
+
+          if (acc[type]) {
+            acc[type] = acc[type].concat(` AND ${out}`).replace(/\|/g, " OR ");
           } else {
-            acc[type] = value;
+            acc[type] = out.replace(/\|/g, " OR ");
           }
 
           return acc;
@@ -79,7 +85,7 @@ const Answers = ({ panelId, data, satyrn, loadingAnswers, statement, plan }) => 
     // from stackoverflow.com/questions/43193341/how-to-generate-random-pastel-or-brighter-color-in-javascript
     return "hsl(" + 360 * Math.random() + "," + (20 + 75 * Math.random()) + "%," + (10 + 60 * Math.random()) + "%)";
   };
-  // console.log(answer);
+
   return (
     <div className="answers">
       <Loader isVisible={loadingAnswers} animation="border">
@@ -87,7 +93,7 @@ const Answers = ({ panelId, data, satyrn, loadingAnswers, statement, plan }) => 
           {answer && (
             <div className="mb-3 mt-4">
               <i>Answer: </i>
-              {renderHTML(answer.replace(/\|/g, " OR "))}
+              {renderHTML(answer)}
             </div>
           )}
           {data && (
