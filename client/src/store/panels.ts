@@ -315,7 +315,7 @@ export const createPanel =
 
       const { data, message } = await response.json();
       if (response.status === 200) {
-        dispatch(notify(message, "success"));
+        // dispatch(notify(message, "success"));
         dispatch(panelsActions.createPanelSuccess(data.panel));
       } else {
         dispatch(notify(message, "error"));
@@ -345,7 +345,7 @@ export const updatePanel =
 
       const { data, message } = await response.json();
       if (response.status === 200) {
-        dispatch(notify(message, "success"));
+        // dispatch(notify(message, "success"));
         dispatch(panelsActions.updatePanelSuccess(data.panel));
       } else {
         dispatch(notify(message, "error"));

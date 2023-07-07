@@ -14,7 +14,7 @@ export const create = async (req: Request, res: Response) => {
       body,
     });
 
-    return res.send_ok("Feedback created successfully!", { feedback });
+    return res.send_ok("Thanks for your input!", { feedback });
   } catch (error) {
     console.warn(error); // eslint-disable-line no-console
 

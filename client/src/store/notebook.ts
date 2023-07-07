@@ -179,7 +179,7 @@ export function createNotebook(payload: any) {
       });
       const { data, message } = await response.json();
       if (response.status === 200) {
-        dispatch(notify(message, "success"));
+        // dispatch(notify(message, "success"));
         dispatch(notebookActions.createNotebookSuccess(data.notebook));
       } else {
         dispatch(notify(message, "error"));
