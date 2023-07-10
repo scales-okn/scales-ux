@@ -161,7 +161,19 @@ const SignUpPage: FunctionComponent = () => {
                     )}
                   </div>
                   <Form.Group className="mb-4">
-                    <Form.Check type="switch" label="Accept Terms of Service" className="text-start" onChange={(event: React.ChangeEvent<HTMLInputElement>) => formik.setFieldValue("tos", event.target.checked)} />
+                    <Form.Check
+                      type="switch"
+                      label={
+                        <div>
+                          Accept{" "}
+                          <a href="https://docs.google.com/document/d/1Bdta3CTuS0hKoDdWQoO_FdVOELHfnVGs4rjSq0531TQ/edit" target="_blank" rel="noopener noreferrer" style={{ color: "rgb(33, 37, 41)" }}>
+                            Terms of Service
+                          </a>
+                        </div>
+                      }
+                      className="text-start"
+                      onChange={(event: React.ChangeEvent<HTMLInputElement>) => formik.setFieldValue("tos", event.target.checked)}
+                    />
                     {formik.touched.tos && formik.errors.tos && <Form.Text className="text-danger float-start mb-3">{formik.errors.tos}</Form.Text>}
                   </Form.Group>
                   <Button
