@@ -96,34 +96,37 @@ const Analysis: FunctionComponent<Props> = ({ panelId }) => {
         resPlan.query = {
           /* beware of changing this, as it needs to match convertFilters in viewHelpers.py on the backend :/ */
           AND: [
-            ...queryFilters.map((filter) => {
-              return filter.value.includes("|")
-                ? {
-                    OR: [
-                      ...filter.value
-                        .split("|")
-                        .filter((i) => i)
-                        .map((or_filter_value) => {
-                          return [
-                            {
-                              entity,
-                              field: filter.type,
-                            },
-                            filterFunc(filter.type, or_filter_value),
-                            "contains",
-                          ];
-                        }),
-                    ],
-                  }
-                : [
-                    {
-                      entity,
-                      field: filter.type,
-                    },
-                    filterFunc(filter.type, filter.value),
-                    "contains",
-                  ];
-            }),
+            ...queryFilters
+              .map((filter) => {
+                if (!filter.value) return null;
+                return filter.value.includes("|")
+                  ? {
+                      OR: [
+                        ...filter.value
+                          .split("|")
+                          .filter((i) => i)
+                          .map((or_filter_value) => {
+                            return [
+                              {
+                                entity,
+                                field: filter.type,
+                              },
+                              filterFunc(filter.type, or_filter_value),
+                              "contains",
+                            ];
+                          }),
+                      ],
+                    }
+                  : [
+                      {
+                        entity,
+                        field: filter.type,
+                      },
+                      filterFunc(filter.type, filter.value),
+                      "contains",
+                    ];
+              })
+              .filter((n) => n),
           ],
         };
       } else {
@@ -131,7 +134,7 @@ const Analysis: FunctionComponent<Props> = ({ panelId }) => {
       }
 
       setPlans({ ...plans, [id]: resPlan });
-      const fetchStem = process.env.REACT_APP_SATYRN_ENV==='development' ? 'http://127.0.0.1:5000/api' : '/proxy';
+      const fetchStem = process.env.REACT_APP_SATYRN_ENV === "development" ? "http://127.0.0.1:5000/api" : "/proxy";
       const response = await fetch(`${fetchStem}/analysis/${ring.rid}/${ring.version}/${info?.defaultEntity}/`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
