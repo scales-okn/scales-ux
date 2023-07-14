@@ -1,10 +1,12 @@
 import express from "express";
 import requestProxy from "express-request-proxy";
+import checkAuth from "../middlewares/checkAuth";
 
 const router = express.Router();
 
 router.all(
   "*",
+  checkAuth,
   (req, res, next) => {
 
     // whoever's fault it is that multi-value query params were getting lost en route to the API...I want a word with them >:(
