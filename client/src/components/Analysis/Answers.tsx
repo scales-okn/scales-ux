@@ -21,21 +21,40 @@ const Answers = ({ panelId, data, satyrn, loadingAnswers, statement, plan }) => 
     if (!data || !statement || !plan || !satyrn) return;
     setAnswerType(getAnswersDisplayType(plan, data.results));
 
-    const formattedFilters = filters
-      ? filters.reduce((acc, { type, value }) => {
-          if (!type || !value) return acc;
+    const currentFilters = statement?.plan?.query?.["AND"];
 
-          let out = value;
-          if (type === "dateFiled") {
-            out = `[${value?.map((date) => dayjs(date).format("YYYY-M-DD"))}]`;
-          }
+    const formatString = (str) => {
+      return str.replace(/\|/g, "");
+    };
 
-          if (acc[type]) {
-            acc[type] = acc[type].concat(` AND ${out}`).replace(/\|/g, " OR ");
+    const formattedFilters = currentFilters
+      ? currentFilters.reduce((acc, andFilter) => {
+          const aggregateString = (type, value, connector = "AND") => {
+            if (!type || !value) return;
+
+            if (type === "dateFiled") {
+              value = `[${value?.map((date) => dayjs(date).format("YYYY-M-DD"))}]`;
+            }
+
+            if (acc[type]) {
+              acc[type] = formatString(acc[type].concat(` ${connector} ${value}`));
+            } else {
+              acc[type] = formatString(value);
+            }
+          };
+
+          if (Array.isArray(andFilter)) {
+            const type = andFilter[0].field;
+            const value = andFilter[1];
+            aggregateString(type, value);
           } else {
-            acc[type] = out.replace(/\|/g, " OR ");
+            andFilter["OR"]?.forEach((item, idx) => {
+              const type = item[0].field;
+              const value = item[1];
+              const connector = idx === 0 ? "AND" : "OR";
+              aggregateString(type, value, connector);
+            });
           }
-
           return acc;
         }, {})
       : {};
