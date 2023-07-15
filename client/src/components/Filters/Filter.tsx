@@ -12,6 +12,9 @@ import { usePanel } from "../../store/panels";
 import { useRing } from "../../store/rings";
 import { DATE_FORMAT } from "../../constants";
 import { useNotify } from "../../components/Notifications";
+import { authorizationHeader } from "utils";
+import { authSelector } from "store/auth";
+import { useSelector } from "react-redux";
 
 export type FilterT = {
   id: string;
@@ -27,6 +30,7 @@ type Props = {
 const Filter = ({ panelId, filter }: Props) => {
   const { panel, filters, setPanelFilters, getPanelResults } = usePanel(panelId);
   const { ring, info } = useRing(panel.ringId);
+  const { token } = useSelector(authSelector);
   const { type, id, value } = filter;
 
   const [isLoading, setIsLoading] = useState<boolean>(false);
@@ -84,8 +88,13 @@ const Filter = ({ panelId, filter }: Props) => {
   const fetchAutocompleteSuggestions = async (query) => {
     if (query.length > 2) {
       setIsLoading(true);
+      const authHeader = authorizationHeader(token);
       try {
-        const response = await fetch(`/proxy/autocomplete/${ring.rid}/1/${info?.defaultEntity}/${filter.type}?query=${query}`);
+        const response = await fetch(`/proxy/autocomplete/${ring.rid}/${ring.version}/${info?.defaultEntity}/${filter.type}?query=${query}`, {
+          headers: {
+            ...authHeader,
+          },
+        });
         if (response.status === 200) {
           const data = await response.json();
           setAutoCompleteSuggestions(data);

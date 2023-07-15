@@ -273,8 +273,8 @@ export const getPanels = (notebookId) => {
       const response = await fetch(`/api/notebooks/${notebookId}/panels`, {
         method: "GET",
         headers: {
-          ...authHeader,
           "Content-Type": "application/json",
+          ...authHeader,
         },
       });
 
@@ -388,8 +388,8 @@ export const getPanelResults =
   (panelId, filters = [], page = 0, batchSize = 10) =>
   async (dispatch: AppDispatch, getState) => {
     try {
-      // const { token } = authSelector(getState());
-      // const authHeader = authorizationHeader(token);
+      const { token } = authSelector(getState());
+      const authHeader = authorizationHeader(token);
       const panel = panelSelector(getState(), panelId);
       const { filters, ringId } = panel;
       // @ts-ignore
@@ -419,7 +419,11 @@ export const getPanelResults =
         })
         .join("&");
 
-      const response = await fetch(appendQuery(`/proxy/results/${rid}/${version}/${info.defaultEntity}?page=${page}&batchSize=${batchSize}&sortBy=dateFiled&sortDirection=desc`, newFilters, { encodeComponents: false }));
+      const response = await fetch(appendQuery(`/proxy/results/${rid}/${version}/${info.defaultEntity}?page=${page}&batchSize=${batchSize}&sortBy=dateFiled&sortDirection=desc`, newFilters, { encodeComponents: false }), {
+        headers: {
+          ...authHeader,
+        },
+      });
       const data = await response.json();
       if (response.status === 200) {
         dispatch(

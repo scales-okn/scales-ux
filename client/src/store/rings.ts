@@ -102,12 +102,18 @@ export const getRings = () => {
 };
 
 export const getRingInfo = (rid: string, version: number) => {
-  return async (dispatch: AppDispatch) => {
+  return async (dispatch: AppDispatch, getState) => {
     const failedToGetRingInfoNotification = (message = "Failed to get ring info!") => dispatch(notify(message, "error"));
 
     try {
+      const { token } = authSelector(getState());
+      const authHeader = authorizationHeader(token);
       dispatch(ringsActions.getRingInfo());
-      const response = await fetch(`/proxy/rings/${rid}/${version}`);
+      const response = await fetch(`/proxy/rings/${rid}/${version}`, {
+        headers: {
+          ...authHeader,
+        },
+      });
       const info = await response.json();
       if (response.status === 200 && info?.success !== false) {
         dispatch(ringsActions.getRingInfoSuccess({ rid, info }));

@@ -13,6 +13,9 @@ import Answers from "./Answers";
 import Parameters from "./Parameters";
 import Statements from "./Statements";
 import _ from "lodash";
+import { useSelector } from "react-redux";
+import { authorizationHeader } from "utils";
+import { authSelector } from "store/auth";
 
 type Props = {
   panelId: string;
@@ -22,6 +25,7 @@ type Props = {
 
 const Analysis: FunctionComponent<Props> = ({ panelId }) => {
   const { panel, analysis, addPanelAnalysis, removePanelAnalysis, filters } = usePanel(panelId);
+  const { token } = useSelector(authSelector);
 
   const { ring, info } = useRing(panel?.ringId);
 
@@ -135,9 +139,10 @@ const Analysis: FunctionComponent<Props> = ({ panelId }) => {
 
       setPlans({ ...plans, [id]: resPlan });
       const fetchStem = process.env.REACT_APP_SATYRN_ENV === "development" ? "http://127.0.0.1:5000/api" : "/proxy";
+      const authHeader = authorizationHeader(token);
       const response = await fetch(`${fetchStem}/analysis/${ring.rid}/${ring.version}/${info?.defaultEntity}/`, {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: { "Content-Type": "application/json", ...authHeader },
         body: JSON.stringify(resPlan),
       });
       const resData = await response.json();
@@ -155,7 +160,12 @@ const Analysis: FunctionComponent<Props> = ({ panelId }) => {
     setLoadingAutosuggestions(true);
     setAutoCompleteSuggestions([]);
     try {
-      const response = await fetch(`/proxy/autocomplete/${ring.rid}/${ring.version}/${info?.defaultEntity}/${type}?query=${query}`);
+      const authHeader = authorizationHeader(token);
+      const response = await fetch(`/proxy/autocomplete/${ring.rid}/${ring.version}/${info?.defaultEntity}/${type}?query=${query}`, {
+        headers: {
+          ...authHeader,
+        },
+      });
       if (response.status === 200) {
         const resData = await response.json();
         resData instanceof Array && setAutoCompleteSuggestions(resData);
