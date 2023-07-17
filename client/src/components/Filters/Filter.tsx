@@ -1,4 +1,4 @@
-import React, { useState, useCallback } from "react";
+import React, { useState } from "react";
 import { FormControl, InputGroup } from "react-bootstrap";
 import DateTimeRangePicker from "@wojtekmaj/react-datetimerange-picker";
 import FilterTypeDropDown from "./FitlerTypeDropDown";
@@ -47,22 +47,6 @@ const Filter = ({ panelId, filter }: Props) => {
       console.warn(error); // eslint-disable-line no-console
     }
   };
-
-  // const getFilterInputById = (id: string) => {
-  //   try {
-  //     return filters?.find((filter: Filter) => filter.id === id);
-  //   } catch (error) {
-  //     console.warn(error); // eslint-disable-line no-console
-  //   }
-  // };
-
-  // const getFilterColumnByKey = (key: string) => {
-  //   try {
-  //     return info?.columns?.find((column) => column.key === key);
-  //   } catch (error) {
-  //     console.warn(error); // eslint-disable-line no-console
-  //   }
-  // };
 
   const getFilterOptionsByKey = (key) => {
     if (!key) return null;
