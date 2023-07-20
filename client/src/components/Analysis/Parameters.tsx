@@ -53,9 +53,7 @@ const Parameters: FunctionComponent<Props> = ({ parameters, fetchAutocompleteSug
                     <Form.Select value={selectedParameter} multiple={parameter.allowMultiple} onChange={(e) => setSelectedParameter(e.target.value)}>
                       {/* fix for (1) the fact that default value was "day-over-day" but year-over-year was displaying, and
                       (2) the current lack of support for day-over-day (simplest hack I could think of, sorry for ugliness!) */}
-                      {(parameter?.options?.length==6 ? 
-                        parameter?.options.slice(1,3).toReversed().concat(parameter?.options.slice(3)) :
-                        parameter?.options)?.map((param, index) => (
+                      {(parameter?.options?.length == 6 ? parameter?.options.slice(1, 3).toReversed().concat(parameter?.options.slice(3)) : parameter?.options)?.map((param, index) => (
                         <option key={index} value={param.value ? param.value : param}>
                           {param.label ? param.label : param}
                         </option>

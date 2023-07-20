@@ -186,7 +186,7 @@ const Answers = ({ panelId, data, satyrn, loadingAnswers, statement, plan }) => 
                     </YAxis>
                     <Tooltip formatter={(value) => new Intl.NumberFormat("en").format(value)} />
                     <CartesianGrid stroke="#eee" strokeDasharray="5 5" />
-                    <Line type="monotone" dataKey={yUnits} stroke="#82ca9d" />
+                    <Line type="monotone" dataKey={yUnits} stroke="#82ca9d" dot={false} activeDot={{ stroke: "white", strokeWidth: 2, r: 5 }} />
                     {/* the below was plotting x-values (e.g. years) as y-values; not sure what the intended outcome was */}
                     {/* <Line
                     type="monotone"
@@ -242,13 +242,17 @@ const Answers = ({ panelId, data, satyrn, loadingAnswers, statement, plan }) => 
                       return (
                         <Line
                           key={line_data.label}
-                          dot={!data.results?.[0]?.series?.[0][0]?.includes("/")} /* hack */
+                          // dot={
+                          //   !data.results?.[0]?.series?.[0][0]?.includes("/")
+                          // } /* hack */
                           data={line_data.series?.map((result) => {
                             return formatMultilineData(result, line_data.label);
                           })}
                           type="monotone"
                           dataKey={line_data.label}
                           stroke={getColor()}
+                          dot={false}
+                          activeDot={{ stroke: "white", strokeWidth: 2, r: 5 }}
                         />
                       );
                     })}
