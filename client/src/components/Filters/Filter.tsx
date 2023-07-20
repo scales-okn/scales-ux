@@ -22,6 +22,11 @@ export type FilterT = {
   type: string;
 };
 
+type FilterOptionT = {
+  label: string;
+  value: string;
+};
+
 type Props = {
   filter: FilterT;
   panelId: string;
@@ -35,7 +40,7 @@ const Filter = ({ panelId, filter }: Props) => {
 
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [autocompleteOpen, setAutocompleteOpen] = useState<boolean>(false);
-  const [autoCompleteSuggestions, setAutoCompleteSuggestions] = useState<string[]>([]);
+  const [autoCompleteSuggestions, setAutoCompleteSuggestions] = useState<FilterOptionT[]>([]);
   const [dateValue, setDateValue] = useState<string>("");
   const { notify } = useNotify();
 
@@ -153,7 +158,7 @@ const Filter = ({ panelId, filter }: Props) => {
                 noOptionsText={isLoading ? <CircularProgress /> : <>No Results Found</>}
                 multiple
                 options={autoCompleteSuggestions || []}
-                getOptionLabel={(option) => option}
+                getOptionLabel={(option: FilterOptionT) => option.label}
                 renderInput={(params) => <TextField {...params} variant="outlined" label={filterOptions?.nicename} />}
                 disableClearable
                 onInputChange={(_, value) => {
@@ -172,7 +177,7 @@ const Filter = ({ panelId, filter }: Props) => {
                   if (!filter) {
                     return false;
                   }
-                  setFilter({ ...filter, value: fieldValue.join("|") });
+                  setFilter({ ...filter, value: fieldValue.map(x => x.value).join("|") });
                 }}
                 sx={{
                   minWidth: "250px",
