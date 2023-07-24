@@ -24,7 +24,8 @@ type Props = {
 // TODO: Update results on filter change
 
 const Analysis: FunctionComponent<Props> = ({ panelId }) => {
-  const { panel, analysis, addPanelAnalysis, removePanelAnalysis, filters } = usePanel(panelId);
+  const { panel, analysis, addPanelAnalysis, removePanelAnalysis, filters } =
+    usePanel(panelId);
   const { token } = useSelector(authSelector);
 
   const { ring, info } = useRing(panel?.ringId);
@@ -34,8 +35,11 @@ const Analysis: FunctionComponent<Props> = ({ panelId }) => {
   const [statements, setStatements] = useState([]);
 
   const [answersLoading, setAnswersLoading] = useState(false);
-  const [loadingAutosuggestions, setLoadingAutosuggestions] = useState<boolean>(false);
-  const [autoCompleteSuggestions, setAutoCompleteSuggestions] = useState<string[]>([]);
+  const [loadingAutosuggestions, setLoadingAutosuggestions] =
+    useState<boolean>(false);
+  const [autoCompleteSuggestions, setAutoCompleteSuggestions] = useState<
+    string[]
+  >([]);
 
   const [data, setData] = useState(null);
   const [satyrn, setSatyrn] = useState(null);
@@ -45,13 +49,20 @@ const Analysis: FunctionComponent<Props> = ({ panelId }) => {
 
   useEffect(() => {
     if (!info) return;
-    const satyrn = new Satyrn(info.defaultEntity, info.operations, info.analysisSpace, ring);
+    const satyrn = new Satyrn(
+      info.defaultEntity,
+      info.operations,
+      info.analysisSpace,
+      ring,
+    );
     setSatyrn(satyrn);
     setStatements(satyrn.planManager.generate());
   }, [info]); // eslint-disable-line react-hooks/exhaustive-deps
 
   useEffect(() => {
-    const allTrue = Object.fromEntries(Object.entries(answersLoading).map(([key, value]) => [key, true]));
+    const allTrue = Object.fromEntries(
+      Object.entries(answersLoading).map(([key, value]) => [key, true]),
+    );
     setAnswersLoading(allTrue);
 
     Object.keys(selectedStatements).map((statementId) => {
@@ -73,8 +84,16 @@ const Analysis: FunctionComponent<Props> = ({ panelId }) => {
       resPlan.rings = [ring.rid];
       // inject value on param slot path
       statement.parameters?.forEach((param) => {
-        if (param.slot instanceof Array && param.slot.length > 0 && statement.selectedParameter) {
-          _.set(resPlan, `${param.slot.join(".")}`, statement.selectedParameter);
+        if (
+          param.slot instanceof Array &&
+          param.slot.length > 0 &&
+          statement.selectedParameter
+        ) {
+          _.set(
+            resPlan,
+            `${param.slot.join(".")}`,
+            statement.selectedParameter,
+          );
         }
       });
 
@@ -82,7 +101,9 @@ const Analysis: FunctionComponent<Props> = ({ panelId }) => {
         ? filters?.map((filter) => {
             if (filter.type === "dateFiled") {
               /* this will need to change once we implement multiple dateFiled filters */
-              filter.value = `[${filter.value?.map((date) => dayjs(date).format("YYYY-M-DD"))}]`;
+              filter.value = `[${filter.value?.map((date) =>
+                dayjs(date).format("YYYY-M-DD"),
+              )}]`;
             }
             return filter;
           })
@@ -92,7 +113,11 @@ const Analysis: FunctionComponent<Props> = ({ panelId }) => {
         const ontologyType = filterType === "ontology_labels";
         const notEmptyString = filterValue !== "";
 
-        return ontologyType && notEmptyString ? "|" + filterValue + "|" : filterType === "case_type" ? { civil: "cv", criminal: "cr", "": "" }[filterValue] : filterValue;
+        return ontologyType && notEmptyString
+          ? "|" + filterValue + "|"
+          : filterType === "case_type"
+          ? { civil: "cv", criminal: "cr", "": "" }[filterValue]
+          : filterValue;
       };
 
       if (queryFilters.length > 0) {
@@ -138,13 +163,19 @@ const Analysis: FunctionComponent<Props> = ({ panelId }) => {
       }
 
       setPlans({ ...plans, [id]: resPlan });
-      const fetchStem = process.env.REACT_APP_SATYRN_ENV === "development" ? "http://127.0.0.1:5000/api" : "/proxy";
+      const fetchStem =
+        process.env.REACT_APP_SATYRN_ENV === "development"
+          ? "http://127.0.0.1:5000/api"
+          : "/proxy";
       const authHeader = authorizationHeader(token);
-      const response = await fetch(`${fetchStem}/analysis/${ring.rid}/${ring.version}/${info?.defaultEntity}/`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json", ...authHeader },
-        body: JSON.stringify(resPlan),
-      });
+      const response = await fetch(
+        `${fetchStem}/analysis/${ring.rid}/${ring.version}/${info?.defaultEntity}/`,
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json", ...authHeader },
+          body: JSON.stringify(resPlan),
+        },
+      );
       const resData = await response.json();
       setData({ ...data, [id]: resData });
       setAnswersLoading({ ...answersLoading, [id]: false });
@@ -161,15 +192,22 @@ const Analysis: FunctionComponent<Props> = ({ panelId }) => {
     setAutoCompleteSuggestions([]);
     try {
       const authHeader = authorizationHeader(token);
-      const response = await fetch(`/proxy/autocomplete/${ring.rid}/${ring.version}/${info?.defaultEntity}/${type}?query=${query}`, {
-        headers: {
-          ...authHeader,
+      const response = await fetch(
+        `/proxy/autocomplete/${ring.rid}/${ring.version}/${info?.defaultEntity}/${type}?query=${query}`,
+        {
+          headers: {
+            ...authHeader,
+          },
         },
-      });
+      );
       if (response.status === 200) {
         const resData = await response.json();
         resData instanceof Array && setAutoCompleteSuggestions(resData);
-        resData?.success === false && notify(resData?.message || "Could not fetch autocomplete suggestions", "error");
+        resData?.success === false &&
+          notify(
+            resData?.message || "Could not fetch autocomplete suggestions",
+            "error",
+          );
         setLoadingAutosuggestions(false);
       } else {
         notify("Could not fetch autocomplete suggestions", "error");
@@ -194,7 +232,10 @@ const Analysis: FunctionComponent<Props> = ({ panelId }) => {
             <Statements
               statements={statements}
               setSelectedStatement={(statement) => {
-                setSelectedStatements({ ...selectedStatements, [id]: statement });
+                setSelectedStatements({
+                  ...selectedStatements,
+                  [id]: statement,
+                });
                 getAnswers(statement, id);
               }}
               selectedStatement={selectedStatements[id]?.statement}
@@ -202,10 +243,16 @@ const Analysis: FunctionComponent<Props> = ({ panelId }) => {
             <Parameters
               autoCompleteSuggestions={autoCompleteSuggestions}
               parameters={selectedStatements[id]?.parameters}
-              selectedParameter={selectedStatements[id]?.parameters}
+              selectedParameter={selectedStatements[id]?.selectedParameter}
               setSelectedParameter={(params) => {
-                const newStatement = { ...selectedStatements[id], selectedParameter: params };
-                setSelectedStatements({ ...selectedStatements, [id]: newStatement });
+                const newStatement = {
+                  ...selectedStatements[id],
+                  selectedParameter: params,
+                };
+                setSelectedStatements({
+                  ...selectedStatements,
+                  [id]: newStatement,
+                });
                 getAnswers(newStatement, id);
               }}
               fetchAutocompleteSuggestions={fetchAutocompleteSuggestions}
@@ -213,11 +260,22 @@ const Analysis: FunctionComponent<Props> = ({ panelId }) => {
             />
           </Col>
           <Col lg="1" className="text-end">
-            <Button size="sm" variant="outline-danger" onClick={() => handleRemoveAnalysis(id)}>
+            <Button
+              size="sm"
+              variant="outline-danger"
+              onClick={() => handleRemoveAnalysis(id)}
+            >
               Remove
             </Button>
           </Col>
-          <Answers panelId={panelId} plan={plans[id]} statement={selectedStatements[id]} data={data?.[id]} satyrn={satyrn} loadingAnswers={answersLoading[id]} />
+          <Answers
+            panelId={panelId}
+            plan={plans[id]}
+            statement={selectedStatements[id]}
+            data={data?.[id]}
+            satyrn={satyrn}
+            loadingAnswers={answersLoading[id]}
+          />
         </Row>
       ))}
 
