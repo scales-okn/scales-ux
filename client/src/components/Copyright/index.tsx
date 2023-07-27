@@ -5,7 +5,7 @@ const Copyright: FunctionComponent = () => (
   <Typography variant="body2" color="textSecondary" align="center" className="mt-5">
     Satyrn is a data exploration platform being developed by the{" "}
     <Link color="inherit" href="https://c3lab.northwestern.edu/">
-      <strong>C3 Lab @ Northwestern University</strong>
+      <strong>SCALES OKN</strong>
     </Link>
     .<br />
     <Link color="inherit" href="https://scales-okn.org/">

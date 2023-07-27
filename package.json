@@ -3,7 +3,7 @@
   "version": "1.5.3",
   "private": true,
   "description": "BFF + Frontend",
-  "license": "C3 License",
+  "license": "SCALES OKN License",
   "scripts": {
     "start": "concurrently 'cd server && npm run start' 'cd client && npm run start'",
     "format": "concurrently 'cd server && npm run format' 'cd client && npm run format'",
