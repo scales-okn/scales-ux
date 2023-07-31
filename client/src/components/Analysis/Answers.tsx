@@ -1,4 +1,4 @@
-import React, { memo, useEffect, useState } from "react";
+import React, { memo, useEffect, useMemo, useState } from "react";
 import {
   BarChart,
   Bar,
@@ -99,7 +99,7 @@ const Answers = ({
     };
   };
 
-  //unsure why result?.[1] is returned twice, & how non-ints (eg dates) are handled, but ignoring for now & just adding carveout for str x-vals
+  // unsure why result?.[1] is returned twice, & how non-ints (eg dates) are handled, but ignoring for now & just adding carveout for str x-vals
   const formatLineData = (result) => {
     return {
       name: result?.[1] == -1 ? "criminal" : String(result?.[0]),
@@ -144,6 +144,31 @@ const Answers = ({
     );
   };
 
+  const orderCourtCircuitData = () => {
+    const copy = [...data.results];
+    copy.sort((a, b) => {
+      const ordinalA = parseInt(a[0]);
+      const ordinalB = parseInt(b[0]);
+
+      return ordinalA - ordinalB;
+    });
+
+    return copy;
+  };
+
+  const barData = useMemo(() => {
+    let out;
+    if (xUnits === "Court Circuit") {
+      out = orderCourtCircuitData();
+    } else {
+      out = data.results;
+    }
+
+    return out.map((result) => {
+      return formatBarData(result);
+    });
+  }, [data]);
+
   return (
     <div className="answers">
       <Loader isVisible={loadingAnswers} animation="border">
@@ -162,9 +187,7 @@ const Answers = ({
                   <BarChart
                     width={1100}
                     height={600}
-                    data={data.results.map((result) => {
-                      return formatBarData(result);
-                    })}
+                    data={barData}
                     margin={{
                       top: 5,
                       right: 30,
