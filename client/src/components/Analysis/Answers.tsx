@@ -157,6 +157,8 @@ const Answers = ({
   };
 
   const barData = useMemo(() => {
+    if (!data) return;
+
     let out;
     if (xUnits === "Court Circuit") {
       out = orderCourtCircuitData();
