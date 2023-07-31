@@ -282,7 +282,9 @@ const Answers = ({
 
               {answerType === "multiline" && (
                 <ResponsiveContainer width="100%" height="80%">
-                  <LineChart>
+                  <LineChart
+                    margin={{ top: 5, right: 20, left: 15, bottom: 5 }}
+                  >
                     {/* not sure why all these props are needed when plotting multiple lines despite not being needed above */}
                     <XAxis
                       height={80}
