@@ -33,20 +33,28 @@ type Props = {
 };
 
 const Filter = ({ panelId, filter }: Props) => {
-  const { panel, filters, setPanelFilters, getPanelResults } = usePanel(panelId);
+  const { panel, filters, setPanelFilters, getPanelResults } =
+    usePanel(panelId);
   const { ring, info } = useRing(panel.ringId);
   const { token } = useSelector(authSelector);
   const { type, id, value } = filter;
 
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [autocompleteOpen, setAutocompleteOpen] = useState<boolean>(false);
-  const [autoCompleteSuggestions, setAutoCompleteSuggestions] = useState<FilterOptionT[]>([]);
+  const [autoCompleteSuggestions, setAutoCompleteSuggestions] = useState<
+    FilterOptionT[]
+  >([]);
   const [dateValue, setDateValue] = useState<string>("");
   const { notify } = useNotify();
 
   const setFilter = (filter: FilterT) => {
     try {
-      const newFilters = [...filters.filter((prevFilterInput: FilterT) => prevFilterInput.id !== filter.id), { ...filter }];
+      const newFilters = [
+        ...filters.filter(
+          (prevFilterInput: FilterT) => prevFilterInput.id !== filter.id,
+        ),
+        { ...filter },
+      ];
       setPanelFilters(newFilters);
     } catch (error) {
       console.warn(error); // eslint-disable-line no-console
@@ -65,7 +73,9 @@ const Filter = ({ panelId, filter }: Props) => {
 
   const getFiltersNormalized = () => {
     try {
-      return info?.filters.map((filter) => ({ key: filter[0], ...filter[1] })).sort((a, b) => a.key.localeCompare(b.key));
+      return info?.filters
+        .map((filter) => ({ key: filter[0], ...filter[1] }))
+        .sort((a, b) => a.key.localeCompare(b.key));
     } catch (error) {
       console.warn(error); // eslint-disable-line no-console
     }
@@ -75,44 +85,57 @@ const Filter = ({ panelId, filter }: Props) => {
   const filterOptions = getFilterOptionsByKey(type);
 
   const fetchAutocompleteSuggestions = async (query) => {
-    if (query.length > 2) {
-      setIsLoading(true);
-      const authHeader = authorizationHeader(token);
-      try {
-        const response = await fetch(`/proxy/autocomplete/${ring.rid}/${ring.version}/${info?.defaultEntity}/${filter.type}?query=${query}`, {
+    setIsLoading(true);
+    const authHeader = authorizationHeader(token);
+    try {
+      const response = await fetch(
+        `/proxy/autocomplete/${ring.rid}/${ring.version}/${info?.defaultEntity}/${filter.type}?query=${query}`,
+        {
           headers: {
             ...authHeader,
           },
-        });
-        if (response.status === 200) {
-          const data = await response.json();
-          setAutoCompleteSuggestions(data);
-          setIsLoading(false);
-        } else {
-          notify("Could not fetch autocomplete suggestions", "error");
-        }
-      } catch (error) {
-        console.warn(error); // eslint-disable-line no-console
-        notify("Could not fetch autocomplete suggestions", "error");
-      } finally {
+        },
+      );
+      if (response.status === 200) {
+        const data = await response.json();
+        setAutoCompleteSuggestions(data);
         setIsLoading(false);
+      } else {
+        notify("Could not fetch autocomplete suggestions", "error");
       }
+    } catch (error) {
+      console.warn(error); // eslint-disable-line no-console
+      notify("Could not fetch autocomplete suggestions", "error");
+    } finally {
+      setIsLoading(false);
     }
   };
 
   const debouncedSearch = debounce(fetchAutocompleteSuggestions, 1500);
 
   const handleClear = async () => {
-    const newFilters = [...filters.filter((filter: FilterT) => filter.id !== id)];
+    const newFilters = [
+      ...filters.filter((filter: FilterT) => filter.id !== id),
+    ];
     setPanelFilters(newFilters);
     getPanelResults(newFilters);
   };
 
   const filterTypeRange = (
     <>
-      <FormControl placeholder="min" min="0" type="number" className="filter-range-input" />
+      <FormControl
+        placeholder="min"
+        min="0"
+        type="number"
+        className="filter-range-input"
+      />
       <InputGroup.Text>-</InputGroup.Text>
-      <FormControl placeholder="max" type="number" max="99999" className="filter-range-input" />
+      <FormControl
+        placeholder="max"
+        type="number"
+        max="99999"
+        className="filter-range-input"
+      />
     </>
   );
 
@@ -139,15 +162,25 @@ const Filter = ({ panelId, filter }: Props) => {
             {filterOptions?.autocomplete ? (
               <Autocomplete
                 open={autocompleteOpen}
-                noOptionsText={isLoading ? <CircularProgress /> : <>No Results Found</>}
+                noOptionsText={
+                  isLoading ? <CircularProgress /> : <>No Results Found</>
+                }
                 multiple
                 options={autoCompleteSuggestions || []}
                 getOptionLabel={(option: FilterOptionT) => option.label}
-                renderInput={(params) => <TextField {...params} variant="outlined" label={filterOptions?.nicename} />}
+                renderInput={(params) => (
+                  <TextField
+                    {...params}
+                    variant="outlined"
+                    label={filterOptions?.nicename}
+                  />
+                )}
                 disableClearable
                 onInputChange={(_, value) => {
-                  debouncedSearch(value);
-                  if (value.length > 2) {
+                  const minChar = filter.type === "case_type" ? 0 : 2;
+
+                  if (value.length > minChar) {
+                    debouncedSearch(value);
                     setIsLoading(true);
                   }
                   if (value.length === 0) {
@@ -161,7 +194,10 @@ const Filter = ({ panelId, filter }: Props) => {
                   if (!filter) {
                     return false;
                   }
-                  setFilter({ ...filter, value: fieldValue.map(x => x.value).join("|") });
+                  setFilter({
+                    ...filter,
+                    value: fieldValue.map((x) => x.value).join("|"),
+                  });
                 }}
                 sx={{
                   minWidth: "250px",
@@ -207,12 +243,24 @@ const Filter = ({ panelId, filter }: Props) => {
 
   return (
     <div className="d-inline-block me-3">
-      <InputGroup className="mb-3" style={{ display: "flex", flexWrap: "nowrap" }}>
+      <InputGroup
+        className="mb-3"
+        style={{ display: "flex", flexWrap: "nowrap" }}
+      >
         <InputGroup.Text className="bg-white">
-          <FilterTypeDropDown filter={filter} getFilterOptionsByKey={getFilterOptionsByKey} filters={filters} getFiltersNormalized={getFiltersNormalized} setFilter={setFilter} />
+          <FilterTypeDropDown
+            filter={filter}
+            getFilterOptionsByKey={getFilterOptionsByKey}
+            filters={filters}
+            getFiltersNormalized={getFiltersNormalized}
+            setFilter={setFilter}
+          />
         </InputGroup.Text>
         {filterTypeRender()}
-        <InputGroup.Text className="cursor-pointer bg-transparent" onClick={handleClear}>
+        <InputGroup.Text
+          className="cursor-pointer bg-transparent"
+          onClick={handleClear}
+        >
           <FontAwesomeIcon icon={faTimesCircle} className="text-muted" />
         </InputGroup.Text>
       </InputGroup>
