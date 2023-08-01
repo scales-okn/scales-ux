@@ -2,41 +2,19 @@ import React, { useEffect, useState } from "react";
 import { useHistory } from "react-router-dom";
 
 import { useFormik } from "formik";
-import * as yup from "yup";
+
 import { Container, Form, Button, Col, Row } from "react-bootstrap";
 
-import { UserSignInFields, UserSignInValidationSchema } from "../SignInPage";
+import { UserSignInFields } from "../SignInPage";
 import PageLayout from "../../components/PageLayout";
 import Loader from "components/Loader";
-
+import { UserSignUpValidationSchema } from "./schema";
 interface UserSignUpFields extends UserSignInFields {
   firstName: string;
   lastName: string;
   usage: string;
   tos: boolean;
 }
-
-export const UserSignUpValidationSchema = UserSignInValidationSchema.concat(
-  yup.object({
-    firstName: yup.string().required("First Name is required"),
-    lastName: yup.string().required("Last Name is required"),
-    usage: yup
-      .string()
-      .max(255, "Must be maximum 255 characters.")
-      .required("Usage Field is required"),
-    password: yup
-      .string()
-      .required("Password is required")
-      .matches(
-        /^.*(?=.{8,})((?=.*[!@#$%^&*()\-_=+{};:,<.>]){1})(?=.*\d)((?=.*[a-z]){1})((?=.*[A-Z]){1}).*$/,
-        "Password must contain at least 8 characters, one uppercase, one number and one special case character",
-      ),
-    tos: yup
-      .boolean()
-      .required("The terms and conditions must be accepted.")
-      .oneOf([true], "The terms and conditions must be accepted."),
-  }),
-);
 
 const SignUpPage = () => {
   const history = useHistory();
