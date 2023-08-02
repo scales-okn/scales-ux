@@ -22,9 +22,6 @@ import Loader from "../Loader";
 
 import Dataset from "../Dataset";
 
-// import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-// import { faPlus } from "@fortawesome/free-solid-svg-icons";
-
 import uniqid from "uniqid";
 
 import { usePanel } from "../../store/panels";
@@ -85,10 +82,8 @@ const AccordionToggleButton = ({
 
 const Panel: FunctionComponent<PanelProps> = ({ panelId }) => {
   const {
-    // filters,
     panel,
     deletePanel,
-    // updatePanel,
     results,
     loadingPanelResults,
     getPanelResults,
@@ -97,7 +92,6 @@ const Panel: FunctionComponent<PanelProps> = ({ panelId }) => {
     setPanelDescription,
     resultsCollapsed,
     setPanelCollapsed,
-    addPanelAnalysis,
   } = usePanel(panelId);
 
   const { ring, info, getRingInfo, loadingRingInfo } = useRing(panel?.ringId);
@@ -137,7 +131,7 @@ const Panel: FunctionComponent<PanelProps> = ({ panelId }) => {
         field: column.key,
         headerName: column.nicename,
         width: 200,
-        sortable: column.sortable,
+        sortable: false,
       })) || [];
 
     out.unshift({
@@ -239,10 +233,12 @@ const Panel: FunctionComponent<PanelProps> = ({ panelId }) => {
                             >
                               {!resultsCollapsed && (
                                 <DataGrid
+                                  rows={rows}
                                   onPageChange={(page) =>
                                     getPanelResults([], page)
                                   }
-                                  rows={rows}
+                                  disableColumnMenu
+                                  disableColumnFilter
                                   rowsPerPageOptions={[10]}
                                   columns={columns}
                                   page={results?.page}
@@ -294,21 +290,6 @@ const Panel: FunctionComponent<PanelProps> = ({ panelId }) => {
                 </Col>
               </div>
             </Card.Body>
-            {/* not currently working, so moving to index.tsx */}
-            {/* <Card.Footer className="d-flex align-items-center py-3">
-              <Button
-                variant="outline-dark"
-                className="me-2"
-                onClick={() => {
-                  addPanelAnalysis({
-                    id: uniqid(),
-                  });
-                }}
-              >
-                <FontAwesomeIcon icon={faPlus} />
-              </Button>{" "}
-              Add Analysis
-            </Card.Footer> */}
           </>
         </Accordion.Collapse>
       </Card>

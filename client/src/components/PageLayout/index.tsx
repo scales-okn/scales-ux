@@ -111,8 +111,13 @@ const PageLayout: FunctionComponent<Props> = (props) => {
               padding: "0 18px",
             }}
           >
-            <Navbar.Brand style={{ marginRight: isTablet ? "2rem" : "1rem" }}>
-              {brand}
+            <Navbar.Brand
+              style={{
+                marginRight: isTablet ? "2rem" : "1rem",
+                cursor: "pointer",
+              }}
+            >
+              <LinkContainer to="/">{brand}</LinkContainer>
             </Navbar.Brand>
             <Navbar.Toggle aria-controls="responsive-navbar-nav" />
             <Navbar.Collapse

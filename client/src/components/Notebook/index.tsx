@@ -3,9 +3,14 @@ import { Col, Container, Row, Button, Form } from "react-bootstrap";
 import Loader from "components/Loader";
 import Panels from "components/Panels";
 import { useSelector } from "react-redux";
-import { notebookSelector, updateNotebook, deleteNotebook, createNotebook } from "store/notebook";
+import {
+  notebookSelector,
+  updateNotebook,
+  deleteNotebook,
+  createNotebook,
+} from "store/notebook";
 import { useDispatch } from "react-redux";
-import { useHistory } from "react-router-dom";
+import { useHistory, useLocation } from "react-router-dom";
 import "./Notebook.scss";
 import { useRings } from "../../store/rings";
 import AddPanel from "../Panels/AddPanel";
@@ -23,8 +28,16 @@ const Notebook: FunctionComponent = () => {
     // hasErrors,
   } = useSelector(notebookSelector);
 
+  const location = useLocation();
+  const isNewNotebook = location.pathname.includes("new");
+
+  const defaultTitle = () => {
+    if (isNewNotebook) return "";
+    return notebook?.title || "";
+  };
+
   const [confirmVisible, setConfirmVisible] = useState(false);
-  const [notebookTitle, setNotebookTitle] = useState(notebook?.title || "");
+  const [notebookTitle, setNotebookTitle] = useState(defaultTitle());
   const [notebookTitleIsValid, setNotebookTitleIsValid] = useState(true);
   const dispatch = useDispatch();
   const history = useHistory();
@@ -75,7 +88,9 @@ const Notebook: FunctionComponent = () => {
                     className="text-white float-end"
                     variant="success"
                     onClick={() => {
-                      dispatch(updateNotebook(notebook?.id, { title: notebookTitle }));
+                      dispatch(
+                        updateNotebook(notebook?.id, { title: notebookTitle }),
+                      );
                       panels.forEach((panel) => {
                         updatePanel(panel.id, panel);
                       });
@@ -85,7 +100,12 @@ const Notebook: FunctionComponent = () => {
                     {savingNotebook ? "Loading…" : "Save"}
                   </Button>
 
-                  <Button className="text-white float-end me-2" variant="danger" onClick={() => setConfirmVisible(true)} disabled={deletingNotebook}>
+                  <Button
+                    className="text-white float-end me-2"
+                    variant="danger"
+                    onClick={() => setConfirmVisible(true)}
+                    disabled={deletingNotebook}
+                  >
                     {deletingNotebook ? "Deleting..." : "Delete"}
                   </Button>
                 </>
@@ -118,7 +138,12 @@ const Notebook: FunctionComponent = () => {
         {notebook && <Panels notebookId={notebook?.id} />}
         <AddPanel notebookId={notebook?.id} />
       </>
-      <ConfirmModal itemName="notebook" open={confirmVisible} setOpen={setConfirmVisible} onConfirm={handleDeleteNotebook} />
+      <ConfirmModal
+        itemName="notebook"
+        open={confirmVisible}
+        setOpen={setConfirmVisible}
+        onConfirm={handleDeleteNotebook}
+      />
     </Loader>
   );
 };
