@@ -81,7 +81,6 @@ const Filter = ({ panelId, filter }: Props) => {
     }
   };
 
-  // const filterColumn = getFilterColumnByKey(type);
   const filterOptions = getFilterOptionsByKey(type);
 
   const fetchAutocompleteSuggestions = async (query) => {
