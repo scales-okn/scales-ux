@@ -28,7 +28,9 @@ const FilterTypeDropDown: FunctionComponent<FilterTypeProps> = (props) => {
   useEffect(() => {
     try {
       if (filterInput) {
-        setFilter({ ...filter, type: filterInput.key });
+        // when changing filter type, reset the value
+        const { type: dataType } = getFilterOptionsByKey(filterInput.key)
+        setFilter({ ...filter, type: filterInput.key, value: dataType === "boolean" ? "false" : "" });
       }
     } catch (error) {
       console.warn(error); // eslint-disable-line no-console

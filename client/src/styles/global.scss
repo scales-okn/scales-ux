@@ -25,10 +25,22 @@ body {
   cursor: pointer;
 }
 
+/**
+  The following styles are overridden here because the application mixes
+  Material UI v4 DataGrid with v5 components. The v4 DataGrid clashes with 
+  the v5 Switch styling. The temporary solution is to use the v4 Switch and override styling
+  here as v4 does not have the sx prop.
+*/
 .MuiDataGrid-root .MuiDataGrid-cell {
   font-size: 1em;
 }
 .MuiDataGrid-footerContainer {
   border-top: 1px solid rgba(224, 224, 224, 1);
   background: #f9f9f9;
+}
+.Mui-checked .MuiSwitch-thumb {
+  color: #20b1c4;
+}
+.MuiSwitch-colorPrimary.Mui-checked + .MuiSwitch-track {
+  background-color: #20b1c4 !important;
 }

@@ -6,6 +6,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faTimesCircle } from "@fortawesome/free-regular-svg-icons";
 import { debounce } from "lodash";
 import Autocomplete from "@mui/material/Autocomplete";
+import Switch from "@material-ui/core/Switch";
 import CircularProgress from "@mui/material/CircularProgress";
 import TextField from "@mui/material/TextField";
 import { usePanel } from "../../store/panels";
@@ -120,6 +121,20 @@ const Filter = ({ panelId, filter }: Props) => {
     switch (filterOptions?.type) {
       case "range":
         return filterTypeRange;
+
+      case "boolean":
+        return (
+          <div className="border">
+            <Switch
+              checked={filter?.value === "true"}
+              onChange={(event) => {
+                setFilter({ ...filter, value: event.target.checked ? "true" : "false" });
+              }}
+              name={filterOptions?.nicename}
+              color="primary"
+            />
+          </div>
+        );
 
       case "date":
         return (
