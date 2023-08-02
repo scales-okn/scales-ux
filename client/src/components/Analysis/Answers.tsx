@@ -1,4 +1,4 @@
-import React, { memo, useEffect, useMemo, useState } from "react";
+import React, { memo, useEffect, useMemo, useState, useRef } from "react";
 import {
   BarChart,
   Bar,
@@ -18,6 +18,7 @@ import { usePanel } from "store/panels";
 import dayjs from "dayjs";
 import { isEmpty } from "lodash";
 import renderHTML from "helpers/renderHTML";
+import useContainerDimensions from "hooks/useContainerDimensions";
 
 const Answers = ({
   panelId,
@@ -30,6 +31,9 @@ const Answers = ({
   const [answerType, setAnswerType] = useState("bar");
   const [answer, setAnswer] = useState(null);
   const { filters } = usePanel(panelId);
+
+  const containerRef = useRef(null);
+  const { width } = useContainerDimensions(containerRef);
 
   const getAnswersDisplayType = (plan, results) => {
     if (isEmpty(plan) || isEmpty(results)) return null;
@@ -172,7 +176,7 @@ const Answers = ({
   }, [data]);
 
   return (
-    <div className="answers">
+    <div className="answers" ref={containerRef}>
       <Loader isVisible={loadingAnswers} animation="border">
         <>
           {answer && (
@@ -187,7 +191,7 @@ const Answers = ({
                 data.results?.[0]?.length === 2 &&
                 answerType === "bar" && (
                   <BarChart
-                    width={1100}
+                    width={width}
                     height={600}
                     data={barData}
                     margin={{

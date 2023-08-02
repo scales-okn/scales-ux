@@ -20,13 +20,8 @@ import { useEffectOnce } from "react-use";
 
 const Notebook: FunctionComponent = () => {
   const { getRings } = useRings();
-  const {
-    notebook,
-    loadingNotebook,
-    savingNotebook,
-    deletingNotebook,
-    // hasErrors,
-  } = useSelector(notebookSelector);
+  const { notebook, loadingNotebook, savingNotebook, deletingNotebook } =
+    useSelector(notebookSelector);
 
   const location = useLocation();
   const isNewNotebook = location.pathname.includes("new");
