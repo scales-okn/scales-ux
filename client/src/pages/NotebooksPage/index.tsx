@@ -42,12 +42,20 @@ const NotebooksPage: FunctionComponent = () => {
         return notebook.collaborators.includes(user.id);
       }
       if (showNotebooks === "public-notebooks") {
-        return !notebook.collaborators.includes(user.id) && notebook.userId !== user.id;
+        return (
+          !notebook.collaborators.includes(user.id) &&
+          notebook.userId !== user.id
+        );
       }
 
       return true;
     })
-    .filter((notebook) => notebook.title.toLowerCase().search(filterNotebooks.toLocaleLowerCase()) > -1);
+    .filter(
+      (notebook) =>
+        notebook.title
+          .toLowerCase()
+          .search(filterNotebooks.toLocaleLowerCase()) > -1,
+    );
 
   const columns = [
     {
@@ -66,14 +74,18 @@ const NotebooksPage: FunctionComponent = () => {
       headerName: "Last Modified",
       width: 200,
       editable: false,
-      renderCell: (params: GridCellParams) => <>{dayjs(params.row.createdAt).format("M/D/YYYY")}</>,
+      renderCell: (params: GridCellParams) => (
+        <>{dayjs(params.row.createdAt).format("M/D/YYYY")}</>
+      ),
     },
     {
       field: "createdAt",
       headerName: "Created On",
       width: 200,
       editable: false,
-      renderCell: (params: GridCellParams) => <>{dayjs(params.row.createdAt).format("M/D/YYYY")}</>,
+      renderCell: (params: GridCellParams) => (
+        <>{dayjs(params.row.createdAt).format("M/D/YYYY")}</>
+      ),
     },
     {
       field: "visibility",
@@ -120,7 +132,13 @@ const NotebooksPage: FunctionComponent = () => {
             <Col md>
               <InputGroup>
                 <InputGroup.Text className="bg-white">Show:</InputGroup.Text>
-                <Form.Select className="border-start-0 ps-0" value={showNotebooks} onChange={(event: React.ChangeEvent<HTMLSelectElement>) => setShowNotebooks(event.target.value)}>
+                <Form.Select
+                  className="border-start-0 ps-0"
+                  value={showNotebooks}
+                  onChange={(event: React.ChangeEvent<HTMLSelectElement>) =>
+                    setShowNotebooks(event.target.value)
+                  }
+                >
                   <option value="my-notebooks">My Notebooks</option>
                   <option value="shared-notebooks">Shared with me</option>
                   <option value="public-notebooks">Public Notebooks</option>
@@ -132,11 +150,22 @@ const NotebooksPage: FunctionComponent = () => {
                 <InputGroup.Text className="bg-white">
                   <FontAwesomeIcon icon={faSearch} className="text-muted" />
                 </InputGroup.Text>
-                <Form.Control autoComplete="off" className="border-start-0 ps-0" id="filter-notebooks" placeholder="Filter Notebooks" onChange={(event: any) => setFilterNotebooks(event.target.value)} />
+                <Form.Control
+                  autoComplete="off"
+                  className="border-start-0 ps-0"
+                  id="filter-notebooks"
+                  placeholder="Filter Notebooks"
+                  onChange={(event: any) =>
+                    setFilterNotebooks(event.target.value)
+                  }
+                />
               </InputGroup>
             </Col>
             <Col>
-              <Link to="/notebooks/new" className="text-white text-decoration-none">
+              <Link
+                to="/notebooks/new"
+                className="text-white text-decoration-none"
+              >
                 <Button
                   className="text-white float-end px-5"
                   variant="primary"

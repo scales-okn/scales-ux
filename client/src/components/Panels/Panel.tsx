@@ -1,15 +1,26 @@
-import React, { FunctionComponent, useState, useEffect, useContext, useMemo } from "react";
+import React, {
+  FunctionComponent,
+  useState,
+  useEffect,
+  useContext,
+  useMemo,
+} from "react";
 import styled from "styled-components";
-import { Accordion, Col, Button, useAccordionButton, Form, AccordionContext, Card } from "react-bootstrap";
+import {
+  Accordion,
+  Col,
+  Button,
+  useAccordionButton,
+  Form,
+  AccordionContext,
+  Card,
+} from "react-bootstrap";
 import { Link } from "react-router-dom";
 import { DataGrid } from "@material-ui/data-grid";
 import Filters from "../Filters";
 import Loader from "../Loader";
 
 import Dataset from "../Dataset";
-
-// import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-// import { faPlus } from "@fortawesome/free-solid-svg-icons";
 
 import uniqid from "uniqid";
 
@@ -25,8 +36,15 @@ type ResultsTogglerProps = {
   callback?: (eventKey: string) => void;
 };
 
-const ResultsToggler: FunctionComponent<ResultsTogglerProps> = ({ children, eventKey, callback }) => {
-  const decoratedOnClick = useAccordionButton(eventKey, () => callback && callback(eventKey));
+const ResultsToggler: FunctionComponent<ResultsTogglerProps> = ({
+  children,
+  eventKey,
+  callback,
+}) => {
+  const decoratedOnClick = useAccordionButton(
+    eventKey,
+    () => callback && callback(eventKey),
+  );
 
   return (
     <Button variant="link" size="sm" onClick={decoratedOnClick}>
@@ -44,9 +62,15 @@ type AccordionToggleButtonProps = {
   callback?: (eventKey: string) => void;
 };
 
-const AccordionToggleButton = ({ eventKey, callback }: AccordionToggleButtonProps) => {
+const AccordionToggleButton = ({
+  eventKey,
+  callback,
+}: AccordionToggleButtonProps) => {
   const { activeEventKey } = useContext(AccordionContext);
-  const decoratedOnClick = useAccordionButton(eventKey, () => callback && callback(eventKey));
+  const decoratedOnClick = useAccordionButton(
+    eventKey,
+    () => callback && callback(eventKey),
+  );
   const isCurrentEventKey = activeEventKey === eventKey;
 
   return (
@@ -58,10 +82,8 @@ const AccordionToggleButton = ({ eventKey, callback }: AccordionToggleButtonProp
 
 const Panel: FunctionComponent<PanelProps> = ({ panelId }) => {
   const {
-    // filters,
     panel,
     deletePanel,
-    // updatePanel,
     results,
     loadingPanelResults,
     getPanelResults,
@@ -70,7 +92,6 @@ const Panel: FunctionComponent<PanelProps> = ({ panelId }) => {
     setPanelDescription,
     resultsCollapsed,
     setPanelCollapsed,
-    addPanelAnalysis,
   } = usePanel(panelId);
 
   const { ring, info, getRingInfo, loadingRingInfo } = useRing(panel?.ringId);
@@ -110,7 +131,7 @@ const Panel: FunctionComponent<PanelProps> = ({ panelId }) => {
         field: column.key,
         headerName: column.nicename,
         width: 200,
-        sortable: column.sortable,
+        sortable: false,
       })) || [];
 
     out.unshift({
@@ -120,7 +141,11 @@ const Panel: FunctionComponent<PanelProps> = ({ panelId }) => {
       width: 100,
       renderCell: (item) => {
         return (
-          <Link to={`/document/${ring.rid}/${ring.version}/Case/${item.row.__uniqueId.ucid}`} target="_blank" rel="noopener noreferrer">
+          <Link
+            to={`/document/${ring.rid}/${ring.version}/Case/${item.row.__uniqueId.ucid}`}
+            target="_blank"
+            rel="noopener noreferrer"
+          >
             <DetailButton>Details</DetailButton>
           </Link>
         );
@@ -133,7 +158,10 @@ const Panel: FunctionComponent<PanelProps> = ({ panelId }) => {
   if (!panel?.ringId) return <Dataset panelId={panel.id} />;
 
   return (
-    <Accordion defaultActiveKey={collapsed === true ? null : panel.id} className="mb-4">
+    <Accordion
+      defaultActiveKey={collapsed === true ? null : panel.id}
+      className="mb-4"
+    >
       <Card>
         <Card.Header className="d-flex align-items-center py-3">
           <div
@@ -145,10 +173,18 @@ const Panel: FunctionComponent<PanelProps> = ({ panelId }) => {
             {ring?.name}
           </div>
           <div className="ms-auto">
-            <Button variant="outline-danger" size="sm" onClick={() => setConfirmVisible(true)} className="me-1">
+            <Button
+              variant="outline-danger"
+              size="sm"
+              onClick={() => setConfirmVisible(true)}
+              className="me-1"
+            >
               Delete
             </Button>
-            <AccordionToggleButton eventKey={panel.id} callback={() => setPanelCollapsed(!collapsed)} />
+            <AccordionToggleButton
+              eventKey={panel.id}
+              callback={() => setPanelCollapsed(!collapsed)}
+            />
           </div>
         </Card.Header>
         <Accordion.Collapse eventKey={panel.id}>
@@ -172,10 +208,20 @@ const Panel: FunctionComponent<PanelProps> = ({ panelId }) => {
 
               <Filters panelId={panel.id} />
               <div className="p-0 bg-light border-bottom border-top">
-                <Loader animation="border" contentHeight={resultsCollapsed ? "60px" : "400px"} isVisible={loadingPanelResults}>
+                <Loader
+                  animation="border"
+                  contentHeight={resultsCollapsed ? "60px" : "400px"}
+                  isVisible={loadingPanelResults}
+                >
                   <>
                     {results && (
-                      <Accordion defaultActiveKey={resultsCollapsed === true ? "results-summary" : "results"}>
+                      <Accordion
+                        defaultActiveKey={
+                          resultsCollapsed === true
+                            ? "results-summary"
+                            : "results"
+                        }
+                      >
                         <Accordion.Collapse eventKey="results">
                           <>
                             <div
@@ -185,11 +231,34 @@ const Panel: FunctionComponent<PanelProps> = ({ panelId }) => {
                                 overflowX: "hidden",
                               }}
                             >
-                              {!resultsCollapsed && <DataGrid onPageChange={(page) => getPanelResults([], page)} rows={rows} rowsPerPageOptions={[10]} columns={columns} page={results?.page} pageSize={results?.batchSize} rowCount={results?.totalCount} checkboxSelection={false} className="bg-white border-0 rounded-0" paginationMode="server" />}
+                              {!resultsCollapsed && (
+                                <DataGrid
+                                  rows={rows}
+                                  onPageChange={(page) =>
+                                    getPanelResults([], page)
+                                  }
+                                  disableColumnMenu
+                                  disableColumnFilter
+                                  rowsPerPageOptions={[10]}
+                                  columns={columns}
+                                  page={results?.page}
+                                  pageSize={results?.batchSize}
+                                  rowCount={results?.totalCount}
+                                  checkboxSelection={false}
+                                  className="bg-white border-0 rounded-0"
+                                  paginationMode="server"
+                                />
+                              )}
                             </div>
                             <div className="p-3">
-                              {results?.totalCount?.toLocaleString()} Dockets Found
-                              <ResultsToggler eventKey="results-summary" callback={() => setPanelResultsCollapsed(!resultsCollapsed)}>
+                              {results?.totalCount?.toLocaleString()} Dockets
+                              Found
+                              <ResultsToggler
+                                eventKey="results-summary"
+                                callback={() =>
+                                  setPanelResultsCollapsed(!resultsCollapsed)
+                                }
+                              >
                                 (collapse)
                               </ResultsToggler>
                             </div>
@@ -197,8 +266,14 @@ const Panel: FunctionComponent<PanelProps> = ({ panelId }) => {
                         </Accordion.Collapse>
                         <Accordion.Collapse eventKey="results-summary">
                           <div className="p-3">
-                            Available data based on filters: {results?.totalCount?.toLocaleString()} Dockets
-                            <ResultsToggler eventKey="results" callback={() => setPanelResultsCollapsed(!resultsCollapsed)}>
+                            Available data based on filters:{" "}
+                            {results?.totalCount?.toLocaleString()} Dockets
+                            <ResultsToggler
+                              eventKey="results"
+                              callback={() =>
+                                setPanelResultsCollapsed(!resultsCollapsed)
+                              }
+                            >
                               (expand to browse data)
                             </ResultsToggler>
                           </div>
@@ -215,25 +290,15 @@ const Panel: FunctionComponent<PanelProps> = ({ panelId }) => {
                 </Col>
               </div>
             </Card.Body>
-            {/* not currently working, so moving to index.tsx */}
-            {/* <Card.Footer className="d-flex align-items-center py-3">
-              <Button
-                variant="outline-dark"
-                className="me-2"
-                onClick={() => {
-                  addPanelAnalysis({
-                    id: uniqid(),
-                  });
-                }}
-              >
-                <FontAwesomeIcon icon={faPlus} />
-              </Button>{" "}
-              Add Analysis
-            </Card.Footer> */}
           </>
         </Accordion.Collapse>
       </Card>
-      <ConfirmModal itemName="panel" open={confirmVisible} setOpen={setConfirmVisible} onConfirm={deletePanel} />
+      <ConfirmModal
+        itemName="panel"
+        open={confirmVisible}
+        setOpen={setConfirmVisible}
+        onConfirm={deletePanel}
+      />
     </Accordion>
   );
 };

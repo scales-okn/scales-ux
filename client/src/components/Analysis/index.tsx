@@ -5,7 +5,8 @@ import { Button, Col, Row, Card } from "react-bootstrap";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faPlus } from "@fortawesome/free-solid-svg-icons";
 import uniqid from "uniqid";
-import { Satyrn } from "statement-mananger";
+// import { Satyrn } from "statement-mananger";
+import { Satyrn } from "helpers/Satyrn";
 import { useNotify } from "../Notifications";
 import "./style.scss";
 import { useRing } from "../../store/rings";
@@ -49,14 +50,14 @@ const Analysis: FunctionComponent<Props> = ({ panelId }) => {
 
   useEffect(() => {
     if (!info) return;
-    const satyrn = new Satyrn(
+    const satyrnRes = new Satyrn(
       info.defaultEntity,
       info.operations,
       info.analysisSpace,
       ring,
     );
-    setSatyrn(satyrn);
-    setStatements(satyrn.planManager.generate());
+    setSatyrn(satyrnRes);
+    setStatements(satyrnRes.planManager.generate());
   }, [info]); // eslint-disable-line react-hooks/exhaustive-deps
 
   useEffect(() => {
