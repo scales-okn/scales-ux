@@ -191,7 +191,7 @@ const Filter = ({ panelId, filter }: Props) => {
                 )}
                 disableClearable
                 onInputChange={(_, value) => {
-                  const minChar = filter.type === "case_type" ? 0 : 2;
+                  const minChar = ["case_type", "state_abbrev", "circuit_abbrev"].includes(filter.type) ? 0 : 2;
 
                   if (value.length > minChar) {
                     debouncedSearch(value);
