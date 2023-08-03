@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
+
 import { createSlice } from "@reduxjs/toolkit";
 import type { RootState, AppDispatch } from "store";
 import { authSelector } from "store/auth";
@@ -221,14 +223,16 @@ export function deleteNotebook(id: string) {
 
 // Hooks
 export function useNotebook() {
-  const { notebook, loadingNotebook, hasErrors } = useSelector(notebookSelector);
+  const { notebook, loadingNotebook, hasErrors } =
+    useSelector(notebookSelector);
   const dispatch = useDispatch();
   return {
     notebook,
     loadingNotebook,
     hasErrors,
     fetchNotebook: (id: string) => dispatch(fetchNotebook(id)),
-    updateNotebook: (id: string, payload: any) => dispatch(updateNotebook(id, payload)),
+    updateNotebook: (id: string, payload: any) =>
+      dispatch(updateNotebook(id, payload)),
     createNotebook: (payload: any) => dispatch(createNotebook(payload)),
     deleteNotebook: (id: string) => dispatch(deleteNotebook(id)),
   };

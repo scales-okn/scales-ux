@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
+
 import { createSlice } from "@reduxjs/toolkit";
 import type { RootState, AppDispatch } from "store";
 import { authSelector } from "store/auth";
@@ -72,7 +74,8 @@ export function fetchNotebooks() {
 }
 
 export const useNotebooks = () => {
-  const { loadingNotebooks, hasErrors, notebooks } = useSelector(notebooksSelector);
+  const { loadingNotebooks, hasErrors, notebooks } =
+    useSelector(notebooksSelector);
   const dispatch = useDispatch();
 
   return {

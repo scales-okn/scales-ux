@@ -1,6 +1,6 @@
 const numberToMonth = (month: string): string => {
   if (!month || parseInt(month) < 1 || parseInt(month) > 12) {
-    console.warn("Invalid month number");
+    console.warn("Invalid month number"); // eslint-disable-line no-console
     return "";
   }
 

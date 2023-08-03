@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
+
 import { createSlice } from "@reduxjs/toolkit";
 import type { RootState, AppDispatch } from "store";
 import jwt_decode from "jwt-decode";
@@ -80,12 +82,16 @@ export const login = (email: string, password: string, rememberMe = false) => {
         case 200:
           decodedToken = jwt_decode(data.token);
           if (decodedToken) {
-            dispatch(authActions.signInSuccess({ ...decodedToken, token: data.token }));
+            dispatch(
+              authActions.signInSuccess({ ...decodedToken, token: data.token }),
+            );
           }
           break;
         default:
           dispatch(authActions.signInFailure(errors));
-          dispatch(notify(message || useUnknownErrorNotificationMessage, "error"));
+          dispatch(
+            notify(message || useUnknownErrorNotificationMessage, "error"),
+          );
           break;
       }
     } catch (error) {
@@ -126,20 +132,21 @@ export const useAuth = () => {
 };
 
 // Middlewares
-export const authMiddleware = (store: Store) => (next: Dispatch) => (action: Action) => {
-  next(action);
-  if (action.type === "auth/signOut") {
-    setTimeout(() => store.dispatch(notify("You have been logged out")), 300);
-  } else {
-    const { exp, iat } = store.getState().auth;
-    if (exp && iat) {
-      const now = new Date().getTime() / 1000;
-      if (now > exp) {
-        store.dispatch(authActions.signOut());
+export const authMiddleware =
+  (store: Store) => (next: Dispatch) => (action: Action) => {
+    next(action);
+    if (action.type === "auth/signOut") {
+      setTimeout(() => store.dispatch(notify("You have been logged out")), 300);
+    } else {
+      const { exp, iat } = store.getState().auth;
+      if (exp && iat) {
+        const now = new Date().getTime() / 1000;
+        if (now > exp) {
+          store.dispatch(authActions.signOut());
+        }
       }
     }
-  }
-};
+  };
 
 export const useUser = () => {
   const { user } = useSelector(authSelector);

@@ -36,12 +36,6 @@ const Answers = ({ data, xUnits, yUnits }: AnswersT) => {
   };
 
   const multiLineTooltip = ({ active, payload, label }) => {
-    console.log(
-      "🚀 ~ file: Multiline.tsx:39 ~ multiLineTooltip ~ active, payload, label:",
-      active,
-      payload,
-      label,
-    );
     // TODO: reimplement this
     // data.results?.[0]?.series?.[0][0]?.includes("/")
     //   ? dayjs(value).format("M/YYYY")

@@ -15,7 +15,12 @@ type Params = {
 };
 
 const DocumentPage: FunctionComponent = () => {
-  const { ringId = null, ringVersion = null, entityType = null, docId = null } = useParams<Params>();
+  const {
+    ringId = null,
+    ringVersion = null,
+    entityType = null,
+    docId = null,
+  } = useParams<Params>();
   const [html, setHtml] = useState("");
   const { token } = useSelector(authSelector);
   const authHeader = authorizationHeader(token);
@@ -36,8 +41,15 @@ const DocumentPage: FunctionComponent = () => {
 
       if (response.status === 200) {
         const html = await response.text();
-        console.log(html);
-        return setHtml(html.replaceAll("onclick", "onclick-removed-by-satyrn").split("</script>").slice(-1)[0].split(receiptStart1)[0].split(receiptStart2)[0].split(receiptStart3)[0] + "<br><br>");
+        return setHtml(
+          html
+            .replaceAll("onclick", "onclick-removed-by-satyrn")
+            .split("</script>")
+            .slice(-1)[0]
+            .split(receiptStart1)[0]
+            .split(receiptStart2)[0]
+            .split(receiptStart3)[0] + "<br><br>",
+        );
       } else {
         return "<div>There was an error retrieving this document.</div>";
       }

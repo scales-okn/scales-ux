@@ -335,7 +335,7 @@ class PlanManager {
           this.nicenameMap.fields[plan.per.entity][plan.per.field][0],
         );
       } else {
-        console.log(match[1]);
+        // console.log(match[1]);
         // TODO: implementation for other types of slot-fillers (e.g. plans with "per" slots)
       }
     });
