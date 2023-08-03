@@ -3,6 +3,13 @@
   margin-top: 2em;
 }
 
+.recharts-default-tooltip {
+  overflow-y: auto;
+  .recharts-tooltip-item-list {
+    max-height: 300px;
+  }
+}
+
 .analysis {
   > .analysis-item {
     &:last-child {
@@ -17,9 +24,18 @@
   border: 1px solid #ccc;
   padding: 18px;
   border-radius: 4px;
+  max-height: 500px;
+  overflow: auto;
+  pointer-events: all;
+  display: block;
 
   .label {
     text-transform: capitalize;
+  }
+
+  .header {
+    text-transform: capitalize;
+    font-weight: bold;
   }
 }
 
