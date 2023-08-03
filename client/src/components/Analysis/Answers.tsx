@@ -18,6 +18,8 @@ import { usePanel } from "store/panels";
 import dayjs from "dayjs";
 import { isEmpty } from "lodash";
 import renderHTML from "helpers/renderHTML";
+import getRandomColor from "helpers/getRandomColor";
+import numberToMonth from "helpers/numberToMonth";
 import useContainerDimensions from "hooks/useContainerDimensions";
 
 const Answers = ({
@@ -135,19 +137,6 @@ const Answers = ({
     };
   };
 
-  const getColor = () => {
-    // from stackoverflow.com/questions/43193341/how-to-generate-random-pastel-or-brighter-color-in-javascript
-    return (
-      "hsl(" +
-      360 * Math.random() +
-      "," +
-      (20 + 75 * Math.random()) +
-      "%," +
-      (10 + 60 * Math.random()) +
-      "%)"
-    );
-  };
-
   const orderCourtCircuitData = () => {
     const copy = [...data.results];
     copy.sort((a, b) => {
@@ -163,17 +152,38 @@ const Answers = ({
   const barData = useMemo(() => {
     if (!data) return;
 
-    let out;
-    if (xUnits === "Court Circuit") {
-      out = orderCourtCircuitData();
-    } else {
-      out = data.results;
-    }
+    const isCourtCircuit = xUnits === "Court Circuit";
+    const out = isCourtCircuit ? orderCourtCircuitData() : data.results;
 
     return out.map((result) => {
       return formatBarData(result);
     });
   }, [data]);
+
+  const renderMonthAndYear = (payload) => {
+    const both = payload[0].payload?.name?.split("/");
+    const month = numberToMonth(both[1]);
+    return `${month}, ${both[0]}`;
+  };
+
+  const customTooltip = ({ active, payload, label }) => {
+    const isMonthOverMonth = statement.selectedParameter === "month";
+
+    if (active && payload && payload.length) {
+      const payloadKeys = Object.keys(payload[0].payload);
+
+      const xValue = isMonthOverMonth ? renderMonthAndYear(payload) : label;
+
+      return (
+        <div className="analysis-tooltip">
+          <p className="label">{`${payloadKeys[1]}: ${xValue}`}</p>
+          <p className="label">{`${payloadKeys[2]}: ${payload[0].value}`}</p>
+        </div>
+      );
+    }
+
+    return null;
+  };
 
   return (
     <div className="answers" ref={containerRef}>
@@ -262,9 +272,10 @@ const Answers = ({
                       />
                     </YAxis>
                     <Tooltip
-                      formatter={(value) =>
-                        new Intl.NumberFormat("en").format(value)
-                      }
+                      // formatter={(value) =>
+                      //   new Intl.NumberFormat("en").format(value)
+                      // }
+                      content={customTooltip}
                     />
                     <CartesianGrid stroke="#eee" strokeDasharray="5 5" />
                     <Line
@@ -372,7 +383,7 @@ const Answers = ({
                           })}
                           type="monotone"
                           dataKey={line_data.label}
-                          stroke={getColor()}
+                          stroke={getRandomColor()}
                           dot={false}
                           activeDot={{ stroke: "white", strokeWidth: 2, r: 5 }}
                         />

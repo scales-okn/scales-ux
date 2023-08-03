@@ -12,13 +12,21 @@
   }
 }
 
+.analysis-tooltip {
+  background: white;
+  border: 1px solid #ccc;
+  padding: 18px;
+  border-radius: 4px;
+
+  .label {
+    text-transform: capitalize;
+  }
+}
+
 .analysis-item {
   padding: 0.5rem 0.5rem 2rem;
   margin-bottom: 2rem;
   border-bottom: 1px solid #f1f1f1;
-}
-
-.answers {
 }
 
 .rbt-close {

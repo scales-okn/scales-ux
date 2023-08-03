@@ -28,3 +28,5 @@ const useContainerDimensions = (myRef) => {
 };
 
 export default useContainerDimensions;
+
+// https://stackoverflow.com/questions/43817118/how-to-get-the-width-of-a-react-element
