@@ -28,7 +28,7 @@ import { usePanel } from "../../store/panels";
 import { useRing } from "../../store/rings";
 import Analysis from "../Analysis";
 import "./Panel.scss";
-import ConfirmModal from "components/SharedElements/ConfirmModal";
+import ConfirmModal from "components/Modals/ConfirmModal";
 
 type ResultsTogglerProps = {
   children: React.ReactNode;

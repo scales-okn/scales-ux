@@ -21,7 +21,7 @@ class PlanManager {
           branch,
           ops,
           this.analysisSpace[branch],
-          branch == "_self" ? null : branch,
+          branch === "_self" ? null : branch,
         ),
       );
     });
@@ -63,7 +63,7 @@ class PlanManager {
         };
         let planSet = [];
         ops.forEach((op) => {
-          if (op == "None") return;
+          if (op === "None") return;
           const requirements = this.operations[op].required;
           if (!(requirements?.target?.validInputs || []).includes(attr.type))
             return;
@@ -196,7 +196,7 @@ class PlanManager {
               // if not _self, what's the relationship to the target?
               // if m2o, direct group bys (e.g. contributors grouped by contribution) don't make sense
               // TODO: should this be permutations of all relationships across all entities? if so, we're going to need to rejigger analysisSpace
-              if (asDetails[0] != "_self") {
+              if (asDetails[0] !== "_self") {
                 if (!["m2o", "o2o"].includes(asDetails[1].relType)) {
                   // make a plan copy and group by the related entity + id
                   groupedPlans.push({
@@ -276,9 +276,9 @@ class PlanManager {
         };
 
         let tfOptions = null;
-        if (attr.type == "date:year")
+        if (attr.type === "date:year")
           tfOptions = [{ label: "year-over-year", value: "year" }];
-        if (attr.type == "date:month")
+        if (attr.type === "date:month")
           tfOptions = [
             { label: "year-over-year", value: "year" },
             { label: "month-over-month", value: "month" },
@@ -301,7 +301,7 @@ class PlanManager {
   _generateSpecialPlan = (planType, basePlanTemplate, op, branch) => {
     let newPlan = JSON.parse(JSON.stringify(basePlanTemplate));
     newPlan.op = op;
-    if (planType == "per") {
+    if (planType === "per") {
       newPlan.per = {
         field: "id",
         entity: branch[1].entity,
@@ -322,14 +322,14 @@ class PlanManager {
 
     if (!opTemplate) return null;
     [...opTemplate.matchAll(this.templateTokenMatcher)].forEach((match) => {
-      if (match[1] == "target") {
+      if (match[1] === "target") {
         opTemplate = opTemplate.replace(
           match[0],
           this.nicenameMap.fields[plan.target.entity][plan.target.field][
             pluralPicker
           ],
         );
-      } else if (match[1] == "per") {
+      } else if (match[1] === "per") {
         opTemplate = opTemplate.replace(
           match[0],
           this.nicenameMap.fields[plan.per.entity][plan.per.field][0],

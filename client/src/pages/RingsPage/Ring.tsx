@@ -8,7 +8,7 @@ import { useAuthHeader, useUser } from "store/auth";
 import { useNotify } from "components/Notifications";
 import { useHistory, useParams } from "react-router-dom";
 import { useRing } from "store/rings";
-import ConfirmModal from "components/SharedElements/ConfirmModal";
+import ConfirmModal from "components/Modals/ConfirmModal";
 import { JsonEditor as Editor } from "jsoneditor-react";
 import "./jsoneditor-react-dark-mode.css";
 

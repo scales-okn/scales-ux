@@ -2,7 +2,7 @@ import React, { FunctionComponent, useState } from "react";
 import { Button } from "react-bootstrap";
 import { useAuthHeader } from "store/auth";
 import { useNotify } from "components/Notifications";
-import ConfirmModal from "components/SharedElements/ConfirmModal";
+import ConfirmModal from "components/Modals/ConfirmModal";
 
 type Props = {
   userId: number;
@@ -42,10 +42,21 @@ const DeleteUser: FunctionComponent<Props> = ({ userId, disabled = false }) => {
 
   return (
     <>
-      <Button className="text-white float-end me-2" variant="danger" onClick={() => setConfirmVisible(true)} disabled={disabled} size="sm">
+      <Button
+        className="text-white float-end me-2"
+        variant="danger"
+        onClick={() => setConfirmVisible(true)}
+        disabled={disabled}
+        size="sm"
+      >
         Delete
       </Button>
-      <ConfirmModal itemName="user" open={confirmVisible} setOpen={setConfirmVisible} onConfirm={deleteUser} />
+      <ConfirmModal
+        itemName="user"
+        open={confirmVisible}
+        setOpen={setConfirmVisible}
+        onConfirm={deleteUser}
+      />
     </>
   );
 };

@@ -29,12 +29,12 @@ class ResponseManager {
         // const queryPart = queryBundle.find(qb => qb[0]["field"] == filt[0])
         // TODO: fix this next step so it works on any entity, not just _self
         const filtMeta = this.analysisSpace._self.attributes.find(
-          (attr) => attr.targetField == filt[0],
+          (attr) => attr.targetField === filt[0],
         );
-        if (idx != 0) desc += " and ";
+        if (idx !== 0) desc += " and ";
         if (
           filtMeta &&
-          filtMeta.type == "date" &&
+          filtMeta.type === "date" &&
           Array.isArray(filt[1]) &&
           filt[1].length > 1
         ) {
@@ -97,7 +97,7 @@ class ResponseManager {
       results.fieldNames,
     );
     const cleanResults = merged[0];
-    const cleanFields = merged[1];
+    // const cleanFields = merged[1];
 
     let formattedResults = [];
     if (cleanResults[0].length === 2) {

@@ -6,7 +6,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faPlus } from "@fortawesome/free-solid-svg-icons";
 import uniqid from "uniqid";
 // import { Satyrn } from "statement-mananger";
-import { Satyrn } from "helpers/Satyrn";
+import { Satyrn } from "models/Satyrn";
 import { useNotify } from "../Notifications";
 import "./style.scss";
 import { useRing } from "../../store/rings";
@@ -21,8 +21,6 @@ import { authSelector } from "store/auth";
 type Props = {
   panelId: string;
 };
-
-// TODO: Update results on filter change
 
 const Analysis: FunctionComponent<Props> = ({ panelId }) => {
   const { panel, analysis, addPanelAnalysis, removePanelAnalysis, filters } =

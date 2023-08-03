@@ -15,7 +15,7 @@ import "./Notebook.scss";
 import { useRings } from "../../store/rings";
 import AddPanel from "../Panels/AddPanel";
 import { getPanels, usePanels } from "../../store/panels";
-import ConfirmModal from "components/SharedElements/ConfirmModal";
+import ConfirmModal from "components/Modals/ConfirmModal";
 import { useEffectOnce } from "react-use";
 
 const Notebook: FunctionComponent = () => {

@@ -2,7 +2,7 @@ import React, { FunctionComponent, useState } from "react";
 import { Button } from "react-bootstrap";
 import { useAuthHeader } from "store/auth";
 import { useNotify } from "components/Notifications";
-import ConfirmModal from "components/SharedElements/ConfirmModal";
+import ConfirmModal from "components/Modals/ConfirmModal";
 
 type Props = {
   feedbackId: number;
@@ -51,7 +51,12 @@ const DeleteFeedback: FunctionComponent<Props> = ({ feedbackId }) => {
       >
         Delete
       </Button>
-      <ConfirmModal itemName="feedback" open={confirmVisible} setOpen={setConfirmVisible} onConfirm={DeleteFeedback} />
+      <ConfirmModal
+        itemName="feedback"
+        open={confirmVisible}
+        setOpen={setConfirmVisible}
+        onConfirm={DeleteFeedback}
+      />
     </>
   );
 };
