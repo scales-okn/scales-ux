@@ -7,7 +7,7 @@ import { isEmpty } from "lodash";
 import renderHTML from "helpers/renderHTML";
 
 import useContainerDimensions from "hooks/useContainerDimensions";
-import Multiline from "./Multiline";
+import MultilineChartDisplay from "./MultilineChartDisplay";
 import LineChartDisplay from "./LineChartDisplay";
 import BarChartDisplay from "./BarChartDisplay";
 
@@ -120,7 +120,11 @@ const Answers = ({
               )}
 
               {answerType === "multiline" && (
-                <Multiline data={data} xUnits={xUnits} yUnits={yUnits} />
+                <MultilineChartDisplay
+                  data={data}
+                  xUnits={xUnits}
+                  yUnits={yUnits}
+                />
               )}
             </Col>
           )}
