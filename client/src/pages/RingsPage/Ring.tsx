@@ -11,6 +11,8 @@ import { useNotify } from "components/Notifications";
 import { useHistory, useParams } from "react-router-dom";
 import { useRing } from "store/rings";
 import ConfirmModal from "components/SharedElements/ConfirmModal";
+import { JsonEditor as Editor } from 'jsoneditor-react';
+import './jsoneditor-react-dark-mode.css';
 
 type Params = {
   ringId: string | null;
@@ -193,19 +195,16 @@ const Ring: React.FC = () => {
               {formik.touched.visibility && formik.errors.visibility ? <Form.Text className="text-danger">{formik.errors.visibility}</Form.Text> : null}
             </Form.Group>
           </Row>
-          <Row className="mb-5">
+          <Row className="mb-3">
             <Form.Group controlId="formDataSource" className="mb-2" as={Col}>
               <Form.Label>Data Source</Form.Label>
-              <JSONInput
-                id="dataSource"
+              <Editor
+                mode="tree"
+                allowedModes={["code", "tree"]}
                 value={sanitizeData(formik.values.dataSource)}
-                placeholder={sanitizeData(formik.values.dataSource)}
-                locale={locale}
-                height="550px"
-                width="100%"
-                onChange={(e) => {
+                onChange={(jsObject) => {
                   try {
-                    formik.setFieldValue("dataSource", e.jsObject);
+                    formik.setFieldValue("dataSource", jsObject);
                   } catch (error) {
                     console.warn(error); // eslint-disable-line no-console
                   }
@@ -213,18 +212,17 @@ const Ring: React.FC = () => {
               />
               {formik.touched.dataSource && formik.errors.dataSource ? <Form.Text className="text-danger">{formik.errors.dataSource}</Form.Text> : null}
             </Form.Group>
+          </Row>
+          <Row className="mb-3">
             <Form.Group controlId="formOntology" className="mb-2" as={Col}>
               <Form.Label>Ontology</Form.Label>
-              <JSONInput
-                id="ontology"
-                placeholder={sanitizeData(formik.values.ontology)}
+              <Editor
+                mode="tree"
+                allowedModes={["code", "tree"]}
                 value={sanitizeData(formik.values.ontology)}
-                locale={locale}
-                height="550px"
-                width="100%"
-                onChange={(e) => {
+                onChange={(jsObject) => {
                   try {
-                    formik.setFieldValue("ontology", e.jsObject);
+                    formik.setFieldValue("ontology", jsObject);
                   } catch (error) {
                     console.warn(error); // eslint-disable-line no-console
                   }
