@@ -1,6 +1,6 @@
-import { DataTypes, Sequelize } from "sequelize";
+import { DataTypes } from "sequelize";
 import jwt from "jsonwebtoken";
-import mailer from "../services/mail";
+import { sendEmail } from "../services/sesMailer";
 
 export interface User {
   id: number;
@@ -74,36 +74,26 @@ export default (sequelize, options) => {
   User.addHook("afterCreate", "verifyEmail", async (user) => {
     try {
       const { firstName, lastName, email } = user;
-      const emailVerificationToken = jwt.sign({ email }, process.env.JWT_SECRET, { expiresIn: process.env.JWT_EXP });
+      const emailVerificationToken = jwt.sign(
+        { email },
+        process.env.JWT_SECRET,
+        { expiresIn: process.env.JWT_EXP }
+      );
       user.emailVerificationToken = emailVerificationToken;
       await user.save();
 
-      mailer.sendMail(
-        {
-          from: `Satyrn <${process.env.SENDGRID_FROM_SENDER}>`,
-          to: `${firstName} ${lastName} <${email}>`,
-          subject: "Satyrn - Please verify your email address",
-          html: `Hello ${firstName}, <br /><br />
-          Thank you for signing up for access to Satyrn.<br />
-          Please <a href="${process.env.UX_CLIENT_MAILER_URL}/verify-email/${emailVerificationToken}">click here to verify this email address</a>. <br /><br />
-          <br />
-          SCALES OKN<br />
-          www.scales-okn.org`,
+      const recipientName = `${firstName} ${lastName}`;
+      // TODO: replace mock recipient email
+      sendEmail({
+        emailSubject: `Welcome to SCALES, ${recipientName}!`,
+        recipientEmail: "benkiggen@gmail.com",
+        templateName: "confirmAccount",
+        recipientName,
+        templateArgs: {
+          url: `${process.env.UX_CLIENT_MAILER_URL}/verify-email/${emailVerificationToken}`,
         },
-        (error, info) => {
-          const errorsArray = error?.response?.body?.errors;
-          if (errorsArray) {
-            errorsArray.map((ea) => {
-              console.log("*********************");
-              console.log("message: ", ea.message);
-              console.log("field: ", ea.field);
-              console.log("help: ", ea.help);
-              console.log("*********************");
-            });
-          }
-          console.warn("info: ", info);
-        }
-      );
+      });
+
       await user.save();
     } catch (error) {
       console.warn({ error });
@@ -123,7 +113,7 @@ export default (sequelize, options) => {
   //           from: `Satyrn <${process.env.SENDGRID_FROM_SENDER}>`,
   //           to: `${firstName} ${lastName} <${email}>`,
   //           subject: "Welcome to the Satyrn Beta!",
-  //           html: `Hello ${firstName}, <br> <br> 
+  //           html: `Hello ${firstName}, <br> <br>
   //           Your account has been approved and you can now access Satyrn! You can sign in <a href="${process.env.UX_CLIENT_MAILER_URL}/sign-in">here</a>. <br />
   //           Please feel free to reach out to us at <EMAIL ADDRESS> with any questions or bug reports as you begin using the system. <br />
   //           If you’re looking for a good place to get started, see <a href=”<LINK TO FUTURE POST”>this post</a> for more details about using the system.<br /> <br/>

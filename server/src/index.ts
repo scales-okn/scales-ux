@@ -17,7 +17,6 @@ import feedbackRouter from "./routes/feedback";
 
 const app = express();
 
-// App dependencies
 (async () => {
   try {
     await database();
