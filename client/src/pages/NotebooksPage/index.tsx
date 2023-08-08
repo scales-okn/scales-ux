@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import React, { FunctionComponent, useState } from "react";
 import PageLayout from "../../components/PageLayout";
 import Loader from "../../components/Loader";

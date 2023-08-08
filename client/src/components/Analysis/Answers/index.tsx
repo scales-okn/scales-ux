@@ -83,9 +83,10 @@ const Answers = ({
   }, [data, plan, satyrn, statement, filters]); // eslint-disable-line react-hooks/exhaustive-deps
 
   // for multiline, assumes the order of unit names is line label, x, y
-  const xUnits = data?.units?.results?.[answerType == "multiline" ? 1 : 0]?.[0];
-  let yUnits = data?.units?.results?.[answerType == "multiline" ? 2 : 1]?.[1];
-  if (yUnits == "Case" || yUnits == "Judge") yUnits += "s"; // unlike attributes, entities seem not to have nicenames
+  const xUnits =
+    data?.units?.results?.[answerType === "multiline" ? 1 : 0]?.[0];
+  let yUnits = data?.units?.results?.[answerType === "multiline" ? 2 : 1]?.[1];
+  if (yUnits === "Case" || yUnits === "Judge") yUnits += "s"; // unlike attributes, entities seem not to have nicenames
 
   return (
     <div className="answers" ref={containerRef}>

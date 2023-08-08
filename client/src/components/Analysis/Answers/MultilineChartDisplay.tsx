@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import React, { memo } from "react";
 import {
   Label,
@@ -123,7 +124,7 @@ const Answers = ({ data, xUnits, yUnits }: AnswersT) => {
         {/* hack */}
         <CartesianGrid stroke="#eee" strokeDasharray="5 5" />
         {data.results?.map((line_data) => {
-          if (line_data.label == -1) {
+          if (line_data.label === -1) {
             line_data.label = "criminal";
           }
           if (typeof line_data.label == "boolean") {
