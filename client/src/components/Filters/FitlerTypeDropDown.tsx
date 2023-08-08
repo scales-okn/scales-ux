@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import React, { FunctionComponent, useState, useEffect } from "react";
 import { Dropdown } from "react-bootstrap";
 
@@ -15,7 +16,13 @@ type FilterTypeProps = {
 };
 
 const FilterTypeDropDown: FunctionComponent<FilterTypeProps> = (props) => {
-  const { filter, filters, getFiltersNormalized, getFilterOptionsByKey, setFilter } = props;
+  const {
+    filter,
+    filters,
+    getFiltersNormalized,
+    getFilterOptionsByKey,
+    setFilter,
+  } = props;
   const { type } = filter;
 
   const filterOptions = getFilterOptionsByKey(type);
@@ -29,8 +36,12 @@ const FilterTypeDropDown: FunctionComponent<FilterTypeProps> = (props) => {
     try {
       if (filterInput) {
         // when changing filter type, reset the value
-        const { type: dataType } = getFilterOptionsByKey(filterInput.key)
-        setFilter({ ...filter, type: filterInput.key, value: dataType === "boolean" ? "false" : "" });
+        const { type: dataType } = getFilterOptionsByKey(filterInput.key);
+        setFilter({
+          ...filter,
+          type: filterInput.key,
+          value: dataType === "boolean" ? "false" : "",
+        });
       }
     } catch (error) {
       console.warn(error); // eslint-disable-line no-console
@@ -38,10 +49,15 @@ const FilterTypeDropDown: FunctionComponent<FilterTypeProps> = (props) => {
   }, [filterInput]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const filtersToRender = getFiltersNormalized()
-    ?.filter((x) => x.nicename != "Docket HTML" && x.nicename != "Case Name") /* hack due to complaints from the docket-preview pane when i tried to change these fields' ring settings */
+    ?.filter(
+      (x) => x.nicename !== "Docket HTML" && x.nicename !== "Case Name",
+    ) /* hack due to complaints from the docket-preview pane when i tried to change these fields' ring settings */
     .map((filterInput) => {
       const { allowMultiple, key } = filterInput;
-      if (allowMultiple === false && filters.some((filter: any) => filter.type === key)) {
+      if (
+        allowMultiple === false &&
+        filters.some((filter: any) => filter.type === key)
+      ) {
         return { ...filterInput, disabled: true };
       }
 
@@ -51,7 +67,11 @@ const FilterTypeDropDown: FunctionComponent<FilterTypeProps> = (props) => {
 
   return (
     <Dropdown className="filter-type-dropdown">
-      <Dropdown.Toggle size="sm" variant="link" className="shadow-none text-decoration-none small">
+      <Dropdown.Toggle
+        size="sm"
+        variant="link"
+        className="shadow-none text-decoration-none small"
+      >
         {filterInput?.nicename || ""}
       </Dropdown.Toggle>
       <Dropdown.Menu style={{ maxHeight: "70vh", overflowY: "auto" }}>
@@ -61,8 +81,13 @@ const FilterTypeDropDown: FunctionComponent<FilterTypeProps> = (props) => {
         {filtersToRender?.map(({ key, nicename, desc, disabled }) => (
           <React.Fragment key={key}>
             <Dropdown.Divider />
-            <Dropdown.Item onClick={() => setFilterInput({ key, nicename })} disabled={disabled}>
-              <Dropdown.ItemText className={disabled ? "text-muted" : ""}>{nicename}</Dropdown.ItemText>
+            <Dropdown.Item
+              onClick={() => setFilterInput({ key, nicename })}
+              disabled={disabled}
+            >
+              <Dropdown.ItemText className={disabled ? "text-muted" : ""}>
+                {nicename}
+              </Dropdown.ItemText>
               {desc && (
                 <Dropdown.ItemText className="text-muted fs-6">
                   <small>{desc}</small>

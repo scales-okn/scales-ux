@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import React, { FunctionComponent } from "react";
 import { AsyncTypeahead } from "react-bootstrap-typeahead";
 import uniqid from "uniqid";
@@ -12,7 +13,14 @@ type Props = {
   loadingAutosuggestions: boolean;
 };
 
-const Parameters: FunctionComponent<Props> = ({ parameters, fetchAutocompleteSuggestions, autoCompleteSuggestions, setSelectedParameter, selectedParameter, loadingAutosuggestions }) => {
+const Parameters: FunctionComponent<Props> = ({
+  parameters,
+  fetchAutocompleteSuggestions,
+  autoCompleteSuggestions,
+  setSelectedParameter,
+  selectedParameter,
+  loadingAutosuggestions,
+}) => {
   return (
     <>
       {parameters &&
@@ -21,7 +29,9 @@ const Parameters: FunctionComponent<Props> = ({ parameters, fetchAutocompleteSug
             <Form.Group key={index} className="mb-3">
               {parameter.type === "string" && (
                 <Col lg="8">
-                  {parameter?.prompt && <Form.Label>{parameter.prompt}</Form.Label>}
+                  {parameter?.prompt && (
+                    <Form.Label>{parameter.prompt}</Form.Label>
+                  )}
                   <AsyncTypeahead
                     as={Form.Control}
                     id={uniqid()}
@@ -29,12 +39,19 @@ const Parameters: FunctionComponent<Props> = ({ parameters, fetchAutocompleteSug
                     labelKey={null}
                     minLength={3}
                     onChange
-                    onSearch={(query) => fetchAutocompleteSuggestions(parameter.options.attribute, query)}
+                    onSearch={(query) =>
+                      fetchAutocompleteSuggestions(
+                        parameter.options.attribute,
+                        query,
+                      )
+                    }
                     options={autoCompleteSuggestions?.map(String)}
                     placeholder="Search or select a statement..."
                     shouldSelect={(shouldSelect, e) => {
                       // Select the hint if the user hits 'enter' or ','
-                      return e.keyCode === 13 || e.keyCode === 188 || shouldSelect;
+                      return (
+                        e.keyCode === 13 || e.keyCode === 188 || shouldSelect
+                      );
                     }}
                     defaultInputValue={""}
                     loading={loadingAutosuggestions}
@@ -43,18 +60,36 @@ const Parameters: FunctionComponent<Props> = ({ parameters, fetchAutocompleteSug
               )}
               {parameter.type === "boolean" && (
                 <Form>
-                  <Form.Check type="switch" title={parameter.prompt} name={parameter.options.attribute} label={parameter.prompt} />
+                  <Form.Check
+                    type="switch"
+                    title={parameter.prompt}
+                    name={parameter.options.attribute}
+                    label={parameter.prompt}
+                  />
                 </Form>
               )}
               {parameter.type === "enum" && (
                 <Form.Group as={Row}>
                   <Col lg="8">
                     <Form.Label>{parameter.prompt}</Form.Label>
-                    <Form.Select value={selectedParameter} multiple={parameter.allowMultiple} onChange={(e) => setSelectedParameter(e.target.value)}>
+                    <Form.Select
+                      value={selectedParameter}
+                      multiple={parameter.allowMultiple}
+                      onChange={(e) => setSelectedParameter(e.target.value)}
+                    >
                       {/* fix for (1) the fact that default value was "day-over-day" but year-over-year was displaying, and
                       (2) the current lack of support for day-over-day (simplest hack I could think of, sorry for ugliness!) */}
-                      {(parameter?.options?.length == 6 ? parameter?.options.slice(1, 3).toReversed().concat(parameter?.options.slice(3)) : parameter?.options)?.map((param, index) => (
-                        <option key={index} value={param.value ? param.value : param}>
+                      {(parameter?.options?.length === 6
+                        ? parameter?.options
+                            .slice(1, 3)
+                            .toReversed()
+                            .concat(parameter?.options.slice(3))
+                        : parameter?.options
+                      )?.map((param, index) => (
+                        <option
+                          key={index}
+                          value={param.value ? param.value : param}
+                        >
                           {param.label ? param.label : param}
                         </option>
                       ))}

@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import React, { memo } from "react";
 import {
   Label,
@@ -27,7 +28,7 @@ const LineChartDisplay = ({
   // unsure why result?.[1] is returned twice, & how non-ints (eg dates) are handled, but ignoring for now & just adding carveout for str x-vals
   const formatLineData = (result) => {
     return {
-      name: result?.[1] == -1 ? "criminal" : String(result?.[0]),
+      name: result?.[1] === -1 ? "criminal" : String(result?.[0]),
       [xUnits]: /^[a-zA-Z ]+$/.test(result?.[0])
         ? result?.[0]
         : parseInt(result?.[0]),

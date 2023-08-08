@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import React, { memo, useMemo } from "react";
 import {
   BarChart,
@@ -19,7 +20,7 @@ type AnswersT = {
 const Answers = ({ data, width, xUnits, yUnits }: AnswersT) => {
   const formatBarData = (result) => {
     return {
-      name: result?.[0] == -1 ? "criminal" : String(result?.[0]),
+      name: result?.[0] === -1 ? "criminal" : String(result?.[0]),
       [yUnits]: result?.[1],
     };
   };
@@ -45,7 +46,7 @@ const Answers = ({ data, width, xUnits, yUnits }: AnswersT) => {
     return out.map((result) => {
       return formatBarData(result);
     });
-  }, [data]);
+  }, [data]); // eslint-disable-line react-hooks/exhaustive-deps
 
   return (
     <BarChart
