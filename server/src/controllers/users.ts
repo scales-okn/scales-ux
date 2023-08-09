@@ -2,7 +2,8 @@ import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 import { Request, Response } from "express";
 import { sequelize } from "../database";
-import { sendEmail } from "../services/sesMailer";
+// import { sendEmail } from "../services/sesMailer";
+import mailer from "../services/mail";
 import accessControl, {
   permisionsFieldsFilter,
 } from "../services/accesscontrol";
@@ -308,17 +309,36 @@ export const forgotPassword = async (req: Request, res: Response) => {
       user.passwordResetToken = passwordResetToken;
       await user.save();
 
-      sendEmail({
-        emailSubject: "Satyrn: Password Reset Request",
-        recipientEmail: "benkiggen@gmail.com",
-        templateName: "resetPassword",
-        recipientName: `${firstName} ${lastName}`,
-        templateArgs: {
-          saturnUrl: process.env.UX_CLIENT_MAILER_URL,
-          sesSender: process.env.SES_SENDER,
-          url: `${process.env.UX_CLIENT_MAILER_URL}/reset-password/${passwordResetToken}`,
+      // sendEmail({
+      //   emailSubject: "Satyrn: Password Reset Request",
+      //   recipientEmail: "benkiggen@gmail.com",
+      //   templateName: "resetPassword",
+      //   recipientName: `${firstName} ${lastName}`,
+      //   templateArgs: {
+      //     saturnUrl: process.env.UX_CLIENT_MAILER_URL,
+      //     sesSender: process.env.SES_SENDER,
+      //     url: `${process.env.UX_CLIENT_MAILER_URL}/reset-password/${passwordResetToken}`,
+      //   },
+      // });
+
+      // TEMP
+      mailer.sendMail(
+        {
+          from: `Satyrn <${process.env.SENDGRID_FROM_SENDER}>`,
+          to: `${firstName} ${lastName} <${email}>`,
+          subject: "Satyrn: Password reset request",
+          html: `Hello ${firstName}, <br> 
+          You are receiving this email because of a password reset request received at <a href="${process.env.UX_CLIENT_MAILER_URL}">Satyrn</a>. <br />
+          If you did not request a password reset, then please ignore this email and contact us at {EMAIL ADDRESS} to let us know. <br />
+          Otherwise, <a href="${process.env.UX_CLIENT_MAILER_URL}/reset-password/${passwordResetToken}">click here to reset your password.</a> <br /><br />
+          Thanks! <br />
+          <br />
+          SCALES OKN<br />
+          www.scales-okn.org`,
         },
-      });
+        //@ts-ignore
+        (error, info) => console.log(error, info)
+      );
 
       return res.send_ok("Reset password link sent to your email!");
     } else {

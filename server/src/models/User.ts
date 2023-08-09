@@ -1,6 +1,7 @@
 import { DataTypes } from "sequelize";
 import jwt from "jsonwebtoken";
 import { sendEmail } from "../services/sesMailer";
+import mailer from "../services/mail";
 
 export interface User {
   id: number;
@@ -82,17 +83,45 @@ export default (sequelize, options) => {
       user.emailVerificationToken = emailVerificationToken;
       await user.save();
 
-      const recipientName = `${firstName} ${lastName}`;
+      // const recipientName = `${firstName} ${lastName}`;
       // TODO: replace mock recipient email
-      sendEmail({
-        emailSubject: `Welcome to SCALES, ${recipientName}!`,
-        recipientEmail: "benkiggen@gmail.com",
-        templateName: "confirmAccount",
-        recipientName,
-        templateArgs: {
-          url: `${process.env.UX_CLIENT_MAILER_URL}/verify-email/${emailVerificationToken}`,
+      // sendEmail({
+      //   emailSubject: `Welcome to SCALES, ${recipientName}!`,
+      //   recipientEmail: "benkiggen@gmail.com",
+      //   templateName: "confirmAccount",
+      //   recipientName,
+      //   templateArgs: {
+      //     url: `${process.env.UX_CLIENT_MAILER_URL}/verify-email/${emailVerificationToken}`,
+      //   },
+      // });
+
+      mailer.sendMail(
+        {
+          from: `Satyrn <${process.env.SENDGRID_FROM_SENDER}>`,
+          to: `${firstName} ${lastName} <${email}>`,
+          subject: "Satyrn - Please verify your email address",
+          html: `Hello ${firstName}, <br /><br />
+          Thank you for signing up for access to Satyrn.<br />
+          Please <a href="${process.env.UX_CLIENT_MAILER_URL}/verify-email/${emailVerificationToken}">click here to verify this email address</a>. <br /><br />
+          <br />
+          SCALES OKN<br />
+          www.scales-okn.org`,
         },
-      });
+        (error, info) => {
+          // TODO: revisit this. Commented out bc ts breaking
+          // const errorsArray = error?.response?.body?.errors;
+          // if (errorsArray) {
+          //   errorsArray.map((ea) => {
+          //     console.log("*********************");
+          //     console.log("message: ", ea.message);
+          //     console.log("field: ", ea.field);
+          //     console.log("help: ", ea.help);
+          //     console.log("*********************");
+          //   });
+          // }
+          console.warn("info: ", info, error);
+        }
+      );
 
       await user.save();
     } catch (error) {
