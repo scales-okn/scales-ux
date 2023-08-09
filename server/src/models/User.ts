@@ -1,5 +1,6 @@
-import { DataTypes, Sequelize } from "sequelize";
+import { DataTypes } from "sequelize";
 import jwt from "jsonwebtoken";
+import { sendEmail } from "../services/sesMailer";
 import mailer from "../services/mail";
 
 export interface User {
@@ -82,6 +83,18 @@ export default (sequelize, options) => {
       user.emailVerificationToken = emailVerificationToken;
       await user.save();
 
+      // const recipientName = `${firstName} ${lastName}`;
+      // TODO: replace mock recipient email
+      // sendEmail({
+      //   emailSubject: `Welcome to SCALES, ${recipientName}!`,
+      //   recipientEmail: "benkiggen@gmail.com",
+      //   templateName: "confirmAccount",
+      //   recipientName,
+      //   templateArgs: {
+      //     url: `${process.env.UX_CLIENT_MAILER_URL}/verify-email/${emailVerificationToken}`,
+      //   },
+      // });
+
       mailer.sendMail(
         {
           from: `Satyrn <${process.env.SENDGRID_FROM_SENDER}>`,
@@ -109,6 +122,7 @@ export default (sequelize, options) => {
           console.warn("info: ", info, error);
         }
       );
+
       await user.save();
     } catch (error) {
       console.warn({ error });
