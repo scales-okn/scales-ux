@@ -74,7 +74,11 @@ export default (sequelize, options) => {
   User.addHook("afterCreate", "verifyEmail", async (user) => {
     try {
       const { firstName, lastName, email } = user;
-      const emailVerificationToken = jwt.sign({ email }, process.env.JWT_SECRET, { expiresIn: process.env.JWT_EXP });
+      const emailVerificationToken = jwt.sign(
+        { email },
+        process.env.JWT_SECRET,
+        { expiresIn: process.env.JWT_EXP }
+      );
       user.emailVerificationToken = emailVerificationToken;
       await user.save();
 
@@ -91,17 +95,18 @@ export default (sequelize, options) => {
           www.scales-okn.org`,
         },
         (error, info) => {
-          const errorsArray = error?.response?.body?.errors;
-          if (errorsArray) {
-            errorsArray.map((ea) => {
-              console.log("*********************");
-              console.log("message: ", ea.message);
-              console.log("field: ", ea.field);
-              console.log("help: ", ea.help);
-              console.log("*********************");
-            });
-          }
-          console.warn("info: ", info);
+          // TODO: revisit this. Commented out bc ts breaking
+          // const errorsArray = error?.response?.body?.errors;
+          // if (errorsArray) {
+          //   errorsArray.map((ea) => {
+          //     console.log("*********************");
+          //     console.log("message: ", ea.message);
+          //     console.log("field: ", ea.field);
+          //     console.log("help: ", ea.help);
+          //     console.log("*********************");
+          //   });
+          // }
+          console.warn("info: ", info, error);
         }
       );
       await user.save();
@@ -123,7 +128,7 @@ export default (sequelize, options) => {
   //           from: `Satyrn <${process.env.SENDGRID_FROM_SENDER}>`,
   //           to: `${firstName} ${lastName} <${email}>`,
   //           subject: "Welcome to the Satyrn Beta!",
-  //           html: `Hello ${firstName}, <br> <br> 
+  //           html: `Hello ${firstName}, <br> <br>
   //           Your account has been approved and you can now access Satyrn! You can sign in <a href="${process.env.UX_CLIENT_MAILER_URL}/sign-in">here</a>. <br />
   //           Please feel free to reach out to us at <EMAIL ADDRESS> with any questions or bug reports as you begin using the system. <br />
   //           If you’re looking for a good place to get started, see <a href=”<LINK TO FUTURE POST”>this post</a> for more details about using the system.<br /> <br/>
