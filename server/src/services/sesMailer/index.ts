@@ -44,7 +44,7 @@ export const sendEmail = ({
   const html: string = template({ ...templateArgs, recipientName });
 
   const params = {
-    Source: process.env.SES_SENDER,
+    Source: `SCALES OKN <${process.env.SES_SENDER}>`,
     Destination: {
       ToAddresses: [recipientEmail],
     },
