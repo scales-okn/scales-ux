@@ -14,10 +14,9 @@ interface Params {
 
 const EmailVerificationPage: FunctionComponent = () => {
   const { token } = useParams<Params>();
-  // const history = useHistory();
-  // const { notify } = useNotify();
   const [isLoading, setIsLoading] = useState(true);
   const [message, setMessage] = useState("");
+
   const verifyEmail = useCallback(async () => {
     try {
       const response = await fetch(`/api/users/verify-email`, {
@@ -29,20 +28,9 @@ const EmailVerificationPage: FunctionComponent = () => {
           token,
         }),
       });
-      // const { data, code, message, errors } = await response.json();
       const { message } = await response.json();
       setIsLoading(false);
       setMessage(message);
-      // switch (code) {
-      //   case 200: {
-      //     notify(message, "success");
-      //     break;
-      //   }
-      //   default: {
-      //     notify(message, "error");
-      //     break;
-      //   }
-      // }
     } catch (error) {
       console.warn(error); // eslint-disable-line no-console
     }
