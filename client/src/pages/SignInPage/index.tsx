@@ -15,7 +15,10 @@ export interface UserSignInFields {
 }
 
 export const UserSignInValidationSchema = yup.object({
-  email: yup.string().email("Enter a valid email").required("Email is required"),
+  email: yup
+    .string()
+    .email("Enter a valid email")
+    .required("Email is required"),
   password: yup.string().required("Password is required"),
 });
 
@@ -51,20 +54,53 @@ const SignInPage: FunctionComponent = () => {
       <Container className="h-100">
         <Row className="h-100 justify-content-center align-items-center text-center">
           <Col lg="6" xs="10">
-            <h6 className="h6" style={{ color: "crimson", fontStyle: "italic" }}>
-              Official launch in fall 2023, beta user onboarding begins mid-June.
+            <h6
+              className="h6"
+              style={{ color: "crimson", fontStyle: "italic" }}
+            >
+              This Application is currently in beta development. Official launch
+              scheduled for fall 2023.
             </h6>
             <Form noValidate onSubmit={formik.handleSubmit}>
-              <div className="form-floating" style={{ marginTop: "50px", marginBottom: "16px" }}>
-                <Form.Control type="email" name="email" placeholder="name@example.com" className="rounded-0 rounded-top" value={formik.values.email} onChange={formik.handleChange} isInvalid={formik.touched.email && Boolean(formik.errors?.email)} />
+              <div
+                className="form-floating"
+                style={{ marginTop: "50px", marginBottom: "16px" }}
+              >
+                <Form.Control
+                  type="email"
+                  name="email"
+                  placeholder="name@example.com"
+                  className="rounded-0 rounded-top"
+                  value={formik.values.email}
+                  onChange={formik.handleChange}
+                  isInvalid={
+                    formik.touched.email && Boolean(formik.errors?.email)
+                  }
+                />
                 <Form.Label>Email address</Form.Label>
               </div>
               <div className="form-floating mb-3">
-                <Form.Control type="password" name="password" placeholder="Password" className="rounded-0 rounded-bottom" value={formik.values.password} onChange={formik.handleChange} isInvalid={formik.touched.password && Boolean(formik.errors?.password)} />
+                <Form.Control
+                  type="password"
+                  name="password"
+                  placeholder="Password"
+                  className="rounded-0 rounded-bottom"
+                  value={formik.values.password}
+                  onChange={formik.handleChange}
+                  isInvalid={
+                    formik.touched.password && Boolean(formik.errors?.password)
+                  }
+                />
                 <Form.Label>Password</Form.Label>
               </div>
               <Form.Group className="mb-4">
-                <Form.Check type="checkbox" label="Remember Me" name="rememberMe" onChange={() => setRememberMe(!rememberMe)} className="text-start" />
+                <Form.Check
+                  type="checkbox"
+                  label="Remember Me"
+                  name="rememberMe"
+                  onChange={() => setRememberMe(!rememberMe)}
+                  className="text-start"
+                />
               </Form.Group>
 
               <Button
@@ -81,12 +117,20 @@ const SignInPage: FunctionComponent = () => {
               </Button>
               <Row className="mb-5">
                 <Col className="text-start" md="5">
-                  <a href="/forgot-password" className="small" style={{ color: "var(--details-blue)" }}>
+                  <a
+                    href="/forgot-password"
+                    className="small"
+                    style={{ color: "var(--details-blue)" }}
+                  >
                     Forgot password?
                   </a>
                 </Col>
                 <Col className="text-end">
-                  <a href="/sign-up" className="small" style={{ color: "var(--details-blue)" }}>{`Don't have an account? Sign Up`}</a>
+                  <a
+                    href="/sign-up"
+                    className="small"
+                    style={{ color: "var(--details-blue)" }}
+                  >{`Don't have an account? Sign Up`}</a>
                 </Col>
               </Row>
             </Form>

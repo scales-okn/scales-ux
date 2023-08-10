@@ -101,8 +101,8 @@ const SignUpPage = () => {
               className="h6 mb-5"
               style={{ color: "crimson", fontStyle: "italic" }}
             >
-              Official launch in fall 2023, beta user onboarding begins
-              mid-June.
+              This Application is currently in beta development. Official launch
+              scheduled for fall 2023.
             </h6>
 
             <Loader
