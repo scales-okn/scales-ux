@@ -18,7 +18,6 @@ interface UserSignUpFields extends UserSignInFields {
 
 const SignUpPage = () => {
   const history = useHistory();
-  // const { notify } = useNotify();
   const [isLoading, setIsLoading] = useState(false);
   const [message, setMessage] = useState("");
 
