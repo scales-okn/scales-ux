@@ -94,7 +94,14 @@ const PageLayout = ({ id = "", children, pageTitle }: PageLayoutT) => {
               )}
             </IconButton>
             {!isTablet && (
-              <Toolbar sx={{ flexGrow: "3", marginLeft: "20px" }}>
+              <Toolbar
+                sx={{
+                  flexGrow: "3",
+                  marginLeft: "20px",
+                  display: "flex",
+                  ...(user ? {} : { justifyContent: "flex-end" }),
+                }}
+              >
                 {user ? (
                   <>
                     <NavItem linkName="Notebooks" route={"/"} />
