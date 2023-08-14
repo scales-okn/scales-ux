@@ -45,18 +45,15 @@ const Notebook: FunctionComponent = () => {
 
   useEffectOnce(() => {
     getRings();
+    if (notebook && !notebookloaded.current) {
+      dispatch(getPanels(notebook.id));
+      notebookloaded.current = true;
+    }
 
     return () => {
       setNotebookTitle("");
     };
   });
-
-  useEffect(() => {
-    if (notebook && !notebookloaded.current) {
-      dispatch(getPanels(notebook.id));
-      notebookloaded.current = true;
-    }
-  }, [notebook]); // eslint-disable-line react-hooks/exhaustive-deps
 
   return (
     <Loader animation="border" isVisible={loadingNotebook}>

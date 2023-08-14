@@ -181,7 +181,10 @@ const NotebooksPage: FunctionComponent = () => {
             </Col>
           </Row>
           <Row>
-            <div style={{ height: 650, width: "100%" }} className="mt-4">
+            <div
+              style={{ height: "70vh", minHeight: "300px", width: "100%" }}
+              className="mt-4"
+            >
               <DataGrid
                 rows={notebooksData}
                 // onEditCellChangeCommitted={handleOnEditCellChangeCommitted}

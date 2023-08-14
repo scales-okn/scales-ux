@@ -322,7 +322,6 @@ export const getPanels = (notebookId) => {
       });
 
       const { data, message } = await response.json();
-      console.log("🚀 ~ file: panels.ts:325 ~ return ~ data:", data);
 
       if (response.status === 200) {
         dispatch(panelsActions.getPanelsSuccess(data.panels));
