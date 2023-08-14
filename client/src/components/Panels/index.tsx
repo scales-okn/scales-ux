@@ -12,12 +12,17 @@ const Panels: FunctionComponent<PanelsProps> = ({ notebookId }) => {
 
   useEffect(() => {
     if (!notebookId || loadingPanels) return;
-    getPanels(notebookId);
+    // getPanels(notebookId); // TODO: Do we need this call?
   }, [notebookId]); // eslint-disable-line react-hooks/exhaustive-deps
 
   return (
     <Loader animation="border" isVisible={loadingPanels}>
-      <>{panels?.length > 0 && panels.map((panel, index) => <Panel key={index} panelId={panel.id} />)}</>
+      <>
+        {panels?.length > 0 &&
+          panels.map((panel, index) => (
+            <Panel key={index} panelId={panel.id} />
+          ))}
+      </>
     </Loader>
   );
 };
