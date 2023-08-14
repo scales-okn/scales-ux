@@ -78,7 +78,7 @@ const PageLayout = ({ id = "", children, pageTitle }: PageLayoutT) => {
               edge="start"
               color="inherit"
               aria-label="menu"
-              sx={{ width: "160px" }}
+              sx={{ width: isTablet ? "40px" : "160px" }}
             >
               {isTablet ? (
                 <MenuIcon onClick={toggleDrawer} fontSize="large" />
