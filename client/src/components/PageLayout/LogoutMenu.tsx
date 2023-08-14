@@ -25,18 +25,6 @@ const LogoutMenu = () => {
   const user = useSelector(userSelector);
   const dispatch = useDispatch();
 
-  const styles = css`
-    min-width: 180px;
-    padding: 1rem;
-    transition: 0.2s ease-in-out;
-    margin: 6px 0;
-    font-size: 18px;
-
-    &:hover {
-      background: var(--main-purple-lightest);
-    }
-  `;
-
   const containerStyles = css`
     .icon {
       display: flex;

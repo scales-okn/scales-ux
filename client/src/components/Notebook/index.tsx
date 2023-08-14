@@ -1,4 +1,4 @@
-import React, { FunctionComponent, useState, useEffect, useRef } from "react";
+import React, { FunctionComponent, useState, useRef } from "react";
 import { Col, Container, Row, Button, Form } from "react-bootstrap";
 import Loader from "components/Loader";
 import Panels from "components/Panels";
