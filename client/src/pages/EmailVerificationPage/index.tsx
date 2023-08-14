@@ -8,12 +8,8 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faBalanceScale } from "@fortawesome/free-solid-svg-icons";
 import renderHTML from "helpers/renderHTML";
 
-interface Params {
-  token: string;
-}
-
 const EmailVerificationPage: FunctionComponent = () => {
-  const { token } = useParams<Params>();
+  const { token } = useParams();
   const [isLoading, setIsLoading] = useState(true);
   const [message, setMessage] = useState("");
 
@@ -31,11 +27,10 @@ const EmailVerificationPage: FunctionComponent = () => {
       const { message } = await response.json();
       setIsLoading(false);
       setMessage(message);
+      // TODO: forward to sign in page with success message
     } catch (error) {
       console.warn(error); // eslint-disable-line no-console
     }
-
-    // history.push("/");
   }, [token]);
 
   useEffect(() => {

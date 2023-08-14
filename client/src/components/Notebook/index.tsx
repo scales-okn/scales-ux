@@ -10,7 +10,7 @@ import {
   createNotebook,
 } from "store/notebook";
 import { useDispatch } from "react-redux";
-import { useHistory, useLocation } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import "./Notebook.scss";
 import { useRings } from "../../store/rings";
 import AddPanel from "../Panels/AddPanel";
@@ -35,12 +35,12 @@ const Notebook: FunctionComponent = () => {
   const [confirmVisible, setConfirmVisible] = useState(false);
   const [notebookTitle, setNotebookTitle] = useState(defaultTitle());
   const dispatch = useDispatch();
-  const history = useHistory();
+  const navigate = useNavigate();
   const { panels, updatePanel } = usePanels(notebook?.id);
 
   const handleDeleteNotebook = () => {
     dispatch(deleteNotebook(notebook?.id));
-    history.push("/notebooks");
+    navigate("/notebooks");
   };
 
   useEffectOnce(() => {

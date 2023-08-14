@@ -15,6 +15,7 @@ type Params = {
 };
 
 const NotebookPage: FunctionComponent = () => {
+  console.log("butt");
   const { notebookId = null } = useParams<Params>();
   const { loadingNotebook } = useSelector(notebookSelector);
   const dispatch = useDispatch();

@@ -20,8 +20,10 @@ const Panels: FunctionComponent<PanelsProps> = ({ notebookId }) => {
     <Loader animation="border" isVisible={loadingPanels}>
       <>
         {panels?.length > 0 &&
-          panels.map((panel, index) => (
-            <Panel key={index} panelId={panel.id} />
+          panels.map((panel) => (
+            <div key={panel.id}>
+              <Panel panelId={panel.id} />
+            </div>
           ))}
       </>
     </Loader>

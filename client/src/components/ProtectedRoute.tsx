@@ -1,29 +1,22 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
-
 import React, { FunctionComponent } from "react";
-import { Redirect, Route } from "react-router-dom";
+import { Route } from "react-router-dom";
 import { authSelector } from "../store/auth";
 import { useSelector } from "react-redux";
+import SignInPage from "pages/SignInPage";
 
 interface Props {
-  component: React.ComponentType<any>;
-  [key: string]: any;
+  path: string;
+  element?: JSX.Element;
 }
 
-const ProtectedRoute: FunctionComponent<Props> = ({
-  component: Component,
-  ...restOfProps
-}) => {
+const ProtectedRoute: FunctionComponent<Props> = ({ path, element }) => {
   const { user } = useSelector(authSelector);
 
-  return (
-    <Route
-      {...restOfProps}
-      render={(props) =>
-        user ? <Component {...props} /> : <Redirect to="/sign-up" />
-      }
-    />
-  );
+  if (user) {
+    return <Route path={path} element={element} />;
+  } else {
+    return <Route element={<SignInPage />} />;
+  }
 };
 
 export default ProtectedRoute;
