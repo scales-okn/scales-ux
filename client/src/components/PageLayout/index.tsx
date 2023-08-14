@@ -50,16 +50,6 @@ const PageLayout = ({ id = "", children, pageTitle }: PageLayoutT) => {
   const { width } = useWindowSize();
   const isTablet = width < 900;
 
-  const drawers = [
-    <MobileMenu
-      key="mobileMenu"
-      drawerOpen={drawerOpen}
-      toggleDrawer={toggleDrawer}
-      isAdmin={isAdmin}
-    />,
-    <FeedbackWidget key="feedbackWidget" />,
-  ];
-
   return (
     <>
       <div className={`app-page ${styles}`} id={id}>
@@ -88,7 +78,7 @@ const PageLayout = ({ id = "", children, pageTitle }: PageLayoutT) => {
               edge="start"
               color="inherit"
               aria-label="menu"
-              sx={{ marginRight: "24px" }}
+              sx={{ width: "160px" }}
             >
               {isTablet ? (
                 <MenuIcon onClick={toggleDrawer} fontSize="large" />
@@ -104,7 +94,7 @@ const PageLayout = ({ id = "", children, pageTitle }: PageLayoutT) => {
               )}
             </IconButton>
             {!isTablet && (
-              <Toolbar>
+              <Toolbar sx={{ flexGrow: "3", marginLeft: "20px" }}>
                 {user ? (
                   <>
                     <NavItem linkName="Notebooks" route={"/"} />
@@ -136,7 +126,15 @@ const PageLayout = ({ id = "", children, pageTitle }: PageLayoutT) => {
           {children}
         </Container>
       </div>
-      {drawers}
+      {isTablet && (
+        <MobileMenu
+          drawerOpen={drawerOpen}
+          toggleDrawer={toggleDrawer}
+          isAdmin={isAdmin}
+        />
+      )}
+
+      <FeedbackWidget />
     </>
   );
 };

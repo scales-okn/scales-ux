@@ -32,6 +32,20 @@ const LogoutMenu = () => {
       cursor: pointer;
     }
 
+    .avatar {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      height: 36px;
+      width: 36px;
+      border-radius: 50%;
+      background-color: var(--dark-green);
+      color: var(--main-purple);
+      text-decoration: none;
+      cursor: pointer;
+      color: white;
+    }
+
     .item {
       min-width: 180px;
       padding: 1rem;
