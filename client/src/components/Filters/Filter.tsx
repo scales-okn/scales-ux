@@ -150,7 +150,10 @@ const Filter = ({ panelId, filter }: Props) => {
             <Switch
               checked={filter?.value === "true"}
               onChange={(event) => {
-                setFilter({ ...filter, value: event.target.checked ? "true" : "false" });
+                setFilter({
+                  ...filter,
+                  value: event.target.checked ? "true" : "false",
+                });
               }}
               name={filterOptions?.nicename}
               color="primary"
@@ -191,7 +194,13 @@ const Filter = ({ panelId, filter }: Props) => {
                 )}
                 disableClearable
                 onInputChange={(_, value) => {
-                  const minChar = ["case_type", "state_abbrev", "circuit_abbrev"].includes(filter.type) ? 0 : 2;
+                  const minChar = [
+                    "case_type",
+                    "state_abbrev",
+                    "circuit_abbrev",
+                  ].includes(filter.type)
+                    ? 0
+                    : 2;
 
                   if (value.length > minChar) {
                     debouncedSearch(value);

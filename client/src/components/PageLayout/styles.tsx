@@ -1,53 +1,50 @@
-import styled from "styled-components";
+import { css } from "@emotion/css";
 
-export const NavItem = styled.div`
-  color: white;
-  text-transform: uppercase;
-  letter-spacing: 0.09em;
-  text-transform: uppercase;
-  font-family: "Esteban", Serif;
-  margin-right: 50px;
-  cursor: pointer;
-  &:hover {
-    color: #e2d8f2;
+export const styles = css`
+  .logo {
+    max-height: 75px;
   }
-  &:after {
-    content: "";
-    display: block;
-    height: ${(props) => (props.active ? "2px" : "0")};
-    width: calc(100% - 2px);
-    border-radius: 2px;
+
+  .divider {
+    height: 1px;
+    width: 100%;
     background: white;
-    transition: 0.2s all;
+    margin: 20px 0;
+  }
+
+  .feedback-widget {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: fixed;
+    bottom: 16px;
+    left: 16px;
+    height: 32px;
+    width: 72px;
+    background: var(--main-purple-light);
+    color: white;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 12px;
+    transition: 0.2s ease-in-out;
+    opacity: 0.8;
+
     &:hover {
-      color: #e2d8f2;
+      opacity: 1;
     }
   }
-`;
 
-export const Logo = styled.img`
-  max-height: 75px;
-`;
-
-export const Divider = styled.div`
-  height: 1px;
-  width: 100%;
-  background: white;
-  margin: 24px 0;
-`;
-
-export const FeedbackWidget = styled.button`
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  position: fixed;
-  bottom: 16px;
-  left: 16px;
-  height: 32px;
-  width: 72px;
-  background: var(--main-purple-light);
-  color: white;
-  border-radius: 12px;
-  font-size: 11px;
-  cursor: pointer;
+  .avatar {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 36px;
+    width: 36px;
+    border-radius: 50%;
+    background-color: var(--dark-green);
+    color: var(--main-purple);
+    text-decoration: none;
+    cursor: pointer;
+    color: white;
+  }
 `;

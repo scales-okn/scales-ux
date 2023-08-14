@@ -10,11 +10,12 @@ type DatasetProps = {
 };
 
 const Dataset: FunctionComponent<DatasetProps> = ({ panelId }) => {
-  // getPanelResults, panel
   const { updatePanel, setPanelCollapsed } = usePanel(panelId);
   const { rings, loadingRings } = useRings();
   const [selectedRing, setSelectedRing] = useState(null);
-  const { ring, loadingRingInfo, info, getRingInfo } = useRing(selectedRing?.id);
+  const { ring, loadingRingInfo, info, getRingInfo } = useRing(
+    selectedRing?.id,
+  );
 
   useEffect(() => {
     const defaultRing = rings.reduce((prev, curr) => {
@@ -37,7 +38,11 @@ const Dataset: FunctionComponent<DatasetProps> = ({ panelId }) => {
           <Col className="d-flex justify-content-center">
             <span className="text-muted pt-2 fs-6">Select a dataset:</span>
             <Dropdown className="dataset-dropdown">
-              <Dropdown.Toggle variant="link" id="dropdown-dataset" className="pt-2">
+              <Dropdown.Toggle
+                variant="link"
+                id="dropdown-dataset"
+                className="pt-2"
+              >
                 {selectedRing ? selectedRing.name : "None"}
               </Dropdown.Toggle>
 
@@ -50,7 +55,9 @@ const Dataset: FunctionComponent<DatasetProps> = ({ panelId }) => {
                     }}
                   >
                     <h6>{ring.name}</h6>
-                    {ring.description && <p className="text-wrap">{ring.description}</p>}
+                    {ring.description && (
+                      <p className="text-wrap">{ring.description}</p>
+                    )}
                   </Dropdown.Item>
                 ))}
               </Dropdown.Menu>

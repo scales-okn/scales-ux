@@ -1,4 +1,4 @@
-import React, { FunctionComponent, useState, useEffect } from "react";
+import React, { FunctionComponent, useState, useEffect, useRef } from "react";
 import { Col, Container, Row, Button, Form } from "react-bootstrap";
 import Loader from "components/Loader";
 import Panels from "components/Panels";
@@ -22,6 +22,7 @@ const Notebook: FunctionComponent = () => {
   const { getRings } = useRings();
   const { notebook, loadingNotebook, savingNotebook, deletingNotebook } =
     useSelector(notebookSelector);
+  const notebookloaded = useRef(false);
 
   const location = useLocation();
   const isNewNotebook = location.pathname.includes("new");
@@ -33,7 +34,6 @@ const Notebook: FunctionComponent = () => {
 
   const [confirmVisible, setConfirmVisible] = useState(false);
   const [notebookTitle, setNotebookTitle] = useState(defaultTitle());
-  const [notebookTitleIsValid, setNotebookTitleIsValid] = useState(true);
   const dispatch = useDispatch();
   const history = useHistory();
   const { panels, updatePanel } = usePanels(notebook?.id);
@@ -45,17 +45,15 @@ const Notebook: FunctionComponent = () => {
 
   useEffectOnce(() => {
     getRings();
+    if (notebook && !notebookloaded.current) {
+      dispatch(getPanels(notebook.id));
+      notebookloaded.current = true;
+    }
 
     return () => {
       setNotebookTitle("");
     };
   });
-
-  useEffect(() => {
-    if (notebook) {
-      dispatch(getPanels(notebook.id));
-    }
-  }, [notebook]); // eslint-disable-line react-hooks/exhaustive-deps
 
   return (
     <Loader animation="border" isVisible={loadingNotebook}>
@@ -67,7 +65,7 @@ const Notebook: FunctionComponent = () => {
                 size="lg"
                 type="text"
                 placeholder="Notebook Title"
-                isInvalid={!notebookTitleIsValid}
+                isInvalid={!notebookTitle && !isNewNotebook}
                 onChange={(event) => {
                   setNotebookTitle(event.target.value);
                 }}
@@ -83,14 +81,18 @@ const Notebook: FunctionComponent = () => {
                     className="text-white float-end"
                     variant="success"
                     onClick={() => {
-                      dispatch(
-                        updateNotebook(notebook?.id, { title: notebookTitle }),
-                      );
-                      panels.forEach((panel) => {
-                        updatePanel(panel.id, panel);
-                      });
+                      if (notebookTitle) {
+                        dispatch(
+                          updateNotebook(notebook?.id, {
+                            title: notebookTitle,
+                          }),
+                        );
+                        panels.forEach((panel) => {
+                          updatePanel(panel.id, panel);
+                        });
+                      }
                     }}
-                    disabled={savingNotebook}
+                    disabled={savingNotebook || !notebookTitle}
                   >
                     {savingNotebook ? "Loading…" : "Save"}
                   </Button>
@@ -111,14 +113,11 @@ const Notebook: FunctionComponent = () => {
                   className="text-white float-end"
                   variant="primary"
                   onClick={() => {
-                    if (!notebookTitle) {
-                      setNotebookTitleIsValid(false);
-                    } else {
-                      setNotebookTitleIsValid(true);
+                    if (notebookTitle) {
                       dispatch(createNotebook({ title: notebookTitle }));
                     }
                   }}
-                  disabled={savingNotebook}
+                  disabled={savingNotebook || !notebookTitle}
                   style={{
                     background: "var(--sea-green)",
                     border: "none",

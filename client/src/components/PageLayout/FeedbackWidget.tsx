@@ -3,7 +3,7 @@ import { useFormik } from "formik";
 import { useAuthHeader } from "store/auth";
 import { useNotify } from "components/Notifications";
 import * as yup from "yup";
-import * as S from "./styles";
+import { styles } from "./styles";
 import { Modal, Button, Form } from "react-bootstrap";
 
 import "./PageLayout.scss";
@@ -59,16 +59,36 @@ const FeedbackWidget = () => {
   });
 
   return (
-    <>
-      <S.FeedbackWidget onClick={() => setFeedbackModalOpen(true)}>Feedback</S.FeedbackWidget>
-      <Modal show={feedbackModalOpen} onHide={() => setFeedbackModalOpen(false)}>
+    <div className={styles}>
+      <div
+        className="feedback-widget"
+        onClick={() => setFeedbackModalOpen(true)}
+      >
+        Feedback
+      </div>
+      <Modal
+        show={feedbackModalOpen}
+        onHide={() => setFeedbackModalOpen(false)}
+      >
         <Form noValidate onSubmit={formik.handleSubmit}>
-          <Modal.Header closeButton style={{ background: "var(--main-purple-light)" }}>
-            <Modal.Title style={{ color: "white" }}>Let Us Know What You Think!</Modal.Title>
+          <Modal.Header
+            closeButton
+            style={{ background: "var(--main-purple-light)" }}
+          >
+            <Modal.Title style={{ color: "white" }}>
+              Let Us Know What You Think!
+            </Modal.Title>
           </Modal.Header>
           <Modal.Body>
             <Form.Group className="mb-3" controlId="formBasicEmail">
-              <Form.Control as="textarea" name="body" aria-label="With textarea" style={{ minHeight: "250px" }} onChange={formik.handleChange} isInvalid={formik.touched.body && Boolean(formik.errors?.body)} />
+              <Form.Control
+                as="textarea"
+                name="body"
+                aria-label="With textarea"
+                style={{ minHeight: "250px" }}
+                onChange={formik.handleChange}
+                isInvalid={formik.touched.body && Boolean(formik.errors?.body)}
+              />
             </Form.Group>
 
             <div
@@ -96,7 +116,7 @@ const FeedbackWidget = () => {
           </Modal.Footer>
         </Form>
       </Modal>
-    </>
+    </div>
   );
 };
 

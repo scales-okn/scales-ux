@@ -1,202 +1,142 @@
-import React, { FunctionComponent, ReactNode, useState } from "react";
-import { useSelector, useDispatch } from "react-redux";
-import { useLocation } from "react-router-dom";
+import React, { ReactNode, useState } from "react";
+import { useSelector } from "react-redux";
+import { Link } from "react-router-dom";
 
-import { userSelector, logout } from "../../store/auth";
+import { userSelector } from "../../store/auth";
 import useWindowSize from "hooks/useWindowSize";
 
-import * as S from "./styles";
-import Drawer from "@mui/material/Drawer";
+import AppBar from "@mui/material/AppBar";
 import Box from "@mui/material/Box";
+import Toolbar from "@mui/material/Toolbar";
+import IconButton from "@mui/material/IconButton";
+import MenuIcon from "@mui/icons-material/Menu";
 import Container from "@mui/material/Container";
 
-import { Navbar, Nav, Dropdown } from "react-bootstrap";
 import FeedbackWidget from "./FeedbackWidget";
-import { LinkContainer } from "react-router-bootstrap";
+import MobileMenu from "./MobileMenu";
+import NavItem from "./NavItem";
+import Logout from "./LogoutMenu";
+import { styles } from "./styles";
 
 import "./PageLayout.scss";
 
-import Avatar from "react-avatar";
-
-type Props = {
+type PageLayoutT = {
   pageTitle?: string;
   id?: string;
   children: ReactNode;
 };
 
-const PageLayout: FunctionComponent<Props> = (props) => {
-  const { id = "", children, pageTitle } = props;
+const PageLayout = ({ id = "", children, pageTitle }: PageLayoutT) => {
   const [drawerOpen, setDrawerOpen] = useState(false);
+
+  const toggleDrawer = (event: React.KeyboardEvent | React.MouseEvent) => {
+    if (
+      event &&
+      event.type === "keydown" &&
+      ((event as React.KeyboardEvent).key === "Tab" ||
+        (event as React.KeyboardEvent).key === "Shift")
+    ) {
+      return;
+    }
+
+    setDrawerOpen((prev) => !prev);
+
+    return null;
+  };
+
   const user = useSelector(userSelector);
-  const dispatch = useDispatch();
-  const location = useLocation();
-  const { pathname } = location;
   const isAdmin = user?.role === "admin";
 
   const { width } = useWindowSize();
-  const isTablet = width < 992;
+  const isTablet = width < 900;
 
-  const brand = isTablet ? (
-    <S.Logo
-      src="/ScalesLogoSmall.png"
-      style={{ width: 60 }}
-      onClick={() => setDrawerOpen(true)}
-    />
-  ) : (
-    <S.Logo src="/ScalesLogo.png" style={{ width: 247 }} />
-  );
-
-  const list = (
-    <Box
-      role="presentation"
-      sx={{
-        width: "200px",
-        height: "100%",
-        background: "var(--main-purple)",
-        padding: "40px 20px",
-      }}
-      onClick={() => setDrawerOpen(false)}
-      onKeyDown={() => setDrawerOpen(false)}
-    >
-      {user && (
-        <>
-          <LinkContainer to="/">
-            <S.NavItem active={pathname === "/"}>Notebooks</S.NavItem>
-          </LinkContainer>
-          <S.Divider />
-          {isAdmin && (
-            <>
-              <LinkContainer to="/rings">
-                <S.NavItem active={pathname === "/rings"}>Rings</S.NavItem>
-              </LinkContainer>
-              <S.Divider />
-              <LinkContainer to="/users">
-                <S.NavItem active={pathname === "/users"}>Users</S.NavItem>
-              </LinkContainer>
-              <S.Divider />
-              <LinkContainer to="/feedback">
-                <S.NavItem active={pathname === "/feedback"}>
-                  Feedback
-                </S.NavItem>
-              </LinkContainer>
-            </>
-          )}
-        </>
-      )}
-    </Box>
-  );
+  const drawers = [
+    <MobileMenu
+      key="mobileMenu"
+      drawerOpen={drawerOpen}
+      toggleDrawer={toggleDrawer}
+      isAdmin={isAdmin}
+    />,
+    <FeedbackWidget key="feedbackWidget" />,
+  ];
 
   return (
     <>
-      <div className="app-page" id={id}>
-        <Drawer open={drawerOpen} onClose={() => setDrawerOpen(false)}>
-          {list}
-        </Drawer>
-        <Navbar
-          style={{
-            backgroundColor: "var(--main-purple)",
-            maxHeight: "80px",
+      <div className={`app-page ${styles}`} id={id}>
+        <Box
+          sx={{
+            maxHeight: "85px",
             position: "fixed",
             top: 0,
             width: "100%",
             zIndex: "1000",
           }}
-          className="mb-4 py-3"
         >
-          <div
-            style={{
-              width: "100%",
+          <AppBar
+            position="static"
+            sx={{
+              backgroundColor: "var(--main-purple)",
               display: "flex",
+              flexDirection: "row",
               justifyContent: "space-between",
-              padding: "0 18px",
+              alignItems: "center",
+              padding: "0 24px",
             }}
           >
-            <Navbar.Brand
-              style={{
-                marginRight: isTablet ? "2rem" : "1rem",
-                cursor: "pointer",
-              }}
+            <IconButton
+              size="small"
+              edge="start"
+              color="inherit"
+              aria-label="menu"
+              sx={{ marginRight: "24px" }}
             >
-              <LinkContainer to="/">{brand}</LinkContainer>
-            </Navbar.Brand>
-            <Navbar.Toggle aria-controls="responsive-navbar-nav" />
-            <Navbar.Collapse
-              id="responsive-navbar-nav"
-              style={{ justifyContent: "flex-end" }}
-            >
-              {user ? (
-                <>
-                  {!isTablet && (
-                    <Nav className="me-auto">
-                      <LinkContainer to="/">
-                        <S.NavItem active={pathname === "/"}>
-                          Notebooks
-                        </S.NavItem>
-                      </LinkContainer>
-                      {isAdmin && (
-                        <>
-                          <LinkContainer to="/rings">
-                            <S.NavItem active={pathname === "/rings"}>
-                              Rings
-                            </S.NavItem>
-                          </LinkContainer>
-                          <LinkContainer to="/users">
-                            <S.NavItem active={pathname === "/users"}>
-                              Users
-                            </S.NavItem>
-                          </LinkContainer>
-                          <LinkContainer to="/feedback">
-                            <S.NavItem active={pathname === "/feedback"}>
-                              Feedback
-                            </S.NavItem>
-                          </LinkContainer>
-                        </>
-                      )}
-                    </Nav>
-                  )}
-                  <Nav>
-                    <Dropdown>
-                      <Dropdown.Toggle
-                        variant="link"
-                        className="profile-toggler"
-                      >
-                        <Avatar
-                          name={`${user?.firstName} ${user?.lastName}`}
-                          size="36"
-                          round={true}
-                          email={user?.email}
-                        />
-                      </Dropdown.Toggle>
-
-                      <Dropdown.Menu align="end" rootCloseEvent="mousedown">
-                        <Dropdown.Item
-                          style={{
-                            minWidth: "280px",
-                          }}
-                          onClick={() => dispatch(logout())}
-                        >
-                          Sign Out
-                        </Dropdown.Item>
-                      </Dropdown.Menu>
-                    </Dropdown>
-                  </Nav>
-                </>
+              {isTablet ? (
+                <MenuIcon onClick={toggleDrawer} fontSize="large" />
               ) : (
-                <LinkContainer to="/sign-in">
-                  <S.NavItem active={pathname === "/feedback"}>
-                    Sign In
-                  </S.NavItem>
-                </LinkContainer>
+                <Link to="/">
+                  <img
+                    alt="logo"
+                    className="logo"
+                    src={"/ScalesLogo.png"}
+                    height={50}
+                  />
+                </Link>
               )}
-            </Navbar.Collapse>
-          </div>
-        </Navbar>
+            </IconButton>
+            {!isTablet && (
+              <Toolbar>
+                {user ? (
+                  <>
+                    <NavItem linkName="Notebooks" route={"/"} />
+                    {isAdmin &&
+                      ["rings", "users", "feedback"].map((title) => {
+                        return (
+                          <NavItem
+                            key={title}
+                            linkName={title}
+                            route={`/${title}`}
+                          />
+                        );
+                      })}
+                  </>
+                ) : (
+                  <NavItem
+                    linkName="Sign In"
+                    route={"/sign-in"}
+                    disableUnderline
+                  />
+                )}
+              </Toolbar>
+            )}
+            <Logout />
+          </AppBar>
+        </Box>
         <Container id="main" className="main" sx={{ paddingTop: "80px" }}>
           {pageTitle && <h4>{pageTitle}</h4>}
           {children}
         </Container>
       </div>
-      <FeedbackWidget />
+      {drawers}
     </>
   );
 };

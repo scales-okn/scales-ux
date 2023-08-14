@@ -1,12 +1,12 @@
-import styled from "styled-components";
+import { css } from "@emotion/css";
 
-export const FilterContainer = styled.div`
+export const styles = css`
   background-color: white;
   padding: 24px;
   position: relative;
   display: flex;
-`;
 
-export const Filters = styled.div`
-  max-width: calc(100% - 200px);
+  .filters {
+    max-width: calc(100% - 200px);
+  }
 `;
