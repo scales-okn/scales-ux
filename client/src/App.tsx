@@ -80,7 +80,7 @@ const App = () => {
               path="/verify-email/:token"
               element={<EmailVerificationPage />}
             />
-            {/* <Route element={<Redirect to="/" />} /> */}
+            <Route path="*" element={<Navigate to="/" replace />} />
           </Routes>
         </BrowserRouter>
       </ErrorBoundary>
