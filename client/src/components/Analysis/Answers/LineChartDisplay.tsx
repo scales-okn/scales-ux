@@ -14,17 +14,14 @@ import numberToMonth from "helpers/numberToMonth";
 
 type LineChartDisplayT = {
   data: any;
-  xUnits: string;
-  yUnits: string;
   statement: any;
 };
 
-const LineChartDisplay = ({
-  data,
-  xUnits,
-  yUnits,
-  statement,
-}: LineChartDisplayT) => {
+const LineChartDisplay = ({ data, statement }: LineChartDisplayT) => {
+  const xUnits = data?.units?.results?.[0]?.[0];
+  let yUnits = data?.units?.results?.[1]?.[1];
+  if (yUnits === "Case" || yUnits === "Judge") yUnits += "s"; // unlike attributes, entities seem not to have nicenames
+
   // unsure why result?.[1] is returned twice, & how non-ints (eg dates) are handled, but ignoring for now & just adding carveout for str x-vals
   const formatLineData = (result) => {
     return {

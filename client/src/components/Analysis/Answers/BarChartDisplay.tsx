@@ -13,11 +13,13 @@ import {
 type AnswersT = {
   data: any;
   width: number;
-  yUnits: string;
-  xUnits: string;
 };
 
-const Answers = ({ data, width, xUnits, yUnits }: AnswersT) => {
+const Answers = ({ data, width }: AnswersT) => {
+  const xUnits = data?.units?.results?.[0]?.[0];
+  let yUnits = data?.units?.results?.[1]?.[1];
+  if (yUnits === "Case" || yUnits === "Judge") yUnits += "s"; // unlike attributes, entities seem not to have nicenames
+
   const formatBarData = (result) => {
     return {
       name: result?.[0] === -1 ? "criminal" : String(result?.[0]),
