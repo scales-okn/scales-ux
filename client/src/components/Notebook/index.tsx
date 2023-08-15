@@ -1,22 +1,26 @@
 import React, { FunctionComponent, useState, useRef } from "react";
 import { Col, Container, Row, Button, Form } from "react-bootstrap";
-import Loader from "components/Loader";
-import Panels from "components/Panels";
-import { useSelector } from "react-redux";
+
+import { useSelector, useDispatch } from "react-redux";
+import { useNavigate, useLocation } from "react-router-dom";
+
+import { useEffectOnce } from "react-use";
+import throttle from "lodash/throttle";
+
 import {
   notebookSelector,
   updateNotebook,
   deleteNotebook,
   createNotebook,
 } from "store/notebook";
-import { useDispatch } from "react-redux";
-import { useNavigate, useLocation } from "react-router-dom";
-import "./Notebook.scss";
 import { useRings } from "../../store/rings";
-import AddPanel from "../Panels/AddPanel";
 import { getPanels, usePanels } from "../../store/panels";
+import AddPanel from "../Panels/AddPanel";
 import ConfirmModal from "components/Modals/ConfirmModal";
-import { useEffectOnce } from "react-use";
+import Loader from "components/Loader";
+import Panels from "components/Panels";
+
+import "./Notebook.scss";
 
 const Notebook: FunctionComponent = () => {
   const { getRings } = useRings();

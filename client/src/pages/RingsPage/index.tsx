@@ -7,15 +7,16 @@ import { Row, Button } from "react-bootstrap";
 import dayjs from "dayjs";
 import { GridCellParams } from "@material-ui/data-grid";
 import { Link } from "react-router-dom";
+import { useEffectOnce } from "react-use";
 
 const RingsPage: React.FC = () => {
   const { getRings, rings, loadingRings } = useRings();
 
-  useEffect(() => {
+  useEffectOnce(() => {
     if (loadingRings) return null;
-
+    console.log("rings");
     getRings();
-  }, []); // eslint-disable-line react-hooks/exhaustive-deps
+  });
 
   return (
     <PageLayout>
@@ -61,13 +62,17 @@ const RingsPage: React.FC = () => {
                 field: "createdAt",
                 headerName: "Created at",
                 width: 200,
-                renderCell: (params: GridCellParams) => <>{dayjs(params.row.createdAt).format("M/D/YYYY")}</>,
+                renderCell: (params: GridCellParams) => (
+                  <>{dayjs(params.row.createdAt).format("M/D/YYYY")}</>
+                ),
               },
               {
                 field: "updatedAt",
                 headerName: "Updated at",
                 width: 200,
-                renderCell: (params: GridCellParams) => <>{dayjs(params.row.updatedAt).format("M/D/YYYY")}</>,
+                renderCell: (params: GridCellParams) => (
+                  <>{dayjs(params.row.updatedAt).format("M/D/YYYY")}</>
+                ),
               },
               {
                 field: "visibility",
