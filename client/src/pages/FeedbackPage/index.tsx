@@ -55,7 +55,9 @@ const AdminFeedbackPage: FunctionComponent = () => {
       minWidth: 200,
       flex: 1,
       renderCell: (params: GridCellParams) => {
-        return <div>{dayjs(params.row.createdAt).format("dddd, MMMM D YYYY")}</div>;
+        return (
+          <div>{dayjs(params.row.createdAt).format("dddd, MMMM D YYYY")}</div>
+        );
       },
     },
     {
@@ -70,12 +72,24 @@ const AdminFeedbackPage: FunctionComponent = () => {
 
   return (
     <PageLayout>
-      {feedbackDetail && <FeedbackDetailModal feedbackDetail={feedbackDetail.row.body} closeModal={setFeedbackDetail} />}
+      {feedbackDetail && (
+        <FeedbackDetailModal
+          feedbackDetail={feedbackDetail.row.body}
+          closeModal={setFeedbackDetail}
+        />
+      )}
       {!isAdmin ? (
         <NotAuthorized />
       ) : (
-        <Row style={{ height: 400, width: "100%" }}>
-          <DataGrid rows={rows} columns={columns} onRowClick={(row) => setFeedbackDetail(row)} pageSize={5} checkboxSelection={false} className="bg-white p-0" />
+        <Row style={{ height: 400, width: "100%", margin: "0 auto" }}>
+          <DataGrid
+            rows={rows}
+            columns={columns}
+            onRowClick={(row) => setFeedbackDetail(row)}
+            pageSize={5}
+            checkboxSelection={false}
+            className="bg-white p-0"
+          />
         </Row>
       )}
     </PageLayout>

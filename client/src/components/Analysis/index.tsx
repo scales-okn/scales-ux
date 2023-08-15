@@ -2,8 +2,7 @@
 import React, { useEffect, FunctionComponent, useState } from "react";
 import { usePanel } from "store/panels";
 import { Button, Col, Row, Card } from "react-bootstrap";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faPlus } from "@fortawesome/free-solid-svg-icons";
+import AddIcon from "@mui/icons-material/Add";
 import uniqid from "uniqid";
 // import { Satyrn } from "statement-mananger";
 import { Satyrn } from "models/Satyrn";
@@ -288,7 +287,7 @@ const Analysis: FunctionComponent<Props> = ({ panelId }) => {
             });
           }}
         >
-          <FontAwesomeIcon icon={faPlus} />
+          <AddIcon fontSize="medium" />
         </Button>
         Add Analysis
       </Card.Footer>

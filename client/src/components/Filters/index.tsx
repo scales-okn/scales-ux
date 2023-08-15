@@ -1,7 +1,6 @@
 import React, { useMemo } from "react";
 import { Button } from "react-bootstrap";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faPlus } from "@fortawesome/free-solid-svg-icons";
+import AddIcon from "@mui/icons-material/Add";
 import Filter from "./Filter";
 import uniqid from "uniqid";
 import { usePanel } from "../../store/panels";
@@ -41,7 +40,7 @@ const Filters = ({ panelId }: FiltersProps) => {
               ]);
             }}
           >
-            <FontAwesomeIcon icon={faPlus} />
+            <AddIcon fontSize="medium" />
           </Button>
           {!filters?.length && <>Add a filter</>}
           <Button

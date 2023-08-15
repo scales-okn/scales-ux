@@ -33,7 +33,7 @@ const RingsPage: React.FC = () => {
             Create Ring
           </Button>
         </Link>
-        <Row style={{ height: 400, width: "100%" }}>
+        <Row style={{ height: 400, width: "100%", margin: "0 auto" }}>
           <DataGrid
             rows={rings}
             columns={[

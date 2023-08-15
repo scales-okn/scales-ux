@@ -4,8 +4,6 @@ import { useParams } from "react-router-dom";
 // import { useNotify } from "../../components/Notifications";
 import { Container, Row, Col } from "react-bootstrap";
 import Loader from "components/Loader";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faBalanceScale } from "@fortawesome/free-solid-svg-icons";
 import renderHTML from "helpers/renderHTML";
 
 const EmailVerificationPage: FunctionComponent = () => {
@@ -41,7 +39,12 @@ const EmailVerificationPage: FunctionComponent = () => {
     <Container className="h-100">
       <Row className="h-100 justify-content-center align-items-center text-center">
         <Col md="9">
-          <FontAwesomeIcon icon={faBalanceScale} size="3x" className="mb-4" />
+          <img
+            src="https://scales-okn.org/wp-content/uploads/2021/02/PreLoader.png"
+            height="50px"
+            width="50px"
+            alt="scales-logo"
+          />
           <h1 className="h3 mb-5 fw-normal">Email Verification</h1>
           <Loader animation="border" isVisible={isLoading}>
             <p>{renderHTML(message)}</p>

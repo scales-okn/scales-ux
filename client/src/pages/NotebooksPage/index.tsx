@@ -6,8 +6,7 @@ import { DataGrid, GridCellParams } from "@material-ui/data-grid";
 import { Link } from "react-router-dom";
 import { Form, Row, Col, Button, InputGroup } from "react-bootstrap";
 import { useEffectOnce } from "react-use";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faSearch } from "@fortawesome/free-solid-svg-icons";
+import SearchIcon from "@mui/icons-material/Search";
 import dayjs from "dayjs";
 import { userSelector } from "../../store/auth";
 import { useSelector } from "react-redux";
@@ -149,7 +148,7 @@ const NotebooksPage: FunctionComponent = () => {
             <Col md>
               <InputGroup>
                 <InputGroup.Text className="bg-white">
-                  <FontAwesomeIcon icon={faSearch} className="text-muted" />
+                  <SearchIcon />
                 </InputGroup.Text>
                 <Form.Control
                   autoComplete="off"

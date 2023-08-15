@@ -2,8 +2,7 @@ import React, { useState } from "react";
 import { FormControl, InputGroup } from "react-bootstrap";
 import DateTimeRangePicker from "@wojtekmaj/react-datetimerange-picker";
 import FilterTypeDropDown from "./FitlerTypeDropDown";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faTimesCircle } from "@fortawesome/free-regular-svg-icons";
+import HighlightOffIcon from "@mui/icons-material/HighlightOff";
 import { debounce } from "lodash";
 import Autocomplete from "@mui/material/Autocomplete";
 import Switch from "@material-ui/core/Switch";
@@ -284,7 +283,7 @@ const Filter = ({ panelId, filter }: Props) => {
           className="cursor-pointer bg-transparent"
           onClick={handleClear}
         >
-          <FontAwesomeIcon icon={faTimesCircle} className="text-muted" />
+          <HighlightOffIcon />
         </InputGroup.Text>
       </InputGroup>
     </div>
