@@ -4,7 +4,6 @@ import React, {
   useEffect,
   useContext,
   useMemo,
-  useCallback,
 } from "react";
 import {
   Accordion,
@@ -15,7 +14,6 @@ import {
   AccordionContext,
   Card,
 } from "react-bootstrap";
-import { throttle } from "lodash";
 import { Link } from "react-router-dom";
 import { DataGrid } from "@material-ui/data-grid";
 import Filters from "../Filters";

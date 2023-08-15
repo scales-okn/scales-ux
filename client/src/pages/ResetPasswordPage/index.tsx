@@ -13,10 +13,6 @@ interface ResetPasswordFields {
   repassword: string;
 }
 
-interface ParamTypes {
-  token: string;
-}
-
 const ResetPasswordValidationSchema = yup.object({
   password: yup
     .string()

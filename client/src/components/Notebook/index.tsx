@@ -5,7 +5,6 @@ import { useSelector, useDispatch } from "react-redux";
 import { useNavigate, useLocation } from "react-router-dom";
 
 import { useEffectOnce } from "react-use";
-import throttle from "lodash/throttle";
 
 import {
   notebookSelector,

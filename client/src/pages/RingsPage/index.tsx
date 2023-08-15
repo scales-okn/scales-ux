@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React from "react";
 import PageLayout from "components/PageLayout";
 import Loader from "components/Loader";
 import { useRings } from "store/rings";
@@ -14,7 +14,6 @@ const RingsPage: React.FC = () => {
 
   useEffectOnce(() => {
     if (loadingRings) return null;
-    console.log("rings");
     getRings();
   });
 
