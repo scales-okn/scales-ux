@@ -104,6 +104,7 @@ const Panel: FunctionComponent<PanelProps> = ({ panelId }) => {
 
   useEffect(() => {
     if (!info || collapsed || loadingPanelResults) return;
+    // if (!info || collapsed) return;
     getPanelResults();
   }, [collapsed, info]); // eslint-disable-line react-hooks/exhaustive-deps
 

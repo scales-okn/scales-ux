@@ -1,4 +1,4 @@
-import React, { FunctionComponent, useState, useRef } from "react";
+import React, { FunctionComponent, useState } from "react";
 import { Col, Container, Row, Button, Form } from "react-bootstrap";
 
 import { useSelector, useDispatch } from "react-redux";
@@ -25,7 +25,6 @@ const Notebook: FunctionComponent = () => {
   const { getRings } = useRings();
   const { notebook, loadingNotebook, savingNotebook, deletingNotebook } =
     useSelector(notebookSelector);
-  const notebookloaded = useRef(false);
 
   const location = useLocation();
   const isNewNotebook = location.pathname.includes("new");
@@ -48,10 +47,7 @@ const Notebook: FunctionComponent = () => {
 
   useEffectOnce(() => {
     getRings();
-    if (notebook && !notebookloaded.current) {
-      dispatch(getPanels(notebook.id));
-      notebookloaded.current = true;
-    }
+    dispatch(getPanels(notebook.id));
 
     return () => {
       setNotebookTitle("");
