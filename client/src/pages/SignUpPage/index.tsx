@@ -107,7 +107,7 @@ const SignUpPage = () => {
                 style={{ color: "crimson", fontStyle: "italic" }}
               >
                 This Application is currently in beta development. Official
-                launch scheduled for September 2023.
+                launch scheduled for Fall 2023.
               </h6>
             )}
 
