@@ -5,7 +5,6 @@ import React, {
   useContext,
   useMemo,
 } from "react";
-import styled from "styled-components";
 import {
   Accordion,
   Col,
@@ -105,6 +104,7 @@ const Panel: FunctionComponent<PanelProps> = ({ panelId }) => {
 
   useEffect(() => {
     if (!info || collapsed || loadingPanelResults) return;
+    // if (!info || collapsed) return;
     getPanelResults();
   }, [collapsed, info]); // eslint-disable-line react-hooks/exhaustive-deps
 
@@ -113,32 +113,22 @@ const Panel: FunctionComponent<PanelProps> = ({ panelId }) => {
     id: uniqid(),
   }));
 
-  const DetailButton = styled(Button)`
-    color: white;
-    background: var(--main-purple);
-    border: none;
-    font-size: 12px;
-
-    &:hover {
-      background: var(--main-purple-light);
-      color: white;
-    }
-  `;
-
   const columns = useMemo(() => {
     const out =
-      info?.columns?.map((column) => ({
-        field: column.key,
-        headerName: column.nicename,
-        width: 200,
-        sortable: false,
-      })) || [];
+      info?.columns
+        ?.filter((c) => c.key !== "case_id")
+        ?.map((column) => ({
+          field: column.key,
+          headerName: column.nicename,
+          width: 200,
+          sortable: false,
+        })) || [];
 
     out.unshift({
       field: "button",
-      headerName: "Details",
+      headerName: "Docket ID",
       sortable: false,
-      width: 100,
+      width: 180,
       renderCell: (item) => {
         return (
           <Link
@@ -146,7 +136,7 @@ const Panel: FunctionComponent<PanelProps> = ({ panelId }) => {
             target="_blank"
             rel="noopener noreferrer"
           >
-            <DetailButton>Details</DetailButton>
+            {item.row.case_id}
           </Link>
         );
       },

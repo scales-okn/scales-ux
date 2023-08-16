@@ -1,28 +1,30 @@
-import React, { FunctionComponent, useState, useRef } from "react";
+import React, { FunctionComponent, useState } from "react";
 import { Col, Container, Row, Button, Form } from "react-bootstrap";
-import Loader from "components/Loader";
-import Panels from "components/Panels";
-import { useSelector } from "react-redux";
+
+import { useSelector, useDispatch } from "react-redux";
+import { useNavigate, useLocation } from "react-router-dom";
+
+import { useEffectOnce } from "react-use";
+
 import {
   notebookSelector,
   updateNotebook,
   deleteNotebook,
   createNotebook,
 } from "store/notebook";
-import { useDispatch } from "react-redux";
-import { useHistory, useLocation } from "react-router-dom";
-import "./Notebook.scss";
 import { useRings } from "../../store/rings";
-import AddPanel from "../Panels/AddPanel";
 import { getPanels, usePanels } from "../../store/panels";
+import AddPanel from "../Panels/AddPanel";
 import ConfirmModal from "components/Modals/ConfirmModal";
-import { useEffectOnce } from "react-use";
+import Loader from "components/Loader";
+import Panels from "components/Panels";
+
+import "./Notebook.scss";
 
 const Notebook: FunctionComponent = () => {
   const { getRings } = useRings();
   const { notebook, loadingNotebook, savingNotebook, deletingNotebook } =
     useSelector(notebookSelector);
-  const notebookloaded = useRef(false);
 
   const location = useLocation();
   const isNewNotebook = location.pathname.includes("new");
@@ -35,20 +37,17 @@ const Notebook: FunctionComponent = () => {
   const [confirmVisible, setConfirmVisible] = useState(false);
   const [notebookTitle, setNotebookTitle] = useState(defaultTitle());
   const dispatch = useDispatch();
-  const history = useHistory();
+  const navigate = useNavigate();
   const { panels, updatePanel } = usePanels(notebook?.id);
 
   const handleDeleteNotebook = () => {
     dispatch(deleteNotebook(notebook?.id));
-    history.push("/notebooks");
+    navigate("/notebooks");
   };
 
   useEffectOnce(() => {
     getRings();
-    if (notebook && !notebookloaded.current) {
-      dispatch(getPanels(notebook.id));
-      notebookloaded.current = true;
-    }
+    dispatch(getPanels(notebook.id));
 
     return () => {
       setNotebookTitle("");

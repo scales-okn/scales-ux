@@ -15,11 +15,14 @@ import getRandomColor from "helpers/getRandomColor";
 
 type AnswersT = {
   data: any;
-  xUnits: string;
-  yUnits: string;
 };
 
-const Answers = ({ data, xUnits, yUnits }: AnswersT) => {
+const Answers = ({ data }: AnswersT) => {
+  // for multiline, assumes the order of unit names is line label, x, y
+  const xUnits = data?.units?.results?.[1]?.[0];
+  let yUnits = data?.units?.results?.[2]?.[1];
+  if (yUnits === "Case" || yUnits === "Judge") yUnits += "s"; // unlike attributes, entities seem not to have nicenames
+
   const convertDate = (dateString: string) => {
     return dayjs(dateString, "YYYY/MM").toDate().valueOf();
   };

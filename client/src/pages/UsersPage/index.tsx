@@ -121,7 +121,14 @@ const AdminUsersPages: FunctionComponent = () => {
       {!isAdmin ? (
         <NotAuthorized />
       ) : (
-        <Row style={{ height: "70vh", minHeight: "300px", width: "100%" }}>
+        <Row
+          style={{
+            height: "70vh",
+            minHeight: "300px",
+            width: "100%",
+            margin: "0 auto",
+          }}
+        >
           <DataGrid
             rows={rows}
             columns={columns}

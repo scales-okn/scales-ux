@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { useHistory } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
 import { useFormik } from "formik";
 
@@ -17,14 +17,14 @@ interface UserSignUpFields extends UserSignInFields {
 }
 
 const SignUpPage = () => {
-  const history = useHistory();
   const [isLoading, setIsLoading] = useState(false);
   const [message, setMessage] = useState("");
+  const navigate = useNavigate();
 
   useEffect(() => {
     const handleKeyDown = (e) => {
       if (e.key === "Escape") {
-        history.push("/sign-in");
+        navigate("/sign-in");
       }
     };
 
@@ -60,8 +60,6 @@ const SignUpPage = () => {
           try {
             switch (response.code) {
               case 200: {
-                // notify(response.message, "success");
-                // history.push("/sign-in");
                 setMessage(response.message);
                 break;
               }
@@ -69,7 +67,6 @@ const SignUpPage = () => {
                 if (response.errors) {
                   setErrors(response.errors);
                 }
-                // notify(response.message, "error");
                 break;
               }
             }
@@ -96,13 +93,23 @@ const SignUpPage = () => {
                 ? "Registered Successfully"
                 : "Please register for beta access"}
             </h1>
-            <h6
-              className="h6 mb-5"
-              style={{ color: "crimson", fontStyle: "italic" }}
-            >
-              This Application is currently in beta development. Official launch
-              scheduled for fall 2023.
-            </h6>
+            {message ? (
+              <img
+                src="https://scales-okn.org/wp-content/uploads/2021/02/PreLoader.png"
+                height="50px"
+                width="50px"
+                alt="scales-logo"
+                style={{ marginBottom: "24px" }}
+              />
+            ) : (
+              <h6
+                className="h6 mb-5"
+                style={{ color: "crimson", fontStyle: "italic" }}
+              >
+                This Application is currently in beta development. Official
+                launch scheduled for Fall 2023.
+              </h6>
+            )}
 
             <Loader
               animation="border"

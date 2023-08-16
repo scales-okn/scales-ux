@@ -1,7 +1,12 @@
-import React, { FunctionComponent } from "react";
-import { BrowserRouter, Redirect, Route, Switch } from "react-router-dom";
+import React from "react";
+import { BrowserRouter, Route, Routes, Navigate } from "react-router-dom";
+
 import { Button } from "react-bootstrap";
 import { ErrorBoundary } from "react-error-boundary";
+
+import { authSelector } from "./store/auth";
+import { useSelector } from "react-redux";
+
 import DocumentPage from "pages/DocumentPage";
 import UsersPage from "pages/UsersPage";
 import FeedbackPage from "pages/FeedbackPage";
@@ -14,7 +19,6 @@ import EmailVerificationPage from "pages/EmailVerificationPage";
 import ForgotPasswordPage from "pages/ForgotPasswordPage";
 import ResetPasswordPage from "pages/ResetPasswordPage";
 import RingsPage from "pages/RingsPage";
-import ProtectedRoute from "components/ProtectedRoute";
 import Notifications from "components/Notifications";
 import Ring from "pages/RingsPage/Ring";
 
@@ -28,7 +32,16 @@ const ErrorFallback = ({ error, resetErrorBoundary }) => {
   );
 };
 
-const App: FunctionComponent = () => {
+const App = () => {
+  const { user } = useSelector(authSelector);
+  const requireAuth = (element) => {
+    if (!user) {
+      return <Navigate to="/sign-in" />;
+    }
+
+    return element;
+  };
+
   return (
     <div className="app">
       <ErrorBoundary
@@ -39,39 +52,36 @@ const App: FunctionComponent = () => {
       >
         <Notifications />
         <BrowserRouter>
-          <Switch>
-            <ProtectedRoute exact path="/" component={NotebooksPage} />
-            <ProtectedRoute exact path="/users" component={UsersPage} />
-            <ProtectedRoute exact path="/feedback" component={FeedbackPage} />
-            <ProtectedRoute exact path="/rings" component={RingsPage} />
-            <ProtectedRoute exact path="/profile" component={ProfilePage} />
-            {/* <ProtectedRoute exact path="/notebooks" component={NotebooksPage} /> */}
-            <ProtectedRoute exact path="/rings" component={NotebooksPage} />
-            <ProtectedRoute exact path="/rings/create" component={Ring} />
-            <ProtectedRoute exact path="/rings/:ringId" component={Ring} />
-            <ProtectedRoute
-              exact
+          <Routes>
+            <Route path="/" element={requireAuth(<NotebooksPage />)} />
+            <Route path="/users" element={requireAuth(<UsersPage />)} />
+            <Route path="/feedback" element={requireAuth(<FeedbackPage />)} />
+            <Route path="/rings" element={requireAuth(<RingsPage />)} />
+            <Route path="/profile" element={requireAuth(<ProfilePage />)} />
+            <Route path="/rings" element={requireAuth(<NotebooksPage />)} />
+            <Route path="/rings/create" element={requireAuth(<Ring />)} />
+            <Route path="/rings/:ringId" element={requireAuth(<Ring />)} />
+            <Route
               path="/notebooks/:notebookId"
-              component={NotebookPage}
+              element={requireAuth(<NotebookPage />)}
             />
-            <ProtectedRoute
-              exact
+            <Route
               path="/document/:ringId/:ringVersion/:entityType/:docId"
-              component={DocumentPage}
+              element={<DocumentPage />}
             />
-            <Route path="/sign-in" component={SignInPage} />
-            <Route path="/sign-up" component={SignUpPage} />
-            <Route path="/forgot-password" component={ForgotPasswordPage} />
+            <Route path="/sign-in" element={<SignInPage />} />
+            <Route path="/sign-up" element={<SignUpPage />} />
+            <Route path="/forgot-password" element={<ForgotPasswordPage />} />
             <Route
               path="/reset-password/:token"
-              component={ResetPasswordPage}
+              element={<ResetPasswordPage />}
             />
             <Route
               path="/verify-email/:token"
-              component={EmailVerificationPage}
+              element={<EmailVerificationPage />}
             />
-            <Route component={() => <Redirect to="/" />} />
-          </Switch>
+            <Route path="*" element={<Navigate to="/" replace />} />
+          </Routes>
         </BrowserRouter>
       </ErrorBoundary>
     </div>

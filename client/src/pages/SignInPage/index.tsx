@@ -2,7 +2,7 @@ import React, { FunctionComponent, useEffect, useState } from "react";
 
 import * as yup from "yup";
 import { Button, Col, Container, Form, Row } from "react-bootstrap";
-import { useHistory } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { authSelector, login } from "store/auth";
 import { useDispatch, useSelector } from "react-redux";
 
@@ -23,7 +23,7 @@ export const UserSignInValidationSchema = yup.object({
 });
 
 const SignInPage: FunctionComponent = () => {
-  const history = useHistory();
+  const navigate = useNavigate();
   const { user, errors } = useSelector(authSelector);
   // const { loading, user, hasErrors, errors } = useSelector(authSelector);
   const dispatch = useDispatch();
@@ -31,9 +31,9 @@ const SignInPage: FunctionComponent = () => {
 
   useEffect(() => {
     if (user) {
-      history.push("/");
+      navigate("/");
     }
-  }, [user, history]);
+  }, [user, navigate]);
 
   const formik = useFormik({
     initialValues: {

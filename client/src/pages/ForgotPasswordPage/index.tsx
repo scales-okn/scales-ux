@@ -1,5 +1,5 @@
 import React, { FunctionComponent } from "react";
-import { useHistory } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { useFormik } from "formik";
 import * as yup from "yup";
 
@@ -12,11 +12,14 @@ interface ForgotPasswordFields {
 }
 
 const ForgotPasswordValidationSchema = yup.object({
-  email: yup.string().email("Enter a valid email").required("Email is required"),
+  email: yup
+    .string()
+    .email("Enter a valid email")
+    .required("Email is required"),
 });
 
 const ForgotPassword: FunctionComponent = () => {
-  const history = useHistory();
+  const navigate = useNavigate();
   const { notify } = useNotify();
 
   const formik = useFormik({
@@ -38,7 +41,7 @@ const ForgotPassword: FunctionComponent = () => {
             switch (response.code) {
               case 200: {
                 notify(response.message, "success");
-                history.push("/sign-in");
+                navigate("/sign-in");
                 break;
               }
               default: {
@@ -64,7 +67,16 @@ const ForgotPassword: FunctionComponent = () => {
             <Form noValidate onSubmit={formik.handleSubmit}>
               <h1 className="h3 mb-5 fw-normal">Forgot Password?</h1>
               <div className="form-floating mb-3">
-                <Form.Control type="email" name="email" placeholder="name@example.com" value={formik.values.email} onChange={formik.handleChange} isInvalid={formik.touched.email && Boolean(formik.errors?.email)} />
+                <Form.Control
+                  type="email"
+                  name="email"
+                  placeholder="name@example.com"
+                  value={formik.values.email}
+                  onChange={formik.handleChange}
+                  isInvalid={
+                    formik.touched.email && Boolean(formik.errors?.email)
+                  }
+                />
                 <Form.Label>Email address</Form.Label>
               </div>
 
@@ -82,7 +94,11 @@ const ForgotPassword: FunctionComponent = () => {
               </Button>
               <Row className="mb-5">
                 <Col className="text-end">
-                  <a href="/sign-in" className="small" style={{ color: "var(--details-blue)" }}>
+                  <a
+                    href="/sign-in"
+                    className="small"
+                    style={{ color: "var(--details-blue)" }}
+                  >
                     Already have an account? Sign in
                   </a>
                 </Col>

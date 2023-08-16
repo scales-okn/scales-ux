@@ -1,0 +1,19 @@
+# Bytecode files
+__pycache__/
+*.pyc
+
+# Virtual environment
+venv/
+.env/
+
+# pytest cache
+.pytest_cache/
+
+# IDE-specific (for PyCharm and VS Code, adjust as needed for your setup)
+.idea/
+.vscode/
+
+# Logs
+*.log
+
+.env

@@ -6,7 +6,7 @@ import * as yup from "yup";
 import { Form, Button, Row, Col } from "react-bootstrap";
 import { useAuthHeader, useUser } from "store/auth";
 import { useNotify } from "components/Notifications";
-import { useHistory, useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { useRing } from "store/rings";
 import ConfirmModal from "components/Modals/ConfirmModal";
 import { JsonEditor as Editor } from "jsoneditor-react";
@@ -23,7 +23,7 @@ const Ring: React.FC = () => {
   const authHeader = useAuthHeader();
   const user = useUser();
   const { notify } = useNotify();
-  const history = useHistory();
+  const navigate = useNavigate();
 
   const [confirmVisible, setConfirmVisible] = useState(false);
 
@@ -65,7 +65,7 @@ const Ring: React.FC = () => {
           try {
             if (response?.code === 200) {
               notify(response.message, "success");
-              history.push("/rings");
+              navigate("/rings");
             }
           } catch (error) {
             console.warn(error); // eslint-disable-line no-console
@@ -92,7 +92,7 @@ const Ring: React.FC = () => {
           switch (response?.code) {
             case 200:
               notify(response.message, "success");
-              history.push("/rings");
+              navigate("/rings");
               break;
             default:
               notify(response.message, "error");

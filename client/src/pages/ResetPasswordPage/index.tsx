@@ -1,5 +1,5 @@
 import React, { FunctionComponent } from "react";
-import { useHistory, useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { useFormik } from "formik";
 import * as yup from "yup";
 
@@ -11,10 +11,6 @@ import PageLayout from "../../components/PageLayout";
 interface ResetPasswordFields {
   password: string;
   repassword: string;
-}
-
-interface ParamTypes {
-  token: string;
 }
 
 const ResetPasswordValidationSchema = yup.object({
@@ -31,9 +27,9 @@ const ResetPasswordValidationSchema = yup.object({
 });
 
 const ResetPassword: FunctionComponent = () => {
-  const history = useHistory();
+  const navigate = useNavigate();
   const { notify } = useNotify();
-  const { token } = useParams<ParamTypes>();
+  const { token } = useParams();
 
   const formik = useFormik({
     initialValues: {
@@ -55,7 +51,7 @@ const ResetPassword: FunctionComponent = () => {
             switch (response.code) {
               case 200: {
                 notify(response.message, "success");
-                history.push("/sign-in");
+                navigate("/sign-in");
                 break;
               }
               default: {

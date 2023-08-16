@@ -1,22 +1,25 @@
 // @ts-nocheck
 import React, { useEffect, FunctionComponent, useState } from "react";
+import { useSelector } from "react-redux";
+
+import { authorizationHeader } from "utils";
+import { authSelector } from "store/auth";
 import { usePanel } from "store/panels";
+import { useRing } from "../../store/rings";
+
 import { Button, Col, Row, Card } from "react-bootstrap";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faPlus } from "@fortawesome/free-solid-svg-icons";
+import AddIcon from "@mui/icons-material/Add";
 import uniqid from "uniqid";
+import _ from "lodash";
 // import { Satyrn } from "statement-mananger";
 import { Satyrn } from "models/Satyrn";
 import { useNotify } from "../Notifications";
-import "./style.scss";
-import { useRing } from "../../store/rings";
+
 import Answers from "./Answers";
 import Parameters from "./Parameters";
 import Statements from "./Statements";
-import _ from "lodash";
-import { useSelector } from "react-redux";
-import { authorizationHeader } from "utils";
-import { authSelector } from "store/auth";
+
+import "./style.scss";
 
 type Props = {
   panelId: string;
@@ -288,7 +291,7 @@ const Analysis: FunctionComponent<Props> = ({ panelId }) => {
             });
           }}
         >
-          <FontAwesomeIcon icon={faPlus} />
+          <AddIcon fontSize="medium" />
         </Button>
         Add Analysis
       </Card.Footer>
