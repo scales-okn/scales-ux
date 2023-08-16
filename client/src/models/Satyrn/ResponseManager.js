@@ -56,10 +56,10 @@ class ResponseManager {
 
     // also, append the results if there won't be any further info...
     // this assumes only one result at a time -- will have to expand in future iterations
-    if (results.results.length === 0) {
+    if (results.results?.length === 0) {
       desc += ` couldn't be generated.`;
     } else if (
-      results.results.length === 1 &&
+      results.results?.length === 1 &&
       results.results[0]?.length === 1
     ) {
       const fresult = isNaN(Number(results.results[0]))
