@@ -1,0 +1,37 @@
+name: CI/CD
+
+on:
+  push:
+    branches: [develop]
+    paths:
+      - 'client/**'
+  # allows you to manually execute this pipeline from the Actions tab.
+  workflow_dispatch:
+
+jobs:
+    # Build react app
+    build:
+        runs-on: ubuntu-latest
+        defaults:
+          run:
+            working-directory: ./client
+        steps:
+            - uses: actions/checkout@v2
+            - name: Setup Node
+              uses: actions/setup-node@v2
+              with:
+                  node-version: 18.x
+            - name: Install dependencies
+              run: npm install --force
+            - name: Build
+              run: npm run build
+              env:
+                CI: false # this is needed to prevent the react build from failing
+            - name: Create the .ssh directory
+              run: mkdir ~/.ssh && chmod 700 ~/.ssh
+            - name: Install private key
+              run: echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/id_rsa && chmod 600 ~/.ssh/id_rsa
+            - name: Add host to known hosts
+              run: echo "${{ secrets.SSH_KNOWN_QA_HOSTS }}" > ~/.ssh/known_hosts
+            - name: SCP files to server
+              run: scp -r ./build/ root@${{ secrets.QA_HOST }}:/var/www/html/
