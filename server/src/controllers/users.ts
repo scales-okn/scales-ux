@@ -253,19 +253,15 @@ export const verifyEmail = async (req: Request, res: Response) => {
         emailIsVerified: true,
       });
       if (updated) {
-        return res.send_ok(
-          `Your account has been approved and you can now access Satyrn! You can sign in <a href="${process.env.UX_CLIENT_MAILER_URL}/sign-in">here</a>.`
-        );
+        return res.send_ok("Email verified successfully!");
       }
     } else {
-      return res.send_badRequest(
-        "Invalid email verification code, or email is already verified."
-      );
+      return res.send_badRequest("Email verification failed!");
     }
   } catch (error) {
     console.warn(error); // eslint-disable-line no-console
 
-    return res.send_internalServerError("Failed to verify your email!");
+    return res.send_internalServerError("Email verification failed!");
   }
 };
 
