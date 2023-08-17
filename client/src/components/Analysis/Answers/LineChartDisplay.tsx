@@ -15,9 +15,16 @@ import numberToMonth from "helpers/numberToMonth";
 type LineChartDisplayT = {
   data: any;
   statement: any;
+  containerWidth: number;
+  chartMargins: Record<string, number>;
 };
 
-const LineChartDisplay = ({ data, statement }: LineChartDisplayT) => {
+const LineChartDisplay = ({
+  data,
+  statement,
+  chartMargins,
+  containerWidth,
+}: LineChartDisplayT) => {
   const xUnits = data?.units?.results?.[0]?.[0];
   let yUnits = data?.units?.results?.[1]?.[1];
   if (yUnits === "Case" || yUnits === "Judge") yUnits += "s"; // unlike attributes, entities seem not to have nicenames
@@ -58,12 +65,18 @@ const LineChartDisplay = ({ data, statement }: LineChartDisplayT) => {
     return null;
   };
 
+  const chartWidth = Math.max(
+    containerWidth,
+    containerWidth * (data.results.length / 15),
+  );
+
   return (
-    <ResponsiveContainer width="100%" height="80%">
+    <ResponsiveContainer width={chartWidth} height="80%">
       <LineChart
         data={data.results.map((result) => {
           return formatLineData(result);
         })}
+        margin={chartMargins}
       >
         <XAxis height={80} scale="auto" dataKey={xUnits}>
           <Label

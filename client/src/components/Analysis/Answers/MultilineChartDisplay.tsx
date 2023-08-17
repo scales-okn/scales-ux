@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import React, { memo } from "react";
+import React, { memo, useMemo } from "react";
 import {
   Label,
   XAxis,
@@ -15,9 +15,11 @@ import getRandomColor from "helpers/getRandomColor";
 
 type AnswersT = {
   data: any;
+  containerWidth: number;
+  chartMargins: Record<string, number>;
 };
 
-const Answers = ({ data }: AnswersT) => {
+const Answers = ({ data, chartMargins, containerWidth }: AnswersT) => {
   // for multiline, assumes the order of unit names is line label, x, y
   const xUnits = data?.units?.results?.[1]?.[0];
   let yUnits = data?.units?.results?.[2]?.[1];
@@ -40,14 +42,14 @@ const Answers = ({ data }: AnswersT) => {
   };
 
   const multiLineTooltip = ({ active, payload, label }) => {
-    // TODO: reimplement this
-    // data.results?.[0]?.series?.[0][0]?.includes("/")
-    //   ? dayjs(value).format("M/YYYY")
-    //   : value;
+    const tooltipHeader = data.results?.[0]?.series?.[0][0]?.includes("/")
+      ? dayjs(label).format("M/YYYY")
+      : label;
+
     if (active && payload && payload.length) {
       return (
         <div className="analysis-tooltip">
-          <p className="header">{label}</p>
+          <p className="header">{tooltipHeader}</p>
           <div className="multiBox">
             {payload.map((pl) => {
               return (
@@ -66,10 +68,41 @@ const Answers = ({ data }: AnswersT) => {
     return null;
   };
 
+  const stringIsNumber = (str) => isFinite(+str);
+
+  const xLabels = useMemo(() => {
+    const allValues = data.results.reduce((acc: any[], result: any) => {
+      const values = result.series.map((series: any) => {
+        return series[0].toString();
+      });
+      return acc.concat(values);
+    }, []);
+
+    const uniqueValues = [...new Set(allValues)];
+
+    if (stringIsNumber(uniqueValues[0])) {
+      return uniqueValues.sort();
+    } else {
+      return uniqueValues;
+    }
+  }, [data.results]);
+
+  const domain = () => {
+    if (stringIsNumber(xLabels[0])) {
+      return [xLabels[0], xLabels[xLabels.length - 1]] as number[];
+    } else {
+      return null;
+    }
+  };
+
+  const chartWidth = Math.max(
+    containerWidth,
+    containerWidth * (xLabels.length / 20),
+  );
+
   return (
-    <ResponsiveContainer width="100%" height="80%">
-      <LineChart margin={{ top: 5, right: 20, left: 15, bottom: 5 }}>
-        {/* not sure why all these props are needed when plotting multiple lines despite not being needed above */}
+    <ResponsiveContainer width={chartWidth} height="80%">
+      <LineChart margin={chartMargins}>
         <XAxis
           height={80}
           scale="auto"
@@ -80,17 +113,14 @@ const Answers = ({ data }: AnswersT) => {
               ? "category"
               : "number"
           }
-          /* hack */ domain={
-            /^[a-zA-Z ]+$/.test(data.results?.[0]?.series?.[0][0])
-              ? undefined
-              : ["dataMin", "dataMax"]
-          }
-          /* hack */ allowDuplicatedCategory={false}
-          tickFormatter={(value) =>
-            data.results?.[0]?.series?.[0][0]?.includes("/") /* hack */
+          domain={domain()}
+          tickCount={xLabels.length}
+          allowDuplicatedCategory={false}
+          tickFormatter={(value) => {
+            return data.results?.[0]?.series?.[0][0]?.includes("/") /* hack */
               ? dayjs(value).format("M/YYYY")
-              : value
-          }
+              : value;
+          }}
         >
           <Label
             style={{

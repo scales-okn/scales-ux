@@ -24,7 +24,7 @@ const Answers = ({
   const { filters } = usePanel(panelId);
 
   const containerRef = useRef(null);
-  const { width } = useContainerDimensions(containerRef);
+  const { width: containerWidth } = useContainerDimensions(containerRef);
 
   const getAnswersDisplayType = (plan, results) => {
     if (isEmpty(plan) || isEmpty(results)) return null;
@@ -82,6 +82,13 @@ const Answers = ({
     );
   }, [data, plan, satyrn, statement, filters]); // eslint-disable-line react-hooks/exhaustive-deps
 
+  const chartMargins = {
+    top: 5,
+    right: 30,
+    left: 20,
+    bottom: 5,
+  };
+
   return (
     <div className="answers" ref={containerRef}>
       <Loader isVisible={loadingAnswers} animation="border">
@@ -93,19 +100,36 @@ const Answers = ({
             </div>
           )}
           {data && (
-            <Col lg="12" className="mt-5">
+            <Col
+              lg="12"
+              className="mt-5"
+              style={{ overflowX: "auto", overflowY: "visible" }}
+            >
               {data.length > 0 &&
                 data.results?.[0]?.length === 2 &&
                 answerType === "bar" && (
-                  <BarChartDisplay data={data} width={width} />
+                  <BarChartDisplay
+                    data={data}
+                    containerWidth={containerWidth}
+                    chartMargins={chartMargins}
+                  />
                 )}
 
               {answerType === "line" && (
-                <LineChartDisplay data={data} statement={statement} />
+                <LineChartDisplay
+                  data={data}
+                  statement={statement}
+                  containerWidth={containerWidth}
+                  chartMargins={chartMargins}
+                />
               )}
 
               {answerType === "multiline" && (
-                <MultilineChartDisplay data={data} />
+                <MultilineChartDisplay
+                  data={data}
+                  containerWidth={containerWidth}
+                  chartMargins={chartMargins}
+                />
               )}
             </Col>
           )}
