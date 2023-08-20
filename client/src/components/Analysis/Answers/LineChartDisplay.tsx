@@ -17,6 +17,7 @@ type LineChartDisplayT = {
   statement: any;
   containerWidth: number;
   chartMargins: Record<string, number>;
+  expanded: boolean;
 };
 
 const LineChartDisplay = ({
@@ -24,6 +25,7 @@ const LineChartDisplay = ({
   statement,
   chartMargins,
   containerWidth,
+  expanded,
 }: LineChartDisplayT) => {
   const xUnits = data?.units?.results?.[0]?.[0];
   let yUnits = data?.units?.results?.[1]?.[1];
@@ -70,8 +72,10 @@ const LineChartDisplay = ({
     containerWidth * (data.results.length / 15),
   );
 
+  const width = expanded ? chartWidth : containerWidth;
+
   return (
-    <ResponsiveContainer width={chartWidth} height="80%">
+    <ResponsiveContainer width={width - 40} height="80%">
       <LineChart
         data={data.results.map((result) => {
           return formatLineData(result);

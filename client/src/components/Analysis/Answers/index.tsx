@@ -5,6 +5,7 @@ import { usePanel } from "store/panels";
 import dayjs from "dayjs";
 import { isEmpty } from "lodash";
 import renderHTML from "helpers/renderHTML";
+import { Button } from "@mui/material";
 
 import useContainerDimensions from "hooks/useContainerDimensions";
 import MultilineChartDisplay from "./MultilineChartDisplay";
@@ -21,6 +22,8 @@ const Answers = ({
 }) => {
   const [answerType, setAnswerType] = useState("bar");
   const [answer, setAnswer] = useState(null);
+  const [expanded, setExpanded] = useState(true);
+
   const { filters } = usePanel(panelId);
 
   const containerRef = useRef(null);
@@ -30,6 +33,10 @@ const Answers = ({
     if (isEmpty(plan) || isEmpty(results)) return null;
     return satyrn.responseManager.pickVisType(plan, results);
   };
+
+  useEffect(() => {
+    setExpanded(true);
+  }, [answer]);
 
   useEffect(() => {
     if (!data || !statement || !plan || !satyrn) return;
@@ -89,53 +96,80 @@ const Answers = ({
     bottom: 5,
   };
 
+  const isBarChart =
+    data?.length > 0 &&
+    data?.results?.[0]?.length === 2 &&
+    answerType === "bar";
+  const isLineChart = data?.length > 0 && answerType === "line";
+  const isMultilineChart = data?.length > 0 && answerType === "multiline";
+
   return (
-    <div className="answers" ref={containerRef}>
-      <Loader isVisible={loadingAnswers} animation="border">
-        <>
-          {answer && (
-            <div className="mb-3 mt-4">
-              <i>Answer: </i>
-              {renderHTML(answer)}
-            </div>
-          )}
-          {data && (
-            <Col
-              lg="12"
-              className="mt-5"
-              style={{ overflowX: "auto", overflowY: "visible" }}
-            >
-              {data.length > 0 &&
-                data.results?.[0]?.length === 2 &&
-                answerType === "bar" && (
-                  <BarChartDisplay
+    <>
+      <div className="answers" ref={containerRef}>
+        <Loader isVisible={loadingAnswers} animation="border">
+          <>
+            {answer && (
+              <div className="mb-3 mt-4">
+                <i>Answer: </i>
+                {renderHTML(answer)}
+              </div>
+            )}
+            {data && (
+              <Col
+                lg="12"
+                className="mt-5"
+                style={{ overflowX: "auto", overflowY: "visible" }}
+              >
+                {data.length > 0 &&
+                  data.results?.[0]?.length === 2 &&
+                  answerType === "bar" && (
+                    <BarChartDisplay
+                      data={data}
+                      expanded={expanded}
+                      containerWidth={containerWidth}
+                      chartMargins={chartMargins}
+                    />
+                  )}
+
+                {isLineChart && (
+                  <LineChartDisplay
                     data={data}
+                    expanded={expanded}
+                    statement={statement}
                     containerWidth={containerWidth}
                     chartMargins={chartMargins}
                   />
                 )}
 
-              {answerType === "line" && (
-                <LineChartDisplay
-                  data={data}
-                  statement={statement}
-                  containerWidth={containerWidth}
-                  chartMargins={chartMargins}
-                />
-              )}
+                {isMultilineChart && (
+                  <MultilineChartDisplay
+                    data={data}
+                    expanded={expanded}
+                    containerWidth={containerWidth}
+                    chartMargins={chartMargins}
+                  />
+                )}
+              </Col>
+            )}
+          </>
+        </Loader>
+      </div>
+      {(isBarChart || isLineChart || isMultilineChart) && (
+        <Button
+          variant="contained"
+          sx={{
+            width: "200px",
 
-              {answerType === "multiline" && (
-                <MultilineChartDisplay
-                  data={data}
-                  containerWidth={containerWidth}
-                  chartMargins={chartMargins}
-                />
-              )}
-            </Col>
-          )}
-        </>
-      </Loader>
-    </div>
+            "&:hover": {
+              backgroundColor: "#f5f5f5",
+            },
+          }}
+          onClick={() => setExpanded((prev) => !prev)}
+        >
+          {expanded ? "collapse" : "expand"}
+        </Button>
+      )}
+    </>
   );
 };
 

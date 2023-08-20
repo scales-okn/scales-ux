@@ -14,9 +14,15 @@ type AnswersT = {
   data: any;
   containerWidth: number;
   chartMargins: Record<string, number>;
+  expanded: boolean;
 };
 
-const Answers = ({ data, containerWidth, chartMargins }: AnswersT) => {
+const Answers = ({
+  data,
+  containerWidth,
+  chartMargins,
+  expanded,
+}: AnswersT) => {
   const xUnits = data?.units?.results?.[0]?.[0];
   let yUnits = data?.units?.results?.[1]?.[1];
   if (yUnits === "Case" || yUnits === "Judge") yUnits += "s"; // unlike attributes, entities seem not to have nicenames
@@ -56,9 +62,11 @@ const Answers = ({ data, containerWidth, chartMargins }: AnswersT) => {
     containerWidth * (data.results.length / 20),
   );
 
+  const width = expanded ? chartWidth : containerWidth;
+
   return (
     <BarChart
-      width={chartWidth}
+      width={width - 40}
       height={600}
       data={barData}
       margin={chartMargins}

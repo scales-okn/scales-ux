@@ -17,9 +17,15 @@ type AnswersT = {
   data: any;
   containerWidth: number;
   chartMargins: Record<string, number>;
+  expanded: boolean;
 };
 
-const Answers = ({ data, chartMargins, containerWidth }: AnswersT) => {
+const Answers = ({
+  data,
+  chartMargins,
+  containerWidth,
+  expanded,
+}: AnswersT) => {
   // for multiline, assumes the order of unit names is line label, x, y
   const xUnits = data?.units?.results?.[1]?.[0];
   let yUnits = data?.units?.results?.[2]?.[1];
@@ -88,6 +94,9 @@ const Answers = ({ data, chartMargins, containerWidth }: AnswersT) => {
   }, [data.results]);
 
   const domain = () => {
+    if (!expanded) {
+      return ["dataMin", "dataMax"];
+    }
     if (stringIsNumber(xLabels[0])) {
       return [xLabels[0], xLabels[xLabels.length - 1]] as number[];
     } else {
@@ -100,14 +109,16 @@ const Answers = ({ data, chartMargins, containerWidth }: AnswersT) => {
     containerWidth * (xLabels.length / 20),
   );
 
+  const width = expanded ? chartWidth : containerWidth;
+
   return (
-    <ResponsiveContainer width={chartWidth} height="80%">
+    <ResponsiveContainer width={width - 40} height="80%">
       <LineChart margin={chartMargins}>
         <XAxis
           height={80}
           scale="auto"
           dataKey={xUnits}
-          interval={0}
+          interval={expanded ? 0 : undefined}
           type={
             /^[a-zA-Z ]+$/.test(data.results?.[0]?.series?.[0][0])
               ? "category"
