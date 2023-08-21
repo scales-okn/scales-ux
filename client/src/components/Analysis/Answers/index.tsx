@@ -5,7 +5,7 @@ import { usePanel } from "store/panels";
 import dayjs from "dayjs";
 import { isEmpty } from "lodash";
 import renderHTML from "helpers/renderHTML";
-import { Button } from "@mui/material";
+import { Button } from "react-bootstrap";
 
 import useContainerDimensions from "hooks/useContainerDimensions";
 import MultilineChartDisplay from "./MultilineChartDisplay";
@@ -155,19 +155,15 @@ const Answers = ({
         </Loader>
       </div>
       {(isBarChart || isLineChart || isMultilineChart) && (
-        <Button
-          variant="contained"
-          sx={{
-            width: "200px",
-
-            "&:hover": {
-              backgroundColor: "#f5f5f5",
-            },
-          }}
-          onClick={() => setExpanded((prev) => !prev)}
-        >
-          {expanded ? "collapse" : "expand"}
-        </Button>
+        <div style={{ width: "300px" }}>
+          <Button
+            variant="outline-success"
+            size="sm"
+            onClick={() => setExpanded((prev) => !prev)}
+          >
+            {expanded ? "collapse" : "expand"}
+          </Button>
+        </div>
       )}
     </>
   );

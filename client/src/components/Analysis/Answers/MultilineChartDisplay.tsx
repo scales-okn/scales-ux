@@ -12,6 +12,7 @@ import {
 } from "recharts";
 import dayjs from "dayjs";
 import getRandomColor from "helpers/getRandomColor";
+import { formatXUnits } from "helpers/stringHelpers";
 
 type AnswersT = {
   data: any;
@@ -31,19 +32,14 @@ const Answers = ({
   let yUnits = data?.units?.results?.[2]?.[1];
   if (yUnits === "Case" || yUnits === "Judge") yUnits += "s"; // unlike attributes, entities seem not to have nicenames
 
-  const convertDate = (dateString: string) => {
-    return dayjs(dateString, "YYYY/MM").toDate().valueOf();
-  };
-
   const formatMultilineData = (result, label) => {
+    const resultLabel = result?.[0];
+    const resultValue = result?.[1];
+
     return {
-      name: result?.[1],
-      [xUnits]: /^[a-zA-Z ]+$/.test(result?.[0])
-        ? result?.[0]
-        : result?.[0].includes("/")
-        ? convertDate(result?.[0])
-        : parseInt(result?.[0]),
-      [label]: parseInt(result?.[1]),
+      name: resultValue,
+      [xUnits]: formatXUnits(resultLabel, { formatMonths: false }),
+      [label]: parseInt(resultValue),
     };
   };
 
@@ -106,7 +102,7 @@ const Answers = ({
 
   const chartWidth = Math.max(
     containerWidth,
-    containerWidth * (xLabels.length / 20),
+    containerWidth * (xLabels.length / 15),
   );
 
   const width = expanded ? chartWidth : containerWidth;

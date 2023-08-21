@@ -10,7 +10,7 @@ import {
   LineChart,
   Line,
 } from "recharts";
-import numberToMonth from "helpers/numberToMonth";
+import { numberToMonth, formatXUnits } from "helpers/stringHelpers";
 
 type LineChartDisplayT = {
   data: any;
@@ -33,12 +33,13 @@ const LineChartDisplay = ({
 
   // unsure why result?.[1] is returned twice, & how non-ints (eg dates) are handled, but ignoring for now & just adding carveout for str x-vals
   const formatLineData = (result) => {
+    const resultLabel = result?.[0];
+    const resultValue = result?.[1];
+
     return {
-      name: result?.[1] === -1 ? "criminal" : String(result?.[0]),
-      [xUnits]: /^[a-zA-Z ]+$/.test(result?.[0])
-        ? result?.[0]
-        : parseInt(result?.[0]),
-      [yUnits]: parseInt(result?.[1]),
+      name: resultValue === -1 ? "criminal" : String(resultLabel),
+      [xUnits]: formatXUnits(resultLabel, { formatMonths: true }),
+      [yUnits]: parseInt(resultValue),
     };
   };
 
@@ -75,7 +76,7 @@ const LineChartDisplay = ({
   const width = expanded ? chartWidth : containerWidth;
 
   return (
-    <ResponsiveContainer width={width - 40} height="80%">
+    <ResponsiveContainer width={width - 40}>
       <LineChart
         data={data.results.map((result) => {
           return formatLineData(result);
@@ -84,12 +85,10 @@ const LineChartDisplay = ({
       >
         <XAxis height={80} scale="auto" dataKey={xUnits}>
           <Label
-            style={{
-              textTransform: "capitalize",
-            }}
             angle={0}
             value={xUnits}
-            position="insideBottom"
+            position={expanded ? "left" : "insideBottom"}
+            offset={expanded ? -500 : 0}
           />
         </XAxis>
         <YAxis
