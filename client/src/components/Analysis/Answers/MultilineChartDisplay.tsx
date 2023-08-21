@@ -12,7 +12,7 @@ import {
 } from "recharts";
 import dayjs from "dayjs";
 import getRandomColor from "helpers/getRandomColor";
-import { formatXUnits } from "helpers/stringHelpers";
+import { formatXUnits, stringIsNumber } from "helpers/stringHelpers";
 
 type AnswersT = {
   data: any;
@@ -70,8 +70,6 @@ const Answers = ({
     return null;
   };
 
-  const stringIsNumber = (str) => isFinite(+str);
-
   const xLabels = useMemo(() => {
     const allValues = data.results.reduce((acc: any[], result: any) => {
       const values = result.series.map((series: any) => {
@@ -90,14 +88,13 @@ const Answers = ({
   }, [data.results]);
 
   const domain = () => {
-    if (!expanded) {
+    if (!expanded && stringIsNumber(xLabels[0])) {
       return ["dataMin", "dataMax"];
     }
     if (stringIsNumber(xLabels[0])) {
       return [xLabels[0], xLabels[xLabels.length - 1]] as number[];
-    } else {
-      return null;
     }
+    return null;
   };
 
   const chartWidth = Math.max(
@@ -130,12 +127,10 @@ const Answers = ({
           }}
         >
           <Label
-            style={{
-              textTransform: "capitalize",
-            }}
             angle={0}
             value={xUnits}
-            position="insideBottom"
+            position={expanded ? "left" : "insideBottom"}
+            offset={expanded ? -500 : 0}
           />
         </XAxis>
         <YAxis

@@ -12,6 +12,8 @@ export const convertToMMYYYY = (dateString: string) => {
   return dayjs(dateString, "YYYY/MM").format("M/YYYY");
 };
 
+export const stringIsNumber = (str) => isFinite(+str);
+
 export const formatXUnits = (resultLabel, { formatMonths }) => {
   if (isAlphabetical(resultLabel)) {
     return resultLabel;
