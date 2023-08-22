@@ -15,7 +15,7 @@ import { numberToMonth, formatXUnits } from "helpers/stringHelpers";
 type LineChartDisplayT = {
   data: any;
   statement: any;
-  containerWidth: number;
+  chartWidth: number;
   chartMargins: Record<string, number>;
   expanded: boolean;
 };
@@ -24,7 +24,7 @@ const LineChartDisplay = ({
   data,
   statement,
   chartMargins,
-  containerWidth,
+  chartWidth,
   expanded,
 }: LineChartDisplayT) => {
   const xUnits = data?.units?.results?.[0]?.[0];
@@ -68,15 +68,8 @@ const LineChartDisplay = ({
     return null;
   };
 
-  const chartWidth = Math.max(
-    containerWidth,
-    containerWidth * (data.results.length / 15),
-  );
-
-  const width = expanded ? chartWidth : containerWidth;
-
   return (
-    <ResponsiveContainer width={width - 40}>
+    <ResponsiveContainer width={chartWidth}>
       <LineChart
         data={data.results.map((result) => {
           return formatLineData(result);

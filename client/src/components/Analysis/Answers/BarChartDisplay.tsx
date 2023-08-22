@@ -12,17 +12,11 @@ import {
 
 type AnswersT = {
   data: any;
-  containerWidth: number;
+  chartWidth: number;
   chartMargins: Record<string, number>;
-  expanded: boolean;
 };
 
-const Answers = ({
-  data,
-  containerWidth,
-  chartMargins,
-  expanded,
-}: AnswersT) => {
+const Answers = ({ data, chartWidth, chartMargins }: AnswersT) => {
   const xUnits = data?.units?.results?.[0]?.[0];
   let yUnits = data?.units?.results?.[1]?.[1];
   if (yUnits === "Case" || yUnits === "Judge") yUnits += "s"; // unlike attributes, entities seem not to have nicenames
@@ -57,16 +51,9 @@ const Answers = ({
     });
   }, [data]); // eslint-disable-line react-hooks/exhaustive-deps
 
-  const chartWidth = Math.max(
-    containerWidth,
-    containerWidth * (data.results.length / 20),
-  );
-
-  const width = expanded ? chartWidth : containerWidth;
-
   return (
     <BarChart
-      width={width - 40}
+      width={chartWidth}
       height={600}
       data={barData}
       margin={chartMargins}

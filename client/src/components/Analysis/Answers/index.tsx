@@ -1,4 +1,4 @@
-import React, { memo, useEffect, useState, useRef } from "react";
+import React, { memo, useEffect, useState, useRef, useMemo } from "react";
 import { Col } from "react-bootstrap";
 import Loader from "components/Loader";
 import { usePanel } from "store/panels";
@@ -103,6 +103,32 @@ const Answers = ({
   const isLineChart = data?.length > 0 && answerType === "line";
   const isMultilineChart = data?.length > 0 && answerType === "multiline";
 
+  const chartWidth = useMemo(() => {
+    const divisor = isBarChart ? 15 : 5;
+    const width = Math.max(
+      containerWidth,
+      containerWidth * (data?.results?.length / divisor),
+    );
+
+    const out = expanded ? width : containerWidth;
+    return out - 40;
+  }, [containerWidth, data?.results?.length, expanded, isBarChart]);
+
+  const collapseIsVisible = useMemo(() => {
+    if (isMultilineChart || !expanded) return true;
+
+    const chartOverflow = chartWidth > containerWidth;
+
+    return chartOverflow && (isBarChart || isLineChart);
+  }, [
+    chartWidth,
+    containerWidth,
+    isBarChart,
+    isLineChart,
+    isMultilineChart,
+    expanded,
+  ]);
+
   return (
     <>
       <div className="answers" ref={containerRef}>
@@ -125,8 +151,7 @@ const Answers = ({
                   answerType === "bar" && (
                     <BarChartDisplay
                       data={data}
-                      expanded={expanded}
-                      containerWidth={containerWidth}
+                      chartWidth={chartWidth}
                       chartMargins={chartMargins}
                     />
                   )}
@@ -136,7 +161,7 @@ const Answers = ({
                     data={data}
                     expanded={expanded}
                     statement={statement}
-                    containerWidth={containerWidth}
+                    chartWidth={chartWidth}
                     chartMargins={chartMargins}
                   />
                 )}
@@ -154,7 +179,7 @@ const Answers = ({
           </>
         </Loader>
       </div>
-      {(isBarChart || isLineChart || isMultilineChart) && (
+      {collapseIsVisible && (
         <div style={{ width: "300px" }}>
           <Button
             variant="outline-success"

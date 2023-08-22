@@ -16,16 +16,16 @@ import { formatXUnits, stringIsNumber } from "helpers/stringHelpers";
 
 type AnswersT = {
   data: any;
-  containerWidth: number;
   chartMargins: Record<string, number>;
   expanded: boolean;
+  containerWidth: number;
 };
 
 const Answers = ({
   data,
   chartMargins,
-  containerWidth,
   expanded,
+  containerWidth,
 }: AnswersT) => {
   // for multiline, assumes the order of unit names is line label, x, y
   const xUnits = data?.units?.results?.[1]?.[0];
@@ -97,15 +97,18 @@ const Answers = ({
     return null;
   };
 
-  const chartWidth = Math.max(
-    containerWidth,
-    containerWidth * (xLabels.length / 15),
-  );
+  const chartWidth = useMemo(() => {
+    const width = Math.max(
+      containerWidth,
+      containerWidth * (xLabels.length / 17),
+    );
 
-  const width = expanded ? chartWidth : containerWidth;
+    const out = expanded ? width : containerWidth;
+    return out - 40;
+  }, [containerWidth, data?.results?.length, expanded, xLabels.length]);
 
   return (
-    <ResponsiveContainer width={width - 40} height="80%">
+    <ResponsiveContainer width={chartWidth} height="80%">
       <LineChart margin={chartMargins}>
         <XAxis
           height={80}
