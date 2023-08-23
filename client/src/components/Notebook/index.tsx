@@ -47,7 +47,7 @@ const Notebook: FunctionComponent = () => {
 
   useEffectOnce(() => {
     getRings();
-    dispatch(getPanels(notebook.id));
+    dispatch(getPanels(notebook?.id));
 
     return () => {
       setNotebookTitle("");

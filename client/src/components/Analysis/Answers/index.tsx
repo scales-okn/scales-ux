@@ -104,7 +104,7 @@ const Answers = ({
   const isMultilineChart = data?.length > 0 && answerType === "multiline";
 
   const chartWidth = useMemo(() => {
-    const divisor = isBarChart ? 15 : 5;
+    const divisor = isBarChart ? 15 : 12;
     const width = Math.max(
       containerWidth,
       containerWidth * (data?.results?.length / divisor),
