@@ -10,26 +10,36 @@ import {
   LineChart,
   Line,
 } from "recharts";
-import numberToMonth from "helpers/numberToMonth";
+import { numberToMonth, formatXUnits } from "helpers/stringHelpers";
 
 type LineChartDisplayT = {
   data: any;
   statement: any;
+  chartWidth: number;
+  chartMargins: Record<string, number>;
+  expanded: boolean;
 };
 
-const LineChartDisplay = ({ data, statement }: LineChartDisplayT) => {
+const LineChartDisplay = ({
+  data,
+  statement,
+  chartMargins,
+  chartWidth,
+  expanded,
+}: LineChartDisplayT) => {
   const xUnits = data?.units?.results?.[0]?.[0];
   let yUnits = data?.units?.results?.[1]?.[1];
   if (yUnits === "Case" || yUnits === "Judge") yUnits += "s"; // unlike attributes, entities seem not to have nicenames
 
   // unsure why result?.[1] is returned twice, & how non-ints (eg dates) are handled, but ignoring for now & just adding carveout for str x-vals
   const formatLineData = (result) => {
+    const resultLabel = result?.[0];
+    const resultValue = result?.[1];
+
     return {
-      name: result?.[1] === -1 ? "criminal" : String(result?.[0]),
-      [xUnits]: /^[a-zA-Z ]+$/.test(result?.[0])
-        ? result?.[0]
-        : parseInt(result?.[0]),
-      [yUnits]: parseInt(result?.[1]),
+      name: resultValue === -1 ? "criminal" : String(resultLabel),
+      [xUnits]: formatXUnits(resultLabel, { formatMonths: true }),
+      [yUnits]: parseInt(resultValue),
     };
   };
 
@@ -59,20 +69,19 @@ const LineChartDisplay = ({ data, statement }: LineChartDisplayT) => {
   };
 
   return (
-    <ResponsiveContainer width="100%" height="80%">
+    <ResponsiveContainer width={chartWidth}>
       <LineChart
         data={data.results.map((result) => {
           return formatLineData(result);
         })}
+        margin={chartMargins}
       >
         <XAxis height={80} scale="auto" dataKey={xUnits}>
           <Label
-            style={{
-              textTransform: "capitalize",
-            }}
             angle={0}
             value={xUnits}
-            position="insideBottom"
+            position={expanded ? "left" : "insideBottom"}
+            offset={expanded ? -500 : 0}
           />
         </XAxis>
         <YAxis

@@ -1,4 +1,4 @@
-import React, { FunctionComponent, useState } from "react";
+import React, { FunctionComponent, useEffect, useState } from "react";
 import { Col, Container, Row, Button, Form } from "react-bootstrap";
 
 import { useSelector, useDispatch } from "react-redux";
@@ -45,9 +45,15 @@ const Notebook: FunctionComponent = () => {
     navigate("/notebooks");
   };
 
+  useEffect(() => {
+    // TODO: revisit this to reduce extra queries
+    if (notebook?.id) {
+      dispatch(getPanels(notebook?.id));
+    }
+  }, [notebook?.id, dispatch]);
+
   useEffectOnce(() => {
     getRings();
-    dispatch(getPanels(notebook?.id));
 
     return () => {
       setNotebookTitle("");

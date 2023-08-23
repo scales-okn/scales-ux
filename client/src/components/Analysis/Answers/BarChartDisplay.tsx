@@ -12,10 +12,11 @@ import {
 
 type AnswersT = {
   data: any;
-  width: number;
+  chartWidth: number;
+  chartMargins: Record<string, number>;
 };
 
-const Answers = ({ data, width }: AnswersT) => {
+const Answers = ({ data, chartWidth, chartMargins }: AnswersT) => {
   const xUnits = data?.units?.results?.[0]?.[0];
   let yUnits = data?.units?.results?.[1]?.[1];
   if (yUnits === "Case" || yUnits === "Judge") yUnits += "s"; // unlike attributes, entities seem not to have nicenames
@@ -52,15 +53,10 @@ const Answers = ({ data, width }: AnswersT) => {
 
   return (
     <BarChart
-      width={width}
+      width={chartWidth}
       height={600}
       data={barData}
-      margin={{
-        top: 5,
-        right: 30,
-        left: 20,
-        bottom: 5,
-      }}
+      margin={chartMargins}
     >
       <CartesianGrid strokeDasharray="3 3" />
       <XAxis dataKey="name" />

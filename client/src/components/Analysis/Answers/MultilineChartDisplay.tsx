@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import React, { memo } from "react";
+import React, { memo, useMemo } from "react";
 import {
   Label,
   XAxis,
@@ -12,42 +12,47 @@ import {
 } from "recharts";
 import dayjs from "dayjs";
 import getRandomColor from "helpers/getRandomColor";
+import { formatXUnits, stringIsNumber } from "helpers/stringHelpers";
+import { addMissingYears } from "./helpers";
 
 type AnswersT = {
   data: any;
+  chartMargins: Record<string, number>;
+  expanded: boolean;
+  containerWidth: number;
 };
 
-const Answers = ({ data }: AnswersT) => {
+const Answers = ({
+  data,
+  chartMargins,
+  expanded,
+  containerWidth,
+}: AnswersT) => {
   // for multiline, assumes the order of unit names is line label, x, y
   const xUnits = data?.units?.results?.[1]?.[0];
   let yUnits = data?.units?.results?.[2]?.[1];
   if (yUnits === "Case" || yUnits === "Judge") yUnits += "s"; // unlike attributes, entities seem not to have nicenames
 
-  const convertDate = (dateString: string) => {
-    return dayjs(dateString, "YYYY/MM").toDate().valueOf();
-  };
-
   const formatMultilineData = (result, label) => {
+    const resultLabel = result?.[0];
+    const resultValue = result?.[1];
+
     return {
-      name: result?.[1],
-      [xUnits]: /^[a-zA-Z ]+$/.test(result?.[0])
-        ? result?.[0]
-        : result?.[0].includes("/")
-        ? convertDate(result?.[0])
-        : parseInt(result?.[0]),
-      [label]: parseInt(result?.[1]),
+      name: resultValue,
+      [xUnits]: formatXUnits(resultLabel, { formatMonths: false }),
+      [label]: parseInt(resultValue),
     };
   };
 
   const multiLineTooltip = ({ active, payload, label }) => {
-    // TODO: reimplement this
-    // data.results?.[0]?.series?.[0][0]?.includes("/")
-    //   ? dayjs(value).format("M/YYYY")
-    //   : value;
+    const tooltipHeader = data.results?.[0]?.series?.[0][0]?.includes("/")
+      ? dayjs(label).format("M/YYYY")
+      : label;
+
     if (active && payload && payload.length) {
       return (
         <div className="analysis-tooltip">
-          <p className="header">{label}</p>
+          <p className="header">{tooltipHeader}</p>
           <div className="multiBox">
             {payload.map((pl) => {
               return (
@@ -66,39 +71,70 @@ const Answers = ({ data }: AnswersT) => {
     return null;
   };
 
+  const xLabels = useMemo(() => {
+    const allValues = data.results.reduce((acc: any[], result: any) => {
+      const values = result.series.map((series: any) => {
+        return series[0].toString();
+      });
+      return acc.concat(values);
+    }, []);
+
+    const uniqueValues = [...new Set(allValues)];
+
+    if (stringIsNumber(uniqueValues[0])) {
+      return addMissingYears(uniqueValues.sort());
+    } else {
+      return uniqueValues;
+    }
+  }, [data.results]);
+
+  const domain = () => {
+    if (!expanded && stringIsNumber(xLabels[0])) {
+      return ["dataMin", "dataMax"];
+    }
+    if (stringIsNumber(xLabels[0])) {
+      return [xLabels[0], xLabels[xLabels.length - 1]] as number[];
+    }
+    return null;
+  };
+
+  const chartWidth = useMemo(() => {
+    const width = Math.max(
+      containerWidth,
+      containerWidth * (xLabels.length / 17),
+    );
+
+    const out = expanded ? width : containerWidth;
+    return out - 40;
+  }, [containerWidth, expanded, xLabels.length]);
+
   return (
-    <ResponsiveContainer width="100%" height="80%">
-      <LineChart margin={{ top: 5, right: 20, left: 15, bottom: 5 }}>
-        {/* not sure why all these props are needed when plotting multiple lines despite not being needed above */}
+    <ResponsiveContainer width={chartWidth} height="80%">
+      <LineChart margin={chartMargins}>
         <XAxis
           height={80}
           scale="auto"
           dataKey={xUnits}
-          interval={0}
+          interval={expanded ? 0 : undefined}
           type={
             /^[a-zA-Z ]+$/.test(data.results?.[0]?.series?.[0][0])
               ? "category"
               : "number"
           }
-          /* hack */ domain={
-            /^[a-zA-Z ]+$/.test(data.results?.[0]?.series?.[0][0])
-              ? undefined
-              : ["dataMin", "dataMax"]
-          }
-          /* hack */ allowDuplicatedCategory={false}
-          tickFormatter={(value) =>
-            data.results?.[0]?.series?.[0][0]?.includes("/") /* hack */
+          domain={domain()}
+          tickCount={xLabels.length}
+          allowDuplicatedCategory={false}
+          tickFormatter={(value) => {
+            return data.results?.[0]?.series?.[0][0]?.includes("/") /* hack */
               ? dayjs(value).format("M/YYYY")
-              : value
-          }
+              : value;
+          }}
         >
           <Label
-            style={{
-              textTransform: "capitalize",
-            }}
             angle={0}
             value={xUnits}
-            position="insideBottom"
+            position={expanded ? "left" : "insideBottom"}
+            offset={expanded ? -500 : 0}
           />
         </XAxis>
         <YAxis

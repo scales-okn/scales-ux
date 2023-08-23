@@ -48,7 +48,7 @@ const EmailVerificationPage: FunctionComponent = () => {
     } catch (error) {
       console.warn(error); // eslint-disable-line no-console
     }
-  }, [token]);
+  }, [token]); // eslint-disable-line react-hooks/exhaustive-deps
 
   useEffectOnce(() => {
     verifyEmail();
