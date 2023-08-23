@@ -189,7 +189,7 @@ const Panel: FunctionComponent<PanelProps> = ({ panelId }) => {
                 onChange={(event) => {
                   setPanelDescription(event.target.value);
                 }}
-                value={panel?.description}
+                value={panel?.description || ""}
                 style={{
                   fontSize: "0.9rem",
                 }}

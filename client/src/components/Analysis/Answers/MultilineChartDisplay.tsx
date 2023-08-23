@@ -13,6 +13,7 @@ import {
 import dayjs from "dayjs";
 import getRandomColor from "helpers/getRandomColor";
 import { formatXUnits, stringIsNumber } from "helpers/stringHelpers";
+import { addMissingYears } from "./helpers";
 
 type AnswersT = {
   data: any;
@@ -81,7 +82,7 @@ const Answers = ({
     const uniqueValues = [...new Set(allValues)];
 
     if (stringIsNumber(uniqueValues[0])) {
-      return uniqueValues.sort();
+      return addMissingYears(uniqueValues.sort());
     } else {
       return uniqueValues;
     }
@@ -105,7 +106,7 @@ const Answers = ({
 
     const out = expanded ? width : containerWidth;
     return out - 40;
-  }, [containerWidth, data?.results?.length, expanded, xLabels.length]);
+  }, [containerWidth, expanded, xLabels.length]);
 
   return (
     <ResponsiveContainer width={chartWidth} height="80%">

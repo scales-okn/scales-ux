@@ -50,7 +50,7 @@ const Notebook: FunctionComponent = () => {
     if (notebook?.id) {
       dispatch(getPanels(notebook?.id));
     }
-  }, [notebook?.id]);
+  }, [notebook?.id, dispatch]);
 
   useEffectOnce(() => {
     getRings();
