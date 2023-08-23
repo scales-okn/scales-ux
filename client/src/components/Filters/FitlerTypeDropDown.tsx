@@ -36,7 +36,7 @@ const FilterTypeDropDown: FunctionComponent<FilterTypeProps> = (props) => {
     try {
       if (filterInput) {
         // when changing filter type, reset the value
-        const { type: dataType } = getFilterOptionsByKey(filterInput.key);
+        const { type: dataType } = getFilterOptionsByKey(filterInput.key) || {};
         setFilter({
           ...filter,
           type: filterInput.key,
