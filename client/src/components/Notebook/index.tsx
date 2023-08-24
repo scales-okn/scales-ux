@@ -1,4 +1,4 @@
-import React, { FunctionComponent, useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Col, Container, Row, Button, Form } from "react-bootstrap";
 
 import { useSelector, useDispatch } from "react-redux";
@@ -21,7 +21,7 @@ import Panels from "components/Panels";
 
 import "./Notebook.scss";
 
-const Notebook: FunctionComponent = () => {
+const Notebook = () => {
   const { getRings } = useRings();
   const { notebook, loadingNotebook, savingNotebook, deletingNotebook } =
     useSelector(notebookSelector);

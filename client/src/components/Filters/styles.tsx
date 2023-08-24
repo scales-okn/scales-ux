@@ -10,3 +10,19 @@ export const styles = css`
     max-width: calc(100% - 200px);
   }
 `;
+
+export const tooltipTitleStyles = css`
+  min-width: 200px;
+
+  h5 {
+    color: var(--main-purple-light);
+  }
+
+  p {
+    font-size: 14px;
+  }
+
+  section {
+    margin-bottom: 24px;
+  }
+`;

@@ -39,10 +39,10 @@ export const findAll = async (req, res) => {
 // Delete a HelpText
 export const deleteHelpText = async (req, res) => {
   try {
-    const { helpTextId } = req.params;
+    const { helpTextSlug } = req.params;
 
     const result = await sequelize.models.HelpText.findByIdAndDelete(
-      helpTextId
+      helpTextSlug
     );
     if (result) {
       return res.send_ok("Help Text has been deleted successfully!");

@@ -16,6 +16,6 @@ router.post(
 
 router.get("/", checkAuth, findAll);
 
-router.delete("/:helpTextId", checkAuth, deleteHelpText);
+router.delete("/:helpTextSlug", checkAuth, deleteHelpText);
 
 export default router;

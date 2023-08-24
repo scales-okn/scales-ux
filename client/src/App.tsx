@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { BrowserRouter, Route, Routes, Navigate } from "react-router-dom";
 
 import { Button } from "react-bootstrap";
@@ -6,6 +6,8 @@ import { ErrorBoundary } from "react-error-boundary";
 
 import { authSelector } from "./store/auth";
 import { useSelector } from "react-redux";
+
+import { useHelpTexts } from "store/helpTexts";
 
 import DocumentPage from "pages/DocumentPage";
 import UsersPage from "pages/UsersPage";
@@ -34,6 +36,7 @@ const ErrorFallback = ({ error, resetErrorBoundary }) => {
 };
 
 const App = () => {
+  const { getHelpTexts } = useHelpTexts();
   const { user } = useSelector(authSelector);
   const requireAuth = (element) => {
     if (!user) {
@@ -42,6 +45,10 @@ const App = () => {
 
     return element;
   };
+
+  useEffect(() => {
+    getHelpTexts(); // Invoke the function by adding parentheses
+  }, []);
 
   return (
     <div className="app">
@@ -58,7 +65,7 @@ const App = () => {
             <Route path="/users" element={requireAuth(<UsersPage />)} />
             <Route path="/feedback" element={requireAuth(<FeedbackPage />)} />
             <Route
-              path="/help-texts"
+              path="/help-texts/:helpTextSlug?"
               element={requireAuth(<HelpTextsPage />)}
             />
             <Route path="/rings" element={requireAuth(<RingsPage />)} />

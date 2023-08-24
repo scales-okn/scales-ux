@@ -1,6 +1,9 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import React, { FunctionComponent, useState, useEffect } from "react";
 import { Dropdown } from "react-bootstrap";
+import { useHelpTexts } from "store/helpTexts";
+
+import FilterTooltip from "./FilterTooltip";
 
 type FilterColumn = {
   key: string;
@@ -24,6 +27,7 @@ const FilterTypeDropDown: FunctionComponent<FilterTypeProps> = (props) => {
     setFilter,
   } = props;
   const { type } = filter;
+  const { helpTexts } = useHelpTexts();
 
   const filterOptions = getFilterOptionsByKey(type);
 
@@ -64,6 +68,10 @@ const FilterTypeDropDown: FunctionComponent<FilterTypeProps> = (props) => {
       return filterInput;
     })
     .sort((a, b) => a.nicename.localeCompare(b.nicename));
+  console.log(filtersToRender);
+  const matchHelpText = (key) => {
+    return helpTexts?.find((helpText) => helpText.slug === key);
+  };
 
   return (
     <Dropdown className="filter-type-dropdown">
@@ -78,24 +86,30 @@ const FilterTypeDropDown: FunctionComponent<FilterTypeProps> = (props) => {
         <Dropdown.ItemText className="text-muted fs-6 ms-3">
           <small>Select a filter type...</small>
         </Dropdown.ItemText>
-        {filtersToRender?.map(({ key, nicename, desc, disabled }) => (
-          <React.Fragment key={key}>
-            <Dropdown.Divider />
-            <Dropdown.Item
-              onClick={() => setFilterInput({ key, nicename })}
-              disabled={disabled}
-            >
-              <Dropdown.ItemText className={disabled ? "text-muted" : ""}>
-                {nicename}
-              </Dropdown.ItemText>
-              {desc && (
-                <Dropdown.ItemText className="text-muted fs-6">
-                  <small>{desc}</small>
+        {filtersToRender?.map(({ key, nicename, desc, disabled }) => {
+          const helpText = matchHelpText(key);
+
+          return (
+            <React.Fragment key={key}>
+              <Dropdown.Divider />
+              <Dropdown.Item
+                onClick={() => setFilterInput({ key, nicename })}
+                disabled={disabled}
+                style={{ display: "flex", alignItems: "center" }}
+              >
+                <Dropdown.ItemText className={disabled ? "text-muted" : ""}>
+                  {nicename}
                 </Dropdown.ItemText>
-              )}
-            </Dropdown.Item>
-          </React.Fragment>
-        ))}
+                {desc && (
+                  <Dropdown.ItemText className="text-muted fs-6">
+                    <small>{desc}</small>
+                  </Dropdown.ItemText>
+                )}
+                {helpText && <FilterTooltip helpText={helpText} />}
+              </Dropdown.Item>
+            </React.Fragment>
+          );
+        })}
       </Dropdown.Menu>
     </Dropdown>
   );
