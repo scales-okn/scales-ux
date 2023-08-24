@@ -106,15 +106,17 @@ const PageLayout = ({ id = "", children, pageTitle }: PageLayoutT) => {
                   <>
                     <NavItem linkName="Notebooks" route={"/"} />
                     {isAdmin &&
-                      ["rings", "users", "feedback"].map((title) => {
-                        return (
-                          <NavItem
-                            key={title}
-                            linkName={title}
-                            route={`/${title}`}
-                          />
-                        );
-                      })}
+                      ["rings", "users", "feedback", "help-texts"].map(
+                        (title) => {
+                          return (
+                            <NavItem
+                              key={title}
+                              linkName={title}
+                              route={`/${title}`}
+                            />
+                          );
+                        },
+                      )}
                   </>
                 ) : (
                   <NavItem

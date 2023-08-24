@@ -16,9 +16,11 @@ import { useSelector } from "react-redux";
 import DeleteUser from "./DeleteUser";
 
 const AdminUsersPages: FunctionComponent = () => {
-  const [rows, setRows] = useState([]);
   const authorizationHeader = useAuthHeader();
+
+  const [rows, setRows] = useState([]);
   const { role, id } = useSelector(userSelector);
+
   const isAdmin = role === "admin";
 
   const columns: GridColDef[] = [

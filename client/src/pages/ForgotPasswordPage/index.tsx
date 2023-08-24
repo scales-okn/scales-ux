@@ -83,7 +83,7 @@ const ForgotPassword: FunctionComponent = () => {
               <Button
                 variant="primary"
                 type="submit"
-                className="w-100 mb-3 text-white "
+                className="w-100 mb-3 text-white"
                 size="lg"
                 style={{
                   background: "var(--main-purple-light)",

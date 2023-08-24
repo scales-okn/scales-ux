@@ -10,6 +10,7 @@ import { useSelector } from "react-redux";
 import DocumentPage from "pages/DocumentPage";
 import UsersPage from "pages/UsersPage";
 import FeedbackPage from "pages/FeedbackPage";
+import HelpTextsPage from "pages/HelpTextsPage";
 import SignInPage from "pages/SignInPage";
 import SignUpPage from "pages/SignUpPage";
 import ProfilePage from "pages/ProfilePage";
@@ -56,6 +57,10 @@ const App = () => {
             <Route path="/" element={requireAuth(<NotebooksPage />)} />
             <Route path="/users" element={requireAuth(<UsersPage />)} />
             <Route path="/feedback" element={requireAuth(<FeedbackPage />)} />
+            <Route
+              path="/help-texts"
+              element={requireAuth(<HelpTextsPage />)}
+            />
             <Route path="/rings" element={requireAuth(<RingsPage />)} />
             <Route path="/profile" element={requireAuth(<ProfilePage />)} />
             <Route path="/rings" element={requireAuth(<NotebooksPage />)} />
