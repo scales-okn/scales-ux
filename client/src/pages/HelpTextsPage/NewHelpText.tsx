@@ -50,13 +50,22 @@ const NewHelpText = () => {
 
   return (
     <>
-      <Button
-        variant="success"
-        onClick={() => setNewHelpTextVisible(true)}
-        style={{ marginBottom: "24px" }}
+      <div
+        style={{
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "flex-end",
+          paddingRight: "26px",
+        }}
       >
-        Add Help Text
-      </Button>
+        <Button
+          variant="success"
+          onClick={() => setNewHelpTextVisible(true)}
+          style={{ marginBottom: "24px" }}
+        >
+          Add Help Text
+        </Button>
+      </div>
       <ModalContainer open={newHelpTextVisible} onClose={onClose}>
         <h4 style={{ margin: "12px 0 24px 0", color: "var(--main-purple)" }}>
           Add New Help Text

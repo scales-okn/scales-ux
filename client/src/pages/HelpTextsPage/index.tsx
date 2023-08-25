@@ -1,13 +1,14 @@
 import React, { useEffect, useState } from "react";
+import { useSelector } from "react-redux";
+import { useHelpTexts } from "store/helpTexts";
+import { userSelector } from "store/auth";
+
 import { DataGrid, GridColDef } from "@material-ui/data-grid";
 import { useParams, useNavigate } from "react-router-dom";
-import { useHelpTexts } from "store/helpTexts";
-import PageLayout from "../../components/PageLayout";
+import { Row } from "react-bootstrap";
+
 import NotAuthorized from "../../components/NotAuthorized";
 import FeedbackDetailModal from "./FeedbackDetailModal";
-import { Row } from "react-bootstrap";
-import { userSelector } from "store/auth";
-import { useSelector } from "react-redux";
 import NewHelpText from "./NewHelpText";
 
 const HelpTextsPage = () => {
@@ -59,12 +60,12 @@ const HelpTextsPage = () => {
   ];
 
   return (
-    <PageLayout>
+    <>
       <NewHelpText />
       {helpTextSlug && (
         <FeedbackDetailModal
           feedbackDetail={feedbackDetail}
-          closeModal={() => navigate("/help-texts")}
+          closeModal={() => navigate("/admin/help-texts")}
         />
       )}
       {!isAdmin ? (
@@ -76,14 +77,14 @@ const HelpTextsPage = () => {
             columns={columns}
             disableColumnMenu
             disableColumnFilter
-            onRowClick={({ row }) => navigate(`/help-texts/${row.slug}`)}
+            onRowClick={({ row }) => navigate(`/admin/help-texts/${row.slug}`)}
             pageSize={5}
             checkboxSelection={false}
             className="bg-white p-0"
           />
         </Row>
       )}
-    </PageLayout>
+    </>
   );
 };
 

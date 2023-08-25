@@ -1,16 +1,9 @@
 import React, { FunctionComponent, useState } from "react";
-import {
-  DataGrid,
-  GridColDef,
-  // GridValueGetterParams,
-  GridCellParams,
-} from "@material-ui/data-grid";
+import { DataGrid, GridColDef, GridCellParams } from "@material-ui/data-grid";
 import dayjs from "dayjs";
 import { useEffectOnce } from "react-use";
-import PageLayout from "../../components/PageLayout";
-import NotAuthorized from "../../components/NotAuthorized";
+import NotAuthorized from "components/NotAuthorized";
 import FeedbackDetailModal from "./FeedbackDetailModal";
-// import UserFieldToggle from "./UserFieldToggle";
 import { Row } from "react-bootstrap";
 import { useAuthHeader, userSelector } from "store/auth";
 import { useSelector } from "react-redux";
@@ -38,7 +31,6 @@ const AdminFeedbackPage: FunctionComponent = () => {
   });
 
   const columns: GridColDef[] = [
-    // { field: "id", headerName: "ID", width: 100 },
     {
       field: "body",
       headerName: "Feedback",
@@ -71,7 +63,7 @@ const AdminFeedbackPage: FunctionComponent = () => {
   ];
 
   return (
-    <PageLayout>
+    <>
       {feedbackDetail && (
         <FeedbackDetailModal
           feedbackDetail={feedbackDetail.row.body}
@@ -92,7 +84,7 @@ const AdminFeedbackPage: FunctionComponent = () => {
           />
         </Row>
       )}
-    </PageLayout>
+    </>
   );
 };
 

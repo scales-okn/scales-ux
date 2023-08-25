@@ -1,13 +1,14 @@
 import React from "react";
-import PageLayout from "components/PageLayout";
-import Loader from "components/Loader";
+import { Link } from "react-router-dom";
 import { useRings } from "store/rings";
+
+import { useEffectOnce } from "react-use";
 import { DataGrid } from "@material-ui/data-grid";
 import { Row, Button } from "react-bootstrap";
 import dayjs from "dayjs";
 import { GridCellParams } from "@material-ui/data-grid";
-import { Link } from "react-router-dom";
-import { useEffectOnce } from "react-use";
+
+import Loader from "components/Loader";
 
 const RingsPage: React.FC = () => {
   const { getRings, rings, loadingRings } = useRings();
@@ -18,9 +19,12 @@ const RingsPage: React.FC = () => {
   });
 
   return (
-    <PageLayout>
+    <>
       <Loader animation="border" isVisible={loadingRings}>
-        <Link to="/rings/create" className="text-white text-decoration-none">
+        <Link
+          to="/admin/rings/create"
+          className="text-white text-decoration-none"
+        >
           <Button
             variant="primary"
             className="mb-3 text-white float-end me-3"
@@ -42,7 +46,7 @@ const RingsPage: React.FC = () => {
                 headerName: "Name",
                 width: 150,
                 renderCell: (params: GridCellParams) => (
-                  <Link to={`/rings/${params.row.id}`} className="ms-2">
+                  <Link to={`/admin/rings/${params.row.id}`} className="ms-2">
                     {params.row.name}
                   </Link>
                 ),
@@ -86,7 +90,7 @@ const RingsPage: React.FC = () => {
           />
         </Row>
       </Loader>
-    </PageLayout>
+    </>
   );
 };
 

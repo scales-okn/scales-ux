@@ -24,6 +24,7 @@ import ResetPasswordPage from "pages/ResetPasswordPage";
 import RingsPage from "pages/RingsPage";
 import Notifications from "components/Notifications";
 import Ring from "pages/RingsPage/Ring";
+import Admin from "pages/AdminPage";
 
 const ErrorFallback = ({ error, resetErrorBoundary }) => {
   return (
@@ -62,17 +63,7 @@ const App = () => {
         <BrowserRouter>
           <Routes>
             <Route path="/" element={requireAuth(<NotebooksPage />)} />
-            <Route path="/users" element={requireAuth(<UsersPage />)} />
-            <Route path="/feedback" element={requireAuth(<FeedbackPage />)} />
-            <Route
-              path="/help-texts/:helpTextSlug?"
-              element={requireAuth(<HelpTextsPage />)}
-            />
-            <Route path="/rings" element={requireAuth(<RingsPage />)} />
             <Route path="/profile" element={requireAuth(<ProfilePage />)} />
-            <Route path="/rings" element={requireAuth(<NotebooksPage />)} />
-            <Route path="/rings/create" element={requireAuth(<Ring />)} />
-            <Route path="/rings/:ringId" element={requireAuth(<Ring />)} />
             <Route
               path="/notebooks/:notebookId"
               element={requireAuth(<NotebookPage />)}
@@ -92,6 +83,22 @@ const App = () => {
               path="/verify-email/:token"
               element={<EmailVerificationPage />}
             />
+
+            {/* Admin Routes */}
+            <Route path="/admin/users" element={requireAuth(<Admin />)} />
+            <Route path="/admin/feedback" element={requireAuth(<Admin />)} />
+            <Route
+              path="/admin/help-texts/:helpTextSlug?"
+              element={requireAuth(<Admin />)}
+            />
+            <Route path="/admin/rings" element={requireAuth(<Admin />)} />
+            <Route path="/admin/rings/create" element={requireAuth(<Ring />)} />
+            <Route
+              path="/admin/rings/:ringId"
+              element={requireAuth(<Ring />)}
+            />
+
+            {/* Default Redirect */}
             <Route path="*" element={<Navigate to="/" replace />} />
           </Routes>
         </BrowserRouter>

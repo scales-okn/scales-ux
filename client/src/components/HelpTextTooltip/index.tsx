@@ -54,7 +54,7 @@ const FilterTooltip = ({ helpText }: FilterTooltipT) => {
       {isAdmin && (
         <section>
           <h5>Slug:</h5>
-          <Link to={`/help-texts/${slug}`}>
+          <Link to={`/admin/help-texts/${slug}`}>
             <p>{slug}</p>
           </Link>
         </section>

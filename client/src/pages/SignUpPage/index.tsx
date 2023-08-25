@@ -6,7 +6,7 @@ import { useFormik } from "formik";
 import { Container, Form, Button, Col, Row } from "react-bootstrap";
 
 import { UserSignInFields } from "../SignInPage";
-import PageLayout from "../../components/PageLayout";
+import PageLayout from "components/PageLayout";
 import Loader from "components/Loader";
 import { UserSignUpValidationSchema } from "./schema";
 interface UserSignUpFields extends UserSignInFields {

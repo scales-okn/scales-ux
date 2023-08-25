@@ -119,7 +119,7 @@ const AdminUsersPages: FunctionComponent = () => {
   });
 
   return (
-    <PageLayout>
+    <>
       {!isAdmin ? (
         <NotAuthorized />
       ) : (
@@ -140,7 +140,7 @@ const AdminUsersPages: FunctionComponent = () => {
           />
         </Row>
       )}
-    </PageLayout>
+    </>
   );
 };
 
