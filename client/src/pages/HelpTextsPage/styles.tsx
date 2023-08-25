@@ -14,4 +14,16 @@ export const detailStyles = css`
   section {
     margin-bottom: 24px;
   }
+
+  .buttonRow {
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 48px;
+
+    button {
+      color: white;
+    }
+  }
 `;

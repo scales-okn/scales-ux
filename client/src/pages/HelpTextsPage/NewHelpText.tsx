@@ -5,6 +5,7 @@ import { useFormik } from "formik";
 import { useAuthHeader } from "store/auth";
 import * as yup from "yup";
 import ModalContainer from "components/Modals/ModalContainer";
+import { useHelpTexts } from "store/helpTexts";
 
 type HelpTextFields = {
   slug: string;
@@ -16,8 +17,14 @@ type HelpTextFields = {
 
 const NewHelpText = () => {
   const authorizationHeader = useAuthHeader();
+  const { createHelpText } = useHelpTexts();
 
   const [newHelpTextVisible, setNewHelpTextVisible] = useState(false);
+
+  const onClose = () => {
+    setNewHelpTextVisible(false);
+    formik.resetForm();
+  };
 
   const validationSchema = yup.object({
     slug: yup.string().required("Slug is required"),
@@ -36,44 +43,10 @@ const NewHelpText = () => {
       links: "",
     },
     validationSchema,
-    onSubmit: (values: HelpTextFields, { setErrors }) => {
-      fetch(`/api/helpTexts`, {
-        method: "POST",
-        headers: {
-          ...authorizationHeader,
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(values),
-      })
-        .then((response) => response.json())
-        .then((response) => {
-          setNewHelpTextVisible(false);
-          try {
-            switch (response.code) {
-              case 200: {
-                // notify(response.message, "success");
-                // navigate("/sign-in");
-                break;
-              }
-              default: {
-                if (response.errors) {
-                  setErrors(response.errors);
-                }
-                // notify(response.message, "error");
-                break;
-              }
-            }
-          } catch (error) {
-            console.warn(error); // eslint-disable-line no-console
-          }
-        });
+    onSubmit: (values: HelpTextFields) => {
+      createHelpText(values);
     },
   });
-
-  const onClose = () => {
-    setNewHelpTextVisible(false);
-    formik.resetForm();
-  };
 
   return (
     <>
@@ -98,6 +71,7 @@ const NewHelpText = () => {
                 {...formik.getFieldProps("slug")}
                 error={formik.touched.slug && Boolean(formik.errors.slug)}
                 helperText={formik.touched.slug && formik.errors.slug}
+                placeholder="Unique identifier for the help text"
               />
             </Grid>
             <Grid item xs={12}>
@@ -114,6 +88,7 @@ const NewHelpText = () => {
                 helperText={
                   formik.touched.description && formik.errors.description
                 }
+                placeholder="Description of the help text"
               />
             </Grid>
             <Grid item xs={12}>
@@ -127,6 +102,7 @@ const NewHelpText = () => {
                   formik.touched.examples && Boolean(formik.errors.examples)
                 }
                 helperText={formik.touched.examples && formik.errors.examples}
+                placeholder="Examples of use. Separate input items by comma"
               />
             </Grid>
             <Grid item xs={12}>
@@ -138,6 +114,7 @@ const NewHelpText = () => {
                 {...formik.getFieldProps("options")}
                 error={formik.touched.options && Boolean(formik.errors.options)}
                 helperText={formik.touched.options && formik.errors.options}
+                placeholder="First few available options in autocomplete. Separate input items by comma"
               />
             </Grid>
             <Grid item xs={12}>
@@ -149,6 +126,7 @@ const NewHelpText = () => {
                 {...formik.getFieldProps("links")}
                 error={formik.touched.links && Boolean(formik.errors.links)}
                 helperText={formik.touched.links && formik.errors.links}
+                placeholder="Links to relevant documentation. Separate input items by comma"
               />
             </Grid>
             <Grid item xs={12} sx={{ marginTop: "12px" }}>

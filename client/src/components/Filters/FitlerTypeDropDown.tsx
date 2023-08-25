@@ -3,7 +3,7 @@ import React, { FunctionComponent, useState, useEffect } from "react";
 import { Dropdown } from "react-bootstrap";
 import { useHelpTexts } from "store/helpTexts";
 
-import FilterTooltip from "./FilterTooltip";
+import FilterTooltip from "../HelpTextTooltip";
 
 type FilterColumn = {
   key: string;
@@ -68,7 +68,7 @@ const FilterTypeDropDown: FunctionComponent<FilterTypeProps> = (props) => {
       return filterInput;
     })
     .sort((a, b) => a.nicename.localeCompare(b.nicename));
-  console.log(filtersToRender);
+
   const matchHelpText = (key) => {
     return helpTexts?.find((helpText) => helpText.slug === key);
   };

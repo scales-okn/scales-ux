@@ -15,14 +15,24 @@ export const tooltipTitleStyles = css`
   min-width: 200px;
 
   h5 {
-    color: var(--main-purple-light);
+    color: var(--main-purple);
+    font-weight: 700;
+    margin-bottom: 12px;
   }
 
   p {
     font-size: 14px;
   }
 
-  section {
-    margin-bottom: 24px;
+  ul {
+    padding-left: 10px;
+  }
+
+  a {
+    margin-left: -10px;
+  }
+
+  section:not(:last-child) {
+    margin-bottom: 32px;
   }
 `;

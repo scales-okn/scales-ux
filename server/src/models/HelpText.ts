@@ -5,19 +5,20 @@ export default (sequelize, options) => {
     "HelpText",
     {
       slug: {
-        type: DataTypes.STRING,
+        type: DataTypes.TEXT,
+        unique: true,
       },
       description: {
-        type: DataTypes.STRING,
+        type: DataTypes.TEXT,
       },
       examples: {
-        type: DataTypes.STRING,
+        type: DataTypes.TEXT,
       },
       options: {
-        type: DataTypes.STRING,
+        type: DataTypes.TEXT,
       },
       links: {
-        type: DataTypes.STRING,
+        type: DataTypes.TEXT,
       },
     },
     options

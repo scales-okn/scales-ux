@@ -1,5 +1,10 @@
 import express from "express";
-import { create, deleteHelpText, findAll } from "../controllers/helpTexts";
+import {
+  create,
+  deleteHelpText,
+  findAll,
+  updateHelpText,
+} from "../controllers/helpTexts";
 
 import checkAuth from "../middlewares/checkAuth";
 import { createHelpTextValidationSchema } from "../validation/helpTexts";
@@ -16,6 +21,8 @@ router.post(
 
 router.get("/", checkAuth, findAll);
 
-router.delete("/:helpTextSlug", checkAuth, deleteHelpText);
+router.delete("/:slug", checkAuth, deleteHelpText);
+
+router.patch("/:slug", checkAuth, updateHelpText);
 
 export default router;

@@ -27,7 +27,6 @@ const HelpTextsPage = () => {
   }, [helpTexts]);
 
   const columns: GridColDef[] = [
-    { field: "id", headerName: "ID", width: 100, sortable: false },
     { field: "slug", headerName: "Slug", width: 150, sortable: false },
     {
       field: "description",

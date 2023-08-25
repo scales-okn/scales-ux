@@ -39,6 +39,64 @@ const helpTextsSlice = createSlice({
       loadingHelpTexts: false,
       hasErrors: true,
     }),
+    deleteHelpText: (state) => ({
+      ...state,
+      loadingHelpTexts: true,
+    }),
+    deleteHelpTextSuccess: (state, action) => {
+      const { slug } = action.payload;
+
+      return {
+        ...state,
+        helpTexts: state.helpTexts.filter((helpText) => helpText.slug !== slug),
+        hasErrors: false,
+      };
+    },
+    deleteHelpTextFailure: (state) => ({
+      ...state,
+      hasErrors: true,
+    }),
+    createHelpText: (state) => ({
+      ...state,
+      loadingHelpTexts: true,
+    }),
+    createHelpTextSuccess: (state, action) => {
+      const { newHelpText } = action.payload;
+
+      return {
+        ...state,
+        helpTexts: [...state.helpTexts, newHelpText],
+        hasErrors: false,
+      };
+    },
+    createHelpTextFailure: (state) => ({
+      ...state,
+      hasErrors: true,
+    }),
+    updateHelpText: (state) => ({
+      ...state,
+      loadingHelpTexts: true,
+    }),
+    updateHelpTextSuccess: (state, action) => {
+      const { updatedHelpText } = action.payload;
+
+      return {
+        ...state,
+        helpTexts: state.helpTexts.map((helpText) => {
+          if (helpText.slug === updatedHelpText.slug) {
+            return updatedHelpText;
+          }
+          return helpText;
+        }),
+        loadingHelpTexts: false,
+        hasErrors: false,
+      };
+    },
+    updateHelpTextFailure: (state) => ({
+      ...state,
+      loadingHelpTexts: false,
+      hasErrors: true,
+    }),
   },
 });
 
@@ -80,6 +138,103 @@ export const getHelpTexts = () => {
   };
 };
 
+export const deleteHelpText = (slug: string) => {
+  return async (dispatch: AppDispatch, getState) => {
+    try {
+      const { token } = authSelector(getState());
+      const authHeader = authorizationHeader(token);
+      dispatch(helpTextsActions.deleteHelpText());
+
+      const response = await fetch(`/api/helpTexts/${slug}`, {
+        method: "DELETE",
+        headers: {
+          ...authHeader,
+        },
+      });
+      const res = await response.json();
+
+      if (res.code === 200) {
+        dispatch(helpTextsActions.deleteHelpTextSuccess({ slug }));
+      } else {
+        dispatch(helpTextsActions.deleteHelpTextFailure());
+      }
+    } catch (error) {
+      console.warn(error); // eslint-disable-line no-console
+      dispatch(helpTextsActions.deleteHelpTextFailure());
+    }
+  };
+};
+
+export const createHelpText = (values: Record<string, unknown>) => {
+  return async (dispatch: AppDispatch, getState) => {
+    try {
+      const { token } = authSelector(getState());
+      const authHeader = authorizationHeader(token);
+      dispatch(helpTextsActions.createHelpText());
+
+      const response = await fetch(`/api/helpTexts`, {
+        method: "POST",
+        headers: {
+          ...authHeader,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(values),
+      });
+      const res = await response.json();
+
+      if (res.code === 200) {
+        dispatch(
+          helpTextsActions.createHelpTextSuccess({
+            newHelpText: res.data.helpText,
+          }),
+        );
+      } else {
+        dispatch(helpTextsActions.createHelpTextFailure());
+      }
+    } catch (error) {
+      console.warn(error); // eslint-disable-line no-console
+      dispatch(helpTextsActions.createHelpTextFailure());
+    }
+  };
+};
+
+export const updateHelpText = (
+  slug: string,
+  values: Record<string, unknown>,
+) => {
+  return async (dispatch: AppDispatch, getState) => {
+    try {
+      const { token } = authSelector(getState());
+      const authHeader = authorizationHeader(token);
+      dispatch(helpTextsActions.updateHelpText());
+
+      const response = await fetch(`/api/helpTexts/${slug}`, {
+        method: "PATCH",
+        headers: {
+          ...authHeader,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(values),
+      });
+      const res = await response.json();
+      console.log("🚀 ~ file: helpTexts.ts:221 ~ return ~ res:", res);
+
+      if (res.code === 200) {
+        dispatch(
+          helpTextsActions.updateHelpTextSuccess({
+            updatedHelpText: res.data.helpText,
+          }),
+        );
+      } else {
+        dispatch(helpTextsActions.updateHelpTextFailure());
+      }
+    } catch (error) {
+      console.warn(error); // eslint-disable-line no-console
+      dispatch(helpTextsActions.updateHelpTextFailure());
+    }
+  };
+};
+
 // Hooks
 export const useHelpTexts = () => {
   const { helpTexts, hasErrors, loadingHelpTexts } =
@@ -92,5 +247,8 @@ export const useHelpTexts = () => {
     loadingHelpTexts,
     hasErrors,
     getHelpTexts: () => dispatch(getHelpTexts()),
+    deleteHelpText: (slug) => dispatch(deleteHelpText(slug)),
+    createHelpText: (values) => dispatch(createHelpText(values)),
+    updateHelpText: (slug, values) => dispatch(updateHelpText(slug, values)),
   };
 };
