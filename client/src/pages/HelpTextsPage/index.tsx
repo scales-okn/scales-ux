@@ -8,7 +8,7 @@ import { useParams, useNavigate } from "react-router-dom";
 import { Row } from "react-bootstrap";
 
 import NotAuthorized from "../../components/NotAuthorized";
-import FeedbackDetailModal from "./FeedbackDetailModal";
+import FeedbackDetailModal from "./HelpTextDetailModal";
 import NewHelpText from "./NewHelpText";
 
 const HelpTextsPage = () => {

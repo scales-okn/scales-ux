@@ -1,6 +1,5 @@
 import React from "react";
 import { css } from "@emotion/css";
-import { Button } from "react-bootstrap";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 
 const BackButton = ({ onClick }) => {

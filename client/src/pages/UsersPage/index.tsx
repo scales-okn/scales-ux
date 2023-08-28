@@ -7,7 +7,6 @@ import {
 } from "@material-ui/data-grid";
 import { useEffectOnce } from "react-use";
 import { Tooltip, Typography } from "@material-ui/core";
-import PageLayout from "../../components/PageLayout";
 import NotAuthorized from "../../components/NotAuthorized";
 import UserFieldToggle from "./UserFieldToggle";
 import { Row } from "react-bootstrap";

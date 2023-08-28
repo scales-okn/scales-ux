@@ -2,7 +2,6 @@ import React, { useState } from "react";
 import { TextField, Grid } from "@mui/material";
 import { Button } from "react-bootstrap";
 import { useFormik } from "formik";
-import { useAuthHeader } from "store/auth";
 import * as yup from "yup";
 import ModalContainer from "components/Modals/ModalContainer";
 import { useHelpTexts } from "store/helpTexts";
@@ -16,7 +15,6 @@ type HelpTextFields = {
 };
 
 const NewHelpText = () => {
-  const authorizationHeader = useAuthHeader();
   const { createHelpText } = useHelpTexts();
 
   const [newHelpTextVisible, setNewHelpTextVisible] = useState(false);
@@ -45,6 +43,7 @@ const NewHelpText = () => {
     validationSchema,
     onSubmit: (values: HelpTextFields) => {
       createHelpText(values);
+      onClose();
     },
   });
 
@@ -140,7 +139,7 @@ const NewHelpText = () => {
             </Grid>
             <Grid item xs={12} sx={{ marginTop: "12px" }}>
               <Button type="submit" variant="success">
-                Add Row
+                Submit
               </Button>
             </Grid>
           </Grid>

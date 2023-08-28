@@ -1,4 +1,4 @@
-import React, { FunctionComponent } from "react";
+import React, { FunctionComponent, useState } from "react";
 import { useHelpTexts } from "store/helpTexts";
 
 import * as yup from "yup";
@@ -19,6 +19,7 @@ const FeedbackDetailModal: FunctionComponent<FeedbackDetailModalT> = ({
   closeModal,
   feedbackDetail,
 }) => {
+  const [confirmVisible, setConfirmVisible] = useState(false);
   const { updateHelpText, deleteHelpText } = useHelpTexts();
   const { slug, description, examples, options, links } = feedbackDetail || {};
 
@@ -43,6 +44,18 @@ const FeedbackDetailModal: FunctionComponent<FeedbackDetailModalT> = ({
       formik.resetForm();
     },
   });
+
+  const handleDelete = () => {
+    if (confirmVisible) {
+      deleteHelpText(slug);
+      setTimeout(() => {
+        closeModal();
+        setConfirmVisible(false);
+      }, 500);
+    } else {
+      setConfirmVisible(true);
+    }
+  };
 
   if (!slug) return null;
 
@@ -76,7 +89,7 @@ const FeedbackDetailModal: FunctionComponent<FeedbackDetailModalT> = ({
             value={formik.values.examples}
             onChange={formik.handleChange}
             error={formik.touched.examples && !!formik.errors.examples}
-            helperText={formik.touched.examples && formik.errors.examples}
+            helperText={"* Separate by comma"}
           />
         </section>
 
@@ -89,7 +102,7 @@ const FeedbackDetailModal: FunctionComponent<FeedbackDetailModalT> = ({
             value={formik.values.options}
             onChange={formik.handleChange}
             error={formik.touched.options && !!formik.errors.options}
-            helperText={formik.touched.options && formik.errors.options}
+            helperText={"* Separate by comma"}
           />
         </section>
 
@@ -102,15 +115,15 @@ const FeedbackDetailModal: FunctionComponent<FeedbackDetailModalT> = ({
             value={formik.values.links}
             onChange={formik.handleChange}
             error={formik.touched.links && !!formik.errors.links}
-            helperText={formik.touched.links && formik.errors.links}
+            helperText={"* Separate by comma"}
           />
         </section>
         <div className="buttonRow">
+          <Button variant="danger" onClick={handleDelete}>
+            {confirmVisible ? "Confirm Delete" : "Delete"}
+          </Button>
           <Button variant="primary" onClick={() => formik.handleSubmit()}>
             Update
-          </Button>
-          <Button variant="danger" onClick={() => deleteHelpText(slug)}>
-            Delete
           </Button>
         </div>
       </div>

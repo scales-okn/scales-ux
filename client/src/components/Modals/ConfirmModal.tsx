@@ -17,7 +17,7 @@ const ConfirmModal: FC<ConfirmModalProps> = ({
   const handleClose = () => setOpen(false);
 
   return (
-    <Modal show={open} onHide={handleClose} animation>
+    <Modal show={open} onHide={handleClose} animation sx={{ xIndex: "134000" }}>
       <Modal.Body>Are you sure you want to delete this {itemName}?</Modal.Body>
       <Modal.Footer>
         <Button

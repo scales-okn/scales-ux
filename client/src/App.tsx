@@ -10,9 +10,6 @@ import { useSelector } from "react-redux";
 import { useHelpTexts } from "store/helpTexts";
 
 import DocumentPage from "pages/DocumentPage";
-import UsersPage from "pages/UsersPage";
-import FeedbackPage from "pages/FeedbackPage";
-import HelpTextsPage from "pages/HelpTextsPage";
 import SignInPage from "pages/SignInPage";
 import SignUpPage from "pages/SignUpPage";
 import ProfilePage from "pages/ProfilePage";
@@ -21,7 +18,6 @@ import NotebookPage from "pages/NotebookPage";
 import EmailVerificationPage from "pages/EmailVerificationPage";
 import ForgotPasswordPage from "pages/ForgotPasswordPage";
 import ResetPasswordPage from "pages/ResetPasswordPage";
-import RingsPage from "pages/RingsPage";
 import Notifications from "components/Notifications";
 import Ring from "pages/RingsPage/Ring";
 import Admin from "pages/AdminPage";
@@ -49,7 +45,7 @@ const App = () => {
 
   useEffect(() => {
     getHelpTexts(); // Invoke the function by adding parentheses
-  }, []);
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   return (
     <div className="app">
