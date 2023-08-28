@@ -19,7 +19,7 @@ import {
   Card,
 } from "react-bootstrap";
 import { Link } from "react-router-dom";
-import { DataGrid, GridColumnHeaderParams } from "@mui/x-data-grid";
+import { DataGrid } from "@mui/x-data-grid";
 import uniqid from "uniqid";
 
 import Filters from "../Filters";
@@ -28,7 +28,7 @@ import Dataset from "../Dataset";
 import Analysis from "../Analysis";
 
 import ConfirmModal from "components/Modals/ConfirmModal";
-import ColumnHeader from "./ColumnHeader";
+import ColumnHeader from "components/ColumnHeader";
 
 import "./Panel.scss";
 
@@ -125,7 +125,7 @@ const Panel: FunctionComponent<PanelProps> = ({ panelId }) => {
           headerName: column.nicename,
           width: 200,
           sortable: false,
-          renderHeader: (params: GridColumnHeaderParams) => {
+          renderHeader: (params) => {
             return (
               <ColumnHeader
                 title={params.colDef.headerName}
@@ -152,7 +152,7 @@ const Panel: FunctionComponent<PanelProps> = ({ panelId }) => {
           </Link>
         );
       },
-      renderHeader: (params: GridColumnHeaderParams) => {
+      renderHeader: (params) => {
         return (
           <ColumnHeader
             title={params.colDef.headerName}
@@ -237,7 +237,6 @@ const Panel: FunctionComponent<PanelProps> = ({ panelId }) => {
                           <>
                             <div
                               style={{
-                                // height: 400,
                                 width: "100%",
                                 overflowX: "hidden",
                               }}
@@ -245,7 +244,7 @@ const Panel: FunctionComponent<PanelProps> = ({ panelId }) => {
                               {!resultsCollapsed && (
                                 <DataGrid
                                   rows={rows}
-                                  onPaginationModelChange={(model, details) => {
+                                  onPaginationModelChange={(model) => {
                                     getPanelResults([], model.page);
                                   }}
                                   paginationModel={{
@@ -260,18 +259,6 @@ const Panel: FunctionComponent<PanelProps> = ({ panelId }) => {
                                   checkboxSelection={false}
                                   className="bg-white border-0 rounded-0"
                                   paginationMode="server"
-                                  // onColumnHeaderEnter={(
-                                  //   params,
-                                  //   event,
-                                  //   details,
-                                  // ) => {
-                                  //   console.log(
-                                  //     "🚀 ~ file: Panel.tsx:244 ~ params, event, details:",
-                                  //     params,
-                                  //     event,
-                                  //     details,
-                                  //   );
-                                  // }}
                                 />
                               )}
                             </div>

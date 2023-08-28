@@ -3,11 +3,12 @@ import { useSelector } from "react-redux";
 import { useHelpTexts } from "store/helpTexts";
 import { userSelector } from "store/auth";
 
-import { DataGrid, GridColDef } from "@material-ui/data-grid";
+import { DataGrid, GridColDef } from "@mui/x-data-grid";
 import { useParams, useNavigate } from "react-router-dom";
 import { Row } from "react-bootstrap";
 
-import NotAuthorized from "../../components/NotAuthorized";
+import ColumnHeader from "components/ColumnHeader";
+import NotAuthorized from "components/NotAuthorized";
 import FeedbackDetailModal from "./HelpTextDetailModal";
 import NewHelpText from "./NewHelpText";
 
@@ -27,14 +28,31 @@ const HelpTextsPage = () => {
     setRows(helpTexts);
   }, [helpTexts]);
 
+  const renderHeader = (params) => {
+    return (
+      <ColumnHeader
+        title={params.colDef.headerName}
+        dataKey={params.colDef.field}
+        withTooltip
+      />
+    );
+  };
+
   const columns: GridColDef[] = [
-    { field: "slug", headerName: "Slug", width: 150, sortable: false },
+    {
+      field: "slug",
+      headerName: "Slug",
+      width: 150,
+      sortable: false,
+      renderHeader,
+    },
     {
       field: "description",
       headerName: "Description",
       minWidth: 200,
       sortable: false,
       flex: 1,
+      renderHeader,
     },
     {
       field: "examples",
@@ -42,6 +60,7 @@ const HelpTextsPage = () => {
       minWidth: 200,
       sortable: false,
       flex: 1,
+      renderHeader,
     },
     {
       field: "options",
@@ -49,6 +68,7 @@ const HelpTextsPage = () => {
       minWidth: 200,
       sortable: false,
       flex: 1,
+      renderHeader,
     },
     {
       field: "links",
@@ -56,6 +76,7 @@ const HelpTextsPage = () => {
       minWidth: 200,
       sortable: false,
       flex: 1,
+      renderHeader,
     },
   ];
 
@@ -71,16 +92,16 @@ const HelpTextsPage = () => {
       {!isAdmin ? (
         <NotAuthorized />
       ) : (
-        <Row style={{ height: 400, width: "100%", margin: "0 auto" }}>
+        <Row style={{ height: "60vh", width: "100%", margin: "0 auto" }}>
           <DataGrid
             rows={rows}
             columns={columns}
             disableColumnMenu
             disableColumnFilter
             onRowClick={({ row }) => navigate(`/admin/help-texts/${row.slug}`)}
-            pageSize={5}
             checkboxSelection={false}
             className="bg-white p-0"
+            hideFooterPagination
           />
         </Row>
       )}

@@ -3,11 +3,11 @@ import { Link } from "react-router-dom";
 import { useRings } from "store/rings";
 
 import { useEffectOnce } from "react-use";
-import { DataGrid } from "@material-ui/data-grid";
+import { DataGrid, GridCellParams } from "@mui/x-data-grid";
 import { Row, Button } from "react-bootstrap";
 import dayjs from "dayjs";
-import { GridCellParams } from "@material-ui/data-grid";
 
+import ColumnHeader from "components/ColumnHeader";
 import Loader from "components/Loader";
 
 const RingsPage: React.FC = () => {
@@ -17,6 +17,66 @@ const RingsPage: React.FC = () => {
     if (loadingRings) return null;
     getRings();
   });
+
+  const renderHeader = (params) => {
+    return (
+      <ColumnHeader
+        title={params.colDef.headerName}
+        dataKey={params.colDef.field}
+        withTooltip
+      />
+    );
+  };
+
+  const columns = [
+    {
+      field: "name",
+      headerName: "Name",
+      width: 150,
+      renderCell: (params: GridCellParams) => (
+        <Link to={`/admin/rings/${params.row.id}`} className="ms-2">
+          {params.row.name}
+        </Link>
+      ),
+      renderHeader,
+    },
+    {
+      field: "rid",
+      headerName: "Ring ID",
+      width: 200,
+      renderHeader,
+    },
+    {
+      field: "description",
+      headerName: "Description",
+      width: 200,
+      renderHeader,
+    },
+    {
+      field: "createdAt",
+      headerName: "Created at",
+      width: 200,
+      renderCell: (params: GridCellParams) => (
+        <>{dayjs(params.row.createdAt).format("M/D/YYYY")}</>
+      ),
+      renderHeader,
+    },
+    {
+      field: "updatedAt",
+      headerName: "Updated at",
+      width: 200,
+      renderCell: (params: GridCellParams) => (
+        <>{dayjs(params.row.updatedAt).format("M/D/YYYY")}</>
+      ),
+      renderHeader,
+    },
+    {
+      field: "visibility",
+      headerName: "Visibility",
+      width: 150,
+      renderHeader,
+    },
+  ];
 
   return (
     <>
@@ -37,54 +97,13 @@ const RingsPage: React.FC = () => {
             Create Ring
           </Button>
         </Link>
-        <Row style={{ height: 400, width: "100%", margin: "0 auto" }}>
+        <Row style={{ height: "60vh", width: "100%", margin: "0 auto" }}>
           <DataGrid
             rows={rings}
-            columns={[
-              {
-                field: "name",
-                headerName: "Name",
-                width: 150,
-                renderCell: (params: GridCellParams) => (
-                  <Link to={`/admin/rings/${params.row.id}`} className="ms-2">
-                    {params.row.name}
-                  </Link>
-                ),
-              },
-              {
-                field: "rid",
-                headerName: "Ring ID",
-                width: 200,
-              },
-              {
-                field: "description",
-                headerName: "Description",
-                width: 200,
-              },
-              {
-                field: "createdAt",
-                headerName: "Created at",
-                width: 200,
-                renderCell: (params: GridCellParams) => (
-                  <>{dayjs(params.row.createdAt).format("M/D/YYYY")}</>
-                ),
-              },
-              {
-                field: "updatedAt",
-                headerName: "Updated at",
-                width: 200,
-                renderCell: (params: GridCellParams) => (
-                  <>{dayjs(params.row.updatedAt).format("M/D/YYYY")}</>
-                ),
-              },
-              {
-                field: "visibility",
-                headerName: "Visibility",
-                width: 150,
-              },
-            ]}
-            rowsPerPageOptions={[5]}
-            pageSize={5}
+            columns={columns}
+            disableColumnMenu
+            disableColumnFilter
+            hideFooterPagination
             checkboxSelection={false}
             className="bg-white p-0"
           />

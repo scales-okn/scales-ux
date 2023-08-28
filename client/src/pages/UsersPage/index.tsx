@@ -1,17 +1,16 @@
 import React, { FunctionComponent, useState } from "react";
-import {
-  DataGrid,
-  GridColDef,
-  GridValueGetterParams,
-  GridCellParams,
-} from "@material-ui/data-grid";
-import { useEffectOnce } from "react-use";
-import { Tooltip, Typography } from "@material-ui/core";
-import NotAuthorized from "../../components/NotAuthorized";
-import UserFieldToggle from "./UserFieldToggle";
-import { Row } from "react-bootstrap";
-import { useAuthHeader, userSelector } from "store/auth";
 import { useSelector } from "react-redux";
+
+import { DataGrid, GridColDef, GridCellParams } from "@mui/x-data-grid";
+import { Tooltip, Typography } from "@material-ui/core";
+import { useEffectOnce } from "react-use";
+import { Row } from "react-bootstrap";
+
+import { useAuthHeader, userSelector } from "store/auth";
+
+import UserFieldToggle from "./UserFieldToggle";
+import NotAuthorized from "components/NotAuthorized";
+import ColumnHeader from "components/ColumnHeader";
 import DeleteUser from "./DeleteUser";
 
 const AdminUsersPages: FunctionComponent = () => {
@@ -22,24 +21,40 @@ const AdminUsersPages: FunctionComponent = () => {
 
   const isAdmin = role === "admin";
 
+  const renderHeader = (params) => {
+    return (
+      <ColumnHeader
+        title={params.colDef.headerName}
+        dataKey={params.colDef.field}
+        withTooltip
+      />
+    );
+  };
+
   const columns: GridColDef[] = [
-    // { field: "id", headerName: "ID", width: 100 },
+    { field: "id", headerName: "ID", width: 100, renderHeader },
     {
       field: "fullName",
       headerName: "Full name",
       description: "This column has a value getter and is not sortable.",
       sortable: false,
       width: 200,
-      valueGetter: (params: GridValueGetterParams) =>
-        `${params.getValue(params.id, "firstName") || ""} ${
-          params.getValue(params.id, "lastName") || ""
-        }`,
+      renderHeader,
+
+      renderCell: (params: GridCellParams) => {
+        return (
+          <div>
+            {params.row.firstName} {params.row.lastName}
+          </div>
+        );
+      },
     },
-    { field: "email", headerName: "Email", width: 240 },
+    { field: "email", headerName: "Email", width: 240, renderHeader },
     {
       field: "usage",
       headerName: "Usage",
       width: 120,
+      renderHeader,
       renderCell: (params: GridCellParams) => (
         <Tooltip title={params.row.usage}>
           <Typography noWrap variant="body2">
@@ -52,6 +67,7 @@ const AdminUsersPages: FunctionComponent = () => {
       field: "approved",
       headerName: "Approved",
       width: 140,
+      renderHeader,
       renderCell: (params: GridCellParams) => (
         <UserFieldToggle
           userId={params.row.id}
@@ -65,6 +81,7 @@ const AdminUsersPages: FunctionComponent = () => {
       field: "blocked",
       headerName: "Blocked",
       width: 140,
+      renderHeader,
       renderCell: (params: GridCellParams) => (
         <UserFieldToggle
           userId={params.row.id}
@@ -117,6 +134,8 @@ const AdminUsersPages: FunctionComponent = () => {
       });
   });
 
+  // TODO: add pagination?
+
   return (
     <>
       {!isAdmin ? (
@@ -124,7 +143,7 @@ const AdminUsersPages: FunctionComponent = () => {
       ) : (
         <Row
           style={{
-            height: "70vh",
+            height: "60vh",
             minHeight: "300px",
             width: "100%",
             margin: "0 auto",
@@ -133,7 +152,9 @@ const AdminUsersPages: FunctionComponent = () => {
           <DataGrid
             rows={rows}
             columns={columns}
-            pageSize={20}
+            disableColumnMenu
+            disableColumnFilter
+            hideFooterPagination
             checkboxSelection={false}
             className="bg-white p-0"
           />

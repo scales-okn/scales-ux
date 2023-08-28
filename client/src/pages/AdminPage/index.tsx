@@ -44,6 +44,7 @@ const AdminPage = () => {
             backgroundColor: "white",
             position: "fixed",
             width: "100vw",
+            zIndex: "999",
           }}
         >
           {tabPaths.map((tab) => (

@@ -1,5 +1,5 @@
 import React, { FunctionComponent, useState } from "react";
-import { DataGrid, GridColDef, GridCellParams } from "@material-ui/data-grid";
+import { DataGrid, GridCellParams, GridColDef } from "@mui/x-data-grid";
 import dayjs from "dayjs";
 import { useEffectOnce } from "react-use";
 import NotAuthorized from "components/NotAuthorized";
@@ -8,9 +8,11 @@ import { Row } from "react-bootstrap";
 import { useAuthHeader, userSelector } from "store/auth";
 import { useSelector } from "react-redux";
 import DeleteFeedback from "./DeleteFeedback";
+import ColumnHeader from "components/ColumnHeader";
 
 const AdminFeedbackPage: FunctionComponent = () => {
   const [rows, setRows] = useState([]);
+
   const [feedbackDetail, setFeedbackDetail] = useState(null);
   const authorizationHeader = useAuthHeader();
 
@@ -30,6 +32,16 @@ const AdminFeedbackPage: FunctionComponent = () => {
       });
   });
 
+  const renderHeader = (params) => {
+    return (
+      <ColumnHeader
+        title={params.colDef.headerName}
+        dataKey={params.colDef.field}
+        withTooltip
+      />
+    );
+  };
+
   const columns: GridColDef[] = [
     {
       field: "body",
@@ -38,6 +50,7 @@ const AdminFeedbackPage: FunctionComponent = () => {
       sortable: false,
       minWidth: 200,
       flex: 1,
+      renderHeader,
     },
     {
       field: "createdAt",
@@ -51,6 +64,7 @@ const AdminFeedbackPage: FunctionComponent = () => {
           <div>{dayjs(params.row.createdAt).format("dddd, MMMM D YYYY")}</div>
         );
       },
+      renderHeader,
     },
     {
       field: "delete",
@@ -59,6 +73,7 @@ const AdminFeedbackPage: FunctionComponent = () => {
       renderCell: (params: GridCellParams) => {
         return <DeleteFeedback feedbackId={params.row.id} />;
       },
+      renderHeader,
     },
   ];
 
@@ -73,12 +88,12 @@ const AdminFeedbackPage: FunctionComponent = () => {
       {!isAdmin ? (
         <NotAuthorized />
       ) : (
-        <Row style={{ height: 400, width: "100%", margin: "0 auto" }}>
+        <Row style={{ height: "60vh", width: "100%", margin: "0 auto" }}>
           <DataGrid
             rows={rows}
             columns={columns}
             onRowClick={(row) => setFeedbackDetail(row)}
-            pageSize={5}
+            hideFooterPagination
             checkboxSelection={false}
             className="bg-white p-0"
           />
