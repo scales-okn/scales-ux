@@ -217,7 +217,6 @@ export const updateHelpText = (
         body: JSON.stringify(values),
       });
       const res = await response.json();
-      console.log("🚀 ~ file: helpTexts.ts:221 ~ return ~ res:", res);
 
       if (res.code === 200) {
         dispatch(

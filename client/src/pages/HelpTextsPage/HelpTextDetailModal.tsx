@@ -1,4 +1,4 @@
-import React, { FunctionComponent, useState } from "react";
+import React, { FunctionComponent, useEffect, useState } from "react";
 import { useHelpTexts } from "store/helpTexts";
 
 import * as yup from "yup";
@@ -30,13 +30,15 @@ const FeedbackDetailModal: FunctionComponent<FeedbackDetailModalT> = ({
     links: yup.string().required("Links are required"),
   });
 
+  const initialValues = {
+    description: description || "",
+    examples: examples || "",
+    options: options || "",
+    links: links || "",
+  };
+
   const formik = useFormik({
-    initialValues: {
-      description: description || "",
-      examples: examples || "",
-      options: options || "",
-      links: links || "",
-    },
+    initialValues,
     validationSchema,
     onSubmit: (values) => {
       updateHelpText(slug, values);
@@ -44,6 +46,10 @@ const FeedbackDetailModal: FunctionComponent<FeedbackDetailModalT> = ({
       formik.resetForm();
     },
   });
+
+  useEffect(() => {
+    formik.setValues(initialValues);
+  }, [feedbackDetail]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const handleDelete = () => {
     if (confirmVisible) {

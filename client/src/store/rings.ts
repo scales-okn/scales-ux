@@ -119,6 +119,7 @@ export const getRingInfo = (rid: string, version: number) => {
         },
       });
       const info = await response.json();
+
       if (response.status === 200 && info?.success !== false) {
         dispatch(ringsActions.getRingInfoSuccess({ rid, info }));
       } else {

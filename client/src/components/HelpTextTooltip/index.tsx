@@ -1,13 +1,16 @@
-import React from "react";
-import Tooltip, { TooltipProps, tooltipClasses } from "@mui/material/Tooltip";
-import { styled } from "@mui/material/styles";
-import { userSelector } from "store/auth";
+import React, { ReactElement, ReactNode } from "react";
 import { useSelector } from "react-redux";
-import { tooltipTitleStyles } from "../Filters/styles";
-import VisibilityIcon from "@mui/icons-material/Visibility";
 import { Link } from "react-router-dom";
 
-const CustomTooltip = styled(({ className, ...props }: TooltipProps) => (
+import Tooltip, { TooltipProps, tooltipClasses } from "@mui/material/Tooltip";
+import { styled } from "@mui/material/styles";
+import VisibilityIcon from "@mui/icons-material/Visibility";
+
+import { userSelector } from "store/auth";
+
+import { tooltipTitleStyles } from "../Filters/styles";
+
+export const CustomTooltip = styled(({ className, ...props }: TooltipProps) => (
   <Tooltip {...props} classes={{ popper: className }} />
 ))(({ theme }) => ({
   [`& .${tooltipClasses.tooltip}`]: {
@@ -24,19 +27,25 @@ const CustomTooltip = styled(({ className, ...props }: TooltipProps) => (
 
 type FilterTooltipT = {
   helpText: Record<string, unknown>;
+  children?: ReactElement & ReactNode;
 };
 
-const FilterTooltip = ({ helpText }: FilterTooltipT) => {
+const FilterTooltip = ({
+  helpText,
+  children = <VisibilityIcon />,
+}: FilterTooltipT) => {
   const { role } = useSelector(userSelector);
   const isAdmin = role === "admin";
 
-  const { slug, description, examples, options, links } = helpText;
+  const { slug, description, examples, options, links } = helpText || {};
 
   const formatMultiple = (options, isLinks = false) => {
     const wrapper = (option) => {
       return isLinks ? (
         <p key={option}>
-          <a href={option}>{option}</a>
+          <a className="optionLink" href={option}>
+            {option}
+          </a>
         </p>
       ) : (
         <li>
@@ -86,7 +95,7 @@ const FilterTooltip = ({ helpText }: FilterTooltipT) => {
 
   return (
     <CustomTooltip title={title} placement="bottom-start">
-      <VisibilityIcon />
+      {children}
     </CustomTooltip>
   );
 };

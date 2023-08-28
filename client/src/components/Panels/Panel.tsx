@@ -5,6 +5,10 @@ import React, {
   useContext,
   useMemo,
 } from "react";
+
+import { usePanel } from "store/panels";
+import { useRing } from "store/rings";
+
 import {
   Accordion,
   Col,
@@ -15,19 +19,18 @@ import {
   Card,
 } from "react-bootstrap";
 import { Link } from "react-router-dom";
-import { DataGrid } from "@material-ui/data-grid";
-import Filters from "../Filters";
-import Loader from "../Loader";
-
-import Dataset from "../Dataset";
-
+import { DataGrid, GridColumnHeaderParams } from "@mui/x-data-grid";
 import uniqid from "uniqid";
 
-import { usePanel } from "../../store/panels";
-import { useRing } from "../../store/rings";
+import Filters from "../Filters";
+import Loader from "../Loader";
+import Dataset from "../Dataset";
 import Analysis from "../Analysis";
-import "./Panel.scss";
+
 import ConfirmModal from "components/Modals/ConfirmModal";
+import ColumnHeader from "./ColumnHeader";
+
+import "./Panel.scss";
 
 type ResultsTogglerProps = {
   children: React.ReactNode;
@@ -103,8 +106,8 @@ const Panel: FunctionComponent<PanelProps> = ({ panelId }) => {
   }, [ring]); // eslint-disable-line react-hooks/exhaustive-deps
 
   useEffect(() => {
-    if (!info || collapsed || loadingPanelResults) return;
-    // if (!info || collapsed) return;
+    // if (!info || collapsed || loadingPanelResults) return;
+    if (!info || collapsed) return;
     getPanelResults();
   }, [collapsed, info]); // eslint-disable-line react-hooks/exhaustive-deps
 
@@ -122,6 +125,15 @@ const Panel: FunctionComponent<PanelProps> = ({ panelId }) => {
           headerName: column.nicename,
           width: 200,
           sortable: false,
+          renderHeader: (params: GridColumnHeaderParams) => {
+            return (
+              <ColumnHeader
+                title={params.colDef.headerName}
+                dataKey={params.colDef.field}
+                withTooltip
+              />
+            );
+          },
         })) || [];
 
     out.unshift({
@@ -138,6 +150,15 @@ const Panel: FunctionComponent<PanelProps> = ({ panelId }) => {
           >
             {item.row.case_id}
           </Link>
+        );
+      },
+      renderHeader: (params: GridColumnHeaderParams) => {
+        return (
+          <ColumnHeader
+            title={params.colDef.headerName}
+            dataKey="case_id"
+            withTooltip
+          />
         );
       },
     });
@@ -216,7 +237,7 @@ const Panel: FunctionComponent<PanelProps> = ({ panelId }) => {
                           <>
                             <div
                               style={{
-                                height: 400,
+                                // height: 400,
                                 width: "100%",
                                 overflowX: "hidden",
                               }}
@@ -224,19 +245,33 @@ const Panel: FunctionComponent<PanelProps> = ({ panelId }) => {
                               {!resultsCollapsed && (
                                 <DataGrid
                                   rows={rows}
-                                  onPageChange={(page) =>
-                                    getPanelResults([], page)
-                                  }
+                                  onPaginationModelChange={(model, details) => {
+                                    getPanelResults([], model.page);
+                                  }}
+                                  paginationModel={{
+                                    page: results?.page,
+                                    pageSize: results?.batchSize,
+                                  }}
                                   disableColumnMenu
                                   disableColumnFilter
-                                  rowsPerPageOptions={[10]}
+                                  pageSizeOptions={[10]}
                                   columns={columns}
-                                  page={results?.page}
-                                  pageSize={results?.batchSize}
                                   rowCount={results?.totalCount}
                                   checkboxSelection={false}
                                   className="bg-white border-0 rounded-0"
                                   paginationMode="server"
+                                  // onColumnHeaderEnter={(
+                                  //   params,
+                                  //   event,
+                                  //   details,
+                                  // ) => {
+                                  //   console.log(
+                                  //     "🚀 ~ file: Panel.tsx:244 ~ params, event, details:",
+                                  //     params,
+                                  //     event,
+                                  //     details,
+                                  //   );
+                                  // }}
                                 />
                               )}
                             </div>

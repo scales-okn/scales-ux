@@ -12,8 +12,6 @@ export const styles = css`
 `;
 
 export const tooltipTitleStyles = css`
-  min-width: 200px;
-
   h5 {
     color: var(--main-purple);
     font-weight: 700;
@@ -28,7 +26,7 @@ export const tooltipTitleStyles = css`
     padding-left: 10px;
   }
 
-  a {
+  .optionLink {
     margin-left: -10px;
   }
 
