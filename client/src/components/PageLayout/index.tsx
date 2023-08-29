@@ -124,7 +124,7 @@ const PageLayout = ({ id = "", children, pageTitle }: PageLayoutT) => {
                       <NavItem
                         key={"admin"}
                         linkName={"admin"}
-                        route={"/admin/rings"}
+                        route={"/admin"}
                       />
                     )}
                   </>

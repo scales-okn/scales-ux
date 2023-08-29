@@ -33,7 +33,6 @@ const HelpTextsPage = () => {
       <ColumnHeader
         title={params.colDef.headerName}
         dataKey={params.colDef.field}
-        withTooltip
       />
     );
   };
@@ -49,7 +48,7 @@ const HelpTextsPage = () => {
     {
       field: "description",
       headerName: "Description",
-      minWidth: 200,
+      minWidth: 300,
       sortable: false,
       flex: 1,
       renderHeader,

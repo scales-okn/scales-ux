@@ -23,7 +23,6 @@ const RingsPage: React.FC = () => {
       <ColumnHeader
         title={params.colDef.headerName}
         dataKey={params.colDef.field}
-        withTooltip
       />
     );
   };

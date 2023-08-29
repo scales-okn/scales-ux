@@ -93,6 +93,10 @@ const App = () => {
               path="/admin/rings/:ringId"
               element={requireAuth(<Ring />)}
             />
+            <Route
+              path="/admin/*"
+              element={<Navigate to="/admin/rings" replace />}
+            />
 
             {/* Default Redirect */}
             <Route path="*" element={<Navigate to="/" replace />} />
