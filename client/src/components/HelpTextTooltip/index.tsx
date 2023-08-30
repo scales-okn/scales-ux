@@ -37,7 +37,19 @@ const FilterTooltip = ({
   const { role } = useSelector(userSelector);
   const isAdmin = role === "admin";
 
-  const { slug, description, examples, options, links } = helpText || {};
+  const {
+    slug,
+    description,
+    examples,
+    options,
+    links,
+  }: {
+    slug?: string;
+    description?: string;
+    examples?: string;
+    options?: string;
+    links?: string;
+  } = helpText || {};
 
   const formatMultiple = (options, isLinks = false) => {
     const wrapper = (option) => {

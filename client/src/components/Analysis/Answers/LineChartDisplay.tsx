@@ -104,7 +104,9 @@ const LineChartDisplay = ({
           />
         </YAxis>
         <Tooltip
-          formatter={(value) => new Intl.NumberFormat("en").format(value)}
+          formatter={(value) =>
+            new Intl.NumberFormat("en").format(value as number)
+          }
           content={singleLineTooltip}
         />
         <CartesianGrid stroke="#eee" strokeDasharray="5 5" />

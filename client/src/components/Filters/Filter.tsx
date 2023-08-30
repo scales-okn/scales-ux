@@ -5,7 +5,7 @@ import FilterTypeDropDown from "./FitlerTypeDropDown";
 import HighlightOffIcon from "@mui/icons-material/HighlightOff";
 import { debounce } from "lodash";
 import Autocomplete from "@mui/material/Autocomplete";
-import Switch from "@material-ui/core/Switch";
+import { Switch } from "@mui/material";
 import CircularProgress from "@mui/material/CircularProgress";
 import TextField from "@mui/material/TextField";
 import { usePanel } from "../../store/panels";

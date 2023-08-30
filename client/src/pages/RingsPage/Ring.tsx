@@ -9,7 +9,7 @@ import { useNotify } from "components/Notifications";
 import { useNavigate, useParams } from "react-router-dom";
 import { useRing } from "store/rings";
 import ConfirmModal from "components/Modals/ConfirmModal";
-import { JsonEditor as Editor } from "jsoneditor-react";
+import Editor from "components/Editor";
 import "./jsoneditor-react-dark-mode.css";
 import { Container } from "@mui/material";
 import BackButton from "components/Buttons/BackButton";
@@ -286,7 +286,7 @@ const Ring: React.FC = () => {
                 />
                 {formik.touched.dataSource && formik.errors.dataSource ? (
                   <Form.Text className="text-danger">
-                    {formik.errors.dataSource}
+                    {formik.errors.dataSource as string}
                   </Form.Text>
                 ) : null}
               </Form.Group>
@@ -308,7 +308,7 @@ const Ring: React.FC = () => {
                 />
                 {formik.touched.ontology && formik.errors.ontology ? (
                   <Form.Text className="text-danger">
-                    {formik.errors.ontology}
+                    {formik.errors.ontology as string}
                   </Form.Text>
                 ) : null}
               </Form.Group>

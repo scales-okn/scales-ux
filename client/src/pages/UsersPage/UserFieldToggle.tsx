@@ -1,7 +1,5 @@
 import React, { FunctionComponent, useState, ChangeEvent } from "react";
-import FormGroup from "@material-ui/core/FormGroup";
-import FormControlLabel from "@material-ui/core/FormControlLabel";
-import Switch from "@material-ui/core/Switch";
+import { FormGroup, FormControlLabel, Switch } from "@mui/material";
 import { useAuthHeader } from "store/auth";
 import { useNotify } from "components/Notifications";
 
@@ -13,14 +11,25 @@ type Props = {
   disabled?: boolean;
 };
 
-const UserFieldToggle: FunctionComponent<Props> = ({ userId, fieldName, label, value, disabled }) => {
+const UserFieldToggle: FunctionComponent<Props> = ({
+  userId,
+  fieldName,
+  label,
+  value,
+  disabled,
+}) => {
   const [checked, setChecked] = useState(value);
   const authHeader = useAuthHeader();
   const { notify } = useNotify();
 
   const handleChange = (event: ChangeEvent<HTMLInputElement>) => {
     if (event.target.checked !== checked) {
-      const fieldValue = fieldName === "role" ? (event.target.checked ? "admin" : "user") : !checked;
+      const fieldValue =
+        fieldName === "role"
+          ? event.target.checked
+            ? "admin"
+            : "user"
+          : !checked;
       fetch(`/api/users/${userId}`, {
         method: "PUT",
         body: JSON.stringify({
@@ -54,7 +63,18 @@ const UserFieldToggle: FunctionComponent<Props> = ({ userId, fieldName, label, v
 
   return (
     <FormGroup row>
-      <FormControlLabel control={<Switch disabled={disabled} checked={checked} onChange={handleChange} color="primary" name={fieldName} />} label={label} />
+      <FormControlLabel
+        control={
+          <Switch
+            disabled={disabled}
+            checked={checked}
+            onChange={handleChange}
+            color="primary"
+            name={fieldName}
+          />
+        }
+        label={label}
+      />
     </FormGroup>
   );
 };

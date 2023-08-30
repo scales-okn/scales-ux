@@ -2,7 +2,7 @@ import React, { FunctionComponent, useState } from "react";
 import { useSelector } from "react-redux";
 
 import { DataGrid, GridColDef, GridCellParams } from "@mui/x-data-grid";
-import { Tooltip, Typography } from "@material-ui/core";
+import { Tooltip, Typography } from "@mui/material";
 import { useEffectOnce } from "react-use";
 import { Row } from "react-bootstrap";
 

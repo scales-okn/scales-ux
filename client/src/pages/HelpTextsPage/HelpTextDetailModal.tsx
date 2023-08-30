@@ -21,7 +21,19 @@ const FeedbackDetailModal: FunctionComponent<FeedbackDetailModalT> = ({
 }) => {
   const [confirmVisible, setConfirmVisible] = useState(false);
   const { updateHelpText, deleteHelpText } = useHelpTexts();
-  const { slug, description, examples, options, links } = feedbackDetail || {};
+  const {
+    slug,
+    description,
+    examples,
+    options,
+    links,
+  }: {
+    slug?: string;
+    description?: string;
+    examples?: string;
+    options?: string;
+    links?: string;
+  } = feedbackDetail || {};
 
   const validationSchema = yup.object({
     description: yup.string().required("Description is required"),
