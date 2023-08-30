@@ -14,6 +14,7 @@ const BackButton = ({ onClick }) => {
     position: absolute;
     top: 80px;
     left: 0;
+    opacity: 0.8;
     transition: background 0.2s ease-in-out;
 
     &:hover {

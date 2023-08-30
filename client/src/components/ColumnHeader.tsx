@@ -18,7 +18,7 @@ const ColumnHeader = ({
   const { helpTexts } = useHelpTexts();
 
   const matchHelpText = (key) => {
-    return helpTexts?.find((helpText) => helpText.slug === key);
+    return helpTexts?.find((helpText) => helpText.slug === `${key}-header`);
   };
 
   const helpText = matchHelpText(dataKey);

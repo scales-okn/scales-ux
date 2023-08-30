@@ -96,17 +96,23 @@ const FilterTypeDropDown: FunctionComponent<FilterTypeProps> = (props) => {
               <Dropdown.Item
                 onClick={() => setFilterInput({ key, nicename })}
                 disabled={disabled}
-                style={{ display: "flex", alignItems: "center" }}
+                style={{
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "space-between",
+                }}
               >
                 <Dropdown.ItemText className={disabled ? "text-muted" : ""}>
                   {nicename}
                 </Dropdown.ItemText>
-                {desc && (
-                  <Dropdown.ItemText className="text-muted fs-6">
-                    <small>{desc}</small>
-                  </Dropdown.ItemText>
-                )}
-                {helpText && <FilterTooltip helpText={helpText} />}
+                <>
+                  {desc && (
+                    <Dropdown.ItemText className="text-muted fs-6">
+                      <small>{desc}</small>
+                    </Dropdown.ItemText>
+                  )}
+                  {helpText && <FilterTooltip helpText={helpText} />}
+                </>
               </Dropdown.Item>
             </React.Fragment>
           );

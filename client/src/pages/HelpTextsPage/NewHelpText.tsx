@@ -42,6 +42,7 @@ const NewHelpText = () => {
     },
     validationSchema,
     onSubmit: (values: HelpTextFields) => {
+      console.log("test");
       createHelpText(values);
       onClose();
     },
@@ -110,7 +111,7 @@ const NewHelpText = () => {
                   formik.touched.examples && Boolean(formik.errors.examples)
                 }
                 helperText={formik.touched.examples && formik.errors.examples}
-                placeholder="Examples of use. Separate input items by comma"
+                placeholder="Examples of use. Separate input items by !!"
               />
             </Grid>
             <Grid item xs={12}>
@@ -122,7 +123,7 @@ const NewHelpText = () => {
                 {...formik.getFieldProps("options")}
                 error={formik.touched.options && Boolean(formik.errors.options)}
                 helperText={formik.touched.options && formik.errors.options}
-                placeholder="First few available options in autocomplete. Separate input items by comma"
+                placeholder="First few available options in autocomplete. Separate input items by !!"
               />
             </Grid>
             <Grid item xs={12}>
@@ -134,7 +135,7 @@ const NewHelpText = () => {
                 {...formik.getFieldProps("links")}
                 error={formik.touched.links && Boolean(formik.errors.links)}
                 helperText={formik.touched.links && formik.errors.links}
-                placeholder="Links to relevant documentation. Separate input items by comma"
+                placeholder="Links to relevant documentation. Separate input items by !!"
               />
             </Grid>
             <Grid item xs={12} sx={{ marginTop: "12px" }}>

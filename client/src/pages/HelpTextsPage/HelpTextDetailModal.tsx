@@ -25,9 +25,9 @@ const FeedbackDetailModal: FunctionComponent<FeedbackDetailModalT> = ({
 
   const validationSchema = yup.object({
     description: yup.string().required("Description is required"),
-    examples: yup.string().required("Examples are required"),
-    options: yup.string().required("Options are required"),
-    links: yup.string().required("Links are required"),
+    examples: yup.string(),
+    options: yup.string(),
+    links: yup.string(),
   });
 
   const initialValues = {
@@ -95,7 +95,7 @@ const FeedbackDetailModal: FunctionComponent<FeedbackDetailModalT> = ({
             value={formik.values.examples}
             onChange={formik.handleChange}
             error={formik.touched.examples && !!formik.errors.examples}
-            helperText={"* Separate by comma"}
+            helperText={"* Separate by !!"}
           />
         </section>
 
@@ -108,7 +108,7 @@ const FeedbackDetailModal: FunctionComponent<FeedbackDetailModalT> = ({
             value={formik.values.options}
             onChange={formik.handleChange}
             error={formik.touched.options && !!formik.errors.options}
-            helperText={"* Separate by comma"}
+            helperText={"* Separate by !!"}
           />
         </section>
 
@@ -121,7 +121,7 @@ const FeedbackDetailModal: FunctionComponent<FeedbackDetailModalT> = ({
             value={formik.values.links}
             onChange={formik.handleChange}
             error={formik.touched.links && !!formik.errors.links}
-            helperText={"* Separate by comma"}
+            helperText={"* Separate by !!"}
           />
         </section>
         <div className="buttonRow">

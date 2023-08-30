@@ -54,7 +54,7 @@ const FilterTooltip = ({
       );
     };
 
-    const optionsArray = options.split(",");
+    const optionsArray = options.split("!!");
     return <ul>{optionsArray.map((option) => wrapper(option))}</ul>;
   };
 
