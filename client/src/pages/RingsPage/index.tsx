@@ -4,11 +4,12 @@ import { useRings } from "store/rings";
 
 import { useEffectOnce } from "react-use";
 import { DataGrid, GridCellParams } from "@mui/x-data-grid";
-import { Row, Button } from "react-bootstrap";
+import { Row } from "react-bootstrap";
 import dayjs from "dayjs";
 
 import ColumnHeader from "components/ColumnHeader";
 import Loader from "components/Loader";
+import StandardButton from "components/Buttons/StandardButton";
 
 const RingsPage: React.FC = () => {
   const { getRings, rings, loadingRings } = useRings();
@@ -84,7 +85,7 @@ const RingsPage: React.FC = () => {
           to="/admin/rings/create"
           className="text-white text-decoration-none"
         >
-          <Button
+          <StandardButton
             variant="primary"
             className="mb-3 text-white float-end me-3"
             style={{
@@ -94,7 +95,7 @@ const RingsPage: React.FC = () => {
             }}
           >
             Create Ring
-          </Button>
+          </StandardButton>
         </Link>
         <Row style={{ height: "60vh", width: "100%", margin: "0 auto" }}>
           <DataGrid

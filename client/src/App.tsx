@@ -1,13 +1,14 @@
 import React, { useEffect } from "react";
 import { BrowserRouter, Route, Routes, Navigate } from "react-router-dom";
 
-import { Button } from "react-bootstrap";
 import { ErrorBoundary } from "react-error-boundary";
 
 import { authSelector } from "./store/auth";
 import { useSelector } from "react-redux";
 
 import { useHelpTexts } from "store/helpTexts";
+
+import StandardButton from "components/Buttons/StandardButton";
 
 import DocumentPage from "pages/DocumentPage";
 import SignInPage from "pages/SignInPage";
@@ -27,7 +28,7 @@ const ErrorFallback = ({ error, resetErrorBoundary }) => {
     <div role="alert">
       <p>Something went wrong:</p>
       <pre>{error.message}</pre>
-      <Button onClick={resetErrorBoundary}>Try again</Button>
+      <StandardButton onClick={resetErrorBoundary}>Try again</StandardButton>
     </div>
   );
 };

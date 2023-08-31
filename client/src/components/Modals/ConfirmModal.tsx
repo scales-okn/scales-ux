@@ -1,5 +1,6 @@
+import StandardButton from "components/Buttons/StandardButton";
 import React, { FC } from "react";
-import { Modal, Button } from "react-bootstrap";
+import { Modal } from "react-bootstrap";
 
 type ConfirmModalProps = {
   open: boolean;
@@ -20,16 +21,19 @@ const ConfirmModal: FC<ConfirmModalProps> = ({
     <Modal show={open} onHide={handleClose} animation sx={{ xIndex: "134000" }}>
       <Modal.Body>Are you sure you want to delete this {itemName}?</Modal.Body>
       <Modal.Footer>
-        <Button
+        <StandardButton
           variant="secondary"
           className="text-white me-2 btn"
           onClick={handleClose}
         >
           Cancel
-        </Button>
-        <Button className="text-white me-2 btn btn-danger" onClick={onConfirm}>
+        </StandardButton>
+        <StandardButton
+          className="text-white me-2 btn btn-danger"
+          onClick={onConfirm}
+        >
           Delete
-        </Button>
+        </StandardButton>
       </Modal.Footer>
     </Modal>
   );

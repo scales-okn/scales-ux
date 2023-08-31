@@ -12,7 +12,6 @@ import { useRing } from "store/rings";
 import {
   Accordion,
   Col,
-  Button,
   useAccordionButton,
   Form,
   AccordionContext,
@@ -28,6 +27,7 @@ import Dataset from "../Dataset";
 import Analysis from "../Analysis";
 
 import ConfirmModal from "components/Modals/ConfirmModal";
+import StandardButton from "components/Buttons/StandardButton";
 import ColumnHeader from "components/ColumnHeader";
 
 import "./Panel.scss";
@@ -49,9 +49,9 @@ const ResultsToggler: FunctionComponent<ResultsTogglerProps> = ({
   );
 
   return (
-    <Button variant="link" size="sm" onClick={decoratedOnClick}>
+    <StandardButton variant="link" size="sm" onClick={decoratedOnClick}>
       {children}
-    </Button>
+    </StandardButton>
   );
 };
 
@@ -76,9 +76,13 @@ const AccordionToggleButton = ({
   const isCurrentEventKey = activeEventKey === eventKey;
 
   return (
-    <Button variant="outline-primary" size="sm" onClick={decoratedOnClick}>
+    <StandardButton
+      variant="outline-primary"
+      size="sm"
+      onClick={decoratedOnClick}
+    >
       {isCurrentEventKey ? "Close" : "Open"}
-    </Button>
+    </StandardButton>
   );
 };
 
@@ -184,14 +188,14 @@ const Panel: FunctionComponent<PanelProps> = ({ panelId }) => {
             {ring?.name}
           </div>
           <div className="ms-auto">
-            <Button
+            <StandardButton
               variant="outline-danger"
               size="sm"
               onClick={() => setConfirmVisible(true)}
               className="me-1"
             >
               Delete
-            </Button>
+            </StandardButton>
             <AccordionToggleButton
               eventKey={panel.id}
               callback={() => setPanelCollapsed(!collapsed)}

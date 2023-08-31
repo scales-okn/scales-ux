@@ -1,9 +1,13 @@
 import React, { useMemo } from "react";
-import { Button } from "react-bootstrap";
+
 import AddIcon from "@mui/icons-material/Add";
-import Filter from "./Filter";
 import uniqid from "uniqid";
-import { usePanel } from "../../store/panels";
+
+import { usePanel } from "store/panels";
+
+import StandardButton from "components/Buttons/StandardButton";
+import Filter from "./Filter";
+
 import { styles } from "./styles";
 
 type FiltersProps = {
@@ -30,7 +34,7 @@ const Filters = ({ panelId }: FiltersProps) => {
       <div className="filters">
         {filterElements}
         <div className="d-inline-block">
-          <Button
+          <StandardButton
             variant="outline-dark"
             className="me-2"
             onClick={() => {
@@ -41,16 +45,16 @@ const Filters = ({ panelId }: FiltersProps) => {
             }}
           >
             <AddIcon fontSize="medium" />
-          </Button>
+          </StandardButton>
           {!filters?.length && <>Add a filter</>}
-          <Button
+          <StandardButton
             variant="primary"
             className="text-white"
             onClick={() => getPanelResults(filters)}
             style={{ position: "absolute", right: "24px", top: "24px" }}
           >
             Update Results
-          </Button>
+          </StandardButton>
         </div>
       </div>
     </div>

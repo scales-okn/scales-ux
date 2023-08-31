@@ -1,8 +1,11 @@
 import React, { FunctionComponent, useEffect, useState } from "react";
-import { Container, Row, Col, Dropdown, Button } from "react-bootstrap";
+import { Container, Row, Col, Dropdown } from "react-bootstrap";
 import Loader from "../Loader";
-import { usePanel } from "../../store/panels";
-import { useRing, useRings } from "../../store/rings";
+import { usePanel } from "store/panels";
+import { useRing, useRings } from "store/rings";
+
+import StandardButton from "components/Buttons/StandardButton";
+
 import "./Dataset.scss";
 
 type DatasetProps = {
@@ -68,7 +71,7 @@ const Dataset: FunctionComponent<DatasetProps> = ({ panelId }) => {
         <Loader animation="border" isVisible={ring && loadingRingInfo}>
           <Row className="justify-content-md-center mb-4 mt-3">
             <Col className="justify-content-center d-flex">
-              <Button
+              <StandardButton
                 variant="primary"
                 size="lg"
                 className="text-white rounded-3"
@@ -79,7 +82,7 @@ const Dataset: FunctionComponent<DatasetProps> = ({ panelId }) => {
                 }}
               >
                 Start Exploring
-              </Button>
+              </StandardButton>
             </Col>
           </Row>
         </Loader>

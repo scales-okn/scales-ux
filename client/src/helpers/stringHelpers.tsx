@@ -17,7 +17,7 @@ export const stringIsNumber = (str) => isFinite(+str);
 export const formatXUnits = (resultLabel, { formatMonths }) => {
   if (isAlphabetical(resultLabel)) {
     return resultLabel;
-  } else if (resultLabel.includes("/")) {
+  } else if (resultLabel?.includes("/")) {
     if (formatMonths) return convertToMMYYYY(resultLabel);
     return convertToEpoch(resultLabel);
   } else {

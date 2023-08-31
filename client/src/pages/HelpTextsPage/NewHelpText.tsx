@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { TextField, Grid } from "@mui/material";
-import { Button } from "react-bootstrap";
+import StandardButton from "components/Buttons/StandardButton";
 import { useFormik } from "formik";
 import * as yup from "yup";
 import ModalContainer from "components/Modals/ModalContainer";
@@ -57,13 +57,13 @@ const NewHelpText = () => {
           paddingRight: "26px",
         }}
       >
-        <Button
+        <StandardButton
           variant="success"
           onClick={() => setNewHelpTextVisible(true)}
           style={{ marginBottom: "24px" }}
         >
           Add Help Text
-        </Button>
+        </StandardButton>
       </div>
       <ModalContainer open={newHelpTextVisible} onClose={onClose}>
         <h4 style={{ margin: "12px 0 24px 0", color: "var(--main-purple)" }}>
@@ -138,9 +138,9 @@ const NewHelpText = () => {
               />
             </Grid>
             <Grid item xs={12} sx={{ marginTop: "12px" }}>
-              <Button type="submit" variant="success">
+              <StandardButton type="submit" variant="success">
                 Submit
-              </Button>
+              </StandardButton>
             </Grid>
           </Grid>
         </form>

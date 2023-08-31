@@ -7,14 +7,15 @@ import { authSelector } from "store/auth";
 import { usePanel } from "store/panels";
 import { useRing } from "../../store/rings";
 
-import { Button, Col, Row, Card } from "react-bootstrap";
+import { Col, Row, Card } from "react-bootstrap";
 import AddIcon from "@mui/icons-material/Add";
 import uniqid from "uniqid";
 import _ from "lodash";
-// import { Satyrn } from "statement-mananger";
+
 import { Satyrn } from "models/Satyrn";
 import { useNotify } from "../Notifications";
 
+import StandardButton from "components/Buttons/StandardButton";
 import Answers from "./Answers";
 import Parameters from "./Parameters";
 import Statements from "./Statements";
@@ -262,13 +263,13 @@ const Analysis: FunctionComponent<Props> = ({ panelId }) => {
             />
           </Col>
           <Col lg="1" className="text-end">
-            <Button
+            <StandardButton
               size="sm"
               variant="outline-danger"
               onClick={() => handleRemoveAnalysis(id)}
             >
               Remove
-            </Button>
+            </StandardButton>
           </Col>
           <Answers
             panelId={panelId}
@@ -282,7 +283,7 @@ const Analysis: FunctionComponent<Props> = ({ panelId }) => {
       ))}
 
       <Card.Footer className="d-flex align-items-center py-3">
-        <Button
+        <StandardButton
           variant="outline-dark"
           className="me-2"
           onClick={() => {
@@ -292,7 +293,7 @@ const Analysis: FunctionComponent<Props> = ({ panelId }) => {
           }}
         >
           <AddIcon fontSize="medium" />
-        </Button>
+        </StandardButton>
         Add Analysis
       </Card.Footer>
     </div>

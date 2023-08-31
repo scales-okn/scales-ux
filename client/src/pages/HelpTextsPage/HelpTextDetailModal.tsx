@@ -3,10 +3,10 @@ import { useHelpTexts } from "store/helpTexts";
 
 import * as yup from "yup";
 import { useFormik } from "formik";
-import { Button } from "react-bootstrap";
 import { TextField } from "@mui/material";
 
 import ModalContainer from "components/Modals/ModalContainer";
+import StandardButton from "components/Buttons/StandardButton";
 
 import { detailStyles } from "./styles";
 
@@ -137,12 +137,15 @@ const FeedbackDetailModal: FunctionComponent<FeedbackDetailModalT> = ({
           />
         </section>
         <div className="buttonRow">
-          <Button variant="danger" onClick={handleDelete}>
+          <StandardButton variant="danger" onClick={handleDelete}>
             {confirmVisible ? "Confirm Delete" : "Delete"}
-          </Button>
-          <Button variant="primary" onClick={() => formik.handleSubmit()}>
+          </StandardButton>
+          <StandardButton
+            variant="primary"
+            onClick={() => formik.handleSubmit()}
+          >
             Update
-          </Button>
+          </StandardButton>
         </div>
       </div>
     </ModalContainer>

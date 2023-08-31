@@ -4,7 +4,7 @@ import { useSelector } from "react-redux";
 import { Link } from "react-router-dom";
 
 import { DataGrid, GridCellParams } from "@mui/x-data-grid";
-import { Form, Row, Col, Button, InputGroup } from "react-bootstrap";
+import { Form, Row, Col, InputGroup } from "react-bootstrap";
 import { useEffectOnce } from "react-use";
 import SearchIcon from "@mui/icons-material/Search";
 import dayjs from "dayjs";
@@ -12,6 +12,7 @@ import dayjs from "dayjs";
 import { userSelector } from "store/auth";
 import { useNotebooks } from "store/notebooks";
 
+import StandardButton from "components/Buttons/StandardButton";
 import PageLayout from "components/PageLayout";
 import Loader from "components/Loader";
 import ColumnHeader from "components/ColumnHeader";
@@ -192,7 +193,7 @@ const NotebooksPage: FunctionComponent = () => {
                 to="/notebooks/new"
                 className="text-white text-decoration-none"
               >
-                <Button
+                <StandardButton
                   className="text-white float-end px-5"
                   variant="primary"
                   style={{
@@ -201,7 +202,7 @@ const NotebooksPage: FunctionComponent = () => {
                   }}
                 >
                   Create Notebook
-                </Button>
+                </StandardButton>
               </Link>
             </Col>
           </Row>

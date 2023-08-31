@@ -1,48 +1,50 @@
 import React from "react";
-import uniqid from "uniqid";
-import { Form, Col, Row } from "react-bootstrap";
-import { Typeahead } from "react-bootstrap-typeahead";
+import { FormControl, InputAdornment, TextField } from "@mui/material";
+import { Autocomplete } from "@mui/material";
 
-const Statements = ({ statements, setSelectedStatement, selectedStatement }) => {
-  const onStatementChange = (selected) => {
-    const selectedStatement = selected[0]?.statement;
+const Statements = ({
+  statements,
+  setSelectedStatement,
+  selectedStatement,
+}) => {
+  const onStatementChange = (event, selected) => {
+    const selectedStatement = selected?.statement;
     if (!selectedStatement) return;
-    setSelectedStatement(selected[0]);
+    setSelectedStatement(selected);
   };
 
   return (
-    <Form.Group className="mb-3" as={Row}>
-      <Col lg="8">
-        <Form.Label>What do you want to know about?</Form.Label>
-        <Typeahead
-          loading={!statements ? true : false}
-          inputProps={{ autoComplete: "false" }}
-          id={uniqid()}
-          labelKey="statement"
-          multiple={false}
-          onChange={onStatementChange}
-          onSearch={() => {
-            // setParameters([]);
-          }}
-          options={statements.filter((stmt) => !stmt.statement.includes("filing year"))} /* hack due to some problem when doing this via ring */
-          shouldSelect={(shouldSelect, e) => {
-            // Select the hint if the user hits 'enter' or ','
-            return e.keyCode === 13 || e.keyCode === 188 || shouldSelect;
-          }}
-          defaultSelected={selectedStatement ? [selectedStatement] : []}
-          isDisabled={selectedStatement !== null}
-          maxHeight="200px"
-          placeholder="Search or select a statement..."
-          filterBy={(option, props) =>
-            props.text
-              .toLowerCase()
-              .split(" ")
-              .every((text) => option.statement.toLowerCase().includes(text))
-          }
-          clearButton
-        />
-      </Col>
-    </Form.Group>
+    <FormControl
+      fullWidth
+      variant="outlined"
+      margin="normal"
+      sx={{ maxWidth: "655px" }}
+    >
+      <Autocomplete
+        loading={!statements ? true : false}
+        options={statements.filter(
+          (stmt) => !stmt.statement.includes("filing year"),
+        )}
+        getOptionLabel={(option) => option.statement || ""}
+        renderInput={(params) => (
+          <TextField
+            {...params}
+            InputProps={{
+              ...params.InputProps,
+              startAdornment: (
+                <InputAdornment position="start"></InputAdornment>
+              ),
+            }}
+            placeholder="Search or select a statement..."
+          />
+        )}
+        onChange={onStatementChange}
+        value={selectedStatement} // Use selectedStatement directly
+        isOptionEqualToValue={(option, value) =>
+          value === null || option.statement === value.statement
+        }
+      />
+    </FormControl>
   );
 };
 

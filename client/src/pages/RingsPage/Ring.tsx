@@ -3,7 +3,7 @@ import PageLayout from "components/PageLayout";
 import Loader from "components/Loader";
 import { useFormik } from "formik";
 import * as yup from "yup";
-import { Form, Button, Row, Col } from "react-bootstrap";
+import { Form, Row, Col } from "react-bootstrap";
 import { useAuthHeader, useUser } from "store/auth";
 import { useNotify } from "components/Notifications";
 import { useNavigate, useParams } from "react-router-dom";
@@ -13,6 +13,7 @@ import Editor from "components/Editor";
 import "./jsoneditor-react-dark-mode.css";
 import { Container } from "@mui/material";
 import BackButton from "components/Buttons/BackButton";
+import StandardButton from "components/Buttons/StandardButton";
 
 type Params = {
   ringId: string | null;
@@ -135,7 +136,7 @@ const Ring: React.FC = () => {
                 <h3 className="mb-3">{ring ? "Edit Ring" : "Create Ring"}</h3>
               </Col>
               <Col>
-                <Button
+                <StandardButton
                   variant="primary"
                   type="submit"
                   className="text-white float-end ms-2"
@@ -145,9 +146,9 @@ const Ring: React.FC = () => {
                   }}
                 >
                   Submit
-                </Button>
+                </StandardButton>
                 {ring && (
-                  <Button
+                  <StandardButton
                     variant="danger"
                     type="button"
                     onClick={() => setConfirmVisible(true)}
@@ -157,7 +158,7 @@ const Ring: React.FC = () => {
                     }}
                   >
                     Delete Ring
-                  </Button>
+                  </StandardButton>
                 )}
               </Col>
             </Row>

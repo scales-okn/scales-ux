@@ -5,9 +5,10 @@ import { usePanel } from "store/panels";
 import dayjs from "dayjs";
 import { isEmpty } from "lodash";
 import renderHTML from "helpers/renderHTML";
-import { Button } from "react-bootstrap";
 
 import useContainerDimensions from "hooks/useContainerDimensions";
+
+import StandardButton from "components/Buttons/StandardButton";
 import MultilineChartDisplay from "./MultilineChartDisplay";
 import LineChartDisplay from "./LineChartDisplay";
 import BarChartDisplay from "./BarChartDisplay";
@@ -181,13 +182,13 @@ const Answers = ({
       </div>
       {collapseIsVisible && (
         <div style={{ width: "300px" }}>
-          <Button
+          <StandardButton
             variant="outline-success"
             size="sm"
             onClick={() => setExpanded((prev) => !prev)}
           >
             {expanded ? "collapse" : "expand"}
-          </Button>
+          </StandardButton>
         </div>
       )}
     </>

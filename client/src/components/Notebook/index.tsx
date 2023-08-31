@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Col, Container, Row, Button, Form } from "react-bootstrap";
+import { Col, Container, Row, Form } from "react-bootstrap";
 
 import { useSelector, useDispatch } from "react-redux";
 import { useNavigate, useLocation } from "react-router-dom";
@@ -12,9 +12,11 @@ import {
   deleteNotebook,
   createNotebook,
 } from "store/notebook";
-import { useRings } from "../../store/rings";
-import { getPanels, usePanels } from "../../store/panels";
+import { useRings } from "store/rings";
+import { getPanels, usePanels } from "store/panels";
 import AddPanel from "../Panels/AddPanel";
+
+import StandardButton from "components/Buttons/StandardButton";
 import ConfirmModal from "components/Modals/ConfirmModal";
 import Loader from "components/Loader";
 import Panels from "components/Panels";
@@ -82,7 +84,7 @@ const Notebook = () => {
             <Col>
               {notebook && (
                 <>
-                  <Button
+                  <StandardButton
                     className="text-white float-end"
                     variant="success"
                     onClick={() => {
@@ -100,21 +102,21 @@ const Notebook = () => {
                     disabled={savingNotebook || !notebookTitle}
                   >
                     {savingNotebook ? "Loading…" : "Save"}
-                  </Button>
+                  </StandardButton>
 
-                  <Button
+                  <StandardButton
                     className="text-white float-end me-2"
                     variant="danger"
                     onClick={() => setConfirmVisible(true)}
                     disabled={deletingNotebook}
                   >
                     {deletingNotebook ? "Deleting..." : "Delete"}
-                  </Button>
+                  </StandardButton>
                 </>
               )}
 
               {!notebook && (
-                <Button
+                <StandardButton
                   className="text-white float-end"
                   variant="primary"
                   onClick={() => {
@@ -129,7 +131,7 @@ const Notebook = () => {
                   }}
                 >
                   {savingNotebook ? "Loading…" : "Create"}
-                </Button>
+                </StandardButton>
               )}
             </Col>
           </Row>
