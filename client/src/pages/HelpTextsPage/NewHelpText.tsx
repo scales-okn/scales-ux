@@ -42,7 +42,6 @@ const NewHelpText = () => {
     },
     validationSchema,
     onSubmit: (values: HelpTextFields) => {
-      console.log("test");
       createHelpText(values);
       onClose();
     },

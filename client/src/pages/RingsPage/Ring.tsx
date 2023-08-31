@@ -273,7 +273,6 @@ const Ring: React.FC = () => {
                 <Form.Label>Data Source</Form.Label>
                 <Editor
                   mode="tree"
-                  style={{ height: "800px" }}
                   allowedModes={["code", "tree"]}
                   value={sanitizeData(formik.values.dataSource)}
                   onChange={(jsObject) => {

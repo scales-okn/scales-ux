@@ -51,11 +51,20 @@ const FilterTooltip = ({
     links?: string;
   } = helpText || {};
 
+  if (!description) return null;
+
   const formatMultiple = (options, isLinks = false) => {
     const wrapper = (option) => {
+      const appendHttp = (link) => {
+        if (!link.includes("http")) {
+          return `https://${link}`;
+        }
+        return link;
+      };
+
       return isLinks ? (
         <p key={option}>
-          <a className="optionLink" href={option}>
+          <a className="optionLink" href={appendHttp(option)}>
             {option}
           </a>
         </p>

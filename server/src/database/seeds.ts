@@ -65,12 +65,10 @@ const seedHelpTexts = async (sequelize) => {
     "case_name-header",
   ];
 
-  // await sequelize.models.HelpText.destroy({ where: {} });
+  await sequelize.models.HelpText.destroy({ where: {} });
 
   for (const slug of searchableFields) {
-    const description = `This is a description for the ${snakeCaseToTitleCase(
-      slug
-    )} field.`;
+    const description = "";
 
     const existingHelpText = await sequelize.models.HelpText.findOne({
       where: { slug },
