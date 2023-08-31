@@ -224,7 +224,6 @@ const Panel: FunctionComponent<PanelProps> = ({ panelId }) => {
               <Filters panelId={panel.id} />
               <div className="p-0 bg-light border-bottom border-top">
                 <Loader
-                  animation="border"
                   contentHeight={resultsCollapsed ? "60px" : "400px"}
                   isVisible={loadingPanelResults}
                 >

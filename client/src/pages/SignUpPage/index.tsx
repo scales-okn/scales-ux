@@ -114,11 +114,7 @@ const SignUpPage = () => {
               </h6>
             )}
 
-            <Loader
-              animation="border"
-              isVisible={isLoading}
-              contentHeight="700px"
-            >
+            <Loader isVisible={isLoading} contentHeight="700px">
               {message ? (
                 <p>{message}</p>
               ) : (

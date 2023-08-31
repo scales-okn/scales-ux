@@ -153,7 +153,7 @@ const NotebooksPage: FunctionComponent = () => {
 
   return (
     <PageLayout>
-      <Loader animation="border" isVisible={loadingNotebooks}>
+      <Loader isVisible={loadingNotebooks}>
         <>
           <Row>
             <Col md>

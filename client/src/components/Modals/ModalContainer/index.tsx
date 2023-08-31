@@ -5,12 +5,16 @@ type ModalContainerT = {
   children: React.ReactNode;
   onClose: (arg: null) => void;
   open: boolean;
+  modalStyles?: Record<string, unknown>;
+  paperStyles?: Record<string, unknown>;
 };
 
 const ModalContainer: FunctionComponent<ModalContainerT> = ({
   children,
   onClose,
   open,
+  modalStyles = {},
+  paperStyles = {},
 }) => {
   return (
     <Modal
@@ -24,10 +28,13 @@ const ModalContainer: FunctionComponent<ModalContainerT> = ({
           width: "50vw",
           maxWidth: "1000px",
           minWidth: "400px",
+          padding: "24px",
+          ...paperStyles,
         },
+        ...modalStyles,
       }}
     >
-      <Paper sx={{ padding: "24px", maxWidth: 400 }}>{children}</Paper>
+      <Paper>{children}</Paper>
     </Modal>
   );
 };

@@ -1,14 +1,15 @@
 import React, { FunctionComponent, useState } from "react";
+import { useSelector } from "react-redux";
+import { useAuthHeader, userSelector } from "store/auth";
+
 import { DataGrid, GridCellParams, GridColDef } from "@mui/x-data-grid";
 import dayjs from "dayjs";
 import { useEffectOnce } from "react-use";
+
 import NotAuthorized from "components/NotAuthorized";
-import FeedbackDetailModal from "./FeedbackDetailModal";
-import { Row } from "react-bootstrap";
-import { useAuthHeader, userSelector } from "store/auth";
-import { useSelector } from "react-redux";
-import DeleteFeedback from "./DeleteFeedback";
 import ColumnHeader from "components/ColumnHeader";
+import FeedbackDetailModal from "./FeedbackDetailModal";
+import DeleteFeedback from "./DeleteFeedback";
 
 const AdminFeedbackPage: FunctionComponent = () => {
   const [rows, setRows] = useState([]);
@@ -87,7 +88,7 @@ const AdminFeedbackPage: FunctionComponent = () => {
       {!isAdmin ? (
         <NotAuthorized />
       ) : (
-        <Row style={{ height: "60vh", width: "100%", margin: "0 auto" }}>
+        <div style={{ height: "60vh", width: "100%", margin: "0 auto" }}>
           <DataGrid
             rows={rows}
             columns={columns}
@@ -96,7 +97,7 @@ const AdminFeedbackPage: FunctionComponent = () => {
             checkboxSelection={false}
             className="bg-white p-0"
           />
-        </Row>
+        </div>
       )}
     </>
   );

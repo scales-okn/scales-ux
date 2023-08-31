@@ -1,40 +1,65 @@
+import React from "react";
+import {
+  Modal,
+  ModalProps,
+  Box,
+  Button,
+  DialogActions,
+  DialogContent,
+  DialogContentText,
+  DialogTitle,
+} from "@mui/material";
 import StandardButton from "components/Buttons/StandardButton";
-import React, { FC } from "react";
-import { Modal } from "react-bootstrap";
 
-type ConfirmModalProps = {
+type ConfirmModalT = Omit<ModalProps, "children"> & {
   open: boolean;
   setOpen: (arg: boolean) => void;
   onConfirm: () => void;
   itemName: string;
 };
 
-const ConfirmModal: FC<ConfirmModalProps> = ({
+const ConfirmModal = ({
   open,
   setOpen,
   onConfirm,
   itemName,
-}) => {
+  ...modalProps
+}: ConfirmModalT) => {
   const handleClose = () => setOpen(false);
 
   return (
-    <Modal show={open} onHide={handleClose} animation sx={{ xIndex: "134000" }}>
-      <Modal.Body>Are you sure you want to delete this {itemName}?</Modal.Body>
-      <Modal.Footer>
-        <StandardButton
-          variant="secondary"
-          className="text-white me-2 btn"
-          onClick={handleClose}
-        >
-          Cancel
-        </StandardButton>
-        <StandardButton
-          className="text-white me-2 btn btn-danger"
-          onClick={onConfirm}
-        >
-          Delete
-        </StandardButton>
-      </Modal.Footer>
+    <Modal
+      open={open}
+      onClose={handleClose}
+      {...modalProps}
+      sx={{
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
+      }}
+    >
+      <Box
+        sx={{ width: 400, bgcolor: "background.paper", boxShadow: 24, p: 2 }}
+      >
+        <DialogTitle>Confirm Deletion</DialogTitle>
+        <DialogContent>
+          <DialogContentText>
+            Are you sure you want to delete this {itemName}?
+          </DialogContentText>
+        </DialogContent>
+        <DialogActions>
+          <StandardButton variant="danger" onClick={handleClose}>
+            Cancel
+          </StandardButton>
+          <StandardButton
+            variant="primary"
+            onClick={onConfirm}
+            style={{ color: "white" }}
+          >
+            Delete
+          </StandardButton>
+        </DialogActions>
+      </Box>
     </Modal>
   );
 };

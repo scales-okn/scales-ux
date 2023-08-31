@@ -35,7 +35,7 @@ const Dataset: FunctionComponent<DatasetProps> = ({ panelId }) => {
   }, [selectedRing]); // eslint-disable-line react-hooks/exhaustive-deps
 
   return (
-    <Loader animation="border" isVisible={loadingRings}>
+    <Loader isVisible={loadingRings}>
       <Container className="bg-light border p-5 mb-4">
         <Row className="justify-content-md-center mb-3">
           <Col className="d-flex justify-content-center">
@@ -68,7 +68,7 @@ const Dataset: FunctionComponent<DatasetProps> = ({ panelId }) => {
           </Col>
         </Row>
 
-        <Loader animation="border" isVisible={ring && loadingRingInfo}>
+        <Loader isVisible={ring && loadingRingInfo}>
           <Row className="justify-content-md-center mb-4 mt-3">
             <Col className="justify-content-center d-flex">
               <StandardButton

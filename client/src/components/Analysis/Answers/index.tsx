@@ -1,5 +1,4 @@
 import React, { memo, useEffect, useState, useRef, useMemo } from "react";
-import { Col } from "react-bootstrap";
 import Loader from "components/Loader";
 import { usePanel } from "store/panels";
 import dayjs from "dayjs";
@@ -133,7 +132,7 @@ const Answers = ({
   return (
     <>
       <div className="answers" ref={containerRef}>
-        <Loader isVisible={loadingAnswers} animation="border">
+        <Loader isVisible={loadingAnswers}>
           <>
             {answer && (
               <div className="mb-3 mt-4">
@@ -142,8 +141,7 @@ const Answers = ({
               </div>
             )}
             {data && (
-              <Col
-                lg="12"
+              <div
                 className="mt-5"
                 style={{ overflowX: "auto", overflowY: "visible" }}
               >
@@ -175,7 +173,7 @@ const Answers = ({
                     chartMargins={chartMargins}
                   />
                 )}
-              </Col>
+              </div>
             )}
           </>
         </Loader>

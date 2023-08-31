@@ -5,7 +5,6 @@ import { userSelector } from "store/auth";
 
 import { DataGrid, GridColDef } from "@mui/x-data-grid";
 import { useParams, useNavigate } from "react-router-dom";
-import { Row } from "react-bootstrap";
 
 import ColumnHeader from "components/ColumnHeader";
 import NotAuthorized from "components/NotAuthorized";
@@ -91,7 +90,7 @@ const HelpTextsPage = () => {
       {!isAdmin ? (
         <NotAuthorized />
       ) : (
-        <Row style={{ height: "60vh", width: "100%", margin: "0 auto" }}>
+        <div style={{ height: "60vh", width: "100%", margin: "0 auto" }}>
           <DataGrid
             rows={rows}
             columns={columns}
@@ -102,7 +101,7 @@ const HelpTextsPage = () => {
             className="bg-white p-0"
             hideFooterPagination
           />
-        </Row>
+        </div>
       )}
     </>
   );

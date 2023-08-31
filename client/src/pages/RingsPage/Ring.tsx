@@ -129,7 +129,7 @@ const Ring: React.FC = () => {
       <BackButton onClick={() => navigate("/admin/rings")} />
 
       <Container sx={{ padding: "86px 0" }}>
-        <Loader animation="border" isVisible={loading}>
+        <Loader isVisible={loading}>
           <Form onSubmit={formik.handleSubmit}>
             <Row className="mb-3">
               <Col>

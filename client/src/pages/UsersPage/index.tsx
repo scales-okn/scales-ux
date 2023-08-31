@@ -1,10 +1,9 @@
-import React, { FunctionComponent, useState } from "react";
+import React, { useState } from "react";
 import { useSelector } from "react-redux";
 
 import { DataGrid, GridColDef, GridCellParams } from "@mui/x-data-grid";
 import { Tooltip, Typography } from "@mui/material";
 import { useEffectOnce } from "react-use";
-import { Row } from "react-bootstrap";
 
 import { useAuthHeader, userSelector } from "store/auth";
 
@@ -13,7 +12,7 @@ import NotAuthorized from "components/NotAuthorized";
 import ColumnHeader from "components/ColumnHeader";
 import DeleteUser from "./DeleteUser";
 
-const AdminUsersPages: FunctionComponent = () => {
+const AdminUsersPages = () => {
   const authorizationHeader = useAuthHeader();
 
   const [rows, setRows] = useState([]);
@@ -140,7 +139,7 @@ const AdminUsersPages: FunctionComponent = () => {
       {!isAdmin ? (
         <NotAuthorized />
       ) : (
-        <Row
+        <div
           style={{
             height: "60vh",
             minHeight: "300px",
@@ -157,7 +156,7 @@ const AdminUsersPages: FunctionComponent = () => {
             checkboxSelection={false}
             className="bg-white p-0"
           />
-        </Row>
+        </div>
       )}
     </>
   );

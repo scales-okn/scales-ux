@@ -63,7 +63,7 @@ const Notebook = () => {
   });
 
   return (
-    <Loader animation="border" isVisible={loadingNotebook}>
+    <Loader isVisible={loadingNotebook}>
       <>
         <Container className="mb-3">
           <Row className="align-items-center">

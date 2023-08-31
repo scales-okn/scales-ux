@@ -1,45 +1,30 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
+import React from "react";
+import { CircularProgress } from "@mui/material";
 
-import React, { FunctionComponent, ReactNode } from "react";
-import { SpinnerProps, Spinner } from "react-bootstrap";
-
-interface ILoaderProps extends SpinnerProps {
+interface LoaderT {
   isVisible: boolean;
   children?: any;
-  loaderContent?: ReactNode;
   contentHeight?: string;
+  size?: number;
 }
 
-const Loader: FunctionComponent<ILoaderProps> = ({
+const Loader = ({
   isVisible = false,
-  animation = "border",
-  variant,
-  size = null,
+  size = 40,
   children,
   contentHeight,
-  loaderContent,
-}) => {
+}: LoaderT) => {
   if (isVisible) {
     return (
-      <>
-        {loaderContent ? (
-          loaderContent
-        ) : (
-          <div
-            className="d-flex justify-content-center p-2"
-            style={{
-              height: contentHeight || "100%",
-            }}
-          >
-            <Spinner
-              className="align-self-center"
-              animation={animation}
-              variant={variant}
-              size={size}
-            />
-          </div>
-        )}
-      </>
+      <div
+        className="d-flex justify-content-center p-2"
+        style={{
+          height: contentHeight || "100%",
+        }}
+      >
+        <CircularProgress className="align-self-center" size={size} />
+      </div>
     );
   }
 

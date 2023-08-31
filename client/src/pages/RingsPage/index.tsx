@@ -4,7 +4,6 @@ import { useRings } from "store/rings";
 
 import { useEffectOnce } from "react-use";
 import { DataGrid, GridCellParams } from "@mui/x-data-grid";
-import { Row } from "react-bootstrap";
 import dayjs from "dayjs";
 
 import ColumnHeader from "components/ColumnHeader";
@@ -80,7 +79,7 @@ const RingsPage: React.FC = () => {
 
   return (
     <>
-      <Loader animation="border" isVisible={loadingRings}>
+      <Loader isVisible={loadingRings}>
         <Link
           to="/admin/rings/create"
           className="text-white text-decoration-none"
@@ -97,7 +96,7 @@ const RingsPage: React.FC = () => {
             Create Ring
           </StandardButton>
         </Link>
-        <Row style={{ height: "60vh", width: "100%", margin: "0 auto" }}>
+        <div style={{ height: "60vh", width: "100%", margin: "0 auto" }}>
           <DataGrid
             rows={rings}
             columns={columns}
@@ -107,7 +106,7 @@ const RingsPage: React.FC = () => {
             checkboxSelection={false}
             className="bg-white p-0"
           />
-        </Row>
+        </div>
       </Loader>
     </>
   );
