@@ -1,5 +1,5 @@
 import React, { FunctionComponent, useEffect, useState } from "react";
-import { Container, Row, Col, Dropdown } from "react-bootstrap";
+import { Container, Grid, Tooltip, MenuItem, Select } from "@mui/material";
 import Loader from "../Loader";
 import { usePanel } from "store/panels";
 import { useRing, useRings } from "store/rings";
@@ -15,7 +15,9 @@ type DatasetProps = {
 const Dataset: FunctionComponent<DatasetProps> = ({ panelId }) => {
   const { updatePanel, setPanelCollapsed } = usePanel(panelId);
   const { rings, loadingRings } = useRings();
-  const [selectedRing, setSelectedRing] = useState(null);
+
+  const [selectedRing, setSelectedRing] = useState<any>(null);
+
   const { ring, loadingRingInfo, info, getRingInfo } = useRing(
     selectedRing?.id,
   );
@@ -37,43 +39,43 @@ const Dataset: FunctionComponent<DatasetProps> = ({ panelId }) => {
   return (
     <Loader isVisible={loadingRings}>
       <Container className="bg-light border p-5 mb-4">
-        <Row className="justify-content-md-center mb-3">
-          <Col className="d-flex justify-content-center">
-            <span className="text-muted pt-2 fs-6">Select a dataset:</span>
-            <Dropdown className="dataset-dropdown">
-              <Dropdown.Toggle
-                variant="link"
-                id="dropdown-dataset"
-                className="pt-2"
-              >
-                {selectedRing ? selectedRing.name : "None"}
-              </Dropdown.Toggle>
-
-              <Dropdown.Menu>
-                {rings?.map((ring, index) => (
-                  <Dropdown.Item
-                    key={index}
-                    onClick={() => {
-                      setSelectedRing(ring);
-                    }}
+        <Grid container justifyContent="center" className="mb-4">
+          <Grid>
+            <span style={{ fontSize: "18px", marginRight: "18px" }}>
+              Select a dataset:
+            </span>
+            <Select
+              variant="outlined"
+              value={selectedRing ? selectedRing.name : "None"}
+              onChange={(event) => {
+                setSelectedRing(
+                  rings.find((ring) => ring.name === event.target.value),
+                );
+              }}
+            >
+              {rings?.map((ring, index) => (
+                <MenuItem key={index} value={ring.name}>
+                  <Tooltip
+                    title={
+                      <span style={{ fontSize: "16px" }}>
+                        {ring.description}
+                      </span>
+                    }
                   >
-                    <h6>{ring.name}</h6>
-                    {ring.description && (
-                      <p className="text-wrap">{ring.description}</p>
-                    )}
-                  </Dropdown.Item>
-                ))}
-              </Dropdown.Menu>
-            </Dropdown>
-          </Col>
-        </Row>
+                    <span>{ring.name}</span>
+                  </Tooltip>
+                </MenuItem>
+              ))}
+            </Select>
+          </Grid>
+        </Grid>
 
         <Loader isVisible={ring && loadingRingInfo}>
-          <Row className="justify-content-md-center mb-4 mt-3">
-            <Col className="justify-content-center d-flex">
+          <Grid container justifyContent="center" className="mb-4 mt-3">
+            <Grid item xs={12} sm={6} className="justify-content-center d-flex">
               <StandardButton
                 variant="primary"
-                size="lg"
+                style={{ color: "white" }}
                 className="text-white rounded-3"
                 disabled={!info}
                 onClick={() => {
@@ -83,8 +85,8 @@ const Dataset: FunctionComponent<DatasetProps> = ({ panelId }) => {
               >
                 Start Exploring
               </StandardButton>
-            </Col>
-          </Row>
+            </Grid>
+          </Grid>
         </Loader>
       </Container>
     </Loader>

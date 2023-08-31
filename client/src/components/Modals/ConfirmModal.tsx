@@ -3,7 +3,6 @@ import {
   Modal,
   ModalProps,
   Box,
-  Button,
   DialogActions,
   DialogContent,
   DialogContentText,
