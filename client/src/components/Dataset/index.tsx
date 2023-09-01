@@ -1,4 +1,4 @@
-import React, { FunctionComponent, useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Container, Grid, Tooltip, MenuItem, Select } from "@mui/material";
 import Loader from "../Loader";
 import { usePanel } from "store/panels";
@@ -12,11 +12,11 @@ type DatasetProps = {
   panelId: string;
 };
 
-const Dataset: FunctionComponent<DatasetProps> = ({ panelId }) => {
+const Dataset = ({ panelId }: DatasetProps) => {
   const { updatePanel, setPanelCollapsed } = usePanel(panelId);
   const { rings, loadingRings } = useRings();
 
-  const [selectedRing, setSelectedRing] = useState<any>(null);
+  const [selectedRing, setSelectedRing] = useState(null);
 
   const { ring, loadingRingInfo, info, getRingInfo } = useRing(
     selectedRing?.id,
@@ -51,6 +51,10 @@ const Dataset: FunctionComponent<DatasetProps> = ({ panelId }) => {
                 setSelectedRing(
                   rings.find((ring) => ring.name === event.target.value),
                 );
+              }}
+              sx={{
+                background: "white",
+                div: { padding: "12px 10px 10px 12px" },
               }}
             >
               {rings?.map((ring, index) => (

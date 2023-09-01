@@ -1,7 +1,8 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
-import React, { FunctionComponent, useState, useEffect } from "react";
-import { Dropdown } from "react-bootstrap";
+import React, { useState, useEffect } from "react";
 import { useHelpTexts } from "store/helpTexts";
+
+import { Box, Menu, MenuItem, ListItemText } from "@mui/material";
+import ArrowDropDownIcon from "@mui/icons-material/ArrowDropDown";
 
 import FilterTooltip from "../HelpTextTooltip";
 
@@ -10,15 +11,31 @@ type FilterColumn = {
   nicename: string;
 };
 
-type FilterTypeProps = {
-  filter: any;
-  filters: any;
-  setFilter: any;
-  getFiltersNormalized: any;
-  getFilterOptionsByKey: any;
+type FilterT = {
+  id: string;
+  type: string;
+  value: string | number;
 };
 
-const FilterTypeDropDown: FunctionComponent<FilterTypeProps> = (props) => {
+type NormFilterT = {
+  allowMultiple: boolean;
+  autocomplete: boolean;
+  disabled: boolean;
+  desc: string;
+  key: string;
+  nicename: string;
+  type: string;
+};
+
+type FilterTypeProps = {
+  filter: FilterT;
+  filters: FilterT[];
+  setFilter: (arg: Record<string, unknown>) => void;
+  getFiltersNormalized: () => NormFilterT[];
+  getFilterOptionsByKey: (type: string) => NormFilterT;
+};
+
+const FilterTypeDropDown = (props: FilterTypeProps) => {
   const {
     filter,
     filters,
@@ -26,6 +43,7 @@ const FilterTypeDropDown: FunctionComponent<FilterTypeProps> = (props) => {
     getFilterOptionsByKey,
     setFilter,
   } = props;
+
   const { type } = filter;
   const { helpTexts } = useHelpTexts();
 
@@ -61,7 +79,7 @@ const FilterTypeDropDown: FunctionComponent<FilterTypeProps> = (props) => {
       const { allowMultiple, key } = filterInput;
       if (
         allowMultiple === false &&
-        filters.some((filter: any) => filter.type === key)
+        filters.some((filter: FilterT) => filter.type === key)
       ) {
         return { ...filterInput, disabled: true };
       }
@@ -74,51 +92,67 @@ const FilterTypeDropDown: FunctionComponent<FilterTypeProps> = (props) => {
     return helpTexts?.find((helpText) => helpText.slug === key);
   };
 
+  const [anchorEl, setAnchorEl] = useState(null);
+
+  const handleMenuOpen = (event) => {
+    setAnchorEl(event.currentTarget);
+  };
+
+  const handleMenuClose = () => {
+    setAnchorEl(null);
+  };
+
   return (
-    <Dropdown className="filter-type-dropdown">
-      <Dropdown.Toggle
-        size="sm"
-        variant="link"
-        className="shadow-none text-decoration-none small"
+    <>
+      <Box sx={{ cursor: "pointer" }}>
+        <ArrowDropDownIcon onClick={handleMenuOpen} />
+      </Box>
+
+      <Menu
+        anchorEl={anchorEl}
+        open={Boolean(anchorEl)}
+        onClose={handleMenuClose}
+        PaperProps={{
+          style: {
+            maxHeight: "70vh",
+            overflowY: "auto",
+          },
+        }}
       >
-        {filterInput?.nicename || ""}
-      </Dropdown.Toggle>
-      <Dropdown.Menu style={{ maxHeight: "70vh", overflowY: "auto" }}>
-        <Dropdown.ItemText className="text-muted fs-6 ms-3">
-          <small>Select a filter type...</small>
-        </Dropdown.ItemText>
+        <MenuItem>
+          <ListItemText className="text-muted fs-6 ms-3">
+            <small>Select a filter type...</small>
+          </ListItemText>
+        </MenuItem>
         {filtersToRender?.map(({ key, nicename, desc, disabled }) => {
           const helpText = matchHelpText(key);
 
           return (
-            <React.Fragment key={key}>
-              <Dropdown.Divider />
-              <Dropdown.Item
-                onClick={() => setFilterInput({ key, nicename })}
-                disabled={disabled}
-                style={{
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "space-between",
+            <div key={key}>
+              <MenuItem
+                onClick={() => {
+                  setFilterInput({ key, nicename });
+                  handleMenuClose();
                 }}
+                disabled={disabled}
               >
-                <Dropdown.ItemText className={disabled ? "text-muted" : ""}>
+                <ListItemText className={disabled ? "text-muted" : ""}>
                   {nicename}
-                </Dropdown.ItemText>
+                </ListItemText>
                 <>
                   {desc && (
-                    <Dropdown.ItemText className="text-muted fs-6">
+                    <ListItemText className="text-muted fs-6">
                       <small>{desc}</small>
-                    </Dropdown.ItemText>
+                    </ListItemText>
                   )}
                   {helpText && <FilterTooltip helpText={helpText} />}
                 </>
-              </Dropdown.Item>
-            </React.Fragment>
+              </MenuItem>
+            </div>
           );
         })}
-      </Dropdown.Menu>
-    </Dropdown>
+      </Menu>
+    </>
   );
 };
 
