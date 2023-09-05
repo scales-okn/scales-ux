@@ -1,12 +1,15 @@
 import React, { memo, useEffect, useState, useRef, useMemo } from "react";
-import Loader from "components/Loader";
 import { usePanel } from "store/panels";
+
+import { css } from "@emotion/css";
 import dayjs from "dayjs";
 import { isEmpty } from "lodash";
-import renderHTML from "helpers/renderHTML";
+import { Paper } from "@mui/material";
 
+import renderHTML from "helpers/renderHTML";
 import useContainerDimensions from "hooks/useContainerDimensions";
 
+import Loader from "components/Loader";
 import StandardButton from "components/Buttons/StandardButton";
 import MultilineChartDisplay from "./MultilineChartDisplay";
 import LineChartDisplay from "./LineChartDisplay";
@@ -129,16 +132,27 @@ const Answers = ({
     expanded,
   ]);
 
+  const styles = css`
+    width: 100%;
+    margin-bottom: 20px;
+  `;
+
   return (
     <>
-      <div className="answers" ref={containerRef}>
+      <div ref={containerRef} className={`$answers ${styles}`}>
         <Loader isVisible={loadingAnswers}>
           <>
             {answer && (
-              <div className="mb-3 mt-4">
+              <Paper
+                elevation={3}
+                sx={{
+                  padding: "16px",
+                  boxShadow: "none",
+                }}
+              >
                 <i>Answer: </i>
                 {renderHTML(answer)}
-              </div>
+              </Paper>
             )}
             {data && (
               <div

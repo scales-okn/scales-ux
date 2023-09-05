@@ -6,6 +6,8 @@ import ArrowDropDownIcon from "@mui/icons-material/ArrowDropDown";
 
 import FilterTooltip from "../HelpTextTooltip";
 
+import { filterTypeStyles } from "./styles";
+
 type FilterColumn = {
   key: string;
   nicename: string;
@@ -103,9 +105,19 @@ const FilterTypeDropDown = (props: FilterTypeProps) => {
   };
 
   return (
-    <>
-      <Box sx={{ cursor: "pointer" }}>
-        <ArrowDropDownIcon onClick={handleMenuOpen} />
+    <div className={`filter-type ${filterTypeStyles}`}>
+      <Box
+        sx={{
+          cursor: "pointer",
+          height: "100%",
+          width: "100%",
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+        }}
+        onClick={handleMenuOpen}
+      >
+        <ArrowDropDownIcon sx={{ color: "royalblue" }} />
       </Box>
 
       <Menu
@@ -152,7 +164,7 @@ const FilterTypeDropDown = (props: FilterTypeProps) => {
           );
         })}
       </Menu>
-    </>
+    </div>
   );
 };
 

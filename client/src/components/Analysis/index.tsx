@@ -5,9 +5,9 @@ import { useSelector } from "react-redux";
 import { authorizationHeader } from "utils";
 import { authSelector } from "store/auth";
 import { usePanel } from "store/panels";
-import { useRing } from "../../store/rings";
+import { useRing } from "store/rings";
 
-import { Col, Row, Card } from "react-bootstrap";
+import { Grid, Paper } from "@mui/material";
 import AddIcon from "@mui/icons-material/Add";
 import uniqid from "uniqid";
 import _ from "lodash";
@@ -230,8 +230,14 @@ const Analysis: FunctionComponent<Props> = ({ panelId }) => {
   return (
     <div className="analysis">
       {analysis.map(({ id }) => (
-        <Row key={id} className="analysis-item" style={{ padding: "16px" }}>
-          <Col lg="11">
+        <Grid
+          key={id}
+          container
+          spacing={2}
+          className="analysis-item"
+          style={{ padding: "16px" }}
+        >
+          <Grid item lg={11}>
             <Statements
               statements={statements}
               setSelectedStatement={(statement) => {
@@ -261,8 +267,8 @@ const Analysis: FunctionComponent<Props> = ({ panelId }) => {
               fetchAutocompleteSuggestions={fetchAutocompleteSuggestions}
               loadingAutosuggestions={loadingAutosuggestions}
             />
-          </Col>
-          <Col lg="1" className="text-end">
+          </Grid>
+          <Grid lg="1" className="text-end">
             <StandardButton
               size="sm"
               variant="outline-danger"
@@ -270,7 +276,7 @@ const Analysis: FunctionComponent<Props> = ({ panelId }) => {
             >
               Remove
             </StandardButton>
-          </Col>
+          </Grid>
           <Answers
             panelId={panelId}
             plan={plans[id]}
@@ -279,10 +285,16 @@ const Analysis: FunctionComponent<Props> = ({ panelId }) => {
             satyrn={satyrn}
             loadingAnswers={answersLoading[id]}
           />
-        </Row>
+        </Grid>
       ))}
 
-      <Card.Footer className="d-flex align-items-center py-3">
+      <Paper
+        elevation={3}
+        sx={{
+          paddingLeft: "8px",
+          boxShadow: "none",
+        }}
+      >
         <StandardButton
           variant="outline-dark"
           className="me-2"
@@ -295,7 +307,7 @@ const Analysis: FunctionComponent<Props> = ({ panelId }) => {
           <AddIcon fontSize="medium" />
         </StandardButton>
         Add Analysis
-      </Card.Footer>
+      </Paper>
     </div>
   );
 };

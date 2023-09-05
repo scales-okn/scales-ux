@@ -80,32 +80,34 @@ const RingsPage: React.FC = () => {
   return (
     <>
       <Loader isVisible={loadingRings}>
-        <Link
-          to="/admin/rings/create"
-          className="text-white text-decoration-none"
-        >
-          <StandardButton
-            variant="primary"
-            className="mb-3 text-white float-end me-3"
-            style={{
-              minWidth: "200px",
-              background: "var(--sea-green)",
-              border: "none",
-            }}
+        <div style={{ display: "flex", flexDirection: "column" }}>
+          <Link
+            to="/admin/rings/create"
+            className="text-white text-decoration-none"
           >
-            Create Ring
-          </StandardButton>
-        </Link>
-        <div style={{ height: "60vh", width: "100%", margin: "0 auto" }}>
-          <DataGrid
-            rows={rings}
-            columns={columns}
-            disableColumnMenu
-            disableColumnFilter
-            hideFooterPagination
-            checkboxSelection={false}
-            className="bg-white p-0"
-          />
+            <StandardButton
+              variant="primary"
+              className="mb-3 text-white float-end me-3"
+              style={{
+                minWidth: "200px",
+                background: "var(--sea-green)",
+                border: "none",
+              }}
+            >
+              Create Ring
+            </StandardButton>
+          </Link>
+          <div style={{ height: "60vh", width: "100%", margin: "0 auto" }}>
+            <DataGrid
+              rows={rings}
+              columns={columns}
+              disableColumnMenu
+              disableColumnFilter
+              hideFooterPagination
+              checkboxSelection={false}
+              className="bg-white p-0"
+            />
+          </div>
         </div>
       </Loader>
     </>

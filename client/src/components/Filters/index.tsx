@@ -8,7 +8,7 @@ import { usePanel } from "store/panels";
 import StandardButton from "components/Buttons/StandardButton";
 import Filter from "./Filter";
 
-import { styles } from "./styles";
+import { filterContainerStyles } from "./styles";
 
 type FiltersProps = {
   panelId: string;
@@ -30,7 +30,7 @@ const Filters = ({ panelId }: FiltersProps) => {
   }, [filters]); // eslint-disable-line
 
   return (
-    <div className={`filter-container ${styles}`}>
+    <div className={`filter-container ${filterContainerStyles}`}>
       <div className="filters">
         {filterElements}
         <div className="d-inline-block">
@@ -51,7 +51,7 @@ const Filters = ({ panelId }: FiltersProps) => {
             variant="primary"
             className="text-white"
             onClick={() => getPanelResults(filters)}
-            style={{ position: "absolute", right: "24px", top: "24px" }}
+            style={{ position: "absolute", right: "24px", top: "32px" }}
           >
             Update Results
           </StandardButton>

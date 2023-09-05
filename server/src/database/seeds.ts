@@ -32,13 +32,6 @@ const seedAdminUser = async (sequelize) => {
   }
 };
 
-const snakeCaseToTitleCase = (str) => {
-  return str
-    .split("_")
-    .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
-    .join(" ");
-};
-
 const seedHelpTexts = async (sequelize) => {
   const searchableFields = [
     "ontology_labels",
@@ -64,8 +57,6 @@ const seedHelpTexts = async (sequelize) => {
     "court_name-header",
     "case_name-header",
   ];
-
-  await sequelize.models.HelpText.destroy({ where: {} });
 
   for (const slug of searchableFields) {
     const description = "";

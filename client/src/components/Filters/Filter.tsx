@@ -1,20 +1,27 @@
 import React, { useState } from "react";
-import { FormControl, InputGroup } from "react-bootstrap";
-import DateTimeRangePicker from "@wojtekmaj/react-datetimerange-picker";
-import FilterTypeDropDown from "./FitlerTypeDropDown";
-import HighlightOffIcon from "@mui/icons-material/HighlightOff";
-import { debounce } from "lodash";
-import Autocomplete from "@mui/material/Autocomplete";
-import { Switch } from "@mui/material";
-import CircularProgress from "@mui/material/CircularProgress";
-import TextField from "@mui/material/TextField";
+import { useSelector } from "react-redux";
+
+import { authSelector } from "store/auth";
 import { usePanel } from "store/panels";
 import { useRing } from "store/rings";
-import { DATE_FORMAT } from "../../helpers/constants";
-import { useNotify } from "components/Notifications";
+
+import { debounce } from "lodash";
+
+import CircularProgress from "@mui/material/CircularProgress";
+import TextField from "@mui/material/TextField";
+import Autocomplete from "@mui/material/Autocomplete";
+import Switch from "@mui/material/Switch";
+import FormControlLabel from "@mui/material/FormControlLabel";
+import HighlightOffIcon from "@mui/icons-material/HighlightOff";
+import DateTimeRangePicker from "@wojtekmaj/react-datetimerange-picker";
+
+import { DATE_FORMAT } from "helpers/constants";
 import { authorizationHeader } from "utils";
-import { authSelector } from "store/auth";
-import { useSelector } from "react-redux";
+
+import { useNotify } from "components/Notifications";
+import FilterTypeDropDown from "./FilterTypeDropDown";
+
+import { filterStyles } from "./styles";
 
 export type FilterT = {
   id: string;
@@ -44,7 +51,7 @@ const Filter = ({ panelId, filter }: Props) => {
   const [autoCompleteSuggestions, setAutoCompleteSuggestions] = useState<
     FilterOptionT[]
   >([]);
-  const [dateValue, setDateValue] = useState<string>("");
+  const [dateValue, setDateValue] = useState<Date | null>(null);
   const { notify } = useNotify();
 
   const setFilter = (filter: FilterT) => {
@@ -120,172 +127,169 @@ const Filter = ({ panelId, filter }: Props) => {
     getPanelResults(newFilters);
   };
 
-  const filterTypeRange = (
+  const rangeInputElement = (
     <>
-      <FormControl
+      <TextField
         placeholder="min"
-        min="0"
         type="number"
+        InputProps={{ inputProps: { min: 0 } }}
         className="filter-range-input"
       />
-      <InputGroup.Text>-</InputGroup.Text>
-      <FormControl
+      <TextField
         placeholder="max"
         type="number"
-        max="99999"
+        InputProps={{ inputProps: { max: 99999 } }}
         className="filter-range-input"
       />
     </>
   );
 
-  const filterTypeRender = () => {
-    switch (filterOptions?.type) {
-      case "range":
-        return filterTypeRange;
+  const autocompleteElement = (
+    <Autocomplete
+      open={autocompleteOpen}
+      noOptionsText={isLoading ? <CircularProgress /> : <>No Results Found</>}
+      multiple
+      options={autoCompleteSuggestions || []}
+      getOptionLabel={(option: FilterOptionT) => option.label}
+      renderInput={(params) => (
+        <TextField
+          {...params}
+          variant="outlined"
+          label={filterOptions?.nicename}
+        />
+      )}
+      disableClearable
+      onInputChange={(_, value) => {
+        const minChar = [
+          "case_type",
+          "state_abbrev",
+          "circuit_abbrev",
+        ].includes(filter.type)
+          ? 0
+          : 2;
 
-      case "boolean":
-        return (
-          <div className="border">
-            <Switch
-              checked={filter?.value === "true"}
-              onChange={(event) => {
-                setFilter({
-                  ...filter,
-                  value: event.target.checked ? "true" : "false",
-                });
-              }}
-              name={filterOptions?.nicename}
-              color="primary"
-            />
-          </div>
-        );
+        if (value.length > minChar) {
+          debouncedSearch(value);
+          setIsLoading(true);
+        }
+        if (value.length === 0) {
+          if (autocompleteOpen) setAutocompleteOpen(false);
+        } else {
+          if (!autocompleteOpen) setAutocompleteOpen(true);
+        }
+      }}
+      onClose={() => setAutocompleteOpen(false)}
+      onChange={(_, fieldValue) => {
+        if (!filter) {
+          return false;
+        }
+        setFilter({
+          ...filter,
+          value: fieldValue.map((x) => x.value).join("|"),
+        });
+      }}
+      sx={{
+        minWidth: "250px",
 
-      case "date":
-        return (
-          <DateTimeRangePicker
-            format={DATE_FORMAT}
-            onChange={(value) => {
-              setDateValue(value);
-              setFilter({ ...filter, value: value });
+        "& .MuiInputBase-root": {
+          borderRadius: "0",
+        },
+        "& .MuiAutocomplete-endAdornment": {
+          display: "none",
+          top: "unset",
+        },
+        "& .MuiOutlinedInput-notchedOutline": {
+          height: "calc(100% + 5px)",
+        },
+        "& .MuiChip-root": {
+          background: "rgba(0, 0, 0, 0.1)",
+          borderRadius: "25px",
+          textTransform: "capitalize",
+        },
+      }}
+    />
+  );
+
+  const textFieldElement = (
+    <TextField
+      disabled={!filterOptions?.type}
+      onChange={(event) => {
+        if (!filter) {
+          return false;
+        }
+        setFilter({ ...filter, value: event.target.value });
+      }}
+      value={value}
+      variant="outlined"
+      placeholder={filterOptions?.type ? null : "Choose a filter type"}
+    />
+  );
+
+  const switchElement = (
+    <div className="switchElement">
+      <FormControlLabel
+        control={
+          <Switch
+            checked={filter?.value === "true"}
+            onChange={(event) => {
+              setFilter({
+                ...filter,
+                value: event.target.checked ? "true" : "false",
+              });
             }}
-            value={dateValue}
+            name={filterOptions?.nicename}
+            color="primary"
           />
-        );
+        }
+        label={filterOptions?.nicename}
+      />
+    </div>
+  );
 
-      default:
-        return (
-          <div>
-            {filterOptions?.autocomplete ? (
-              <Autocomplete
-                open={autocompleteOpen}
-                noOptionsText={
-                  isLoading ? <CircularProgress /> : <>No Results Found</>
-                }
-                multiple
-                options={autoCompleteSuggestions || []}
-                getOptionLabel={(option: FilterOptionT) => option.label}
-                renderInput={(params) => (
-                  <TextField
-                    {...params}
-                    variant="outlined"
-                    label={filterOptions?.nicename}
-                  />
-                )}
-                disableClearable
-                onInputChange={(_, value) => {
-                  const minChar = [
-                    "case_type",
-                    "state_abbrev",
-                    "circuit_abbrev",
-                  ].includes(filter.type)
-                    ? 0
-                    : 2;
-
-                  if (value.length > minChar) {
-                    debouncedSearch(value);
-                    setIsLoading(true);
-                  }
-                  if (value.length === 0) {
-                    if (autocompleteOpen) setAutocompleteOpen(false);
-                  } else {
-                    if (!autocompleteOpen) setAutocompleteOpen(true);
-                  }
-                }}
-                onClose={() => setAutocompleteOpen(false)}
-                onChange={(_, fieldValue) => {
-                  if (!filter) {
-                    return false;
-                  }
-                  setFilter({
-                    ...filter,
-                    value: fieldValue.map((x) => x.value).join("|"),
-                  });
-                }}
-                sx={{
-                  minWidth: "250px",
-
-                  "& .MuiInputBase-root": {
-                    borderRadius: "0",
-                  },
-                  "& .MuiAutocomplete-endAdornment": {
-                    display: "none",
-                    top: "unset",
-                  },
-                  "& .MuiOutlinedInput-notchedOutline": {
-                    height: "calc(100% + 5px)",
-                  },
-                  "& .MuiChip-root": {
-                    background: "rgba(0, 0, 0, 0.1)",
-                    borderRadius: "25px",
-                    textTransform: "capitalize",
-                  },
-                }}
-              />
-            ) : filter.type === "causeOfAction" ? (
-              filterTypeRange
-            ) : (
-              <FormControl
-                disabled={!filterOptions?.type}
-                className="border-end-0"
-                size="sm"
-                style={{ height: "56px" }}
-                onChange={(event) => {
-                  if (!filter) {
-                    return false;
-                  }
-                  setFilter({ ...filter, value: event.target.value });
-                }}
-                value={value}
-              />
-            )}
-          </div>
-        );
-    }
-  };
+  const datePickerElement = (
+    <div className="dateRangePickerElement">
+      <DateTimeRangePicker
+        format={DATE_FORMAT}
+        onChange={(value) => {
+          setDateValue(value);
+          setFilter({ ...filter, value: value });
+        }}
+        value={dateValue}
+      />
+    </div>
+  );
 
   return (
-    <div className="d-inline-block me-3">
-      <InputGroup
-        className="mb-3"
-        style={{ display: "flex", flexWrap: "nowrap" }}
-      >
-        <InputGroup.Text className="bg-white">
-          <FilterTypeDropDown
-            filter={filter}
-            getFilterOptionsByKey={getFilterOptionsByKey}
-            filters={filters}
-            getFiltersNormalized={getFiltersNormalized}
-            setFilter={setFilter}
-          />
-        </InputGroup.Text>
-        {filterTypeRender()}
-        <InputGroup.Text
-          className="cursor-pointer bg-transparent"
-          onClick={handleClear}
-        >
+    <div className={`filter ${filterStyles}`}>
+      <div className="filterItem">
+        <FilterTypeDropDown
+          filter={filter}
+          getFilterOptionsByKey={getFilterOptionsByKey}
+          filters={filters}
+          getFiltersNormalized={getFiltersNormalized}
+          setFilter={setFilter}
+        />
+        <div>
+          {(() => {
+            if (filterOptions?.type === "range") {
+              return rangeInputElement;
+            }
+            if (filterOptions?.type === "boolean") {
+              return switchElement;
+            }
+            if (filterOptions?.type === "date") {
+              return datePickerElement;
+            }
+            if (filterOptions?.autocomplete) {
+              return autocompleteElement;
+            }
+            return textFieldElement;
+          })()}
+        </div>
+        <div className="closeIcon" onClick={handleClear}>
           <HighlightOffIcon />
-        </InputGroup.Text>
-      </InputGroup>
+        </div>
+      </div>
     </div>
   );
 };
