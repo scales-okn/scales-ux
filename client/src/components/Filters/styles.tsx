@@ -39,13 +39,27 @@ export const filterStyles = css`
 
   .dateRangePickerElement {
     height: 56px;
+    position: relative;
+
+    .rangeLabel {
+      position: absolute;
+      top: -9px;
+      left: 10px;
+      background-color: white;
+      color: rgba(0, 0, 0, 0.6);
+      font-size: 12px;
+      z-index: 12;
+      padding: 0 4px;
+    }
 
     .react-datetimerange-picker {
       height: 56px;
     }
 
     .react-datetimerange-picker__wrapper {
+      border-radius: 0 4px 4px 0;
       padding: 10px;
+      border: 1px solid lightgrey;
     }
   }
 `;

@@ -249,6 +249,7 @@ const Filter = ({ panelId, filter }: Props) => {
 
   const datePickerElement = (
     <div className="dateRangePickerElement">
+      <div className="rangeLabel">{filterOptions?.nicename}</div>
       <DateTimeRangePicker
         format={DATE_FORMAT}
         onChange={(value) => {

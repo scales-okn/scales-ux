@@ -51,7 +51,7 @@ const Filters = ({ panelId }: FiltersProps) => {
             variant="primary"
             className="text-white"
             onClick={() => getPanelResults(filters)}
-            style={{ position: "absolute", right: "24px", top: "32px" }}
+            style={{ position: "absolute", right: "24px", top: "24px" }}
           >
             Update Results
           </StandardButton>
