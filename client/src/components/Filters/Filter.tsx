@@ -192,7 +192,7 @@ const Filter = ({ panelId, filter }: Props) => {
         minWidth: "250px",
 
         "& .MuiInputBase-root": {
-          borderRadius: "0",
+          borderRadius: "0 4px 4px 0",
         },
         "& .MuiAutocomplete-endAdornment": {
           display: "none",
@@ -222,6 +222,7 @@ const Filter = ({ panelId, filter }: Props) => {
       value={value}
       variant="outlined"
       placeholder={filterOptions?.type ? null : "Choose a filter type"}
+      sx={{ "& .MuiInputBase-root": { borderRadius: "0 4px 4px 0" } }}
     />
   );
 
