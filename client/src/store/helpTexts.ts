@@ -2,7 +2,6 @@ import { createSlice } from "@reduxjs/toolkit";
 import type { RootState, AppDispatch } from "store";
 import { authSelector } from "store/auth";
 import { useDispatch, useSelector } from "react-redux";
-import { notify } from "reapop";
 import { authorizationHeader } from "utils";
 
 type InitialStateT = {
