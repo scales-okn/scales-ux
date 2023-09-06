@@ -262,6 +262,11 @@ const Panel: FunctionComponent<PanelProps> = ({ panelId }) => {
                                   checkboxSelection={false}
                                   className="bg-white border-0 rounded-0"
                                   paginationMode="server"
+                                  sx={{
+                                    "& .MuiDataGrid-virtualScroller": {
+                                      minHeight: "400px",
+                                    },
+                                  }}
                                 />
                               )}
                             </div>

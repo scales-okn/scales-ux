@@ -2,7 +2,7 @@ import { createSlice } from "@reduxjs/toolkit";
 import type { RootState, AppDispatch } from "store";
 import { authSelector } from "store/auth";
 import { useDispatch, useSelector } from "react-redux";
-// import { notify } from "reapop";
+import { notify } from "reapop";
 import { authorizationHeader } from "utils";
 
 type InitialStateT = {
@@ -65,7 +65,7 @@ const helpTextsSlice = createSlice({
 
       return {
         ...state,
-        helpTexts: [...state.helpTexts, newHelpText],
+        helpTexts: [newHelpText, ...state.helpTexts],
         hasErrors: false,
       };
     },

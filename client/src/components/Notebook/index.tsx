@@ -27,13 +27,14 @@ const Notebook = () => {
   const location = useLocation();
   const isNewNotebook = location.pathname.includes("new");
 
-  const defaultTitle = () => {
-    if (isNewNotebook) return "";
-    return notebook?.title || "";
-  };
+  useEffect(() => {
+    if (isNewNotebook) {
+      setNotebookTitle("");
+    }
+  }, [isNewNotebook]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const [confirmVisible, setConfirmVisible] = useState(false);
-  const [notebookTitle, setNotebookTitle] = useState(defaultTitle());
+  const [notebookTitle, setNotebookTitle] = useState(notebook?.title || "");
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const { panels, updatePanel } = usePanels(notebook?.id);
