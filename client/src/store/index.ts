@@ -13,6 +13,7 @@ import rings from "store/rings";
 import notebooks from "store/notebooks";
 import notebook from "store/notebook";
 import panels from "store/panels";
+import helpTexts from "store/helpTexts";
 
 // Root reducer
 const reducers = combineReducers({
@@ -21,6 +22,7 @@ const reducers = combineReducers({
   notebooks,
   notebook,
   panels,
+  helpTexts,
   notifications: notificationsReducer(),
 });
 

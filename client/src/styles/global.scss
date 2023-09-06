@@ -3,12 +3,12 @@
 // Globals
 body {
   background: $gray-200;
-  height: 100vh;
+  height: 92vh; // hacky
 }
 
 .app,
 .root {
-  height: 100vh;
+  height: 92vh; // hacky
 }
 
 :root {
@@ -17,7 +17,7 @@ body {
   --main-purple-lightest: #e6d5ff;
   --details-blue: #4879c5;
   --light-green: #a2cd61;
-  --dark-green: #5d7b30;
+  --success-green: #2a844e;
   --sea-green: #2a844e;
   --baby-blue: #d7ffff;
 }

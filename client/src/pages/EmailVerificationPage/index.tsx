@@ -93,7 +93,7 @@ const EmailVerificationPage: FunctionComponent = () => {
           alt="scales-logo"
         />
         <h1 className="title">Welcome to SCALES!</h1>
-        <Loader animation="border" isVisible={isLoading}>
+        <Loader isVisible={isLoading}>
           <p>{messages[status]}</p>
         </Loader>
       </div>

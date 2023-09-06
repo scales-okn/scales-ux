@@ -73,7 +73,7 @@ const Answers = ({
 
   const xLabels = useMemo(() => {
     const allValues = data.results.reduce((acc: any[], result: any) => {
-      const values = result.series.map((series: any) => {
+      const values = result.series?.map((series: any) => {
         return series[0].toString();
       });
       return acc.concat(values);
@@ -157,7 +157,9 @@ const Answers = ({
           />
         </YAxis>
         <Tooltip
-          formatter={(value) => new Intl.NumberFormat("en").format(value)}
+          formatter={(value) =>
+            new Intl.NumberFormat("en").format(value as number)
+          }
           content={multiLineTooltip}
         />
         {/* hack */}

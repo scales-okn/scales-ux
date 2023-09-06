@@ -1,6 +1,6 @@
 import React, { ReactNode, useState } from "react";
 import { useSelector } from "react-redux";
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 
 import { userSelector } from "../../store/auth";
 import useWindowSize from "hooks/useWindowSize";
@@ -44,11 +44,23 @@ const PageLayout = ({ id = "", children, pageTitle }: PageLayoutT) => {
     return null;
   };
 
+  const location = useLocation();
+  const isAdminView = location.pathname.includes("admin");
   const user = useSelector(userSelector);
   const isAdmin = user?.role === "admin";
 
   const { width } = useWindowSize();
-  const isTablet = width < 900;
+  const isTablet = width < 768;
+
+  const containerStyles = {
+    marginTop: "128px",
+    minHeight: "70vh",
+    ...(isAdminView && {
+      marginTop: "64px",
+      maxWidth: "100% !important",
+      padding: "0 !important",
+    }),
+  };
 
   return (
     <>
@@ -65,12 +77,15 @@ const PageLayout = ({ id = "", children, pageTitle }: PageLayoutT) => {
           <AppBar
             position="static"
             sx={{
-              backgroundColor: "var(--main-purple)",
+              background:
+                "linear-gradient(to right, var(--main-purple), var(--main-purple-light))",
               display: "flex",
               flexDirection: "row",
               justifyContent: "space-between",
               alignItems: "center",
               padding: "0 24px",
+              height: "64px !important",
+              zIndex: "1000",
             }}
           >
             <IconButton
@@ -105,16 +120,13 @@ const PageLayout = ({ id = "", children, pageTitle }: PageLayoutT) => {
                 {user ? (
                   <>
                     <NavItem linkName="Notebooks" route={"/"} />
-                    {isAdmin &&
-                      ["rings", "users", "feedback"].map((title) => {
-                        return (
-                          <NavItem
-                            key={title}
-                            linkName={title}
-                            route={`/${title}`}
-                          />
-                        );
-                      })}
+                    {isAdmin && (
+                      <NavItem
+                        key={"admin"}
+                        linkName={"admin"}
+                        route={"/admin"}
+                      />
+                    )}
                   </>
                 ) : (
                   <NavItem
@@ -128,7 +140,8 @@ const PageLayout = ({ id = "", children, pageTitle }: PageLayoutT) => {
             <Logout />
           </AppBar>
         </Box>
-        <Container id="main" className="main" sx={{ paddingTop: "80px" }}>
+
+        <Container id="main" className="main" sx={containerStyles}>
           {pageTitle && <h4>{pageTitle}</h4>}
           {children}
         </Container>

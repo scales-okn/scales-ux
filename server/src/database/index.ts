@@ -4,6 +4,7 @@ import UserModel from "../models/User";
 import PanelModel from "../models/Panel";
 import NotebookModel from "../models/Notebook";
 import FeedbackModel from "../models/Feedback";
+import HelpTextModel from "../models/HelpText";
 import RingModel from "../models/Ring";
 import LogModel from "../models/Log";
 import logs from "./logs";
@@ -47,6 +48,7 @@ const database = async () => {
     const Notebook = NotebookModel(sequelize, { hooks: logHooks });
     const Ring = RingModel(sequelize, { hooks: logHooks });
     FeedbackModel(sequelize, { hooks: logHooks });
+    HelpTextModel(sequelize, { hooks: logHooks });
 
     // Associate Models
     Panel.associate({

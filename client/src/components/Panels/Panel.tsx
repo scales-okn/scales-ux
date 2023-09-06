@@ -5,29 +5,32 @@ import React, {
   useContext,
   useMemo,
 } from "react";
+
+import { usePanel } from "store/panels";
+import { useRing } from "store/rings";
+
 import {
   Accordion,
   Col,
-  Button,
   useAccordionButton,
   Form,
   AccordionContext,
   Card,
 } from "react-bootstrap";
 import { Link } from "react-router-dom";
-import { DataGrid } from "@material-ui/data-grid";
-import Filters from "../Filters";
-import Loader from "../Loader";
-
-import Dataset from "../Dataset";
-
+import { DataGrid } from "@mui/x-data-grid";
 import uniqid from "uniqid";
 
-import { usePanel } from "../../store/panels";
-import { useRing } from "../../store/rings";
+import Filters from "../Filters";
+import Loader from "../Loader";
+import Dataset from "../Dataset";
 import Analysis from "../Analysis";
-import "./Panel.scss";
+
 import ConfirmModal from "components/Modals/ConfirmModal";
+import StandardButton from "components/Buttons/StandardButton";
+import ColumnHeader from "components/ColumnHeader";
+
+import "./Panel.scss";
 
 type ResultsTogglerProps = {
   children: React.ReactNode;
@@ -46,9 +49,9 @@ const ResultsToggler: FunctionComponent<ResultsTogglerProps> = ({
   );
 
   return (
-    <Button variant="link" size="sm" onClick={decoratedOnClick}>
+    <StandardButton variant="link" size="sm" onClick={decoratedOnClick}>
       {children}
-    </Button>
+    </StandardButton>
   );
 };
 
@@ -73,9 +76,13 @@ const AccordionToggleButton = ({
   const isCurrentEventKey = activeEventKey === eventKey;
 
   return (
-    <Button variant="outline-primary" size="sm" onClick={decoratedOnClick}>
+    <StandardButton
+      variant="outline-primary"
+      size="sm"
+      onClick={decoratedOnClick}
+    >
       {isCurrentEventKey ? "Close" : "Open"}
-    </Button>
+    </StandardButton>
   );
 };
 
@@ -103,8 +110,8 @@ const Panel: FunctionComponent<PanelProps> = ({ panelId }) => {
   }, [ring]); // eslint-disable-line react-hooks/exhaustive-deps
 
   useEffect(() => {
+    // if (!info || collapsed || loadingPanelResults) return;
     if (!info || collapsed) return;
-
     getPanelResults();
   }, [collapsed, info]); // eslint-disable-line react-hooks/exhaustive-deps
 
@@ -122,6 +129,15 @@ const Panel: FunctionComponent<PanelProps> = ({ panelId }) => {
           headerName: column.nicename,
           width: 200,
           sortable: false,
+          renderHeader: (params) => {
+            return (
+              <ColumnHeader
+                title={params.colDef.headerName}
+                dataKey={params.colDef.field}
+                withTooltip
+              />
+            );
+          },
         })) || [];
 
     out.unshift({
@@ -138,6 +154,15 @@ const Panel: FunctionComponent<PanelProps> = ({ panelId }) => {
           >
             {item.row.case_id}
           </Link>
+        );
+      },
+      renderHeader: (params) => {
+        return (
+          <ColumnHeader
+            title={params.colDef.headerName}
+            dataKey="case_id"
+            withTooltip
+          />
         );
       },
     });
@@ -163,14 +188,14 @@ const Panel: FunctionComponent<PanelProps> = ({ panelId }) => {
             {ring?.name}
           </div>
           <div className="ms-auto">
-            <Button
+            <StandardButton
               variant="outline-danger"
               size="sm"
               onClick={() => setConfirmVisible(true)}
               className="me-1"
             >
               Delete
-            </Button>
+            </StandardButton>
             <AccordionToggleButton
               eventKey={panel.id}
               callback={() => setPanelCollapsed(!collapsed)}
@@ -199,7 +224,6 @@ const Panel: FunctionComponent<PanelProps> = ({ panelId }) => {
               <Filters panelId={panel.id} />
               <div className="p-0 bg-light border-bottom border-top">
                 <Loader
-                  animation="border"
                   contentHeight={resultsCollapsed ? "60px" : "400px"}
                   isVisible={loadingPanelResults}
                 >
@@ -216,7 +240,6 @@ const Panel: FunctionComponent<PanelProps> = ({ panelId }) => {
                           <>
                             <div
                               style={{
-                                height: 400,
                                 width: "100%",
                                 overflowX: "hidden",
                               }}
@@ -224,19 +247,26 @@ const Panel: FunctionComponent<PanelProps> = ({ panelId }) => {
                               {!resultsCollapsed && (
                                 <DataGrid
                                   rows={rows}
-                                  onPageChange={(page) =>
-                                    getPanelResults([], page)
-                                  }
+                                  onPaginationModelChange={(model) => {
+                                    getPanelResults([], model.page);
+                                  }}
+                                  paginationModel={{
+                                    page: results?.page,
+                                    pageSize: results?.batchSize,
+                                  }}
                                   disableColumnMenu
                                   disableColumnFilter
-                                  rowsPerPageOptions={[10]}
+                                  pageSizeOptions={[10]}
                                   columns={columns}
-                                  page={results?.page}
-                                  pageSize={results?.batchSize}
                                   rowCount={results?.totalCount}
                                   checkboxSelection={false}
                                   className="bg-white border-0 rounded-0"
                                   paginationMode="server"
+                                  sx={{
+                                    "& .MuiDataGrid-virtualScroller": {
+                                      minHeight: "400px",
+                                    },
+                                  }}
                                 />
                               )}
                             </div>

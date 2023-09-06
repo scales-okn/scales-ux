@@ -3,12 +3,15 @@ import { useNavigate } from "react-router-dom";
 
 import { useFormik } from "formik";
 
-import { Container, Form, Button, Col, Row } from "react-bootstrap";
+import { Container, Form, Col, Row } from "react-bootstrap";
 
 import { UserSignInFields } from "../SignInPage";
-import PageLayout from "../../components/PageLayout";
+import PageLayout from "components/PageLayout";
 import Loader from "components/Loader";
 import { UserSignUpValidationSchema } from "./schema";
+
+import StandardButton from "components/Buttons/StandardButton";
+
 interface UserSignUpFields extends UserSignInFields {
   firstName: string;
   lastName: string;
@@ -111,11 +114,7 @@ const SignUpPage = () => {
               </h6>
             )}
 
-            <Loader
-              animation="border"
-              isVisible={isLoading}
-              contentHeight="700px"
-            >
+            <Loader isVisible={isLoading} contentHeight="700px">
               {message ? (
                 <p>{message}</p>
               ) : (
@@ -277,7 +276,7 @@ const SignUpPage = () => {
                       </Form.Text>
                     )}
                   </Form.Group>
-                  <Button
+                  <StandardButton
                     type="submit"
                     className="w-100 mb-3 text-white"
                     size="lg"
@@ -287,7 +286,7 @@ const SignUpPage = () => {
                     }}
                   >
                     Register
-                  </Button>
+                  </StandardButton>
 
                   <Row className="mb-5">
                     <Col className="text-end">

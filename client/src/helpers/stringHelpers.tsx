@@ -15,9 +15,11 @@ export const convertToMMYYYY = (dateString: string) => {
 export const stringIsNumber = (str) => isFinite(+str);
 
 export const formatXUnits = (resultLabel, { formatMonths }) => {
+  if (typeof resultLabel !== "string") return resultLabel;
+
   if (isAlphabetical(resultLabel)) {
     return resultLabel;
-  } else if (resultLabel.includes("/")) {
+  } else if (resultLabel?.includes("/")) {
     if (formatMonths) return convertToMMYYYY(resultLabel);
     return convertToEpoch(resultLabel);
   } else {

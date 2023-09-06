@@ -64,7 +64,7 @@ const DocumentPage: FunctionComponent = () => {
 
   return (
     <PageLayout>
-      <Loader animation="border" isVisible={!html}>
+      <Loader isVisible={!html}>
         <div dangerouslySetInnerHTML={{ __html: html }}></div>
       </Loader>
     </PageLayout>
