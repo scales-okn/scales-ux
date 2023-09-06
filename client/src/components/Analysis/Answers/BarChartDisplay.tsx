@@ -70,7 +70,9 @@ const Answers = ({ data, chartWidth, chartMargins }: AnswersT) => {
         }
       />
       <Tooltip
-        formatter={(value) => new Intl.NumberFormat("en").format(value)}
+        formatter={(value) =>
+          new Intl.NumberFormat("en").format(value as number)
+        }
       />
       <Legend />
       <Bar dataKey={yUnits} fill="#82ca9d" />

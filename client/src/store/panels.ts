@@ -441,6 +441,8 @@ export const getPanelResults =
 
       const filterParams = filters
         ?.map((filter) => {
+          if (!filter.value) return null;
+
           if (
             filter.type === "filing_date" ||
             filter.type === "terminating_date"

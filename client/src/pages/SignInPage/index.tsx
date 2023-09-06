@@ -1,14 +1,15 @@
 import React, { FunctionComponent, useEffect, useState } from "react";
 
 import * as yup from "yup";
-import { Button, Col, Container, Form, Row } from "react-bootstrap";
+import { Col, Container, Form, Row } from "react-bootstrap";
 import { useNavigate } from "react-router-dom";
 import { authSelector, login } from "store/auth";
 import { useDispatch, useSelector } from "react-redux";
 
-import PageLayout from "../../components/PageLayout";
 import { useFormik } from "formik";
 
+import PageLayout from "components/PageLayout";
+import StandardButton from "components/Buttons/StandardButton";
 export interface UserSignInFields {
   email: string;
   password: string;
@@ -103,7 +104,7 @@ const SignInPage: FunctionComponent = () => {
                 />
               </Form.Group>
 
-              <Button
+              <StandardButton
                 type="submit"
                 className="w-100 mb-3 text-white"
                 size="lg"
@@ -114,7 +115,7 @@ const SignInPage: FunctionComponent = () => {
                 }}
               >
                 Sign in
-              </Button>
+              </StandardButton>
               <Row className="mb-5">
                 <Col className="text-start" md="5">
                   <a

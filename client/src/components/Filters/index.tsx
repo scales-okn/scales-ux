@@ -1,10 +1,14 @@
 import React, { useMemo } from "react";
-import { Button } from "react-bootstrap";
+
 import AddIcon from "@mui/icons-material/Add";
-import Filter from "./Filter";
 import uniqid from "uniqid";
-import { usePanel } from "../../store/panels";
-import { styles } from "./styles";
+
+import { usePanel } from "store/panels";
+
+import StandardButton from "components/Buttons/StandardButton";
+import Filter from "./Filter";
+
+import { filterContainerStyles } from "./styles";
 
 type FiltersProps = {
   panelId: string;
@@ -14,23 +18,19 @@ const Filters = ({ panelId }: FiltersProps) => {
   const { filters = [], setPanelFilters, getPanelResults } = usePanel(panelId);
 
   const filterElements = useMemo(() => {
-    const out = [];
-    if (filters) {
-      out.push(
-        filters?.map((filter) => {
-          return <Filter key={filter.id} panelId={panelId} filter={filter} />;
-        }),
-      );
-    }
-    return out;
-  }, [filters]); // eslint-disable-line
+    return (
+      filters?.map((filter) => {
+        return <Filter key={filter.id} panelId={panelId} filter={filter} />;
+      }) || []
+    );
+  }, [filters]); // eslint-disable-line react-hooks/exhaustive-deps
 
   return (
-    <div className={`filter-container ${styles}`}>
+    <div className={`filter-container ${filterContainerStyles}`}>
       <div className="filters">
         {filterElements}
         <div className="d-inline-block">
-          <Button
+          <StandardButton
             variant="outline-dark"
             className="me-2"
             onClick={() => {
@@ -41,16 +41,16 @@ const Filters = ({ panelId }: FiltersProps) => {
             }}
           >
             <AddIcon fontSize="medium" />
-          </Button>
+          </StandardButton>
           {!filters?.length && <>Add a filter</>}
-          <Button
+          <StandardButton
             variant="primary"
             className="text-white"
             onClick={() => getPanelResults(filters)}
             style={{ position: "absolute", right: "24px", top: "24px" }}
           >
             Update Results
-          </Button>
+          </StandardButton>
         </div>
       </div>
     </div>

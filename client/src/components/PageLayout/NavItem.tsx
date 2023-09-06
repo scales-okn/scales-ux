@@ -13,7 +13,13 @@ type NavItemT = {
 const NavItem = ({ linkName, route, isMobile, disableUnderline }: NavItemT) => {
   const location = useLocation();
   const { pathname } = location;
-  const isActive = pathname === route;
+  const isActive = () => {
+    if (linkName === "Notebooks") {
+      return pathname === "/";
+    } else {
+      return pathname.includes(route);
+    }
+  };
 
   const navItemStyles = css`
     color: white;
@@ -34,7 +40,7 @@ const NavItem = ({ linkName, route, isMobile, disableUnderline }: NavItemT) => {
       content: "";
       display: block;
       width: calc(100% - 2px);
-      height: ${isActive && !disableUnderline ? "2px" : 0};
+      height: ${isActive() && !disableUnderline ? "2px" : 0};
       border-radius: 2px;
       background: white;
       transition: 0.2s all;

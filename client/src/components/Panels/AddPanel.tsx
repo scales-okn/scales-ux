@@ -1,8 +1,8 @@
 import React, { FunctionComponent } from "react";
-import { Button } from "react-bootstrap";
-import { usePanels } from "../../store/panels";
+import { usePanels } from "store/panels";
 import "./AddPanel.scss";
-import { useNotebook } from "../../store/notebook";
+import { useNotebook } from "store/notebook";
+import StandardButton from "components/Buttons/StandardButton";
 
 type AddPanelProps = {
   notebookId: string | null;
@@ -13,9 +13,16 @@ const AddPanel: FunctionComponent<AddPanelProps> = ({ notebookId }) => {
   const { createPanel } = usePanels(notebookId);
 
   return (
-    <Button className="add-panel-btn w-100" style={{ marginBottom: "80px" }} size="lg" variant="link" disabled={!notebook} onClick={() => createPanel()}>
+    <StandardButton
+      className="add-panel-btn w-100"
+      style={{ marginBottom: "80px" }}
+      size="lg"
+      variant="link"
+      disabled={!notebook}
+      onClick={() => createPanel()}
+    >
       Add Panel
-    </Button>
+    </StandardButton>
   );
 };
 

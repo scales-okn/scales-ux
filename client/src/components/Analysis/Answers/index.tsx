@@ -1,13 +1,16 @@
 import React, { memo, useEffect, useState, useRef, useMemo } from "react";
-import { Col } from "react-bootstrap";
-import Loader from "components/Loader";
 import { usePanel } from "store/panels";
+
+import { css } from "@emotion/css";
 import dayjs from "dayjs";
 import { isEmpty } from "lodash";
-import renderHTML from "helpers/renderHTML";
-import { Button } from "react-bootstrap";
+import { Paper } from "@mui/material";
 
+import renderHTML from "helpers/renderHTML";
 import useContainerDimensions from "hooks/useContainerDimensions";
+
+import Loader from "components/Loader";
+import StandardButton from "components/Buttons/StandardButton";
 import MultilineChartDisplay from "./MultilineChartDisplay";
 import LineChartDisplay from "./LineChartDisplay";
 import BarChartDisplay from "./BarChartDisplay";
@@ -129,20 +132,30 @@ const Answers = ({
     expanded,
   ]);
 
+  const styles = css`
+    width: 100%;
+    margin-bottom: 20px;
+  `;
+
   return (
     <>
-      <div className="answers" ref={containerRef}>
-        <Loader isVisible={loadingAnswers} animation="border">
+      <div ref={containerRef} className={`$answers ${styles}`}>
+        <Loader isVisible={loadingAnswers}>
           <>
             {answer && (
-              <div className="mb-3 mt-4">
+              <Paper
+                elevation={3}
+                sx={{
+                  padding: "16px",
+                  boxShadow: "none",
+                }}
+              >
                 <i>Answer: </i>
                 {renderHTML(answer)}
-              </div>
+              </Paper>
             )}
             {data && (
-              <Col
-                lg="12"
+              <div
                 className="mt-5"
                 style={{ overflowX: "auto", overflowY: "visible" }}
               >
@@ -174,20 +187,20 @@ const Answers = ({
                     chartMargins={chartMargins}
                   />
                 )}
-              </Col>
+              </div>
             )}
           </>
         </Loader>
       </div>
       {collapseIsVisible && (
         <div style={{ width: "300px" }}>
-          <Button
+          <StandardButton
             variant="outline-success"
             size="sm"
             onClick={() => setExpanded((prev) => !prev)}
           >
             {expanded ? "collapse" : "expand"}
-          </Button>
+          </StandardButton>
         </div>
       )}
     </>

@@ -5,9 +5,9 @@ import * as yup from "yup";
 
 import { useNotify } from "components/Notifications";
 
-import { Button, Col, Container, Form, Row } from "react-bootstrap";
+import { Col, Container, Form, Row } from "react-bootstrap";
 import PageLayout from "../../components/PageLayout";
-
+import StandardButton from "components/Buttons/StandardButton";
 interface ResetPasswordFields {
   password: string;
   repassword: string;
@@ -106,7 +106,7 @@ const ResetPassword: FunctionComponent = () => {
                 />
                 <Form.Label>Confirm Password</Form.Label>
               </div>
-              <Button
+              <StandardButton
                 type="submit"
                 className="w-100 mb-3 text-white"
                 size="lg"
@@ -117,7 +117,7 @@ const ResetPassword: FunctionComponent = () => {
                 }}
               >
                 Reset Password
-              </Button>
+              </StandardButton>
             </Form>
           </Col>
         </Row>

@@ -1,16 +1,22 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import React, { FunctionComponent, useState } from "react";
-import PageLayout from "../../components/PageLayout";
-import Loader from "../../components/Loader";
-import { DataGrid, GridCellParams } from "@material-ui/data-grid";
+import { useSelector } from "react-redux";
 import { Link } from "react-router-dom";
-import { Form, Row, Col, Button, InputGroup } from "react-bootstrap";
+
+import { DataGrid, GridCellParams } from "@mui/x-data-grid";
+import { Form, Row, Col, InputGroup } from "react-bootstrap";
 import { useEffectOnce } from "react-use";
 import SearchIcon from "@mui/icons-material/Search";
 import dayjs from "dayjs";
-import { userSelector } from "../../store/auth";
-import { useSelector } from "react-redux";
-import { useNotebooks } from "../../store/notebooks";
+
+import { userSelector } from "store/auth";
+import { useNotebooks } from "store/notebooks";
+
+import StandardButton from "components/Buttons/StandardButton";
+import PageLayout from "components/PageLayout";
+import Loader from "components/Loader";
+import ColumnHeader from "components/ColumnHeader";
+
 import "./NotebooksPage.scss";
 
 const NotebooksPage: FunctionComponent = () => {
@@ -57,12 +63,23 @@ const NotebooksPage: FunctionComponent = () => {
           .search(filterNotebooks.toLocaleLowerCase()) > -1,
     );
 
+  const renderHeader = (params) => {
+    return (
+      <ColumnHeader
+        title={params.colDef.headerName}
+        dataKey={params.colDef.field}
+      />
+    );
+  };
+
   const columns = [
     {
       field: "title",
       headerName: "Name",
       width: 250,
       editable: true,
+      sortable: false,
+      renderHeader,
       renderCell: (params: GridCellParams) => (
         <Link to={`/notebooks/${params.row.id}`} className="ms-2">
           {params.row.title}
@@ -72,8 +89,10 @@ const NotebooksPage: FunctionComponent = () => {
     {
       field: "updatedAt",
       headerName: "Last Modified",
-      width: 200,
+      width: 150,
       editable: false,
+      sortable: false,
+      renderHeader,
       renderCell: (params: GridCellParams) => (
         <>{dayjs(params.row.createdAt).format("M/D/YYYY")}</>
       ),
@@ -81,8 +100,10 @@ const NotebooksPage: FunctionComponent = () => {
     {
       field: "createdAt",
       headerName: "Created On",
-      width: 200,
+      width: 150,
       editable: false,
+      sortable: false,
+      renderHeader,
       renderCell: (params: GridCellParams) => (
         <>{dayjs(params.row.createdAt).format("M/D/YYYY")}</>
       ),
@@ -90,12 +111,16 @@ const NotebooksPage: FunctionComponent = () => {
     {
       field: "visibility",
       headerName: "Visibility",
-      width: 160,
+      width: 130,
+      editable: false,
+      renderHeader,
     },
     {
       field: "userId",
       headerName: "Owned By",
       width: 150,
+      sortable: false,
+      renderHeader,
       renderCell: (params: GridCellParams) => {
         if (params.row.userId === user.id) {
           return <>You</>;
@@ -107,8 +132,10 @@ const NotebooksPage: FunctionComponent = () => {
     {
       field: "collaborators",
       headerName: "Shared With",
-      width: 160,
+      width: 150,
       editable: true,
+      sortable: false,
+      renderHeader,
       renderCell: (params: GridCellParams) => {
         if (params.row.collaborators.length === 0) {
           return <>Nobody</>;
@@ -126,7 +153,7 @@ const NotebooksPage: FunctionComponent = () => {
 
   return (
     <PageLayout>
-      <Loader animation="border" isVisible={loadingNotebooks}>
+      <Loader isVisible={loadingNotebooks}>
         <>
           <Row>
             <Col md>
@@ -166,7 +193,7 @@ const NotebooksPage: FunctionComponent = () => {
                 to="/notebooks/new"
                 className="text-white text-decoration-none"
               >
-                <Button
+                <StandardButton
                   className="text-white float-end px-5"
                   variant="primary"
                   style={{
@@ -175,21 +202,18 @@ const NotebooksPage: FunctionComponent = () => {
                   }}
                 >
                   Create Notebook
-                </Button>
+                </StandardButton>
               </Link>
             </Col>
           </Row>
           <Row>
-            <div
-              style={{ height: "70vh", minHeight: "300px", width: "100%" }}
-              className="mt-4"
-            >
+            <div style={{ height: "60vh", width: "100%" }} className="mt-4">
               <DataGrid
                 rows={notebooksData}
-                // onEditCellChangeCommitted={handleOnEditCellChangeCommitted}
                 columns={columns}
-                pageSize={10}
-                rowsPerPageOptions={[10]}
+                disableColumnMenu
+                disableColumnFilter
+                hideFooterPagination
                 hideFooter={notebooks?.length <= 10 ? true : false}
                 rowCount={notebooks?.length}
                 checkboxSelection={false}

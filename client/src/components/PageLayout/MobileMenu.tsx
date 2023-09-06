@@ -54,17 +54,14 @@ const MobileMenu = ({ drawerOpen, toggleDrawer, isAdmin }: MobileMenuT) => {
             <Divider />
             <List sx={{ margin: "24px", marginLeft: "32px" }}>
               <NavItem linkName="Notebooks" route={"/"} isMobile />
-              {isAdmin &&
-                ["rings", "users", "feedback"].map((title) => {
-                  return (
-                    <NavItem
-                      key={title}
-                      linkName={title}
-                      route={`/${title}`}
-                      isMobile
-                    />
-                  );
-                })}
+              {isAdmin && (
+                <NavItem
+                  key={"admin"}
+                  linkName={"admin"}
+                  route={"/admin/rings"}
+                  isMobile
+                />
+              )}
             </List>
           </Box>
         </SwipeableDrawer>

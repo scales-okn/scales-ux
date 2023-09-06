@@ -4,7 +4,8 @@ import { useAuthHeader } from "store/auth";
 import { useNotify } from "components/Notifications";
 import * as yup from "yup";
 import { styles } from "./styles";
-import { Modal, Button, Form } from "react-bootstrap";
+import { Modal, Form } from "react-bootstrap";
+import StandardButton from "components/Buttons/StandardButton";
 
 import "./PageLayout.scss";
 
@@ -102,7 +103,7 @@ const FeedbackWidget = () => {
             </div>
           </Modal.Body>
           <Modal.Footer>
-            <Button
+            <StandardButton
               variant="primary"
               type="submit"
               style={{
@@ -112,7 +113,7 @@ const FeedbackWidget = () => {
               }}
             >
               Submit
-            </Button>
+            </StandardButton>
           </Modal.Footer>
         </Form>
       </Modal>

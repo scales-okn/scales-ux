@@ -4,8 +4,9 @@ import { useFormik } from "formik";
 import * as yup from "yup";
 
 import PageLayout from "../../components/PageLayout";
-import { Button, Col, Container, Form, Row } from "react-bootstrap";
+import { Col, Container, Form, Row } from "react-bootstrap";
 import { useNotify } from "components/Notifications";
+import StandardButton from "components/Buttons/StandardButton";
 
 interface ForgotPasswordFields {
   email: string;
@@ -80,10 +81,10 @@ const ForgotPassword: FunctionComponent = () => {
                 <Form.Label>Email address</Form.Label>
               </div>
 
-              <Button
+              <StandardButton
                 variant="primary"
                 type="submit"
-                className="w-100 mb-3 text-white "
+                className="w-100 mb-3 text-white"
                 size="lg"
                 style={{
                   background: "var(--main-purple-light)",
@@ -91,7 +92,7 @@ const ForgotPassword: FunctionComponent = () => {
                 }}
               >
                 Submit
-              </Button>
+              </StandardButton>
               <Row className="mb-5">
                 <Col className="text-end">
                   <a

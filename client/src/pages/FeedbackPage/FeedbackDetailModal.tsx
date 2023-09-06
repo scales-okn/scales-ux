@@ -1,18 +1,19 @@
-import React, { FunctionComponent } from "react";
-import Modal from "react-bootstrap/Modal";
+import React from "react";
+import ModalContainer from "components/Modals/ModalContainer";
 
 type FeedbackDetailModalT = {
   feedbackDetail: string;
   closeModal: (arg: null) => void;
 };
 
-const FeedbackDetailModal: FunctionComponent<FeedbackDetailModalT> = ({ closeModal, feedbackDetail }) => {
+const FeedbackDetailModal = ({
+  closeModal,
+  feedbackDetail,
+}: FeedbackDetailModalT) => {
   return (
-    <Modal show onHide={() => closeModal(null)}>
-      <Modal.Body>
-        <div style={{ wordWrap: "break-word" }}>{feedbackDetail}</div>
-      </Modal.Body>
-    </Modal>
+    <ModalContainer open onClose={() => closeModal(null)}>
+      <span>{feedbackDetail}</span>
+    </ModalContainer>
   );
 };
 

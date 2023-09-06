@@ -1,14 +1,14 @@
-import React, { FunctionComponent, useState } from "react";
-import { Button } from "react-bootstrap";
+import React, { useState } from "react";
 import { useAuthHeader } from "store/auth";
 import { useNotify } from "components/Notifications";
 import ConfirmModal from "components/Modals/ConfirmModal";
+import StandardButton from "components/Buttons/StandardButton";
 
 type Props = {
   feedbackId: number;
 };
 
-const DeleteFeedback: FunctionComponent<Props> = ({ feedbackId }) => {
+const DeleteFeedback = ({ feedbackId }: Props) => {
   const authHeader = useAuthHeader();
   const { notify } = useNotify();
   const [confirmVisible, setConfirmVisible] = useState(false);
@@ -40,7 +40,7 @@ const DeleteFeedback: FunctionComponent<Props> = ({ feedbackId }) => {
 
   return (
     <>
-      <Button
+      <StandardButton
         className="text-white float-end me-2"
         variant="danger"
         onClick={(e) => {
@@ -50,7 +50,7 @@ const DeleteFeedback: FunctionComponent<Props> = ({ feedbackId }) => {
         size="sm"
       >
         Delete
-      </Button>
+      </StandardButton>
       <ConfirmModal
         itemName="feedback"
         open={confirmVisible}

@@ -1,15 +1,16 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { BrowserRouter, Route, Routes, Navigate } from "react-router-dom";
 
-import { Button } from "react-bootstrap";
 import { ErrorBoundary } from "react-error-boundary";
 
 import { authSelector } from "./store/auth";
 import { useSelector } from "react-redux";
 
+import { useHelpTexts } from "store/helpTexts";
+
+import StandardButton from "components/Buttons/StandardButton";
+
 import DocumentPage from "pages/DocumentPage";
-import UsersPage from "pages/UsersPage";
-import FeedbackPage from "pages/FeedbackPage";
 import SignInPage from "pages/SignInPage";
 import SignUpPage from "pages/SignUpPage";
 import ProfilePage from "pages/ProfilePage";
@@ -18,21 +19,22 @@ import NotebookPage from "pages/NotebookPage";
 import EmailVerificationPage from "pages/EmailVerificationPage";
 import ForgotPasswordPage from "pages/ForgotPasswordPage";
 import ResetPasswordPage from "pages/ResetPasswordPage";
-import RingsPage from "pages/RingsPage";
 import Notifications from "components/Notifications";
 import Ring from "pages/RingsPage/Ring";
+import Admin from "pages/AdminPage";
 
 const ErrorFallback = ({ error, resetErrorBoundary }) => {
   return (
     <div role="alert">
       <p>Something went wrong:</p>
       <pre>{error.message}</pre>
-      <Button onClick={resetErrorBoundary}>Try again</Button>
+      <StandardButton onClick={resetErrorBoundary}>Try again</StandardButton>
     </div>
   );
 };
 
 const App = () => {
+  const { getHelpTexts } = useHelpTexts();
   const { user } = useSelector(authSelector);
   const requireAuth = (element) => {
     if (!user) {
@@ -41,6 +43,10 @@ const App = () => {
 
     return element;
   };
+
+  useEffect(() => {
+    getHelpTexts(); // Invoke the function by adding parentheses
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   return (
     <div className="app">
@@ -54,13 +60,7 @@ const App = () => {
         <BrowserRouter>
           <Routes>
             <Route path="/" element={requireAuth(<NotebooksPage />)} />
-            <Route path="/users" element={requireAuth(<UsersPage />)} />
-            <Route path="/feedback" element={requireAuth(<FeedbackPage />)} />
-            <Route path="/rings" element={requireAuth(<RingsPage />)} />
             <Route path="/profile" element={requireAuth(<ProfilePage />)} />
-            <Route path="/rings" element={requireAuth(<NotebooksPage />)} />
-            <Route path="/rings/create" element={requireAuth(<Ring />)} />
-            <Route path="/rings/:ringId" element={requireAuth(<Ring />)} />
             <Route
               path="/notebooks/:notebookId"
               element={requireAuth(<NotebookPage />)}
@@ -80,6 +80,26 @@ const App = () => {
               path="/verify-email/:token"
               element={<EmailVerificationPage />}
             />
+
+            {/* Admin Routes */}
+            <Route path="/admin/users" element={requireAuth(<Admin />)} />
+            <Route path="/admin/feedback" element={requireAuth(<Admin />)} />
+            <Route
+              path="/admin/help-texts/:helpTextSlug?"
+              element={requireAuth(<Admin />)}
+            />
+            <Route path="/admin/rings" element={requireAuth(<Admin />)} />
+            <Route path="/admin/rings/create" element={requireAuth(<Ring />)} />
+            <Route
+              path="/admin/rings/:ringId"
+              element={requireAuth(<Ring />)}
+            />
+            <Route
+              path="/admin/*"
+              element={<Navigate to="/admin/rings" replace />}
+            />
+
+            {/* Default Redirect */}
             <Route path="*" element={<Navigate to="/" replace />} />
           </Routes>
         </BrowserRouter>
