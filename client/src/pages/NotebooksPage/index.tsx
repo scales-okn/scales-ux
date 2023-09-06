@@ -9,13 +9,13 @@ import { useEffectOnce } from "react-use";
 import SearchIcon from "@mui/icons-material/Search";
 import dayjs from "dayjs";
 
-import { userSelector } from "store/auth";
-import { useNotebooks } from "store/notebooks";
+import { userSelector } from "@store/auth";
+import { useNotebooks } from "@store/notebooks";
 
-import StandardButton from "components/Buttons/StandardButton";
-import PageLayout from "components/PageLayout";
-import Loader from "components/Loader";
-import ColumnHeader from "components/ColumnHeader";
+import StandardButton from "@components/Buttons/StandardButton";
+import PageLayout from "@components/PageLayout";
+import Loader from "@components/Loader";
+import ColumnHeader from "@components/ColumnHeader";
 
 import "./NotebooksPage.scss";
 

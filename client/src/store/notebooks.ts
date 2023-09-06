@@ -1,10 +1,10 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
 import { createSlice } from "@reduxjs/toolkit";
-import type { RootState, AppDispatch } from "store";
-import { authSelector } from "store/auth";
+import type { RootState, AppDispatch } from "@store";
+import { authSelector } from "@store/auth";
 import { useSelector, useDispatch } from "react-redux";
-import { authorizationHeader } from "utils";
+import { authorizationHeader } from "@helpers/authorizationHeader";
 
 interface InitialState {
   loadingNotebooks: boolean;

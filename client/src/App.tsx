@@ -6,22 +6,22 @@ import { ErrorBoundary } from "react-error-boundary";
 import { authSelector } from "./store/auth";
 import { useSelector } from "react-redux";
 
-import { useHelpTexts } from "store/helpTexts";
+import { useHelpTexts } from "@store/helpTexts";
 
-import StandardButton from "components/Buttons/StandardButton";
+import StandardButton from "@components/Buttons/StandardButton";
 
-import DocumentPage from "pages/DocumentPage";
-import SignInPage from "pages/SignInPage";
-import SignUpPage from "pages/SignUpPage";
-import ProfilePage from "pages/ProfilePage";
-import NotebooksPage from "pages/NotebooksPage";
-import NotebookPage from "pages/NotebookPage";
-import EmailVerificationPage from "pages/EmailVerificationPage";
-import ForgotPasswordPage from "pages/ForgotPasswordPage";
-import ResetPasswordPage from "pages/ResetPasswordPage";
-import Notifications from "components/Notifications";
-import Ring from "pages/RingsPage/Ring";
-import Admin from "pages/AdminPage";
+import DocumentPage from "@pages/DocumentPage";
+import SignInPage from "@pages/SignInPage";
+import SignUpPage from "@pages/SignUpPage";
+import ProfilePage from "@pages/ProfilePage";
+import NotebooksPage from "@pages/NotebooksPage";
+import NotebookPage from "@pages/NotebookPage";
+import EmailVerificationPage from "@pages/EmailVerificationPage";
+import ForgotPasswordPage from "@pages/ForgotPasswordPage";
+import ResetPasswordPage from "@pages/ResetPasswordPage";
+import Notifications from "@components/Notifications";
+import Ring from "@pages/RingsPage/Ring";
+import Admin from "@pages/AdminPage";
 
 const ErrorFallback = ({ error, resetErrorBoundary }) => {
   return (

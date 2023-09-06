@@ -6,11 +6,11 @@ import { useFormik } from "formik";
 import { Container, Form, Col, Row } from "react-bootstrap";
 
 import { UserSignInFields } from "../SignInPage";
-import PageLayout from "components/PageLayout";
-import Loader from "components/Loader";
+import PageLayout from "@components/PageLayout";
+import Loader from "@components/Loader";
 import { UserSignUpValidationSchema } from "./schema";
 
-import StandardButton from "components/Buttons/StandardButton";
+import StandardButton from "@components/Buttons/StandardButton";
 
 interface UserSignUpFields extends UserSignInFields {
   firstName: string;

@@ -2,11 +2,11 @@ import React from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { Tabs, Tab } from "@mui/material";
 
-import RingsPage from "pages/RingsPage";
-import UsersPage from "pages/UsersPage";
-import FeedbackPage from "pages/FeedbackPage";
-import HelpTextsPage from "pages/HelpTextsPage";
-import PageLayout from "components/PageLayout";
+import RingsPage from "@pages/RingsPage";
+import UsersPage from "@pages/UsersPage";
+import FeedbackPage from "@pages/FeedbackPage";
+import HelpTextsPage from "@pages/HelpTextsPage";
+import PageLayout from "@components/PageLayout";
 
 import { adminPageStyles } from "./styles";
 

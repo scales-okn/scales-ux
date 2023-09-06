@@ -5,8 +5,8 @@ import * as yup from "yup";
 
 import PageLayout from "../../components/PageLayout";
 import { Col, Container, Form, Row } from "react-bootstrap";
-import { useNotify } from "components/Notifications";
-import StandardButton from "components/Buttons/StandardButton";
+import { useNotify } from "@components/Notifications";
+import StandardButton from "@components/Buttons/StandardButton";
 
 interface ForgotPasswordFields {
   email: string;

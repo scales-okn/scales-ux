@@ -88,7 +88,7 @@ const database = async () => {
       attributePrefix: "version",
     });
   } catch (error) {
-    console.error("Models failed to initialize!", error);
+    console.error("@models failed to initialize!", error);
   }
 
   // Authentication

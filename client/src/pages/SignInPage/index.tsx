@@ -3,13 +3,13 @@ import React, { FunctionComponent, useEffect, useState } from "react";
 import * as yup from "yup";
 import { Col, Container, Form, Row } from "react-bootstrap";
 import { useNavigate } from "react-router-dom";
-import { authSelector, login } from "store/auth";
+import { authSelector, login } from "@store/auth";
 import { useDispatch, useSelector } from "react-redux";
 
 import { useFormik } from "formik";
 
-import PageLayout from "components/PageLayout";
-import StandardButton from "components/Buttons/StandardButton";
+import PageLayout from "@components/PageLayout";
+import StandardButton from "@components/Buttons/StandardButton";
 export interface UserSignInFields {
   email: string;
   password: string;

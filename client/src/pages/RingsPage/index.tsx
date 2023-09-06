@@ -1,14 +1,14 @@
 import React from "react";
 import { Link } from "react-router-dom";
-import { useRings } from "store/rings";
+import { useRings } from "@store/rings";
 
 import { useEffectOnce } from "react-use";
 import { DataGrid, GridCellParams } from "@mui/x-data-grid";
 import dayjs from "dayjs";
 
-import ColumnHeader from "components/ColumnHeader";
-import Loader from "components/Loader";
-import StandardButton from "components/Buttons/StandardButton";
+import ColumnHeader from "@components/ColumnHeader";
+import Loader from "@components/Loader";
+import StandardButton from "@components/Buttons/StandardButton";
 
 const RingsPage: React.FC = () => {
   const { getRings, rings, loadingRings } = useRings();

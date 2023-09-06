@@ -6,7 +6,7 @@ import Tooltip, { TooltipProps, tooltipClasses } from "@mui/material/Tooltip";
 import { styled } from "@mui/material/styles";
 import VisibilityIcon from "@mui/icons-material/Visibility";
 
-import { userSelector } from "store/auth";
+import { userSelector } from "@store/auth";
 
 import { tooltipTitleStyles } from "../Filters/styles";
 

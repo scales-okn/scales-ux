@@ -1,19 +1,19 @@
 import React, { useState } from "react";
-import PageLayout from "components/PageLayout";
-import Loader from "components/Loader";
+import PageLayout from "@components/PageLayout";
+import Loader from "@components/Loader";
 import { useFormik } from "formik";
 import * as yup from "yup";
 import { Form, Row, Col } from "react-bootstrap";
-import { useAuthHeader, useUser } from "store/auth";
-import { useNotify } from "components/Notifications";
+import { useAuthHeader, useUser } from "@store/auth";
+import { useNotify } from "@components/Notifications";
 import { useNavigate, useParams } from "react-router-dom";
-import { useRing } from "store/rings";
-import ConfirmModal from "components/Modals/ConfirmModal";
-import Editor from "components/Editor";
+import { useRing } from "@store/rings";
+import ConfirmModal from "@components/Modals/ConfirmModal";
+import Editor from "@components/Editor";
 import "./jsoneditor-react-dark-mode.css";
 import { Container } from "@mui/material";
-import BackButton from "components/Buttons/BackButton";
-import StandardButton from "components/Buttons/StandardButton";
+import BackButton from "@components/Buttons/BackButton";
+import StandardButton from "@components/Buttons/StandardButton";
 
 type Params = {
   ringId: string | null;

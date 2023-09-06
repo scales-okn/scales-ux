@@ -11,8 +11,8 @@ import {
   Line,
 } from "recharts";
 import dayjs from "dayjs";
-import getRandomColor from "helpers/getRandomColor";
-import { formatXUnits, stringIsNumber } from "helpers/stringHelpers";
+import getRandomColor from "@helpers/getRandomColor";
+import { formatXUnits, stringIsNumber } from "@helpers/stringHelpers";
 import { addMissingYears } from "./helpers";
 
 type AnswersT = {

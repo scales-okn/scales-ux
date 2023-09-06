@@ -9,15 +9,15 @@ import {
   updateNotebook,
   deleteNotebook,
   createNotebook,
-} from "store/notebook";
-import { useRings } from "store/rings";
-import { getPanels, usePanels } from "store/panels";
+} from "@store/notebook";
+import { useRings } from "@store/rings";
+import { getPanels, usePanels } from "@store/panels";
 import AddPanel from "../Panels/AddPanel";
 
-import StandardButton from "components/Buttons/StandardButton";
-import ConfirmModal from "components/Modals/ConfirmModal";
-import Loader from "components/Loader";
-import Panels from "components/Panels";
+import StandardButton from "@components/Buttons/StandardButton";
+import ConfirmModal from "@components/Modals/ConfirmModal";
+import Loader from "@components/Loader";
+import Panels from "@components/Panels";
 
 const Notebook = () => {
   const { getRings } = useRings();

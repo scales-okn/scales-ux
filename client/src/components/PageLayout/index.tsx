@@ -3,7 +3,7 @@ import { useSelector } from "react-redux";
 import { Link, useLocation } from "react-router-dom";
 
 import { userSelector } from "../../store/auth";
-import useWindowSize from "hooks/useWindowSize";
+import useWindowSize from "@hooks/useWindowSize";
 
 import AppBar from "@mui/material/AppBar";
 import Box from "@mui/material/Box";

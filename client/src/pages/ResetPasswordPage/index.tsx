@@ -3,11 +3,11 @@ import { useNavigate, useParams } from "react-router-dom";
 import { useFormik } from "formik";
 import * as yup from "yup";
 
-import { useNotify } from "components/Notifications";
+import { useNotify } from "@components/Notifications";
 
 import { Col, Container, Form, Row } from "react-bootstrap";
 import PageLayout from "../../components/PageLayout";
-import StandardButton from "components/Buttons/StandardButton";
+import StandardButton from "@components/Buttons/StandardButton";
 interface ResetPasswordFields {
   password: string;
   repassword: string;

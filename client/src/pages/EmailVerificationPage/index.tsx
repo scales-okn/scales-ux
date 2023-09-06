@@ -2,7 +2,7 @@ import React, { FunctionComponent, useState, useCallback } from "react";
 import { useParams, Link, useNavigate } from "react-router-dom";
 
 import { useEffectOnce } from "react-use";
-import Loader from "components/Loader";
+import Loader from "@components/Loader";
 import { styles } from "./styles";
 
 const EmailVerificationPage: FunctionComponent = () => {

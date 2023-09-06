@@ -2,20 +2,20 @@
 import React, { useEffect, FunctionComponent, useState } from "react";
 import { useSelector } from "react-redux";
 
-import { authorizationHeader } from "utils";
-import { authSelector } from "store/auth";
-import { usePanel } from "store/panels";
-import { useRing } from "store/rings";
+import { authorizationHeader } from "@helpers/authorizationHeader";
+import { authSelector } from "@store/auth";
+import { usePanel } from "@store/panels";
+import { useRing } from "@store/rings";
 
 import { Grid, Paper } from "@mui/material";
 import AddIcon from "@mui/icons-material/Add";
 import uniqid from "uniqid";
 import _ from "lodash";
 
-import { Satyrn } from "models/Satyrn";
+import { Satyrn } from "@models/Satyrn";
 import { useNotify } from "../Notifications";
 
-import StandardButton from "components/Buttons/StandardButton";
+import StandardButton from "@components/Buttons/StandardButton";
 import Answers from "./Answers";
 import Parameters from "./Parameters";
 import Statements from "./Statements";
@@ -167,7 +167,7 @@ const Analysis: FunctionComponent<Props> = ({ panelId }) => {
 
       setPlans({ ...plans, [id]: resPlan });
       const fetchStem =
-        process.env.REACT_APP_SATYRN_ENV === "development"
+        import.meta.env.VITE_REACT_APP_SATYRN_ENV === "development"
           ? "http://127.0.0.1:5000/api"
           : "/proxy";
       const authHeader = authorizationHeader(token);

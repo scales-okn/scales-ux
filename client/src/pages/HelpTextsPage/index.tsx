@@ -1,13 +1,13 @@
 import React, { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
-import { useHelpTexts } from "store/helpTexts";
-import { userSelector } from "store/auth";
+import { useHelpTexts } from "@store/helpTexts";
+import { userSelector } from "@store/auth";
 
 import { DataGrid, GridColDef } from "@mui/x-data-grid";
 import { useParams, useNavigate } from "react-router-dom";
 
-import ColumnHeader from "components/ColumnHeader";
-import NotAuthorized from "components/NotAuthorized";
+import ColumnHeader from "@components/ColumnHeader";
+import NotAuthorized from "@components/NotAuthorized";
 import FeedbackDetailModal from "./HelpTextDetailModal";
 import NewHelpText from "./NewHelpText";
 

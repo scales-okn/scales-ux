@@ -6,8 +6,8 @@ import React, {
   useMemo,
 } from "react";
 
-import { usePanel } from "store/panels";
-import { useRing } from "store/rings";
+import { usePanel } from "@store/panels";
+import { useRing } from "@store/rings";
 
 import {
   Accordion,
@@ -26,9 +26,9 @@ import Loader from "../Loader";
 import Dataset from "../Dataset";
 import Analysis from "../Analysis";
 
-import ConfirmModal from "components/Modals/ConfirmModal";
-import StandardButton from "components/Buttons/StandardButton";
-import ColumnHeader from "components/ColumnHeader";
+import ConfirmModal from "@components/Modals/ConfirmModal";
+import StandardButton from "@components/Buttons/StandardButton";
+import ColumnHeader from "@components/ColumnHeader";
 
 import "./Panel.scss";
 

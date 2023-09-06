@@ -1,9 +1,9 @@
 import React, { useState } from "react";
 import { useSelector } from "react-redux";
 
-import { authSelector } from "store/auth";
-import { usePanel } from "store/panels";
-import { useRing } from "store/rings";
+import { authSelector } from "@store/auth";
+import { usePanel } from "@store/panels";
+import { useRing } from "@store/rings";
 
 import { debounce } from "lodash";
 
@@ -15,10 +15,10 @@ import FormControlLabel from "@mui/material/FormControlLabel";
 import HighlightOffIcon from "@mui/icons-material/HighlightOff";
 import DateTimeRangePicker from "@wojtekmaj/react-datetimerange-picker";
 
-import { DATE_FORMAT } from "helpers/constants";
-import { authorizationHeader } from "utils";
+import { DATE_FORMAT } from "@helpers/constants";
+import { authorizationHeader } from "@helpers/authorizationHeader";
 
-import { useNotify } from "components/Notifications";
+import { useNotify } from "@components/Notifications";
 import FilterTypeDropDown from "./FilterTypeDropDown";
 
 import { filterStyles } from "./styles";

@@ -1,11 +1,11 @@
 import React, { useState } from "react";
 import { useFormik } from "formik";
-import { useAuthHeader } from "store/auth";
-import { useNotify } from "components/Notifications";
+import { useAuthHeader } from "@store/auth";
+import { useNotify } from "@components/Notifications";
 import * as yup from "yup";
 import { styles } from "./styles";
 import { Modal, Form } from "react-bootstrap";
-import StandardButton from "components/Buttons/StandardButton";
+import StandardButton from "@components/Buttons/StandardButton";
 
 import "./PageLayout.scss";
 

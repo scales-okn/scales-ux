@@ -1,7 +1,7 @@
 import React, { FunctionComponent, useState } from "react";
 import { useParams } from "react-router";
-import { authSelector } from "store/auth";
-import { authorizationHeader } from "utils";
+import { authSelector } from "@store/auth";
+import { authorizationHeader } from "@helpers/authorizationHeader";
 import { useSelector } from "react-redux";
 import PageLayout from "../../components/PageLayout";
 import Loader from "../../components/Loader";

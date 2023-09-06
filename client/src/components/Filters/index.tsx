@@ -3,9 +3,9 @@ import React, { useMemo } from "react";
 import AddIcon from "@mui/icons-material/Add";
 import uniqid from "uniqid";
 
-import { usePanel } from "store/panels";
+import { usePanel } from "@store/panels";
 
-import StandardButton from "components/Buttons/StandardButton";
+import StandardButton from "@components/Buttons/StandardButton";
 import Filter from "./Filter";
 
 import { filterContainerStyles } from "./styles";
