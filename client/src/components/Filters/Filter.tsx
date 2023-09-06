@@ -56,12 +56,13 @@ const Filter = ({ panelId, filter }: Props) => {
 
   const setFilter = (filter: FilterT) => {
     try {
-      const newFilters = [
-        ...filters.filter(
-          (prevFilterInput: FilterT) => prevFilterInput.id !== filter.id,
-        ),
-        { ...filter },
-      ];
+      const newFilters = filters.map((existingFilter) => {
+        if (existingFilter.id === filter.id) {
+          return filter;
+        }
+        return existingFilter;
+      });
+
       setPanelFilters(newFilters);
     } catch (error) {
       console.warn(error); // eslint-disable-line no-console

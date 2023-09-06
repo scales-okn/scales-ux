@@ -8,9 +8,11 @@ export const filterContainerStyles = css`
   align-items: center;
 
   .filters {
-    max-width: calc(100% - 200px);
+    max-width: calc(100% - 120px);
     display: flex;
     align-items: center;
+    flex-wrap: wrap;
+    gap: 20px;
   }
 `;
 

@@ -18,16 +18,12 @@ const Filters = ({ panelId }: FiltersProps) => {
   const { filters = [], setPanelFilters, getPanelResults } = usePanel(panelId);
 
   const filterElements = useMemo(() => {
-    const out = [];
-    if (filters) {
-      out.push(
-        filters?.map((filter) => {
-          return <Filter key={filter.id} panelId={panelId} filter={filter} />;
-        }),
-      );
-    }
-    return out;
-  }, [filters]); // eslint-disable-line
+    return (
+      filters?.map((filter) => {
+        return <Filter key={filter.id} panelId={panelId} filter={filter} />;
+      }) || []
+    );
+  }, [filters]); // eslint-disable-line react-hooks/exhaustive-deps
 
   return (
     <div className={`filter-container ${filterContainerStyles}`}>
