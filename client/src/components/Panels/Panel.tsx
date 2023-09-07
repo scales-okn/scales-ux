@@ -110,8 +110,7 @@ const Panel: FunctionComponent<PanelProps> = ({ panelId }) => {
   }, [ring]); // eslint-disable-line react-hooks/exhaustive-deps
 
   useEffect(() => {
-    // if (!info || collapsed || loadingPanelResults) return;
-    if (!info || collapsed) return;
+    if (!info || collapsed || loadingPanelResults) return;
     getPanelResults();
   }, [collapsed, info]); // eslint-disable-line react-hooks/exhaustive-deps
 

@@ -7,6 +7,7 @@ import { authorizationHeader } from "@helpers/authorizationHeader";
 import { notify } from "reapop";
 import { useUnknownErrorNotificationMessage } from "@components/Notifications";
 import { useSelector, useDispatch } from "react-redux";
+import { makeRequest } from "@helpers/makeRequest";
 
 interface InitialState {
   loadingNotebook: boolean;
@@ -109,22 +110,14 @@ export const notebookSelector = (state: RootState) => state.notebook;
 export default notebookSlice.reducer;
 
 export function fetchNotebook(id: string) {
-  return async (dispatch: AppDispatch, getState) => {
-    const { token } = authSelector(getState());
-    const authHeader = authorizationHeader(token);
-
+  return async (dispatch: AppDispatch) => {
     dispatch(notebookActions.getNotebook());
 
     try {
-      const response = await fetch(`/api/notebooks/${id}`, {
-        method: "GET",
-        headers: {
-          "Content-Type": "application/json",
-          ...authHeader,
-        },
-      });
-      if (response.status === 200) {
-        const { data } = await response.json();
+      const response = await makeRequest.get(`/api/notebooks/${id}`);
+
+      if (response.code === 200) {
+        const { data } = response;
         dispatch(notebookActions.getNotebookSuccess(data.notebook));
       } else {
         dispatch(notebookActions.getNotebookFailure());
@@ -137,21 +130,12 @@ export function fetchNotebook(id: string) {
 
 export function updateNotebook(id: string, payload: any) {
   return async (dispatch: AppDispatch, getState) => {
-    const { token } = authSelector(getState());
-    const authHeader = authorizationHeader(token);
     dispatch(notebookActions.saveNotebook());
 
     try {
-      const response = await fetch(`/api/notebooks/${id}`, {
-        method: "PUT",
-        headers: {
-          "Content-Type": "application/json",
-          ...authHeader,
-        },
-        body: JSON.stringify(payload),
-      });
-      if (response.status === 200) {
-        const { data, message } = await response.json();
+      const response = await makeRequest.put(`/api/notebooks/${id}`, payload);
+      if (response.code === 200) {
+        const { data, message } = response;
         dispatch(notify(message, "success"));
         dispatch(notebookActions.saveNotebookSuccess(data.notebook));
       } else {
@@ -167,20 +151,11 @@ export function updateNotebook(id: string, payload: any) {
 
 export function createNotebook(payload: any) {
   return async (dispatch: AppDispatch, getState) => {
-    const { token } = authSelector(getState());
-    const authHeader = authorizationHeader(token);
     dispatch(notebookActions.createNotebook());
     try {
-      const response = await fetch(`/api/notebooks`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          ...authHeader,
-        },
-        body: JSON.stringify(payload),
-      });
-      const { data, message } = await response.json();
-      if (response.status === 200) {
+      const response = await makeRequest.post(`/api/notebooks`, payload);
+      const { data, message } = response;
+      if (response.code === 200) {
         // dispatch(notify(message, "success"));
         dispatch(notebookActions.createNotebookSuccess(data.notebook));
       } else {
@@ -195,19 +170,11 @@ export function createNotebook(payload: any) {
 
 export function deleteNotebook(id: string) {
   return async (dispatch: AppDispatch, getState) => {
-    const { token } = authSelector(getState());
-    const authHeader = authorizationHeader(token);
     dispatch(notebookActions.removeNotebook());
     try {
-      const response = await fetch(`/api/notebooks/${id}`, {
-        method: "DELETE",
-        headers: {
-          "Content-Type": "application/json",
-          ...authHeader,
-        },
-      });
-      const { message } = await response.json();
-      if (response.status === 200) {
+      const response = await makeRequest.delete(`/api/notebooks/${id}`);
+      const { message } = response;
+      if (response.code === 200) {
         dispatch(notebookActions.clearNotebook());
         dispatch(notify(message, "success"));
         dispatch(notebookActions.removeNotebookSuccess());

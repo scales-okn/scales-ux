@@ -9,7 +9,7 @@ import { ringSelector } from "@store/rings";
 import appendQuery from "append-query";
 import dayjs from "dayjs";
 import { useSelector, useDispatch } from "react-redux";
-import { authorizationHeader } from "@helpers/authorizationHeader";
+import { makeRequest } from "@helpers/makeRequest";
 
 const initialStateAnalysisItem: IPanelAnalysisItem = {
   id: "",
@@ -141,16 +141,16 @@ const panelsSlice = createSlice({
     }),
     getPanelResultsSuccess: (state, { payload }) => ({
       ...state,
-      panels: state.panels.map((panel) =>
-        panel.id === payload.panelId
+      panels: state.panels.map((panel) => {
+        return panel.id === payload.panelId
           ? {
               ...panel,
               results: payload.results,
               loadingPanelResults: false,
               hasErrors: false,
             }
-          : panel,
-      ),
+          : panel;
+      }),
     }),
     getPanelResultsFailure: (state, { payload }) => ({
       ...state,
@@ -307,23 +307,15 @@ export default panelsSlice.reducer;
 
 // Thunk Async Actions
 export const getPanels = (notebookId) => {
-  return async (dispatch: AppDispatch, getState) => {
+  return async (dispatch: AppDispatch) => {
     try {
-      const { token } = authSelector(getState());
-      const authHeader = authorizationHeader(token);
       dispatch(panelsActions.getPanels());
 
-      const response = await fetch(`/api/notebooks/${notebookId}/panels`, {
-        method: "GET",
-        headers: {
-          "Content-Type": "application/json",
-          ...authHeader,
-        },
-      });
+      const { data, message, code } = await makeRequest.get(
+        `/api/notebooks/${notebookId}/panels`,
+      );
 
-      const { data, message } = await response.json();
-
-      if (response.status === 200) {
+      if (code === 200) {
         dispatch(panelsActions.getPanelsSuccess(data.panels));
       } else {
         dispatch(notify(message, "error"));
@@ -339,26 +331,18 @@ export const createPanel =
   (payload: any = {}) =>
   async (dispatch: AppDispatch, getState) => {
     try {
-      const { token, user } = authSelector(getState());
+      const { user } = authSelector(getState());
       const { notebook } = notebookSelector(getState());
-      const authHeader = authorizationHeader(token);
+
       dispatch(panelsActions.createPanel());
 
-      const response = await fetch(`/api/panels`, {
-        method: "POST",
-        headers: {
-          ...authHeader,
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          ...payload,
-          notebookId: notebook.id,
-          userId: user.id,
-        }),
+      const { data, message, code } = await makeRequest.post(`/api/panels`, {
+        ...payload,
+        notebookId: notebook.id,
+        userId: user.id,
       });
 
-      const { data, message } = await response.json();
-      if (response.status === 200) {
+      if (code === 200) {
         dispatch(panelsActions.createPanelSuccess(data.panel));
       } else {
         dispatch(notify(message, "error"));
@@ -373,21 +357,14 @@ export const updatePanel =
   (panelId, payload: any = {}) =>
   async (dispatch: AppDispatch, getState) => {
     try {
-      const { token } = authSelector(getState());
-      const authHeader = authorizationHeader(token);
       dispatch(panelsActions.updatePanel({ panelId }));
 
-      const response = await fetch(`/api/panels/${panelId}`, {
-        method: "PUT",
-        headers: {
-          ...authHeader,
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(payload),
-      });
+      const { data, message, code } = await makeRequest.put(
+        `/api/panels/${panelId}`,
+        payload,
+      );
 
-      const { data, message } = await response.json();
-      if (response.status === 200) {
+      if (code === 200) {
         // dispatch(notify(message, "success"));
         dispatch(panelsActions.updatePanelSuccess(data.panel));
       } else {
@@ -402,20 +379,13 @@ export const updatePanel =
 export const deletePanel =
   (panelId) => async (dispatch: AppDispatch, getState) => {
     try {
-      const { token } = authSelector(getState());
-      const authHeader = authorizationHeader(token);
       dispatch(panelsActions.deletePanel());
 
-      const response = await fetch(`/api/panels/${panelId}`, {
-        method: "DELETE",
-        headers: {
-          ...authHeader,
-          "Content-Type": "application/json",
-        },
-      });
+      const { message, code } = await makeRequest.delete(
+        `/api/panels/${panelId}`,
+      );
 
-      const { message } = await response.json();
-      if (response.status === 200) {
+      if (code === 200) {
         dispatch(notify(message, "success"));
         dispatch(panelsActions.deletePanelSuccess(panelId));
       } else {
@@ -431,8 +401,6 @@ export const getPanelResults =
   (panelId, filters = [], page = 0, batchSize = 10) =>
   async (dispatch: AppDispatch, getState) => {
     try {
-      const { token } = authSelector(getState());
-      const authHeader = authorizationHeader(token);
       const panel = panelSelector(getState(), panelId);
       const { filters, ringId } = panel;
       // @ts-ignore
@@ -456,24 +424,19 @@ export const getPanelResults =
         })
         .join("&");
 
-      const response = await fetch(
+      const response = await makeRequest.get(
         appendQuery(
           `/proxy/results/${rid}/${version}/${info.defaultEntity}?page=${page}&batchSize=${batchSize}&sortBy=dateFiled&sortDirection=desc`,
           filterParams,
           { encodeComponents: false },
         ),
-        {
-          headers: {
-            ...authHeader,
-          },
-        },
       );
-      const data = await response.json();
-      if (response.status === 200) {
+
+      if (response) {
         dispatch(
           panelsActions.getPanelResultsSuccess({
             panelId,
-            results: data,
+            results: response,
           }),
         );
       } else {

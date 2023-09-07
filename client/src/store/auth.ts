@@ -8,6 +8,7 @@ import { Store, Dispatch, Action } from "redux";
 import { notify } from "reapop";
 import { useUnknownErrorNotificationMessage } from "@components/Notifications";
 import { authorizationHeader } from "@helpers/authorizationHeader";
+import { makeRequest } from "@helpers/makeRequest";
 
 interface InitialState extends DecodedToken {
   hasErrors: boolean;
@@ -68,14 +69,13 @@ export const login = (email: string, password: string, rememberMe = false) => {
   return async (dispatch: AppDispatch) => {
     dispatch(authActions.signIn());
     try {
-      const response = await fetch(`/api/users/login`, {
-        method: "POST",
-        body: JSON.stringify({ email, password, rememberMe }),
-        headers: {
-          "Content-Type": "application/json",
-        },
+      const response = await makeRequest.post(`/api/users/login`, {
+        email,
+        password,
+        rememberMe,
       });
-      const { data, code, message, errors } = await response.json();
+
+      const { data, code, message, errors } = response;
       let decodedToken: DecodedToken = null;
 
       switch (code) {

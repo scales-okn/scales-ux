@@ -11,6 +11,7 @@ import UserFieldToggle from "./UserFieldToggle";
 import NotAuthorized from "@components/NotAuthorized";
 import ColumnHeader from "@components/ColumnHeader";
 import DeleteUser from "./DeleteUser";
+import { makeRequest } from "@helpers/makeRequest";
 
 const AdminUsersPages = () => {
   const authorizationHeader = useAuthHeader();
@@ -120,16 +121,12 @@ const AdminUsersPages = () => {
   }
 
   useEffectOnce(() => {
-    fetch(`/api/users`, {
-      headers: {
-        ...authorizationHeader,
-        "Content-Type": "application/json",
-      },
-    })
-      .then((response) => response.json())
-      .then((response) => {
-        setRows(response.data.users);
-      });
+    const fetchData = async () => {
+      const response = await makeRequest.get("/api/users");
+      setRows(response.data.users);
+    };
+
+    fetchData();
   });
 
   // TODO: add pagination?

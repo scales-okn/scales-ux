@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { Grid, TextField } from "@mui/material";
 import { useSelector, useDispatch } from "react-redux";
 import { useNavigate, useLocation } from "react-router-dom";
@@ -23,6 +23,7 @@ const Notebook = () => {
   const { getRings } = useRings();
   const { notebook, loadingNotebook, savingNotebook, deletingNotebook } =
     useSelector(notebookSelector);
+  const idRef = useRef(notebook?.id);
 
   const location = useLocation();
   const isNewNotebook = location.pathname.includes("new");
@@ -51,10 +52,10 @@ const Notebook = () => {
   }, [notebook]); // eslint-disable-line react-hooks/exhaustive-deps
 
   useEffect(() => {
-    if (notebook?.id) {
+    if (notebook?.id && notebook?.id !== idRef.current) {
       dispatch(getPanels(notebook?.id));
     }
-  }, [notebook?.id, dispatch]);
+  }, [notebook?.id]);
 
   useEffectOnce(() => {
     getRings();

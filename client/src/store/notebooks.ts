@@ -2,9 +2,8 @@
 
 import { createSlice } from "@reduxjs/toolkit";
 import type { RootState, AppDispatch } from "@store";
-import { authSelector } from "@store/auth";
 import { useSelector, useDispatch } from "react-redux";
-import { authorizationHeader } from "@helpers/authorizationHeader";
+import { makeRequest } from "@helpers/makeRequest";
 
 interface InitialState {
   loadingNotebooks: boolean;
@@ -49,21 +48,11 @@ export const notebooksSelector = (state: RootState) => state?.notebooks;
 export default notebooksSlice.reducer;
 
 export function fetchNotebooks() {
-  return async (dispatch: AppDispatch, getState) => {
-    const { token } = authSelector(getState());
-    const authHeader = authorizationHeader(token);
-
+  return async (dispatch: AppDispatch) => {
     dispatch(notebooksActions.fetchNotebooks());
 
     try {
-      const response = await fetch(`/api/notebooks`, {
-        method: "GET",
-        headers: {
-          ...authHeader,
-          "Content-Type": "application/json",
-        },
-      });
-      const { data } = await response.json();
+      const { data } = await makeRequest.get(`/api/notebooks`);
 
       dispatch(notebooksActions.fetchNotebooksSuccess(data.notebooks));
     } catch (error) {
