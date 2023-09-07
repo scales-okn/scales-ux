@@ -1,16 +1,8 @@
 {
   "compilerOptions": {
-    "baseUrl": "./src",
+    "baseUrl": ".",
     "paths": {
-      "@/*": ["src/*"],
-      "@store/*": ["src/store/*"],
-      "@pages/*": ["src/pages/*"],
-      "@components/*": ["src/components/*"],
-      "@helpers/*": ["src/helpers/*"],
-      "@hooks/*": ["src/hooks/*"],
-      "@styles/*": ["src/styles/*"],
-      "@models/*": ["src/models/*"],
-      "@types/*": ["src/types/*"]
+      "src/*": ["./src/*"]
     },
     "target": "es6",
     "lib": ["dom", "dom.iterable", "esnext"],

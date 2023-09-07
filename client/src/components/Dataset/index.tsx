@@ -1,10 +1,10 @@
 import React, { useEffect, useState } from "react";
 import { Container, Grid, Tooltip, MenuItem, Select } from "@mui/material";
 import Loader from "../Loader";
-import { usePanel } from "@store/panels";
-import { useRing, useRings } from "@store/rings";
+import { usePanel } from "src/store/panels";
+import { useRing, useRings } from "src/store/rings";
 
-import StandardButton from "@components/Buttons/StandardButton";
+import StandardButton from "src/components/Buttons/StandardButton";
 
 import "./Dataset.scss";
 

@@ -29,6 +29,7 @@ const reducers = combineReducers({
 const persistConfig = {
   key: "satyrn",
   version:
+    // @ts-ignore
     Number(import.meta.env.VITE_REACT_APP_VERSION.replace(/\./g, "")) || 1,
   storage,
   blacklist: ["notifications"],
@@ -37,6 +38,7 @@ const persistConfig = {
 // Store
 const store = configureStore({
   reducer: persistReducer(persistConfig, reducers),
+  // @ts-ignore
   devTools: import.meta.env.MODE !== "production",
   middleware: [thunk, authMiddleware],
 });

@@ -1,12 +1,12 @@
 import React, { FunctionComponent, useEffect, useState } from "react";
-import { useHelpTexts } from "@store/helpTexts";
+import { useHelpTexts } from "src/store/helpTexts";
 
 import * as yup from "yup";
 import { useFormik } from "formik";
 import { TextField } from "@mui/material";
 
-import ModalContainer from "@components/Modals/ModalContainer";
-import StandardButton from "@components/Buttons/StandardButton";
+import ModalContainer from "src/components/Modals/ModalContainer";
+import StandardButton from "src/components/Buttons/StandardButton";
 
 import { detailStyles } from "./styles";
 

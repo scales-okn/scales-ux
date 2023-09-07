@@ -9,7 +9,7 @@ type PanelsProps = {
 const Panels: FunctionComponent<PanelsProps> = ({ notebookId }) => {
   const { panels = [] } = usePanels(notebookId);
 
-  // // TODO: Do we need this call?
+  // // // TODO: Do we need this call?
   // useEffect(() => {
   //   if (!notebookId || loadingPanels) return;
   //   getPanels(notebookId);

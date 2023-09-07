@@ -2,8 +2,8 @@ import React, { ReactNode, useState } from "react";
 import { useSelector } from "react-redux";
 import { Link, useLocation } from "react-router-dom";
 
-import { userSelector } from "../../store/auth";
-import useWindowSize from "@hooks/useWindowSize";
+import { userSelector } from "src/store/auth";
+import useWindowSize from "src/hooks/useWindowSize";
 
 import AppBar from "@mui/material/AppBar";
 import Box from "@mui/material/Box";
@@ -51,16 +51,6 @@ const PageLayout = ({ id = "", children, pageTitle }: PageLayoutT) => {
 
   const { width } = useWindowSize();
   const isTablet = width < 768;
-
-  const containerStyles = {
-    marginTop: "128px",
-    minHeight: "70vh",
-    ...(isAdminView && {
-      marginTop: "64px",
-      maxWidth: "100% !important",
-      padding: "0 !important",
-    }),
-  };
 
   return (
     <>
@@ -141,7 +131,19 @@ const PageLayout = ({ id = "", children, pageTitle }: PageLayoutT) => {
           </AppBar>
         </Box>
 
-        <Container id="main" className="main" sx={containerStyles}>
+        <Container
+          id="main"
+          className="main"
+          sx={{
+            marginTop: "128px",
+            minHeight: "70vh",
+            ...(isAdminView && {
+              marginTop: "64px",
+              maxWidth: "100% !important",
+              padding: "0 !important",
+            }),
+          }}
+        >
           {pageTitle && <h4>{pageTitle}</h4>}
           {children}
         </Container>

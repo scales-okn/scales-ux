@@ -1,7 +1,8 @@
 import { defineConfig } from "vite";
-import path from "path";
 import react from "@vitejs/plugin-react";
+import eslint from "vite-plugin-eslint";
 import dotenv from "dotenv";
+import checker from "vite-plugin-checker";
 
 dotenv.config();
 
@@ -13,25 +14,17 @@ export default defineConfig(() => {
     server: {
       port: 3000,
     },
-    plugins: [react()],
+    plugins: [
+      react(),
+      eslint(),
+      checker({
+        typescript: true,
+      }),
+    ],
     resolve: {
-      alias: [
-        { find: "@", replacement: path.resolve(__dirname, "src") },
-        { find: "@store", replacement: path.resolve(__dirname, "src/store") },
-        { find: "@pages", replacement: path.resolve(__dirname, "src/pages") },
-        {
-          find: "@components",
-          replacement: path.resolve(__dirname, "src/components"),
-        },
-        {
-          find: "@helpers",
-          replacement: path.resolve(__dirname, "src/helpers"),
-        },
-        { find: "@hooks", replacement: path.resolve(__dirname, "src/hooks") },
-        { find: "@styles", replacement: path.resolve(__dirname, "src/styles") },
-        { find: "@models", replacement: path.resolve(__dirname, "src/models") },
-        { find: "@types", replacement: path.resolve(__dirname, "src/types") },
-      ],
+      alias: {
+        src: "/src",
+      },
     },
   };
 });

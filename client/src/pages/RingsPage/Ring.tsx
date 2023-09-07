@@ -1,19 +1,20 @@
 import React, { useState } from "react";
-import PageLayout from "@components/PageLayout";
-import Loader from "@components/Loader";
+import { useNavigate, useParams } from "react-router-dom";
+import { useAuthHeader, useUser } from "src/store/auth";
+
 import { useFormik } from "formik";
 import * as yup from "yup";
 import { Form, Row, Col } from "react-bootstrap";
-import { useAuthHeader, useUser } from "@store/auth";
-import { useNotify } from "@components/Notifications";
-import { useNavigate, useParams } from "react-router-dom";
-import { useRing } from "@store/rings";
-import ConfirmModal from "@components/Modals/ConfirmModal";
-import Editor from "@components/Editor";
-import "./jsoneditor-react-dark-mode.css";
 import { Container } from "@mui/material";
-import BackButton from "@components/Buttons/BackButton";
-import StandardButton from "@components/Buttons/StandardButton";
+
+import Loader from "src/components/Loader";
+import { useNotify } from "src/components/Notifications";
+import { useRing } from "src/store/rings";
+import ConfirmModal from "src/components/Modals/ConfirmModal";
+import Editor from "src/components/Editor";
+import BackButton from "src/components/Buttons/BackButton";
+import StandardButton from "src/components/Buttons/StandardButton";
+import "./jsoneditor-react-dark-mode.css";
 
 type Params = {
   ringId: string | null;
@@ -125,7 +126,7 @@ const Ring: React.FC = () => {
   };
 
   return (
-    <PageLayout>
+    <>
       <BackButton onClick={() => navigate("/admin/rings")} />
 
       <Container sx={{ padding: "86px 0" }}>
@@ -322,7 +323,7 @@ const Ring: React.FC = () => {
         setOpen={setConfirmVisible}
         onConfirm={() => deleteRing(ring.rid)}
       />
-    </PageLayout>
+    </>
   );
 };
 

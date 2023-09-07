@@ -1,6 +1,6 @@
 // makeRequest.ts
-import { authorizationHeader } from "@helpers/authorizationHeader";
-import store from "@store";
+import { authorizationHeader } from "src/helpers/authorizationHeader";
+import store from "src/store";
 
 // Define a base URL for your API (you can customize this)
 const baseURL = "http://localhost:8080"; // Replace with your API URL

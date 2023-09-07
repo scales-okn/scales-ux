@@ -1,16 +1,16 @@
 import React, { memo, useEffect, useState, useRef, useMemo } from "react";
-import { usePanel } from "@store/panels";
+import { usePanel } from "src/store/panels";
 
 import { css } from "@emotion/css";
 import dayjs from "dayjs";
 import { isEmpty } from "lodash";
 import { Paper } from "@mui/material";
 
-import renderHTML from "@helpers/renderHTML";
-import useContainerDimensions from "@hooks/useContainerDimensions";
+import renderHTML from "src/helpers/renderHTML";
+import useContainerDimensions from "src/hooks/useContainerDimensions";
 
-import Loader from "@components/Loader";
-import StandardButton from "@components/Buttons/StandardButton";
+import Loader from "src/components/Loader";
+import StandardButton from "src/components/Buttons/StandardButton";
 import MultilineChartDisplay from "./MultilineChartDisplay";
 import LineChartDisplay from "./LineChartDisplay";
 import BarChartDisplay from "./BarChartDisplay";

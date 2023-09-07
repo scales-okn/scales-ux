@@ -1,11 +1,11 @@
-import React, { FunctionComponent, useState } from "react";
+import React, { FunctionComponent, useState, useEffect } from "react";
 import { useParams } from "react-router";
-import { authSelector } from "@store/auth";
-import { authorizationHeader } from "@helpers/authorizationHeader";
+import { authSelector } from "src/store/auth";
+import { authorizationHeader } from "src/helpers/authorizationHeader";
 import { useSelector } from "react-redux";
-import PageLayout from "../../components/PageLayout";
 import Loader from "../../components/Loader";
 import { useEffectOnce } from "react-use";
+import { makeRequest } from "src/helpers/makeRequest";
 
 type Params = {
   ringId: string | null;
@@ -41,15 +41,17 @@ const DocumentPage: FunctionComponent = () => {
 
       if (response.status === 200) {
         const html = await response.text();
-        return setHtml(
+
+        const out =
           html
             .replaceAll("onclick", "onclick-removed-by-satyrn")
             .split("</script>")
             .slice(-1)[0]
             .split(receiptStart1)[0]
             .split(receiptStart2)[0]
-            .split(receiptStart3)[0] + "<br><br>",
-        );
+            .split(receiptStart3)[0] + "<br><br>";
+
+        return setHtml(out);
       } else {
         return "<div>There was an error retrieving this document.</div>";
       }
@@ -58,16 +60,14 @@ const DocumentPage: FunctionComponent = () => {
     }
   };
 
-  useEffectOnce(() => {
+  useEffect(() => {
     fetchDocument();
-  });
+  }, [docId]);
 
   return (
-    <PageLayout>
-      <Loader isVisible={!html}>
-        <div dangerouslySetInnerHTML={{ __html: html }}></div>
-      </Loader>
-    </PageLayout>
+    <Loader isVisible={!html}>
+      <div dangerouslySetInnerHTML={{ __html: html }}></div>
+    </Loader>
   );
 };
 

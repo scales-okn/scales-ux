@@ -1,9 +1,9 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
 import { createSlice } from "@reduxjs/toolkit";
-import type { RootState, AppDispatch } from "@store";
+import type { RootState, AppDispatch } from "src/store";
 import { useSelector, useDispatch } from "react-redux";
-import { makeRequest } from "@helpers/makeRequest";
+import { makeRequest } from "src/helpers/makeRequest";
 
 interface InitialState {
   loadingNotebooks: boolean;

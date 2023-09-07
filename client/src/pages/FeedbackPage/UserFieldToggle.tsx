@@ -1,7 +1,7 @@
 import React, { FunctionComponent, useState, ChangeEvent } from "react";
 import { FormGroup, FormControlLabel, Switch } from "@mui/material";
-import { useAuthHeader } from "@store/auth";
-import { useNotify } from "@components/Notifications";
+import { useAuthHeader } from "src/store/auth";
+import { useNotify } from "src/components/Notifications";
 
 type Props = {
   userId: number;

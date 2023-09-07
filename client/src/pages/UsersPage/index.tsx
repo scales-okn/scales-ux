@@ -5,13 +5,13 @@ import { DataGrid, GridColDef, GridCellParams } from "@mui/x-data-grid";
 import { Tooltip, Typography } from "@mui/material";
 import { useEffectOnce } from "react-use";
 
-import { useAuthHeader, userSelector } from "@store/auth";
+import { useAuthHeader, userSelector } from "src/store/auth";
 
 import UserFieldToggle from "./UserFieldToggle";
-import NotAuthorized from "@components/NotAuthorized";
-import ColumnHeader from "@components/ColumnHeader";
+import NotAuthorized from "src/components/NotAuthorized";
+import ColumnHeader from "src/components/ColumnHeader";
 import DeleteUser from "./DeleteUser";
-import { makeRequest } from "@helpers/makeRequest";
+import { makeRequest } from "src/helpers/makeRequest";
 
 const AdminUsersPages = () => {
   const authorizationHeader = useAuthHeader();

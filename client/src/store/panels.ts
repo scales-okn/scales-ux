@@ -1,15 +1,15 @@
 /* eslint-disable  @typescript-eslint/no-explicit-any */
 
 import { createSlice } from "@reduxjs/toolkit";
-import type { RootState, AppDispatch } from "@store";
-import { authSelector } from "@store/auth";
-import { notebookSelector } from "@store/notebook";
+import type { RootState, AppDispatch } from "./index";
+import { authSelector } from "./auth";
+import { notebookSelector } from "./notebook";
 import { notify } from "reapop";
-import { ringSelector } from "@store/rings";
+import { ringSelector } from "./rings";
 import appendQuery from "append-query";
 import dayjs from "dayjs";
 import { useSelector, useDispatch } from "react-redux";
-import { makeRequest } from "@helpers/makeRequest";
+import { makeRequest } from "../helpers/makeRequest";
 
 const initialStateAnalysisItem: IPanelAnalysisItem = {
   id: "",

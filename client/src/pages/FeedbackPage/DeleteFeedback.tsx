@@ -1,8 +1,8 @@
 import React, { useState } from "react";
-import { useAuthHeader } from "@store/auth";
-import { useNotify } from "@components/Notifications";
-import ConfirmModal from "@components/Modals/ConfirmModal";
-import StandardButton from "@components/Buttons/StandardButton";
+import { useAuthHeader } from "src/store/auth";
+import { useNotify } from "src/components/Notifications";
+import ConfirmModal from "src/components/Modals/ConfirmModal";
+import StandardButton from "src/components/Buttons/StandardButton";
 
 type Props = {
   feedbackId: number;

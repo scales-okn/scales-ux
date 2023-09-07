@@ -2,11 +2,11 @@ import React from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { Tabs, Tab } from "@mui/material";
 
-import RingsPage from "@pages/RingsPage";
-import UsersPage from "@pages/UsersPage";
-import FeedbackPage from "@pages/FeedbackPage";
-import HelpTextsPage from "@pages/HelpTextsPage";
-import PageLayout from "@components/PageLayout";
+import RingsPage from "src/pages/RingsPage";
+import UsersPage from "src/pages/UsersPage";
+import FeedbackPage from "src/pages/FeedbackPage";
+import HelpTextsPage from "src/pages/HelpTextsPage";
+import PageLayout from "src/components/PageLayout";
 
 import { adminPageStyles } from "./styles";
 
@@ -33,36 +33,34 @@ const AdminPage = () => {
   };
 
   return (
-    <PageLayout>
-      <div className={`adminPage ${adminPageStyles}`}>
-        <Tabs
-          value={selectedTab.path}
-          onChange={handleTabChange}
-          sx={{
-            marginBottom: "40px",
-            borderBottom: "1px solid lightgrey",
-            backgroundColor: "white",
-            position: "fixed",
-            width: "100vw",
-            zIndex: "999",
-          }}
-        >
-          {tabPaths.map((tab) => (
-            <Tab
-              key={tab.path}
-              label={tab.label}
-              value={tab.path}
-              wrapped
-              sx={{
-                fontWeight: "600",
-                width: "120px",
-              }}
-            />
-          ))}
-        </Tabs>
-        <div className="container">{selectedTab.component}</div>
-      </div>
-    </PageLayout>
+    <div className={`adminPage ${adminPageStyles}`}>
+      <Tabs
+        value={selectedTab.path}
+        onChange={handleTabChange}
+        sx={{
+          marginBottom: "40px",
+          borderBottom: "1px solid lightgrey",
+          backgroundColor: "white",
+          position: "fixed",
+          width: "100vw",
+          zIndex: "999",
+        }}
+      >
+        {tabPaths.map((tab) => (
+          <Tab
+            key={tab.path}
+            label={tab.label}
+            value={tab.path}
+            wrapped
+            sx={{
+              fontWeight: "600",
+              width: "120px",
+            }}
+          />
+        ))}
+      </Tabs>
+      <div className="container">{selectedTab.component}</div>
+    </div>
   );
 };
 

@@ -1,10 +1,10 @@
 import React, { useState } from "react";
 import { TextField, Grid } from "@mui/material";
-import StandardButton from "@components/Buttons/StandardButton";
+import StandardButton from "src/components/Buttons/StandardButton";
 import { useFormik } from "formik";
 import * as yup from "yup";
-import ModalContainer from "@components/Modals/ModalContainer";
-import { useHelpTexts } from "@store/helpTexts";
+import ModalContainer from "src/components/Modals/ModalContainer";
+import { useHelpTexts } from "src/store/helpTexts";
 
 type HelpTextFields = {
   slug: string;

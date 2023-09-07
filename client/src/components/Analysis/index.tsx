@@ -2,20 +2,20 @@
 import React, { useEffect, FunctionComponent, useState } from "react";
 import { useSelector } from "react-redux";
 
-import { authorizationHeader } from "@helpers/authorizationHeader";
-import { authSelector } from "@store/auth";
-import { usePanel } from "@store/panels";
-import { useRing } from "@store/rings";
+import { authSelector } from "src/store/auth";
+import { usePanel } from "src/store/panels";
+import { useRing } from "src/store/rings";
 
 import { Grid, Paper } from "@mui/material";
 import AddIcon from "@mui/icons-material/Add";
 import uniqid from "uniqid";
 import _ from "lodash";
 
-import { Satyrn } from "@models/Satyrn";
-import { useNotify } from "../Notifications";
+import { Satyrn } from "src/models/Satyrn";
+import StandardButton from "src/components/Buttons/StandardButton";
+import { makeRequest } from "src/helpers/makeRequest";
 
-import StandardButton from "@components/Buttons/StandardButton";
+import { useNotify } from "../Notifications";
 import Answers from "./Answers";
 import Parameters from "./Parameters";
 import Statements from "./Statements";
@@ -29,7 +29,6 @@ type Props = {
 const Analysis: FunctionComponent<Props> = ({ panelId }) => {
   const { panel, analysis, addPanelAnalysis, removePanelAnalysis, filters } =
     usePanel(panelId);
-  const { token } = useSelector(authSelector);
 
   const { ring, info } = useRing(panel?.ringId);
 
@@ -52,6 +51,7 @@ const Analysis: FunctionComponent<Props> = ({ panelId }) => {
 
   useEffect(() => {
     if (!info) return;
+
     const satyrnRes = new Satyrn(
       info.defaultEntity,
       info.operations,
@@ -66,6 +66,7 @@ const Analysis: FunctionComponent<Props> = ({ panelId }) => {
     const allTrue = Object.fromEntries(
       Object.entries(answersLoading).map(([key, value]) => [key, true]),
     );
+
     setAnswersLoading(allTrue);
 
     Object.keys(selectedStatements).map((statementId) => {
@@ -170,17 +171,13 @@ const Analysis: FunctionComponent<Props> = ({ panelId }) => {
         import.meta.env.VITE_REACT_APP_SATYRN_ENV === "development"
           ? "http://127.0.0.1:5000/api"
           : "/proxy";
-      const authHeader = authorizationHeader(token);
-      const response = await fetch(
+
+      const response = await makeRequest.post(
         `${fetchStem}/analysis/${ring.rid}/${ring.version}/${info?.defaultEntity}/`,
-        {
-          method: "POST",
-          headers: { "Content-Type": "application/json", ...authHeader },
-          body: JSON.stringify(resPlan),
-        },
+        resPlan,
       );
-      const resData = await response.json();
-      setData({ ...data, [id]: resData });
+
+      setData({ ...data, [id]: response });
       setAnswersLoading({ ...answersLoading, [id]: false });
     } catch (error) {
       console.warn(error); // eslint-disable-line no-console
@@ -194,16 +191,12 @@ const Analysis: FunctionComponent<Props> = ({ panelId }) => {
     setLoadingAutosuggestions(true);
     setAutoCompleteSuggestions([]);
     try {
-      const authHeader = authorizationHeader(token);
-      const response = await fetch(
+      const response = await makeRequest.get(
         `/proxy/autocomplete/${ring.rid}/${ring.version}/${info?.defaultEntity}/${type}?query=${query}`,
-        {
-          headers: {
-            ...authHeader,
-          },
-        },
       );
-      if (response.status === 200) {
+
+      // TODO: confirm this still works
+      if (response.code === 200) {
         const resData = await response.json();
         resData instanceof Array && setAutoCompleteSuggestions(resData);
         resData?.success === false &&
@@ -235,7 +228,7 @@ const Analysis: FunctionComponent<Props> = ({ panelId }) => {
           container
           spacing={2}
           className="analysis-item"
-          style={{ padding: "16px" }}
+          style={{ padding: "16px", position: "relative" }}
         >
           <Grid item lg={11}>
             <Statements
@@ -268,7 +261,7 @@ const Analysis: FunctionComponent<Props> = ({ panelId }) => {
               loadingAutosuggestions={loadingAutosuggestions}
             />
           </Grid>
-          <Grid lg="1" className="text-end">
+          <Grid style={{ position: "absolute", top: "20px", right: "0" }}>
             <StandardButton
               size="sm"
               variant="outline-danger"

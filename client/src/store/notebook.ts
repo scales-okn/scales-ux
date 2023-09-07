@@ -1,13 +1,11 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
 import { createSlice } from "@reduxjs/toolkit";
-import type { RootState, AppDispatch } from "@store";
-import { authSelector } from "@store/auth";
-import { authorizationHeader } from "@helpers/authorizationHeader";
+import type { RootState, AppDispatch } from "src/store";
 import { notify } from "reapop";
-import { useUnknownErrorNotificationMessage } from "@components/Notifications";
+import { useUnknownErrorNotificationMessage } from "src/components/Notifications";
 import { useSelector, useDispatch } from "react-redux";
-import { makeRequest } from "@helpers/makeRequest";
+import { makeRequest } from "src/helpers/makeRequest";
 
 interface InitialState {
   loadingNotebook: boolean;

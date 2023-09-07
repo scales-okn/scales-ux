@@ -8,7 +8,7 @@ import {
   DialogContentText,
   DialogTitle,
 } from "@mui/material";
-import StandardButton from "@components/Buttons/StandardButton";
+import StandardButton from "src/components/Buttons/StandardButton";
 
 type ConfirmModalT = Omit<ModalProps, "children"> & {
   open: boolean;
