@@ -8,6 +8,7 @@ import { useNotify } from "src/components/Notifications";
 import { Col, Container, Form, Row } from "react-bootstrap";
 
 import StandardButton from "src/components/Buttons/StandardButton";
+import { makeRequest } from "src/helpers/makeRequest";
 interface ResetPasswordFields {
   password: string;
   repassword: string;
@@ -37,35 +38,21 @@ const ResetPassword: FunctionComponent = () => {
       repassword: "",
     },
     validationSchema: ResetPasswordValidationSchema,
-    onSubmit: (values: ResetPasswordFields, { setErrors }) => {
-      fetch(`/api/users/password/reset`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ ...values, token }),
-      })
-        .then((response) => response.json())
-        .then((response) => {
-          try {
-            switch (response.code) {
-              case 200: {
-                notify(response.message, "success");
-                navigate("/sign-in");
-                break;
-              }
-              default: {
-                if (response.errors) {
-                  setErrors(response.errors);
-                }
-                notify(response.message, "error");
-                break;
-              }
-            }
-          } catch (error) {
-            console.warn(error); // eslint-disable-line no-console
-          }
-        });
+    onSubmit: async (values: ResetPasswordFields, { setErrors }) => {
+      const response = await makeRequest.post(`/api/users/password/reset`, {
+        ...values,
+        token,
+      });
+
+      if (response.code === 200) {
+        notify(response.message, "success");
+        navigate("/sign-in");
+      } else {
+        if (response.errors) {
+          setErrors(response.errors);
+        }
+        notify(response.message, "error");
+      }
     },
   });
 

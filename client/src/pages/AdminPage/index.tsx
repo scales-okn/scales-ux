@@ -6,7 +6,6 @@ import RingsPage from "src/pages/RingsPage";
 import UsersPage from "src/pages/UsersPage";
 import FeedbackPage from "src/pages/FeedbackPage";
 import HelpTextsPage from "src/pages/HelpTextsPage";
-import PageLayout from "src/components/PageLayout";
 
 import { adminPageStyles } from "./styles";
 

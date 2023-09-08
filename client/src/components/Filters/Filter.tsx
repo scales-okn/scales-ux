@@ -1,7 +1,5 @@
 import React, { useState } from "react";
-import { useSelector } from "react-redux";
 
-import { authSelector } from "src/store/auth";
 import { usePanel } from "src/store/panels";
 import { useRing } from "src/store/rings";
 
@@ -42,7 +40,6 @@ const Filter = ({ panelId, filter }: Props) => {
   const { panel, filters, setPanelFilters, getPanelResults } =
     usePanel(panelId);
   const { ring, info } = useRing(panel.ringId);
-  const { token } = useSelector(authSelector);
   const { type, id, value } = filter;
 
   const [isLoading, setIsLoading] = useState<boolean>(false);

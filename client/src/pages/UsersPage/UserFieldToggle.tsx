@@ -1,7 +1,7 @@
 import React, { FunctionComponent, useState, ChangeEvent } from "react";
 import { FormGroup, FormControlLabel, Switch } from "@mui/material";
-import { useAuthHeader } from "src/store/auth";
 import { useNotify } from "src/components/Notifications";
+import { makeRequest } from "src/helpers/makeRequest";
 
 type Props = {
   userId: number;
@@ -19,10 +19,9 @@ const UserFieldToggle: FunctionComponent<Props> = ({
   disabled,
 }) => {
   const [checked, setChecked] = useState(value);
-  const authHeader = useAuthHeader();
   const { notify } = useNotify();
 
-  const handleChange = (event: ChangeEvent<HTMLInputElement>) => {
+  const handleChange = async (event: ChangeEvent<HTMLInputElement>) => {
     if (event.target.checked !== checked) {
       const fieldValue =
         fieldName === "role"
@@ -30,34 +29,21 @@ const UserFieldToggle: FunctionComponent<Props> = ({
             ? "admin"
             : "user"
           : !checked;
-      fetch(`/api/users/${userId}`, {
-        method: "PUT",
-        body: JSON.stringify({
-          [fieldName]: fieldValue,
-        }),
-        headers: {
-          ...authHeader,
-          "Content-Type": "application/json",
-        },
-      })
-        .then((response) => response.json())
-        .then((response) => {
-          try {
-            if (response?.code === 200) {
-              if (fieldName === "role") {
-                setChecked(response.data.user[fieldName] === "admin");
-              } else {
-                setChecked(response.data.user[fieldName]);
-              }
-              notify(response.message, "success");
-            } else {
-              notify(response.message, "error");
-            }
-          } catch (error) {
-            console.warn(error); // eslint-disable-line no-console
-          }
-        })
-        .catch((error) => console.warn(error)); // eslint-disable-line no-console
+
+      const response = await makeRequest.put(`/api/users/${userId}`, {
+        [fieldName]: fieldValue,
+      });
+
+      if (response?.code === 200) {
+        if (fieldName === "role") {
+          setChecked(response.data.user[fieldName] === "admin");
+        } else {
+          setChecked(response.data.user[fieldName]);
+        }
+        notify(response.message, "success");
+      } else {
+        notify(response.message, "error");
+      }
     }
   };
 

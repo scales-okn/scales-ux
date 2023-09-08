@@ -5,12 +5,12 @@ import { useFormik } from "formik";
 
 import { Container, Form, Col, Row } from "react-bootstrap";
 
-import { UserSignInFields } from "../SignInPage";
-
-import Loader from "src/components/Loader";
-import { UserSignUpValidationSchema } from "./schema";
+import { makeRequest } from "src/helpers/makeRequest";
 
 import StandardButton from "src/components/Buttons/StandardButton";
+import Loader from "src/components/Loader";
+import { UserSignInFields } from "../SignInPage";
+import { UserSignUpValidationSchema } from "./schema";
 
 interface UserSignUpFields extends UserSignInFields {
   firstName: string;
@@ -48,41 +48,20 @@ const SignUpPage = () => {
       tos: true,
     },
     validationSchema: UserSignUpValidationSchema,
-    onSubmit: (values: UserSignUpFields, { setErrors }) => {
+    onSubmit: async (values: UserSignUpFields, { setErrors }) => {
       setIsLoading(true);
-      fetch(`/api/users/create`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(values),
-      })
-        .then((response) => response.json())
-        .then((response) => {
-          setIsLoading(false);
-          try {
-            switch (response.code) {
-              case 200: {
-                setMessage(response.message);
-                break;
-              }
-              default: {
-                if (response.errors) {
-                  setErrors(response.errors);
-                }
-                break;
-              }
-            }
-          } catch (error) {
-            console.warn(error); // eslint-disable-line no-console
-          }
-        })
-        .catch((error) => {
-          console.warn(error); // eslint-disable-line no-console
-        })
-        .finally(() => {
-          setIsLoading(false);
-        });
+
+      const response = await makeRequest.post(`/api/users/create`, values);
+
+      if (response.code === 200) {
+        setIsLoading(false);
+        setMessage(response.message);
+      } else {
+        setIsLoading(false);
+        if (response.errors) {
+          setErrors(response.errors);
+        }
+      }
     },
   });
 

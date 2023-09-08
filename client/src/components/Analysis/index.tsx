@@ -1,8 +1,6 @@
 // @ts-nocheck
 import React, { useEffect, FunctionComponent, useState } from "react";
-import { useSelector } from "react-redux";
 
-import { authSelector } from "src/store/auth";
 import { usePanel } from "src/store/panels";
 import { useRing } from "src/store/rings";
 

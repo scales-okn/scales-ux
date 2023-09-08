@@ -5,7 +5,7 @@ import { DataGrid, GridColDef, GridCellParams } from "@mui/x-data-grid";
 import { Tooltip, Typography } from "@mui/material";
 import { useEffectOnce } from "react-use";
 
-import { useAuthHeader, userSelector } from "src/store/auth";
+import { userSelector } from "src/store/auth";
 
 import UserFieldToggle from "./UserFieldToggle";
 import NotAuthorized from "src/components/NotAuthorized";
@@ -14,8 +14,6 @@ import DeleteUser from "./DeleteUser";
 import { makeRequest } from "src/helpers/makeRequest";
 
 const AdminUsersPages = () => {
-  const authorizationHeader = useAuthHeader();
-
   const [rows, setRows] = useState([]);
   const { role, id } = useSelector(userSelector);
 

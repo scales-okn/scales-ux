@@ -1,4 +1,4 @@
-import React, { FunctionComponent } from "react";
+import React from "react";
 import { useNavigate } from "react-router-dom";
 import { useFormik } from "formik";
 import * as yup from "yup";
@@ -6,6 +6,7 @@ import * as yup from "yup";
 import { Col, Container, Form, Row } from "react-bootstrap";
 import { useNotify } from "src/components/Notifications";
 import StandardButton from "src/components/Buttons/StandardButton";
+import { makeRequest } from "src/helpers/makeRequest";
 
 interface ForgotPasswordFields {
   email: string;
@@ -18,7 +19,7 @@ const ForgotPasswordValidationSchema = yup.object({
     .required("Email is required"),
 });
 
-const ForgotPassword: FunctionComponent = () => {
+const ForgotPassword = () => {
   const navigate = useNavigate();
   const { notify } = useNotify();
 
@@ -27,35 +28,18 @@ const ForgotPassword: FunctionComponent = () => {
       email: "",
     },
     validationSchema: ForgotPasswordValidationSchema,
-    onSubmit: (values: ForgotPasswordFields, { setErrors }) => {
-      fetch(`/api/users/password/forgot`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(values),
-      })
-        .then((response) => response.json())
-        .then((response) => {
-          try {
-            switch (response.code) {
-              case 200: {
-                notify(response.message, "success");
-                navigate("/sign-in");
-                break;
-              }
-              default: {
-                if (response.errors) {
-                  setErrors(response.errors);
-                }
-                notify(response.message, "error");
-                break;
-              }
-            }
-          } catch (error) {
-            console.warn(error); // eslint-disable-line no-console
-          }
-        });
+    onSubmit: async (values: ForgotPasswordFields, { setErrors }) => {
+      const response = await makeRequest.post(
+        `/api/users/password/forgot`,
+        values,
+      );
+
+      if (response.code === 200) {
+        notify(response.message, "success");
+        navigate("/sign-in");
+      } else {
+        notify(response.message, "error");
+      }
     },
   });
 

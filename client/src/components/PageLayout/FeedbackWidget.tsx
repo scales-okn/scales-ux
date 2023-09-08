@@ -1,12 +1,15 @@
 import React, { useState } from "react";
-import { useFormik } from "formik";
-import { useAuthHeader } from "src/store/auth";
-import { useNotify } from "src/components/Notifications";
-import * as yup from "yup";
-import { styles } from "./styles";
+
 import { Modal, Form } from "react-bootstrap";
+import { useFormik } from "formik";
+import * as yup from "yup";
+
+import { makeRequest } from "src/helpers/makeRequest";
+
+import { useNotify } from "src/components/Notifications";
 import StandardButton from "src/components/Buttons/StandardButton";
 
+import { styles } from "./styles";
 import "./PageLayout.scss";
 
 type FeedbackFieldsT = {
@@ -15,7 +18,6 @@ type FeedbackFieldsT = {
 
 const FeedbackWidget = () => {
   const [feedbackModalOpen, setFeedbackModalOpen] = useState(false);
-  const authorizationHeader = useAuthHeader();
   const commentValidationSchema = yup.object({
     body: yup.string().required("Comment is required for submission"),
   });
@@ -26,36 +28,15 @@ const FeedbackWidget = () => {
       body: "",
     },
     validationSchema: commentValidationSchema,
-    onSubmit: (values: FeedbackFieldsT, { setErrors }) => {
-      fetch(`/api/feedback`, {
-        method: "POST",
-        headers: {
-          ...authorizationHeader,
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(values),
-      })
-        .then((response) => response.json())
-        .then((response) => {
-          try {
-            switch (response.code) {
-              case 200: {
-                notify(response.message, "success");
-                setFeedbackModalOpen(false);
-                break;
-              }
-              default: {
-                if (response.errors) {
-                  setErrors(response.errors);
-                }
-                notify(response.message, "error");
-                break;
-              }
-            }
-          } catch (error) {
-            console.warn(error); // eslint-disable-line no-console
-          }
-        });
+    onSubmit: async (values: FeedbackFieldsT, { setErrors }) => {
+      const response = await makeRequest.post(`/api/feedback`, values);
+
+      if (response.code === 200) {
+        notify(response.message, "success");
+        setFeedbackModalOpen(false);
+      } else {
+        notify(response.message, "error");
+      }
     },
   });
 

@@ -11,17 +11,17 @@ import { useHelpTexts } from "./store/helpTexts";
 import StandardButton from "src/components/Buttons/StandardButton";
 import PageLayout from "./components/PageLayout";
 
-import DocumentPage from "./pages/DocumentPage";
-import SignInPage from "./pages/SignInPage";
-import SignUpPage from "./pages/SignUpPage";
-import NotebooksPage from "./pages/NotebooksPage";
-import NotebookPage from "./pages/NotebookPage";
-import EmailVerificationPage from "./pages/EmailVerificationPage";
-import ForgotPasswordPage from "./pages/ForgotPasswordPage";
-import ResetPasswordPage from "./pages/ResetPasswordPage";
+import DocumentPage from "src/pages/DocumentPage";
+import SignInPage from "src/pages/SignInPage";
+import SignUpPage from "src/pages/SignUpPage";
+import NotebooksPage from "src/pages/NotebooksPage";
+import NotebookPage from "src/pages/NotebookPage";
+import EmailVerificationPage from "src/pages/EmailVerificationPage";
+import ForgotPasswordPage from "src/pages/ForgotPasswordPage";
+import ResetPasswordPage from "src/pages/ResetPasswordPage";
 import Notifications from "src/components/Notifications";
-import Ring from "./pages/RingsPage/Ring";
-import Admin from "./pages/AdminPage";
+import Ring from "src/pages/RingsPage/Ring";
+import Admin from "src/pages/AdminPage";
 
 const ErrorFallback = ({ error, resetErrorBoundary }) => {
   return (

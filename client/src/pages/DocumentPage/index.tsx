@@ -31,19 +31,11 @@ const DocumentPage: FunctionComponent = () => {
 
   const fetchDocument = async () => {
     try {
-      const response = await fetch(docUrl, {
-        method: "GET",
-        headers: {
-          "Content-Type": "text/html",
-          ...authHeader,
-        },
-      });
+      const response = await makeRequest.get(docUrl, { responseType: "text" });
 
-      if (response.status === 200) {
-        const html = await response.text();
-
-        const out =
-          html
+      if (response) {
+        const html =
+          response
             .replaceAll("onclick", "onclick-removed-by-satyrn")
             .split("</script>")
             .slice(-1)[0]
@@ -51,7 +43,7 @@ const DocumentPage: FunctionComponent = () => {
             .split(receiptStart2)[0]
             .split(receiptStart3)[0] + "<br><br>";
 
-        return setHtml(out);
+        return setHtml(html);
       } else {
         return "<div>There was an error retrieving this document.</div>";
       }

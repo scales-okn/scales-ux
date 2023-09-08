@@ -1,10 +1,12 @@
 import React, { FunctionComponent, useState } from "react";
 import { useSelector } from "react-redux";
-import { useAuthHeader, userSelector } from "src/store/auth";
+import { userSelector } from "src/store/auth";
 
 import { DataGrid, GridCellParams, GridColDef } from "@mui/x-data-grid";
 import dayjs from "dayjs";
 import { useEffectOnce } from "react-use";
+
+import { makeRequest } from "src/helpers/makeRequest";
 
 import NotAuthorized from "src/components/NotAuthorized";
 import ColumnHeader from "src/components/ColumnHeader";
@@ -15,22 +17,19 @@ const AdminFeedbackPage: FunctionComponent = () => {
   const [rows, setRows] = useState([]);
 
   const [feedbackDetail, setFeedbackDetail] = useState(null);
-  const authorizationHeader = useAuthHeader();
 
   const { role } = useSelector(userSelector);
   const isAdmin = role === "admin";
 
   useEffectOnce(() => {
-    fetch(`/api/feedback`, {
-      headers: {
-        ...authorizationHeader,
-        "Content-Type": "application/json",
-      },
-    })
-      .then((response) => response.json())
-      .then((response) => {
+    const fetchFeedback = async () => {
+      const response = await makeRequest.get(`/api/feedback`);
+
+      if (response.code === 200) {
         setRows(response.data.feedback);
-      });
+      }
+    };
+    fetchFeedback();
   });
 
   const renderHeader = (params) => {
