@@ -6,8 +6,8 @@ import React, {
   useMemo,
 } from "react";
 
-import { usePanel } from "store/panels";
-import { useRing } from "store/rings";
+import { usePanel } from "src/store/panels";
+import { useRing } from "src/store/rings";
 
 import {
   Accordion,
@@ -26,9 +26,9 @@ import Loader from "../Loader";
 import Dataset from "../Dataset";
 import Analysis from "../Analysis";
 
-import ConfirmModal from "components/Modals/ConfirmModal";
-import StandardButton from "components/Buttons/StandardButton";
-import ColumnHeader from "components/ColumnHeader";
+import ConfirmModal from "src/components/Modals/ConfirmModal";
+import StandardButton from "src/components/Buttons/StandardButton";
+import ColumnHeader from "src/components/ColumnHeader";
 
 import "./Panel.scss";
 
@@ -110,8 +110,7 @@ const Panel: FunctionComponent<PanelProps> = ({ panelId }) => {
   }, [ring]); // eslint-disable-line react-hooks/exhaustive-deps
 
   useEffect(() => {
-    // if (!info || collapsed || loadingPanelResults) return;
-    if (!info || collapsed) return;
+    if (!info || collapsed || loadingPanelResults) return;
     getPanelResults();
   }, [collapsed, info]); // eslint-disable-line react-hooks/exhaustive-deps
 

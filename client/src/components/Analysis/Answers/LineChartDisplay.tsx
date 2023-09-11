@@ -10,7 +10,7 @@ import {
   LineChart,
   Line,
 } from "recharts";
-import { numberToMonth, formatXUnits } from "helpers/stringHelpers";
+import { numberToMonth, formatXUnits } from "src/helpers/stringHelpers";
 
 type LineChartDisplayT = {
   data: any;

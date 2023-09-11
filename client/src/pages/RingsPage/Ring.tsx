@@ -1,19 +1,21 @@
 import React, { useState } from "react";
-import PageLayout from "components/PageLayout";
-import Loader from "components/Loader";
+import { useNavigate, useParams } from "react-router-dom";
+import { useUser } from "src/store/auth";
+
 import { useFormik } from "formik";
 import * as yup from "yup";
 import { Form, Row, Col } from "react-bootstrap";
-import { useAuthHeader, useUser } from "store/auth";
-import { useNotify } from "components/Notifications";
-import { useNavigate, useParams } from "react-router-dom";
-import { useRing } from "store/rings";
-import ConfirmModal from "components/Modals/ConfirmModal";
-import Editor from "components/Editor";
-import "./jsoneditor-react-dark-mode.css";
 import { Container } from "@mui/material";
-import BackButton from "components/Buttons/BackButton";
-import StandardButton from "components/Buttons/StandardButton";
+
+import Loader from "src/components/Loader";
+import { useNotify } from "src/components/Notifications";
+import { useRing } from "src/store/rings";
+import ConfirmModal from "src/components/Modals/ConfirmModal";
+import Editor from "src/components/Editor";
+import BackButton from "src/components/Buttons/BackButton";
+import StandardButton from "src/components/Buttons/StandardButton";
+import "./jsoneditor-react-dark-mode.css";
+import { makeRequest } from "src/helpers/makeRequest";
 
 type Params = {
   ringId: string | null;
@@ -23,7 +25,6 @@ const Ring: React.FC = () => {
   const { ringId = null } = useParams<Params>();
   const { ring } = useRing(Number(ringId));
   const [loading, setLoading] = useState(false);
-  const authHeader = useAuthHeader();
   const user = useUser();
   const { notify } = useNotify();
   const navigate = useNavigate();
@@ -55,59 +56,32 @@ const Ring: React.FC = () => {
     }),
     onSubmit: async (values) => {
       setLoading(true);
-      fetch(`/api/rings/${ringId || "create"}`, {
-        method: ringId ? "PUT" : "POST",
-        body: JSON.stringify(values),
-        headers: {
-          ...authHeader,
-          "Content-Type": "application/json",
-        },
-      })
-        .then((response) => response.json())
-        .then((response) => {
-          try {
-            if (response?.code === 200) {
-              notify(response.message, "success");
-              navigate("/admin/rings");
-            }
-          } catch (error) {
-            console.warn(error); // eslint-disable-line no-console
-            notify(error.message, "error");
-          }
-        })
-        .catch((error) => console.warn(error)) // eslint-disable-line no-console
-        .finally(() => setLoading(false));
+      let response;
+      if (ringId) {
+        response = await makeRequest.put(`/api/rings/${ringId}`, values);
+      } else {
+        response = await makeRequest.post(`/api/rings/create`, values);
+      }
+
+      if (response?.code === 200) {
+        notify(response.message, "success");
+        navigate("/admin/rings");
+      }
     },
   });
 
   const deleteRing = async (rid) => {
     setLoading(true);
-    fetch(`/api/rings/${rid}`, {
-      method: "DELETE",
-      headers: {
-        ...authHeader,
-        "Content-Type": "application/json",
-      },
-    })
-      .then((response) => response.json())
-      .then((response) => {
-        try {
-          switch (response?.code) {
-            case 200:
-              notify(response.message, "success");
-              navigate("/admin/rings");
-              break;
-            default:
-              notify(response.message, "error");
-              break;
-          }
-        } catch (error) {
-          console.warn(error); // eslint-disable-line no-console
-          notify(error.message, "error");
-        }
-      })
-      .catch((error) => console.warn(error)) // eslint-disable-line no-console
-      .finally(() => setLoading(false));
+    const response = await makeRequest.delete(`/api/rings/${rid}`);
+
+    if (response?.code === 200) {
+      notify(response.message, "success");
+      navigate("/admin/rings");
+    } else {
+      notify(response.message, "error");
+    }
+
+    setLoading(false);
   };
 
   const sanitizeData = (data) => {
@@ -125,7 +99,7 @@ const Ring: React.FC = () => {
   };
 
   return (
-    <PageLayout>
+    <>
       <BackButton onClick={() => navigate("/admin/rings")} />
 
       <Container sx={{ padding: "86px 0" }}>
@@ -322,7 +296,7 @@ const Ring: React.FC = () => {
         setOpen={setConfirmVisible}
         onConfirm={() => deleteRing(ring.rid)}
       />
-    </PageLayout>
+    </>
   );
 };
 

@@ -1,9 +1,7 @@
 import React, { useState } from "react";
-import { useSelector } from "react-redux";
 
-import { authSelector } from "store/auth";
-import { usePanel } from "store/panels";
-import { useRing } from "store/rings";
+import { usePanel } from "src/store/panels";
+import { useRing } from "src/store/rings";
 
 import { debounce } from "lodash";
 
@@ -15,10 +13,9 @@ import FormControlLabel from "@mui/material/FormControlLabel";
 import HighlightOffIcon from "@mui/icons-material/HighlightOff";
 import DateTimeRangePicker from "@wojtekmaj/react-datetimerange-picker";
 
-import { DATE_FORMAT } from "helpers/constants";
-import { authorizationHeader } from "utils";
-
-import { useNotify } from "components/Notifications";
+import { DATE_FORMAT } from "src/helpers/constants";
+import { makeRequest } from "src/helpers/makeRequest";
+import { useNotify } from "src/components/Notifications";
 import FilterTypeDropDown from "./FilterTypeDropDown";
 
 import { filterStyles } from "./styles";
@@ -43,7 +40,6 @@ const Filter = ({ panelId, filter }: Props) => {
   const { panel, filters, setPanelFilters, getPanelResults } =
     usePanel(panelId);
   const { ring, info } = useRing(panel.ringId);
-  const { token } = useSelector(authSelector);
   const { type, id, value } = filter;
 
   const [isLoading, setIsLoading] = useState<boolean>(false);
@@ -93,19 +89,13 @@ const Filter = ({ panelId, filter }: Props) => {
 
   const fetchAutocompleteSuggestions = async (query) => {
     setIsLoading(true);
-    const authHeader = authorizationHeader(token);
     try {
-      const response = await fetch(
+      const response = await makeRequest.get(
         `/proxy/autocomplete/${ring.rid}/${ring.version}/${info?.defaultEntity}/${filter.type}?query=${query}`,
-        {
-          headers: {
-            ...authHeader,
-          },
-        },
       );
-      if (response.status === 200) {
-        const data = await response.json();
-        setAutoCompleteSuggestions(data);
+
+      if (response) {
+        setAutoCompleteSuggestions(response);
         setIsLoading(false);
       } else {
         notify("Could not fetch autocomplete suggestions", "error");

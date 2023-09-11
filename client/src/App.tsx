@@ -6,22 +6,22 @@ import { ErrorBoundary } from "react-error-boundary";
 import { authSelector } from "./store/auth";
 import { useSelector } from "react-redux";
 
-import { useHelpTexts } from "store/helpTexts";
+import { useHelpTexts } from "./store/helpTexts";
 
-import StandardButton from "components/Buttons/StandardButton";
+import StandardButton from "src/components/Buttons/StandardButton";
+import PageLayout from "./components/PageLayout";
 
-import DocumentPage from "pages/DocumentPage";
-import SignInPage from "pages/SignInPage";
-import SignUpPage from "pages/SignUpPage";
-import ProfilePage from "pages/ProfilePage";
-import NotebooksPage from "pages/NotebooksPage";
-import NotebookPage from "pages/NotebookPage";
-import EmailVerificationPage from "pages/EmailVerificationPage";
-import ForgotPasswordPage from "pages/ForgotPasswordPage";
-import ResetPasswordPage from "pages/ResetPasswordPage";
-import Notifications from "components/Notifications";
-import Ring from "pages/RingsPage/Ring";
-import Admin from "pages/AdminPage";
+import DocumentPage from "src/pages/DocumentPage";
+import SignInPage from "src/pages/SignInPage";
+import SignUpPage from "src/pages/SignUpPage";
+import NotebooksPage from "src/pages/NotebooksPage";
+import NotebookPage from "src/pages/NotebookPage";
+import EmailVerificationPage from "src/pages/EmailVerificationPage";
+import ForgotPasswordPage from "src/pages/ForgotPasswordPage";
+import ResetPasswordPage from "src/pages/ResetPasswordPage";
+import Notifications from "src/components/Notifications";
+import Ring from "src/pages/RingsPage/Ring";
+import Admin from "src/pages/AdminPage";
 
 const ErrorFallback = ({ error, resetErrorBoundary }) => {
   return (
@@ -45,7 +45,7 @@ const App = () => {
   };
 
   useEffect(() => {
-    getHelpTexts(); // Invoke the function by adding parentheses
+    if (user) getHelpTexts();
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   return (
@@ -58,50 +58,54 @@ const App = () => {
       >
         <Notifications />
         <BrowserRouter>
-          <Routes>
-            <Route path="/" element={requireAuth(<NotebooksPage />)} />
-            <Route path="/profile" element={requireAuth(<ProfilePage />)} />
-            <Route
-              path="/notebooks/:notebookId"
-              element={requireAuth(<NotebookPage />)}
-            />
-            <Route
-              path="/document/:ringId/:ringVersion/:entityType/:docId"
-              element={<DocumentPage />}
-            />
-            <Route path="/sign-in" element={<SignInPage />} />
-            <Route path="/sign-up" element={<SignUpPage />} />
-            <Route path="/forgot-password" element={<ForgotPasswordPage />} />
-            <Route
-              path="/reset-password/:token"
-              element={<ResetPasswordPage />}
-            />
-            <Route
-              path="/verify-email/:token"
-              element={<EmailVerificationPage />}
-            />
+          <PageLayout>
+            <Routes>
+              <Route path="/" element={requireAuth(<NotebooksPage />)} />
+              <Route
+                path="/notebooks/:notebookId"
+                element={requireAuth(<NotebookPage />)}
+              />
+              <Route
+                path="/document/:ringId/:ringVersion/:entityType/:docId"
+                element={<DocumentPage />}
+              />
+              <Route path="/sign-in" element={<SignInPage />} />
+              <Route path="/sign-up" element={<SignUpPage />} />
+              <Route path="/forgot-password" element={<ForgotPasswordPage />} />
+              <Route
+                path="/reset-password/:token"
+                element={<ResetPasswordPage />}
+              />
+              <Route
+                path="/verify-email/:token"
+                element={<EmailVerificationPage />}
+              />
 
-            {/* Admin Routes */}
-            <Route path="/admin/users" element={requireAuth(<Admin />)} />
-            <Route path="/admin/feedback" element={requireAuth(<Admin />)} />
-            <Route
-              path="/admin/help-texts/:helpTextSlug?"
-              element={requireAuth(<Admin />)}
-            />
-            <Route path="/admin/rings" element={requireAuth(<Admin />)} />
-            <Route path="/admin/rings/create" element={requireAuth(<Ring />)} />
-            <Route
-              path="/admin/rings/:ringId"
-              element={requireAuth(<Ring />)}
-            />
-            <Route
-              path="/admin/*"
-              element={<Navigate to="/admin/rings" replace />}
-            />
+              {/* Admin Routes */}
+              <Route path="/admin/users" element={requireAuth(<Admin />)} />
+              <Route path="/admin/feedback" element={requireAuth(<Admin />)} />
+              <Route
+                path="/admin/help-texts/:helpTextSlug?"
+                element={requireAuth(<Admin />)}
+              />
+              <Route path="/admin/rings" element={requireAuth(<Admin />)} />
+              <Route
+                path="/admin/rings/create"
+                element={requireAuth(<Ring />)}
+              />
+              <Route
+                path="/admin/rings/:ringId"
+                element={requireAuth(<Ring />)}
+              />
+              <Route
+                path="/admin/*"
+                element={<Navigate to="/admin/rings" replace />}
+              />
 
-            {/* Default Redirect */}
-            <Route path="*" element={<Navigate to="/" replace />} />
-          </Routes>
+              {/* Default Redirect */}
+              <Route path="*" element={<Navigate to="/" replace />} />
+            </Routes>
+          </PageLayout>
         </BrowserRouter>
       </ErrorBoundary>
     </div>

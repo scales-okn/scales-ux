@@ -1,9 +1,8 @@
 import React, { FunctionComponent, useEffect } from "react";
 import { useParams } from "react-router";
-import Notebook from "../../components/Notebook";
-import PageLayout from "../../components/PageLayout";
+import Notebook from "src/components/Notebook";
 import { useDispatch } from "react-redux";
-import { fetchNotebook, notebookActions } from "../../store/notebook";
+import { fetchNotebook, notebookActions } from "src/store/notebook";
 
 type Params = {
   notebookId: string | null;
@@ -20,11 +19,7 @@ const NotebookPage: FunctionComponent = () => {
     }
   }, [notebookId]); // eslint-disable-line react-hooks/exhaustive-deps
 
-  return (
-    <PageLayout>
-      <Notebook />
-    </PageLayout>
-  );
+  return <Notebook />;
 };
 
 export default NotebookPage;

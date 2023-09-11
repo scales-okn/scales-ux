@@ -8,12 +8,12 @@ import thunk from "redux-thunk";
 import { reducer as notificationsReducer } from "reapop";
 
 // Reducers
-import auth, { authMiddleware } from "store/auth";
-import rings from "store/rings";
-import notebooks from "store/notebooks";
-import notebook from "store/notebook";
-import panels from "store/panels";
-import helpTexts from "store/helpTexts";
+import auth, { authMiddleware } from "./auth";
+import rings from "./rings";
+import notebooks from "./notebooks";
+import notebook from "./notebook";
+import panels from "./panels";
+import helpTexts from "./helpTexts";
 
 // Root reducer
 const reducers = combineReducers({
@@ -28,7 +28,9 @@ const reducers = combineReducers({
 
 const persistConfig = {
   key: "satyrn",
-  version: Number(process.env.REACT_APP_VERSION.replace(/\./g, "")) || 1,
+  version:
+    // @ts-ignore
+    Number(import.meta.env.VITE_REACT_APP_VERSION.replace(/\./g, "")) || 1,
   storage,
   blacklist: ["notifications"],
 };
@@ -36,7 +38,8 @@ const persistConfig = {
 // Store
 const store = configureStore({
   reducer: persistReducer(persistConfig, reducers),
-  devTools: process.env.NODE_ENV !== "production",
+  // @ts-ignore
+  devTools: import.meta.env.MODE !== "production",
   middleware: [thunk, authMiddleware],
 });
 

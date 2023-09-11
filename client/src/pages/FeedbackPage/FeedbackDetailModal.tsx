@@ -1,5 +1,5 @@
 import React from "react";
-import ModalContainer from "components/Modals/ModalContainer";
+import ModalContainer from "src/components/Modals/ModalContainer";
 
 type FeedbackDetailModalT = {
   feedbackDetail: string;

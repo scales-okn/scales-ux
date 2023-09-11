@@ -1,8 +1,7 @@
 import { createSlice } from "@reduxjs/toolkit";
-import type { RootState, AppDispatch } from "store";
-import { authSelector } from "store/auth";
+import type { RootState, AppDispatch } from "./";
 import { useDispatch, useSelector } from "react-redux";
-import { authorizationHeader } from "utils";
+import { makeRequest } from "src/helpers/makeRequest";
 
 type InitialStateT = {
   loadingHelpTexts: boolean;
@@ -112,21 +111,14 @@ export default helpTextsSlice.reducer;
 
 // Async actions
 export const getHelpTexts = () => {
-  return async (dispatch: AppDispatch, getState) => {
+  return async (dispatch: AppDispatch) => {
     try {
-      const { token } = authSelector(getState());
-      const authHeader = authorizationHeader(token);
       dispatch(helpTextsActions.getHelpTexts());
 
-      const response = await fetch(`/api/helpTexts`, {
-        headers: {
-          ...authHeader,
-        },
-      });
-      const { data } = await response.json();
+      const response = await makeRequest.get(`/api/helpTexts`);
 
-      if (response.status === 200) {
-        dispatch(helpTextsActions.getHelpTextsSuccess(data.helpTexts));
+      if (response.code === 200) {
+        dispatch(helpTextsActions.getHelpTextsSuccess(response.data.helpTexts));
       } else {
         dispatch(helpTextsActions.getHelpTextsFailure());
       }
@@ -140,19 +132,11 @@ export const getHelpTexts = () => {
 export const deleteHelpText = (slug: string) => {
   return async (dispatch: AppDispatch, getState) => {
     try {
-      const { token } = authSelector(getState());
-      const authHeader = authorizationHeader(token);
       dispatch(helpTextsActions.deleteHelpText());
 
-      const response = await fetch(`/api/helpTexts/${slug}`, {
-        method: "DELETE",
-        headers: {
-          ...authHeader,
-        },
-      });
-      const res = await response.json();
+      const response = await makeRequest.delete(`/api/helpTexts/${slug}`);
 
-      if (res.code === 200) {
+      if (response.code === 200) {
         dispatch(helpTextsActions.deleteHelpTextSuccess({ slug }));
       } else {
         dispatch(helpTextsActions.deleteHelpTextFailure());
@@ -167,24 +151,14 @@ export const deleteHelpText = (slug: string) => {
 export const createHelpText = (values: Record<string, unknown>) => {
   return async (dispatch: AppDispatch, getState) => {
     try {
-      const { token } = authSelector(getState());
-      const authHeader = authorizationHeader(token);
       dispatch(helpTextsActions.createHelpText());
 
-      const response = await fetch(`/api/helpTexts`, {
-        method: "POST",
-        headers: {
-          ...authHeader,
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(values),
-      });
-      const res = await response.json();
+      const response = await makeRequest.post(`/api/helpTexts`, values);
 
-      if (res.code === 200) {
+      if (response.code === 200) {
         dispatch(
           helpTextsActions.createHelpTextSuccess({
-            newHelpText: res.data.helpText,
+            newHelpText: response.data.helpText,
           }),
         );
       } else {
@@ -203,24 +177,17 @@ export const updateHelpText = (
 ) => {
   return async (dispatch: AppDispatch, getState) => {
     try {
-      const { token } = authSelector(getState());
-      const authHeader = authorizationHeader(token);
       dispatch(helpTextsActions.updateHelpText());
 
-      const response = await fetch(`/api/helpTexts/${slug}`, {
-        method: "PATCH",
-        headers: {
-          ...authHeader,
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(values),
-      });
-      const res = await response.json();
+      const response = await makeRequest.patch(
+        `/api/helpTexts/${slug}`,
+        values,
+      );
 
-      if (res.code === 200) {
+      if (response.code === 200) {
         dispatch(
           helpTextsActions.updateHelpTextSuccess({
-            updatedHelpText: res.data.helpText,
+            updatedHelpText: response.data.helpText,
           }),
         );
       } else {

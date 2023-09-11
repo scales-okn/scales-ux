@@ -1,8 +1,8 @@
 import React, { FunctionComponent } from "react";
-import { usePanels } from "store/panels";
+import { usePanels } from "src/store/panels";
 import "./AddPanel.scss";
-import { useNotebook } from "store/notebook";
-import StandardButton from "components/Buttons/StandardButton";
+import { useNotebook } from "src/store/notebook";
+import StandardButton from "src/components/Buttons/StandardButton";
 
 type AddPanelProps = {
   notebookId: string | null;

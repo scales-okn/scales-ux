@@ -9,15 +9,15 @@ import {
   updateNotebook,
   deleteNotebook,
   createNotebook,
-} from "store/notebook";
-import { useRings } from "store/rings";
-import { getPanels, usePanels } from "store/panels";
+} from "src/store/notebook";
+import { useRings } from "src/store/rings";
+import { getPanels, usePanels } from "src/store/panels";
 import AddPanel from "../Panels/AddPanel";
 
-import StandardButton from "components/Buttons/StandardButton";
-import ConfirmModal from "components/Modals/ConfirmModal";
-import Loader from "components/Loader";
-import Panels from "components/Panels";
+import StandardButton from "src/components/Buttons/StandardButton";
+import ConfirmModal from "src/components/Modals/ConfirmModal";
+import Loader from "src/components/Loader";
+import Panels from "src/components/Panels";
 
 const Notebook = () => {
   const { getRings } = useRings();
@@ -54,7 +54,7 @@ const Notebook = () => {
     if (notebook?.id) {
       dispatch(getPanels(notebook?.id));
     }
-  }, [notebook?.id, dispatch]);
+  }, [notebook?.id]); // eslint-disable-line react-hooks/exhaustive-deps
 
   useEffectOnce(() => {
     getRings();

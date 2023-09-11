@@ -2,9 +2,9 @@ import React from "react";
 
 import { css } from "@emotion/css";
 
-import { useHelpTexts } from "store/helpTexts";
+import { useHelpTexts } from "src/store/helpTexts";
 
-import CustomTooltip from "components/HelpTextTooltip";
+import CustomTooltip from "src/components/HelpTextTooltip";
 
 const ColumnHeader = ({
   title,

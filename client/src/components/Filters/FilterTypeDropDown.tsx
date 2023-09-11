@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { useHelpTexts } from "store/helpTexts";
+import { useHelpTexts } from "src/store/helpTexts";
 
 import { Box, Menu, MenuItem, ListItemText } from "@mui/material";
 import ArrowDropDownIcon from "@mui/icons-material/ArrowDropDown";

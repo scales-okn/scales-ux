@@ -1,21 +1,23 @@
 import React, { useState } from "react";
+import {
+  Modal,
+  TextareaAutosize,
+  Button,
+  Typography,
+  Box,
+} from "@mui/material";
 import { useFormik } from "formik";
-import { useAuthHeader } from "store/auth";
-import { useNotify } from "components/Notifications";
 import * as yup from "yup";
+
+import { makeRequest } from "src/helpers/makeRequest";
+
+import { useNotify } from "src/components/Notifications";
+
 import { styles } from "./styles";
-import { Modal, Form } from "react-bootstrap";
-import StandardButton from "components/Buttons/StandardButton";
-
 import "./PageLayout.scss";
-
-type FeedbackFieldsT = {
-  body: string;
-};
 
 const FeedbackWidget = () => {
   const [feedbackModalOpen, setFeedbackModalOpen] = useState(false);
-  const authorizationHeader = useAuthHeader();
   const commentValidationSchema = yup.object({
     body: yup.string().required("Comment is required for submission"),
   });
@@ -26,36 +28,20 @@ const FeedbackWidget = () => {
       body: "",
     },
     validationSchema: commentValidationSchema,
-    onSubmit: (values: FeedbackFieldsT, { setErrors }) => {
-      fetch(`/api/feedback`, {
-        method: "POST",
-        headers: {
-          ...authorizationHeader,
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(values),
-      })
-        .then((response) => response.json())
-        .then((response) => {
-          try {
-            switch (response.code) {
-              case 200: {
-                notify(response.message, "success");
-                setFeedbackModalOpen(false);
-                break;
-              }
-              default: {
-                if (response.errors) {
-                  setErrors(response.errors);
-                }
-                notify(response.message, "error");
-                break;
-              }
-            }
-          } catch (error) {
-            console.warn(error); // eslint-disable-line no-console
-          }
-        });
+    onSubmit: async (values) => {
+      try {
+        const response = await makeRequest.post(`/api/feedback`, values);
+
+        if (response.code === 200) {
+          notify(response.message, "success");
+          setFeedbackModalOpen(false);
+        } else {
+          notify(response.message, "error");
+        }
+      } catch (error) {
+        console.error(error); // eslint-disable-line no-console
+        notify("An error occurred", "error");
+      }
     },
   });
 
@@ -68,54 +54,56 @@ const FeedbackWidget = () => {
         Feedback
       </div>
       <Modal
-        show={feedbackModalOpen}
-        onHide={() => setFeedbackModalOpen(false)}
+        open={feedbackModalOpen}
+        onClose={() => setFeedbackModalOpen(false)}
+        sx={{
+          maxWidth: "500px",
+          width: "100%",
+          margin: "0 auto",
+          marginTop: "160px",
+        }}
       >
-        <Form noValidate onSubmit={formik.handleSubmit}>
-          <Modal.Header
-            closeButton
-            style={{ background: "var(--main-purple-light)" }}
-          >
-            <Modal.Title style={{ color: "white" }}>
-              Let Us Know What You Think!
-            </Modal.Title>
-          </Modal.Header>
-          <Modal.Body>
-            <Form.Group className="mb-3" controlId="formBasicEmail">
-              <Form.Control
-                as="textarea"
+        <div style={{ background: "white" }}>
+          <form onSubmit={formik.handleSubmit}>
+            <Box
+              sx={{ background: "var(--main-purple-light)", padding: "18px" }}
+              color="white"
+            >
+              <Typography variant="h6">Let Us Know What You Think!</Typography>
+            </Box>
+            <Box sx={{ padding: "36px 18px" }}>
+              <TextareaAutosize
                 name="body"
-                aria-label="With textarea"
-                style={{ minHeight: "250px" }}
+                // rowsMin={5}
+                placeholder="Leave your feedback here..."
                 onChange={formik.handleChange}
-                isInvalid={formik.touched.body && Boolean(formik.errors?.body)}
+                value={formik.values.body}
+                style={{ width: "100%", minHeight: "250px", padding: "12px" }}
               />
-            </Form.Group>
-
-            <div
-              style={{
-                fontSize: "12px",
-                fontStyle: "italic",
-                color: "grey",
-              }}
-            >
-              Note: Specifics are very helpful: Who, What, Where, When, Why
-            </div>
-          </Modal.Body>
-          <Modal.Footer>
-            <StandardButton
-              variant="primary"
-              type="submit"
-              style={{
-                color: "white",
-                background: "var(--main-purple-light)",
-                border: "none",
-              }}
-            >
-              Submit
-            </StandardButton>
-          </Modal.Footer>
-        </Form>
+              {formik.touched.body && formik.errors.body && (
+                <Typography color="error">{formik.errors.body}</Typography>
+              )}
+            </Box>
+            <Box sx={{ padding: "0 18px" }}>
+              <Typography variant="caption" style={{ color: "grey" }}>
+                Note: Specifics are very helpful: Who, What, Where, When, Why
+              </Typography>
+            </Box>
+            <Box sx={{ padding: "24px 18px" }} textAlign="right">
+              <Button
+                variant="contained"
+                color="primary"
+                type="submit"
+                style={{
+                  color: "white",
+                  background: "var(--main-purple-light)",
+                }}
+              >
+                Submit
+              </Button>
+            </Box>
+          </form>
+        </div>
       </Modal>
     </div>
   );
