@@ -1,8 +1,6 @@
 import { createSlice } from "@reduxjs/toolkit";
 import type { RootState, AppDispatch } from "./";
-import { authSelector } from "./auth";
 import { useDispatch, useSelector } from "react-redux";
-import { authorizationHeader } from "src/helpers/authorizationHeader";
 import { makeRequest } from "src/helpers/makeRequest";
 
 type InitialStateT = {
@@ -153,8 +151,6 @@ export const deleteHelpText = (slug: string) => {
 export const createHelpText = (values: Record<string, unknown>) => {
   return async (dispatch: AppDispatch, getState) => {
     try {
-      const { token } = authSelector(getState());
-      const authHeader = authorizationHeader(token);
       dispatch(helpTextsActions.createHelpText());
 
       const response = await makeRequest.post(`/api/helpTexts`, values);

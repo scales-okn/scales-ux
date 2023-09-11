@@ -1,4 +1,5 @@
-//@ts-ignore
+// @ts-nocheck
+/* eslint-disable */
 import { authorizationHeader } from "src/helpers/authorizationHeader";
 import store from "src/store";
 
@@ -62,3 +63,4 @@ export const makeRequest = {
     sendRequest({ method: "PATCH", path, body }),
   delete: (path: string) => sendRequest({ method: "DELETE", path }),
 };
+/* eslint-enable */

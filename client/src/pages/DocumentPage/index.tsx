@@ -1,10 +1,6 @@
 import React, { FunctionComponent, useState, useEffect } from "react";
 import { useParams } from "react-router";
-import { authSelector } from "src/store/auth";
-import { authorizationHeader } from "src/helpers/authorizationHeader";
-import { useSelector } from "react-redux";
 import Loader from "../../components/Loader";
-import { useEffectOnce } from "react-use";
 import { makeRequest } from "src/helpers/makeRequest";
 
 type Params = {
@@ -22,8 +18,6 @@ const DocumentPage: FunctionComponent = () => {
     docId = null,
   } = useParams<Params>();
   const [html, setHtml] = useState("");
-  const { token } = useSelector(authSelector);
-  const authHeader = authorizationHeader(token);
   const docUrl = `/proxy/document/${ringId}/${ringVersion}/${entityType}/${docId}`;
   const receiptStart1 = `<table width="400"`,
     receiptStart2 = `<table border="1"`,
@@ -54,7 +48,7 @@ const DocumentPage: FunctionComponent = () => {
 
   useEffect(() => {
     fetchDocument();
-  }, [docId]);
+  }, [docId]); // eslint-disable-line react-hooks/exhaustive-deps
 
   return (
     <Loader isVisible={!html}>

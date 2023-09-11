@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import { useAuthHeader, useUser } from "src/store/auth";
+import { useUser } from "src/store/auth";
 
 import { useFormik } from "formik";
 import * as yup from "yup";
@@ -25,7 +25,6 @@ const Ring: React.FC = () => {
   const { ringId = null } = useParams<Params>();
   const { ring } = useRing(Number(ringId));
   const [loading, setLoading] = useState(false);
-  const authHeader = useAuthHeader();
   const user = useUser();
   const { notify } = useNotify();
   const navigate = useNavigate();
