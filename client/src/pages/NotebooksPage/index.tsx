@@ -5,6 +5,17 @@ import { Link } from "react-router-dom";
 
 import { DataGrid, GridCellParams } from "@mui/x-data-grid";
 import { Form, Row, Col, InputGroup } from "react-bootstrap";
+import {
+  FormControl,
+  InputLabel,
+  Select,
+  MenuItem,
+  TextField,
+  InputAdornment,
+  IconButton,
+  Grid,
+} from "@mui/material";
+
 import { useEffectOnce } from "react-use";
 import SearchIcon from "@mui/icons-material/Search";
 import dayjs from "dayjs";
@@ -153,40 +164,50 @@ const NotebooksPage: FunctionComponent = () => {
   return (
     <Loader isVisible={loadingNotebooks}>
       <>
-        <Row>
-          <Col md>
-            <InputGroup>
-              <InputGroup.Text className="bg-white">Show:</InputGroup.Text>
-              <Form.Select
-                className="border-start-0 ps-0"
+        <Grid container spacing={2} sx={{ alignItems: "center" }}>
+          <Grid item md={4}>
+            <FormControl fullWidth>
+              <InputLabel>Show:</InputLabel>
+              <Select
                 value={showNotebooks}
-                onChange={(event: React.ChangeEvent<HTMLSelectElement>) =>
-                  setShowNotebooks(event.target.value)
+                onChange={(event) =>
+                  setShowNotebooks(event.target.value as string)
                 }
+                sx={{ background: "white", borderRadius: "4px" }}
               >
-                <option value="my-notebooks">My Notebooks</option>
-                <option value="shared-notebooks">Shared with me</option>
-                <option value="public-notebooks">Public Notebooks</option>
-              </Form.Select>
-            </InputGroup>
-          </Col>
-          <Col md>
-            <InputGroup>
-              <InputGroup.Text className="bg-white">
-                <SearchIcon />
-              </InputGroup.Text>
-              <Form.Control
-                autoComplete="off"
-                className="border-start-0 ps-0"
-                id="filter-notebooks"
-                placeholder="Filter Notebooks"
-                onChange={(event: any) =>
-                  setFilterNotebooks(event.target.value)
-                }
-              />
-            </InputGroup>
-          </Col>
-          <Col>
+                <MenuItem value="my-notebooks">My Notebooks</MenuItem>
+                <MenuItem value="shared-notebooks">Shared with me</MenuItem>
+                <MenuItem value="public-notebooks">Public Notebooks</MenuItem>
+              </Select>
+            </FormControl>
+          </Grid>
+          <Grid item md={4}>
+            <TextField
+              fullWidth
+              id="filter-notebooks"
+              label="Filter Notebooks"
+              placeholder="Filter Notebooks"
+              value={filterNotebooks}
+              onChange={(event: React.ChangeEvent<HTMLInputElement>) =>
+                setFilterNotebooks(event.target.value)
+              }
+              InputProps={{
+                startAdornment: (
+                  <InputAdornment position="start">
+                    <IconButton>
+                      <SearchIcon />
+                    </IconButton>
+                  </InputAdornment>
+                ),
+              }}
+              sx={{
+                background: "white",
+                borderRadius: "4px",
+                "& .MuiFormControl-root": { border: "none" },
+              }}
+            />
+          </Grid>
+          <Grid item md={4}>
             <Link
               to="/notebooks/new"
               className="text-white text-decoration-none"
@@ -202,8 +223,8 @@ const NotebooksPage: FunctionComponent = () => {
                 Create Notebook
               </StandardButton>
             </Link>
-          </Col>
-        </Row>
+          </Grid>
+        </Grid>
         <Row>
           <div style={{ height: "60vh", width: "100%" }} className="mt-4">
             <DataGrid
