@@ -4,7 +4,7 @@ import { useSelector } from "react-redux";
 import { Link } from "react-router-dom";
 
 import { DataGrid, GridCellParams } from "@mui/x-data-grid";
-import { Form, Row, Col, InputGroup } from "react-bootstrap";
+import { Row } from "react-bootstrap";
 import {
   FormControl,
   InputLabel,
@@ -225,21 +225,20 @@ const NotebooksPage: FunctionComponent = () => {
             </Link>
           </Grid>
         </Grid>
-        <Row>
-          <div style={{ height: "60vh", width: "100%" }} className="mt-4">
-            <DataGrid
-              rows={notebooksData}
-              columns={columns}
-              disableColumnMenu
-              disableColumnFilter
-              hideFooterPagination
-              hideFooter={notebooks?.length <= 10 ? true : false}
-              rowCount={notebooks?.length}
-              checkboxSelection={false}
-              className="bg-white"
-            />
-          </div>
-        </Row>
+
+        <div style={{ height: "60vh", width: "100%" }} className="mt-4">
+          <DataGrid
+            rows={notebooksData}
+            columns={columns}
+            disableColumnMenu
+            disableColumnFilter
+            hideFooterPagination
+            hideFooter={notebooks?.length <= 10 ? true : false}
+            rowCount={notebooks?.length}
+            checkboxSelection={false}
+            className="bg-white"
+          />
+        </div>
       </>
     </Loader>
   );

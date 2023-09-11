@@ -49,7 +49,7 @@
     "cypress": "cypress open",
     "e2e": "cypress run",
     "test": "react-scripts test",
-    "start": "vite --host",
+    "start": "vite --host --port 3000",
     "build": "vite build",
     "serve": "vite preview",
     "eject": "react-scripts eject",

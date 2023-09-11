@@ -11,6 +11,8 @@ export default defineConfig(() => {
   return {
     build: {
       outDir: "build",
+      assetsDir: "assets",
+      emptyOutDir: true,
     },
     base: "/",
     server: {
@@ -27,6 +29,14 @@ export default defineConfig(() => {
     resolve: {
       alias: {
         src: "/src",
+      },
+    },
+    server: {
+      proxy: {
+        "/api": {
+          target: "http://localhost:8080",
+          changeOrigin: true,
+        },
       },
     },
   };

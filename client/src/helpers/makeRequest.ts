@@ -16,7 +16,7 @@ const sendRequest = async ({
   body?: Record<string, any>;
   options?: Record<string, unknown>;
 }) => {
-  const url = `${baseURL}${path}`;
+  // const url = `${baseURL}${path}`;
   const token = store.getState().auth.token;
   const authHeader = authorizationHeader(token);
 
@@ -30,7 +30,7 @@ const sendRequest = async ({
   };
 
   try {
-    const response = await fetch(url, fetchOptions);
+    const response = await fetch(path, fetchOptions);
 
     if (!response.ok) {
       throw new Error(`HTTP error! Status: ${response.status}`);
