@@ -32,7 +32,7 @@ const FeedbackWidget = () => {
       try {
         const response = await makeRequest.post(`/api/feedback`, values);
 
-        if (response.code === 200) {
+        if (response.status === "OK") {
           notify(response.message, "success");
           setFeedbackModalOpen(false);
         } else {

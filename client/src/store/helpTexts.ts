@@ -117,7 +117,7 @@ export const getHelpTexts = () => {
 
       const response = await makeRequest.get(`/api/helpTexts`);
 
-      if (response.code === 200) {
+      if (response.status === "OK") {
         dispatch(helpTextsActions.getHelpTextsSuccess(response.data.helpTexts));
       } else {
         dispatch(helpTextsActions.getHelpTextsFailure());
@@ -136,7 +136,7 @@ export const deleteHelpText = (slug: string) => {
 
       const response = await makeRequest.delete(`/api/helpTexts/${slug}`);
 
-      if (response.code === 200) {
+      if (response.status === "OK") {
         dispatch(helpTextsActions.deleteHelpTextSuccess({ slug }));
       } else {
         dispatch(helpTextsActions.deleteHelpTextFailure());
@@ -155,7 +155,7 @@ export const createHelpText = (values: Record<string, unknown>) => {
 
       const response = await makeRequest.post(`/api/helpTexts`, values);
 
-      if (response.code === 200) {
+      if (response.status === "OK") {
         dispatch(
           helpTextsActions.createHelpTextSuccess({
             newHelpText: response.data.helpText,
@@ -184,7 +184,7 @@ export const updateHelpText = (
         values,
       );
 
-      if (response.code === 200) {
+      if (response.status === "OK") {
         dispatch(
           helpTextsActions.updateHelpTextSuccess({
             updatedHelpText: response.data.helpText,

@@ -25,7 +25,7 @@ const AdminFeedbackPage: FunctionComponent = () => {
     const fetchFeedback = async () => {
       const response = await makeRequest.get(`/api/feedback`);
 
-      if (response.code === 200) {
+      if (response.status === "OK") {
         setRows(response.data.feedback);
       }
     };

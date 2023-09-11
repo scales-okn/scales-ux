@@ -34,7 +34,7 @@ const EmailVerificationPage: FunctionComponent = () => {
       const response = await makeRequest.post(`/api/users/verify-email`, {
         token,
       });
-      if (response.code === 200) {
+      if (response.status === "OK") {
         setTimer();
       }
       setIsLoading(false);

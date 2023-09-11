@@ -16,7 +16,7 @@ const DeleteFeedback = ({ feedbackId }: Props) => {
   const DeleteFeedback = async () => {
     const response = await makeRequest.delete(`/api/feedback/${feedbackId}`);
 
-    if (response.code === 200) {
+    if (response.status === "OK") {
       window.location.reload();
     } else {
       notify(response.message, "error");

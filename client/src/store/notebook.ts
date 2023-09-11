@@ -114,7 +114,7 @@ export function fetchNotebook(id: string) {
     try {
       const response = await makeRequest.get(`/api/notebooks/${id}`);
 
-      if (response.code === 200) {
+      if (response.status === "OK") {
         const { data } = response;
         dispatch(notebookActions.getNotebookSuccess(data.notebook));
       } else {
@@ -132,7 +132,7 @@ export function updateNotebook(id: string, payload: any) {
 
     try {
       const response = await makeRequest.put(`/api/notebooks/${id}`, payload);
-      if (response.code === 200) {
+      if (response.status === "OK") {
         const { data, message } = response;
         dispatch(notify(message, "success"));
         dispatch(notebookActions.saveNotebookSuccess(data.notebook));
@@ -153,7 +153,7 @@ export function createNotebook(payload: any) {
     try {
       const response = await makeRequest.post(`/api/notebooks`, payload);
       const { data, message } = response;
-      if (response.code === 200) {
+      if (response.status === "OK") {
         // dispatch(notify(message, "success"));
         dispatch(notebookActions.createNotebookSuccess(data.notebook));
       } else {
@@ -172,7 +172,7 @@ export function deleteNotebook(id: string) {
     try {
       const response = await makeRequest.delete(`/api/notebooks/${id}`);
       const { message } = response;
-      if (response.code === 200) {
+      if (response.status === "OK") {
         dispatch(notebookActions.clearNotebook());
         dispatch(notify(message, "success"));
         dispatch(notebookActions.removeNotebookSuccess());

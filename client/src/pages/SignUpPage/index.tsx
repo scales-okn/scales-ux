@@ -53,7 +53,7 @@ const SignUpPage = () => {
 
       const response = await makeRequest.post(`/api/users/create`, values);
 
-      if (response.code === 200) {
+      if (response.status === "OK") {
         setIsLoading(false);
         setMessage(response.message);
       } else {

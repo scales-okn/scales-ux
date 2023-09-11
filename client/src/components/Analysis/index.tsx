@@ -194,7 +194,7 @@ const Analysis: FunctionComponent<Props> = ({ panelId }) => {
       );
 
       // TODO: confirm this still works
-      if (response.code === 200) {
+      if (response.status === "OK") {
         const resData = await response.json();
         resData instanceof Array && setAutoCompleteSuggestions(resData);
         resData?.success === false &&

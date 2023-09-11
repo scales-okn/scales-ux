@@ -34,7 +34,7 @@ const ForgotPassword = () => {
         values,
       );
 
-      if (response.code === 200) {
+      if (response.status === "OK") {
         notify(response.message, "success");
         navigate("/sign-in");
       } else {

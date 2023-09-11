@@ -84,7 +84,7 @@ export const getRings = () => {
       const response = await makeRequest.get(`/api/rings`);
       const { data } = response;
 
-      if (response.code === 200) {
+      if (response.status === "OK") {
         dispatch(ringsActions.getRingsSuccess(data.rings));
       } else {
         dispatch(ringsActions.getRingsFailure());

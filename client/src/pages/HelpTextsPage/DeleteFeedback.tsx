@@ -17,7 +17,7 @@ const DeleteFeedback: FunctionComponent<Props> = ({ feedbackId }) => {
   const DeleteFeedback = async () => {
     const response = await makeRequest.delete(`/api/feedback/${feedbackId}`);
 
-    if (response.code === 200) {
+    if (response.status === "OK") {
       notify("Feedback deleted successfully", "success");
     } else {
       notify(response.message, "error");
