@@ -163,10 +163,13 @@ const NotebooksPage: FunctionComponent = () => {
   return (
     <Loader isVisible={loadingNotebooks}>
       <>
-        <Grid container spacing={2} sx={{ alignItems: "center" }}>
+        <Grid
+          container
+          spacing={2}
+          sx={{ alignItems: "center", marginTop: "80px" }}
+        >
           <Grid item md={4}>
             <FormControl fullWidth>
-              <InputLabel>Show:</InputLabel>
               <Select
                 value={showNotebooks}
                 onChange={(event) =>
@@ -184,7 +187,6 @@ const NotebooksPage: FunctionComponent = () => {
             <TextField
               fullWidth
               id="filter-notebooks"
-              label="Filter Notebooks"
               placeholder="Filter Notebooks"
               value={filterNotebooks}
               onChange={(event: React.ChangeEvent<HTMLInputElement>) =>

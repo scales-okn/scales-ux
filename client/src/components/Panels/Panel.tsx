@@ -1,89 +1,32 @@
-import React, {
-  FunctionComponent,
-  useState,
-  useEffect,
-  useContext,
-  useMemo,
-} from "react";
-
+import React, { FunctionComponent, useState, useEffect, useMemo } from "react";
 import { usePanel } from "src/store/panels";
 import { useRing } from "src/store/rings";
-
 import {
   Accordion,
-  Col,
-  useAccordionButton,
-  Form,
-  AccordionContext,
-  Card,
-} from "react-bootstrap";
+  CardContent,
+  Typography,
+  FormControl,
+  Input,
+  Button,
+  Grid,
+  AccordionDetails,
+} from "@mui/material";
 import { Link } from "react-router-dom";
 import { DataGrid } from "@mui/x-data-grid";
 import uniqid from "uniqid";
-
 import Filters from "../Filters";
 import Loader from "../Loader";
 import Dataset from "../Dataset";
 import Analysis from "../Analysis";
-
 import ConfirmModal from "src/components/Modals/ConfirmModal";
-import StandardButton from "src/components/Buttons/StandardButton";
 import ColumnHeader from "src/components/ColumnHeader";
+import DeleteButton from "src/components/Buttons/DeleteButton";
 
 import "./Panel.scss";
-
-type ResultsTogglerProps = {
-  children: React.ReactNode;
-  eventKey: string;
-  callback?: (eventKey: string) => void;
-};
-
-const ResultsToggler: FunctionComponent<ResultsTogglerProps> = ({
-  children,
-  eventKey,
-  callback,
-}) => {
-  const decoratedOnClick = useAccordionButton(
-    eventKey,
-    () => callback && callback(eventKey),
-  );
-
-  return (
-    <StandardButton variant="link" size="sm" onClick={decoratedOnClick}>
-      {children}
-    </StandardButton>
-  );
-};
+import { panelHeaderStyles } from "./styles";
 
 type PanelProps = {
   panelId: string;
-};
-
-type AccordionToggleButtonProps = {
-  eventKey: string;
-  callback?: (eventKey: string) => void;
-};
-
-const AccordionToggleButton = ({
-  eventKey,
-  callback,
-}: AccordionToggleButtonProps) => {
-  const { activeEventKey } = useContext(AccordionContext);
-  const decoratedOnClick = useAccordionButton(
-    eventKey,
-    () => callback && callback(eventKey),
-  );
-  const isCurrentEventKey = activeEventKey === eventKey;
-
-  return (
-    <StandardButton
-      variant="outline-primary"
-      size="sm"
-      onClick={decoratedOnClick}
-    >
-      {isCurrentEventKey ? "Close" : "Open"}
-    </StandardButton>
-  );
 };
 
 const Panel: FunctionComponent<PanelProps> = ({ panelId }) => {
@@ -107,12 +50,12 @@ const Panel: FunctionComponent<PanelProps> = ({ panelId }) => {
   useEffect(() => {
     if (!ring || ring.info || loadingRingInfo) return;
     getRingInfo(ring.version);
-  }, [ring]); // eslint-disable-line react-hooks/exhaustive-deps
+  }, [ring]);
 
   useEffect(() => {
     if (!info || collapsed || loadingPanelResults) return;
     getPanelResults();
-  }, [collapsed, info]); // eslint-disable-line react-hooks/exhaustive-deps
+  }, [collapsed, info]);
 
   const rows = results?.results?.map((result) => ({
     ...result,
@@ -167,151 +110,136 @@ const Panel: FunctionComponent<PanelProps> = ({ panelId }) => {
     });
 
     return out;
-  }, [info, ring]); // eslint-disable-line react-hooks/exhaustive-deps
+  }, [info, ring]);
 
   if (!panel?.ringId) return <Dataset panelId={panel.id} />;
 
   return (
-    <Accordion
-      defaultActiveKey={collapsed === true ? null : panel.id}
-      className="mb-4"
-    >
-      <Card>
-        <Card.Header className="d-flex align-items-center py-3">
-          <div
-            className="notebook-ring-name"
-            style={{
-              fontSize: "1.1rem",
-            }}
+    <Accordion expanded={!collapsed} className="mb-4">
+      <div className={`panelHeaderStyles ${panelHeaderStyles}`}>
+        <Typography
+          className="notebook-ring-name"
+          style={{
+            fontSize: "1.1rem",
+          }}
+        >
+          {ring?.name}
+        </Typography>
+        <div className="ms-auto">
+          <DeleteButton
+            onClick={() => setConfirmVisible(true)}
+            sx={{ marginRight: "12px" }}
+          />
+          <Button
+            variant="outlined"
+            size="small"
+            onClick={() => setPanelCollapsed(!collapsed)}
           >
-            {ring?.name}
-          </div>
-          <div className="ms-auto">
-            <StandardButton
-              variant="outline-danger"
-              size="sm"
-              onClick={() => setConfirmVisible(true)}
-              className="me-1"
-            >
-              Delete
-            </StandardButton>
-            <AccordionToggleButton
-              eventKey={panel.id}
-              callback={() => setPanelCollapsed(!collapsed)}
+            {collapsed ? "Open" : "Close"}
+          </Button>
+        </div>
+      </div>
+
+      <AccordionDetails sx={{ padding: 0 }}>
+        <CardContent
+          sx={{
+            padding: 0,
+            marginX: 0,
+          }}
+        >
+          <FormControl sx={{ width: "100%" }}>
+            <Input
+              onClick={(event) => {
+                event.stopPropagation();
+              }}
+              placeholder="Your Panel Description Here"
+              onChange={(event) => {
+                setPanelDescription(event.target.value);
+              }}
+              value={panel?.description || ""}
+              style={{
+                fontSize: "0.9rem",
+              }}
+              className="description"
+              sx={{
+                background: "var(--light-grey)",
+                height: "56px",
+                paddingLeft: "16px",
+              }}
             />
-          </div>
-        </Card.Header>
-        <Accordion.Collapse eventKey={panel.id}>
-          <>
-            <Card.Body className="p-0 mx-0">
-              <Form.Control
-                type="textarea"
-                onClick={(event) => {
-                  event.stopPropagation();
-                }}
-                placeholder="Your Panel Description Here"
-                onChange={(event) => {
-                  setPanelDescription(event.target.value);
-                }}
-                value={panel?.description || ""}
-                style={{
-                  fontSize: "0.9rem",
-                }}
-                className="border-0 bg-light border-bottom p-3 panel-description font-italic text-muted"
-              />
+          </FormControl>
 
-              <Filters panelId={panel.id} />
-              <div className="p-0 bg-light border-bottom border-top">
-                <Loader
-                  contentHeight={resultsCollapsed ? "60px" : "400px"}
-                  isVisible={loadingPanelResults}
-                >
-                  <>
-                    {results && (
-                      <Accordion
-                        defaultActiveKey={
-                          resultsCollapsed === true
-                            ? "results-summary"
-                            : "results"
-                        }
-                      >
-                        <Accordion.Collapse eventKey="results">
-                          <>
-                            <div
-                              style={{
-                                width: "100%",
-                                overflowX: "hidden",
+          <Filters panelId={panel.id} />
+          <div className="p-0 bg-light border-top">
+            <Loader
+              contentHeight={resultsCollapsed ? "60px" : "400px"}
+              isVisible={loadingPanelResults}
+            >
+              <>
+                {results && (
+                  <Accordion expanded={resultsCollapsed === true}>
+                    <AccordionDetails sx={{ padding: "0px" }}>
+                      <>
+                        <div
+                          style={{
+                            width: "100%",
+                            overflowX: "hidden",
+                          }}
+                        >
+                          {!resultsCollapsed && (
+                            <DataGrid
+                              rows={rows}
+                              onPaginationModelChange={(model) => {
+                                getPanelResults([], model.page);
                               }}
-                            >
-                              {!resultsCollapsed && (
-                                <DataGrid
-                                  rows={rows}
-                                  onPaginationModelChange={(model) => {
-                                    getPanelResults([], model.page);
-                                  }}
-                                  paginationModel={{
-                                    page: results?.page,
-                                    pageSize: results?.batchSize,
-                                  }}
-                                  disableColumnMenu
-                                  disableColumnFilter
-                                  pageSizeOptions={[10]}
-                                  columns={columns}
-                                  rowCount={results?.totalCount}
-                                  checkboxSelection={false}
-                                  className="bg-white border-0 rounded-0"
-                                  paginationMode="server"
-                                  sx={{
-                                    "& .MuiDataGrid-virtualScroller": {
-                                      minHeight: "400px",
-                                    },
-                                  }}
-                                />
-                              )}
-                            </div>
-                            <div className="p-3">
-                              {results?.totalCount?.toLocaleString()} Dockets
-                              Found
-                              <ResultsToggler
-                                eventKey="results-summary"
-                                callback={() =>
-                                  setPanelResultsCollapsed(!resultsCollapsed)
-                                }
-                              >
-                                (collapse)
-                              </ResultsToggler>
-                            </div>
-                          </>
-                        </Accordion.Collapse>
-                        <Accordion.Collapse eventKey="results-summary">
-                          <div className="p-3">
-                            Available data based on filters:{" "}
-                            {results?.totalCount?.toLocaleString()} Dockets
-                            <ResultsToggler
-                              eventKey="results"
-                              callback={() =>
-                                setPanelResultsCollapsed(!resultsCollapsed)
-                              }
-                            >
-                              (expand to browse data)
-                            </ResultsToggler>
-                          </div>
-                        </Accordion.Collapse>
-                      </Accordion>
-                    )}
-                  </>
-                </Loader>
-              </div>
+                              paginationModel={{
+                                page: results?.page,
+                                pageSize: results?.batchSize,
+                              }}
+                              disableColumnMenu
+                              disableColumnFilter
+                              pageSizeOptions={[10]}
+                              columns={columns}
+                              rowCount={results?.totalCount}
+                              checkboxSelection={false}
+                              className="bg-white border-0 rounded-0"
+                              paginationMode="server"
+                              sx={{
+                                "& .MuiDataGrid-virtualScroller": {
+                                  minHeight: "400px",
+                                },
+                              }}
+                            />
+                          )}
+                        </div>
+                        <div className="p-3">
+                          {results?.totalCount?.toLocaleString()} Dockets Found
+                          <Button
+                            size="small"
+                            onClick={() =>
+                              setPanelResultsCollapsed(!resultsCollapsed)
+                            }
+                            sx={{ textTransform: "none" }}
+                          >
+                            ({resultsCollapsed ? "Expand" : "Collapse"})
+                          </Button>
+                        </div>
+                      </>
+                    </AccordionDetails>
+                  </Accordion>
+                )}
+              </>
+            </Loader>
+          </div>
 
-              <div className="bg-white p-3">
-                <Col>
-                  <Analysis panelId={panelId} />
-                </Col>
-              </div>
-            </Card.Body>
-          </>
-        </Accordion.Collapse>
-      </Card>
+          <div className="bg-white p-3">
+            <Grid>
+              <Analysis panelId={panelId} />
+            </Grid>
+          </div>
+        </CardContent>
+      </AccordionDetails>
+
       <ConfirmModal
         itemName="panel"
         open={confirmVisible}
