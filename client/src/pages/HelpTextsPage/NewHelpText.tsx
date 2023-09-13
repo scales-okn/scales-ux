@@ -1,8 +1,9 @@
 import React, { useState } from "react";
-import { TextField, Grid } from "@mui/material";
-import StandardButton from "src/components/Buttons/StandardButton";
+import { TextField, Grid, Button } from "@mui/material";
+
 import { useFormik } from "formik";
 import * as yup from "yup";
+
 import ModalContainer from "src/components/Modals/ModalContainer";
 import { useHelpTexts } from "src/store/helpTexts";
 
@@ -54,21 +55,21 @@ const NewHelpText = () => {
           display: "flex",
           alignItems: "center",
           justifyContent: "flex-end",
-          paddingRight: "26px",
         }}
       >
-        <StandardButton
-          variant="success"
+        <Button
+          color="success"
+          variant="contained"
           onClick={() => setNewHelpTextVisible(true)}
           style={{ marginBottom: "24px" }}
         >
           Add Help Text
-        </StandardButton>
+        </Button>
       </div>
       <ModalContainer open={newHelpTextVisible} onClose={onClose}>
-        <h4 style={{ margin: "12px 0 24px 0", color: "var(--main-purple)" }}>
+        <h3 style={{ margin: "12px 0 24px 0", color: "var(--main-purple)" }}>
           Add New Help Text
-        </h4>
+        </h3>
         <form onSubmit={formik.handleSubmit}>
           <Grid container spacing={2}>
             <Grid item xs={12}>
@@ -137,10 +138,18 @@ const NewHelpText = () => {
                 placeholder="Links to relevant documentation. Separate input items by !!"
               />
             </Grid>
-            <Grid item xs={12} sx={{ marginTop: "12px" }}>
-              <StandardButton type="submit" variant="success">
+            <Grid
+              item
+              xs={12}
+              sx={{
+                marginTop: "12px",
+                display: "flex",
+                justifyContent: "flex-end",
+              }}
+            >
+              <Button type="submit" variant="contained">
                 Submit
-              </StandardButton>
+              </Button>
             </Grid>
           </Grid>
         </form>

@@ -60,20 +60,20 @@ const AdminUsersPages = () => {
         </Tooltip>
       ),
     },
-    {
-      field: "approved",
-      headerName: "Approved",
-      width: 140,
-      renderHeader,
-      renderCell: (params: GridCellParams) => (
-        <UserFieldToggle
-          userId={params.row.id}
-          fieldName="approved"
-          value={params.row.approved}
-          disabled={params.row.id === id}
-        />
-      ),
-    },
+    // {
+    //   field: "approved",
+    //   headerName: "Approved",
+    //   width: 140,
+    //   renderHeader,
+    //   renderCell: (params: GridCellParams) => (
+    //     <UserFieldToggle
+    //       userId={params.row.id}
+    //       fieldName="approved"
+    //       value={params.row.approved}
+    //       disabled={params.row.id === id}
+    //     />
+    //   ),
+    // },
     {
       field: "blocked",
       headerName: "Blocked",

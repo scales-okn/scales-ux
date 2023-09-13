@@ -1,14 +1,21 @@
 import React, { FunctionComponent, useEffect, useState } from "react";
-
 import * as yup from "yup";
-import { Col, Container, Form, Row } from "react-bootstrap";
+import {
+  Container,
+  Typography,
+  TextField,
+  Grid,
+  FormControlLabel,
+  Button,
+  Checkbox,
+} from "@mui/material";
 import { useNavigate } from "react-router-dom";
 import { authSelector, login } from "src/store/auth";
 import { useDispatch, useSelector } from "react-redux";
-
 import { useFormik } from "formik";
 
-import StandardButton from "src/components/Buttons/StandardButton";
+import { signInPageStyles } from "./styles";
+
 export interface UserSignInFields {
   email: string;
   password: string;
@@ -25,7 +32,6 @@ export const UserSignInValidationSchema = yup.object({
 const SignInPage: FunctionComponent = () => {
   const navigate = useNavigate();
   const { user, errors } = useSelector(authSelector);
-  // const { loading, user, hasErrors, errors } = useSelector(authSelector);
   const dispatch = useDispatch();
   const [rememberMe, setRememberMe] = useState(false);
 
@@ -50,88 +56,102 @@ const SignInPage: FunctionComponent = () => {
   });
 
   return (
-    <Container className="h-100">
-      <Row className="h-100 justify-content-center align-items-center text-center">
-        <Col lg="6" xs="10">
-          <h6 className="h6" style={{ color: "crimson", fontStyle: "italic" }}>
+    <Container className={`signInPageStyles ${signInPageStyles}`}>
+      <Grid container className="gridRow">
+        <Grid item lg={6} xs={10}>
+          <Typography
+            variant="h6"
+            style={{
+              color: "crimson",
+              fontStyle: "italic",
+              marginBottom: "16px",
+            }}
+          >
             This Application is currently in beta development. Official launch
             scheduled for fall 2023.
-          </h6>
-          <Form noValidate onSubmit={formik.handleSubmit}>
+          </Typography>
+          <form noValidate onSubmit={formik.handleSubmit}>
             <div
               className="form-floating"
               style={{ marginTop: "50px", marginBottom: "16px" }}
             >
-              <Form.Control
+              <TextField
+                fullWidth
                 type="email"
                 name="email"
-                placeholder="name@example.com"
-                className="rounded-0 rounded-top"
+                label="Email address"
+                variant="outlined"
                 value={formik.values.email}
                 onChange={formik.handleChange}
-                isInvalid={
-                  formik.touched.email && Boolean(formik.errors?.email)
-                }
+                error={formik.touched.email && Boolean(formik.errors?.email)}
+                helperText={formik.touched.email && formik.errors?.email}
+                className="input"
               />
-              <Form.Label>Email address</Form.Label>
             </div>
             <div className="form-floating mb-3">
-              <Form.Control
+              <TextField
+                fullWidth
                 type="password"
                 name="password"
-                placeholder="Password"
-                className="rounded-0 rounded-bottom"
+                label="Password"
+                variant="outlined"
                 value={formik.values.password}
                 onChange={formik.handleChange}
-                isInvalid={
+                error={
                   formik.touched.password && Boolean(formik.errors?.password)
                 }
+                helperText={formik.touched.password && formik.errors?.password}
+                className="input"
               />
-              <Form.Label>Password</Form.Label>
             </div>
-            <Form.Group className="mb-4">
-              <Form.Check
-                type="checkbox"
+
+            <div className="buttonRow">
+              <FormControlLabel
+                control={
+                  <Checkbox
+                    checked={rememberMe}
+                    onChange={() => setRememberMe(!rememberMe)}
+                    name="rememberMe"
+                    color="primary"
+                  />
+                }
                 label="Remember Me"
-                name="rememberMe"
-                onChange={() => setRememberMe(!rememberMe)}
                 className="text-start"
               />
-            </Form.Group>
-
-            <StandardButton
-              type="submit"
-              className="w-100 mb-3 text-white"
-              size="lg"
-              style={{
-                background: "var(--main-purple-light)",
-                border: "none",
-                marginTop: "20px",
-              }}
-            >
-              Sign in
-            </StandardButton>
-            <Row className="mb-5">
-              <Col className="text-start" md="5">
-                <a
+              <Button
+                color="success"
+                variant="contained"
+                size="medium"
+                type="submit"
+              >
+                Sign in
+              </Button>
+            </div>
+            <Grid container justifyContent="space-between" className="mb-5">
+              <Grid item xs={6}>
+                <Typography
+                  variant="body2"
+                  component="a"
                   href="/forgot-password"
-                  className="small"
                   style={{ color: "var(--details-blue)" }}
                 >
                   Forgot password?
-                </a>
-              </Col>
-              <Col className="text-end">
-                <a
+                </Typography>
+              </Grid>
+              <Grid item xs={6} style={{ textAlign: "end" }}>
+                <Typography
+                  variant="body2"
+                  component="a"
                   href="/sign-up"
-                  className="small"
                   style={{ color: "var(--details-blue)" }}
-                >{`Don't have an account? Sign Up`}</a>
-              </Col>
-            </Row>
-          </Form>
-        </Col>
-      </Row>
+                >
+                  {`Don't have an account? Sign Up`}
+                </Typography>
+              </Grid>
+            </Grid>
+          </form>
+        </Grid>
+      </Grid>
     </Container>
   );
 };

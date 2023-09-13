@@ -3,7 +3,7 @@ import { makeRequest } from "src/helpers/makeRequest";
 
 import { useNotify } from "src/components/Notifications";
 import ConfirmModal from "src/components/Modals/ConfirmModal";
-import StandardButton from "src/components/Buttons/StandardButton";
+import { Button } from "@mui/material";
 
 type Props = {
   feedbackId: number;
@@ -25,17 +25,17 @@ const DeleteFeedback = ({ feedbackId }: Props) => {
 
   return (
     <>
-      <StandardButton
-        className="text-white float-end me-2"
-        variant="danger"
+      <Button
+        color="error"
+        variant="outlined"
+        size="small"
         onClick={(e) => {
           e.stopPropagation();
           setConfirmVisible(true);
         }}
-        size="sm"
       >
         Delete
-      </StandardButton>
+      </Button>
       <ConfirmModal
         itemName="feedback"
         open={confirmVisible}

@@ -1,10 +1,11 @@
 import React, { FunctionComponent, useState } from "react";
 
+import { Button } from "@mui/material";
+
 import { makeRequest } from "src/helpers/makeRequest";
 
 import { useNotify } from "src/components/Notifications";
 import ConfirmModal from "src/components/Modals/ConfirmModal";
-import StandardButton from "src/components/Buttons/StandardButton";
 
 type Props = {
   userId: number;
@@ -28,15 +29,17 @@ const DeleteUser: FunctionComponent<Props> = ({ userId, disabled = false }) => {
 
   return (
     <>
-      <StandardButton
-        className="text-white float-end me-2"
-        variant="danger"
-        onClick={() => setConfirmVisible(true)}
-        disabled={disabled}
-        size="sm"
+      <Button
+        color="error"
+        variant="outlined"
+        size="small"
+        onClick={(e) => {
+          e.stopPropagation();
+          setConfirmVisible(true);
+        }}
       >
         Delete
-      </StandardButton>
+      </Button>
       <ConfirmModal
         itemName="user"
         open={confirmVisible}

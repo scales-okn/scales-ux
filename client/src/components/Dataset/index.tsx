@@ -4,7 +4,7 @@ import Loader from "../Loader";
 import { usePanel } from "src/store/panels";
 import { useRing, useRings } from "src/store/rings";
 
-import StandardButton from "src/components/Buttons/StandardButton";
+import Button from "@mui/material/Button";
 
 import "./Dataset.scss";
 
@@ -75,20 +75,19 @@ const Dataset = ({ panelId }: DatasetProps) => {
         </Grid>
 
         <Loader isVisible={ring && loadingRingInfo}>
-          <Grid container justifyContent="center" className="mb-4 mt-3">
+          <Grid container justifyContent="center">
             <Grid item xs={12} sm={6} className="justify-content-center d-flex">
-              <StandardButton
-                variant="primary"
-                style={{ color: "white" }}
-                className="text-white rounded-3"
+              <Button
+                variant="contained"
                 disabled={!info}
                 onClick={() => {
                   updatePanel({ ringId: selectedRing.id });
                   setPanelCollapsed(false);
                 }}
+                sx={{ marginTop: "12px" }}
               >
                 Start Exploring
-              </StandardButton>
+              </Button>
             </Grid>
           </Grid>
         </Loader>

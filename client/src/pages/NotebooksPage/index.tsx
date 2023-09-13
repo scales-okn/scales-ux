@@ -6,13 +6,13 @@ import { Link } from "react-router-dom";
 import { DataGrid, GridCellParams } from "@mui/x-data-grid";
 import {
   FormControl,
-  InputLabel,
   Select,
   MenuItem,
   TextField,
   InputAdornment,
   IconButton,
   Grid,
+  Button,
 } from "@mui/material";
 
 import { useEffectOnce } from "react-use";
@@ -22,7 +22,6 @@ import dayjs from "dayjs";
 import { userSelector } from "src/store/auth";
 import { useNotebooks } from "src/store/notebooks";
 
-import StandardButton from "src/components/Buttons/StandardButton";
 import Loader from "src/components/Loader";
 import ColumnHeader from "src/components/ColumnHeader";
 
@@ -208,21 +207,18 @@ const NotebooksPage: FunctionComponent = () => {
               }}
             />
           </Grid>
-          <Grid item md={4}>
+          <Grid
+            item
+            md={4}
+            sx={{ display: "flex", justifyContent: "flex-end" }}
+          >
             <Link
               to="/notebooks/new"
               className="text-white text-decoration-none"
             >
-              <StandardButton
-                className="text-white float-end px-5"
-                variant="primary"
-                style={{
-                  background: "var(--sea-green)",
-                  border: "none",
-                }}
-              >
+              <Button color="success" variant="contained">
                 Create Notebook
-              </StandardButton>
+              </Button>
             </Link>
           </Grid>
         </Grid>

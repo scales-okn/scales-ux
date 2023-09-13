@@ -2,9 +2,9 @@ import React, { useState } from "react";
 import {
   Modal,
   TextareaAutosize,
-  Button,
   Typography,
   Box,
+  Button,
 } from "@mui/material";
 import { useFormik } from "formik";
 import * as yup from "yup";
@@ -74,7 +74,6 @@ const FeedbackWidget = () => {
             <Box sx={{ padding: "36px 18px" }}>
               <TextareaAutosize
                 name="body"
-                // rowsMin={5}
                 placeholder="Leave your feedback here..."
                 onChange={formik.handleChange}
                 value={formik.values.body}
@@ -90,15 +89,7 @@ const FeedbackWidget = () => {
               </Typography>
             </Box>
             <Box sx={{ padding: "24px 18px" }} textAlign="right">
-              <Button
-                variant="contained"
-                color="primary"
-                type="submit"
-                style={{
-                  color: "white",
-                  background: "var(--main-purple-light)",
-                }}
-              >
+              <Button color="info" variant="contained">
                 Submit
               </Button>
             </Box>

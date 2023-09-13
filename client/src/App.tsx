@@ -1,16 +1,14 @@
 import React, { useEffect } from "react";
-import { BrowserRouter, Route, Routes, Navigate } from "react-router-dom";
-
-import { ErrorBoundary } from "react-error-boundary";
-
-import { authSelector } from "./store/auth";
 import { useSelector } from "react-redux";
-
+import { BrowserRouter, Route, Routes, Navigate } from "react-router-dom";
+import { authSelector } from "./store/auth";
 import { useHelpTexts } from "./store/helpTexts";
 
-import StandardButton from "src/components/Buttons/StandardButton";
-import PageLayout from "./components/PageLayout";
+import { ErrorBoundary } from "react-error-boundary";
+import { ThemeProvider, createTheme } from "@mui/material/styles";
+import { Button, hexToRgb } from "@mui/material";
 
+import PageLayout from "./components/PageLayout";
 import DocumentPage from "src/pages/DocumentPage";
 import SignInPage from "src/pages/SignInPage";
 import SignUpPage from "src/pages/SignUpPage";
@@ -23,12 +21,46 @@ import Notifications from "src/components/Notifications";
 import Ring from "src/pages/RingsPage/Ring";
 import Admin from "src/pages/AdminPage";
 
+const theme = createTheme({
+  palette: {
+    // primary: {
+    //   main: "rgb(145, 94, 221)",
+    // },
+    secondary: {
+      main: hexToRgb("#2a844e"),
+      dark: hexToRgb("#32ae64"),
+    },
+    error: {
+      main: hexToRgb("#bb182b"),
+      dark: hexToRgb("#f42039"),
+    },
+    info: {
+      main: hexToRgb("#915edd"),
+      dark: hexToRgb("#a268f9"),
+    },
+  },
+});
+
 const ErrorFallback = ({ error, resetErrorBoundary }) => {
   return (
     <div role="alert">
-      <p>Something went wrong:</p>
-      <pre>{error.message}</pre>
-      <StandardButton onClick={resetErrorBoundary}>Try again</StandardButton>
+      <div
+        style={{
+          display: "flex",
+          flexDirection: "column",
+          alignContent: "center",
+          maxWidth: "500px",
+          width: "90%",
+          margin: "120px auto",
+          textAlign: "center",
+        }}
+      >
+        <h3>Something went wrong:</h3>
+        <h6 style={{ marginBottom: "36px" }}>{error.message}</h6>
+        <Button variant="contained" onClick={resetErrorBoundary}>
+          Try again
+        </Button>
+      </div>
     </div>
   );
 };
@@ -49,66 +81,74 @@ const App = () => {
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   return (
-    <div className="app">
-      <ErrorBoundary
-        FallbackComponent={ErrorFallback}
-        onReset={() => {
-          window.location.reload();
-        }}
-      >
-        <Notifications />
-        <BrowserRouter>
-          <PageLayout>
-            <Routes>
-              <Route path="/" element={requireAuth(<NotebooksPage />)} />
-              <Route
-                path="/notebooks/:notebookId"
-                element={requireAuth(<NotebookPage />)}
-              />
-              <Route
-                path="/document/:ringId/:ringVersion/:entityType/:docId"
-                element={<DocumentPage />}
-              />
-              <Route path="/sign-in" element={<SignInPage />} />
-              <Route path="/sign-up" element={<SignUpPage />} />
-              <Route path="/forgot-password" element={<ForgotPasswordPage />} />
-              <Route
-                path="/reset-password/:token"
-                element={<ResetPasswordPage />}
-              />
-              <Route
-                path="/verify-email/:token"
-                element={<EmailVerificationPage />}
-              />
+    <ThemeProvider theme={theme}>
+      <div className="app">
+        <ErrorBoundary
+          FallbackComponent={ErrorFallback}
+          onReset={() => {
+            window.location.reload();
+          }}
+        >
+          <Notifications />
+          <BrowserRouter>
+            <PageLayout>
+              <Routes>
+                <Route path="/" element={requireAuth(<NotebooksPage />)} />
+                <Route
+                  path="/notebooks/:notebookId"
+                  element={requireAuth(<NotebookPage />)}
+                />
+                <Route
+                  path="/document/:ringId/:ringVersion/:entityType/:docId"
+                  element={<DocumentPage />}
+                />
+                <Route path="/sign-in" element={<SignInPage />} />
+                <Route path="/sign-up" element={<SignUpPage />} />
+                <Route
+                  path="/forgot-password"
+                  element={<ForgotPasswordPage />}
+                />
+                <Route
+                  path="/reset-password/:token"
+                  element={<ResetPasswordPage />}
+                />
+                <Route
+                  path="/verify-email/:token"
+                  element={<EmailVerificationPage />}
+                />
 
-              {/* Admin Routes */}
-              <Route path="/admin/users" element={requireAuth(<Admin />)} />
-              <Route path="/admin/feedback" element={requireAuth(<Admin />)} />
-              <Route
-                path="/admin/help-texts/:helpTextSlug?"
-                element={requireAuth(<Admin />)}
-              />
-              <Route path="/admin/rings" element={requireAuth(<Admin />)} />
-              <Route
-                path="/admin/rings/create"
-                element={requireAuth(<Ring />)}
-              />
-              <Route
-                path="/admin/rings/:ringId"
-                element={requireAuth(<Ring />)}
-              />
-              <Route
-                path="/admin/*"
-                element={<Navigate to="/admin/rings" replace />}
-              />
+                {/* Admin Routes */}
+                <Route path="/admin/users" element={requireAuth(<Admin />)} />
+                <Route
+                  path="/admin/feedback"
+                  element={requireAuth(<Admin />)}
+                />
+                <Route
+                  path="/admin/help-texts/:helpTextSlug?"
+                  element={requireAuth(<Admin />)}
+                />
+                <Route path="/admin/rings" element={requireAuth(<Admin />)} />
+                <Route
+                  path="/admin/rings/create"
+                  element={requireAuth(<Ring />)}
+                />
+                <Route
+                  path="/admin/rings/:ringId"
+                  element={requireAuth(<Ring />)}
+                />
+                <Route
+                  path="/admin/*"
+                  element={<Navigate to="/admin/rings" replace />}
+                />
 
-              {/* Default Redirect */}
-              <Route path="*" element={<Navigate to="/" replace />} />
-            </Routes>
-          </PageLayout>
-        </BrowserRouter>
-      </ErrorBoundary>
-    </div>
+                {/* Default Redirect */}
+                <Route path="*" element={<Navigate to="/" replace />} />
+              </Routes>
+            </PageLayout>
+          </BrowserRouter>
+        </ErrorBoundary>
+      </div>
+    </ThemeProvider>
   );
 };
 

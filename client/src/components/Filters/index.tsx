@@ -5,7 +5,7 @@ import uniqid from "uniqid";
 
 import { usePanel } from "src/store/panels";
 
-import StandardButton from "src/components/Buttons/StandardButton";
+import Button from "@mui/material/Button";
 import Filter from "./Filter";
 
 import { filterContainerStyles } from "./styles";
@@ -30,27 +30,32 @@ const Filters = ({ panelId }: FiltersProps) => {
       <div className="filters">
         {filterElements}
         <div className="d-inline-block">
-          <StandardButton
-            variant="outline-dark"
-            className="me-2"
+          <Button
+            variant="outlined"
+            color="success"
             onClick={() => {
               setPanelFilters([
                 ...(filters || []),
                 { id: uniqid(), value: "" },
               ]);
             }}
+            sx={{
+              border: "1px solid black",
+              color: "black",
+              marginRight: "18px",
+            }}
           >
             <AddIcon fontSize="medium" />
-          </StandardButton>
+          </Button>
           {!filters?.length && <>Add a filter</>}
-          <StandardButton
-            variant="primary"
-            className="text-white"
+          <Button
+            variant="contained"
+            color="info"
             onClick={() => getPanelResults(filters)}
             style={{ position: "absolute", right: "24px", top: "24px" }}
           >
             Update Results
-          </StandardButton>
+          </Button>
         </div>
       </div>
     </div>

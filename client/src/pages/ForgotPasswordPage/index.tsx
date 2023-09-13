@@ -2,10 +2,16 @@ import React from "react";
 import { useNavigate } from "react-router-dom";
 import { useFormik } from "formik";
 import * as yup from "yup";
-
-import { Col, Container, Form, Row } from "react-bootstrap";
+import {
+  Container,
+  Typography,
+  Box,
+  TextField,
+  Button,
+  Grid,
+  Link,
+} from "@mui/material";
 import { useNotify } from "src/components/Notifications";
-import StandardButton from "src/components/Buttons/StandardButton";
 import { makeRequest } from "src/helpers/makeRequest";
 
 interface ForgotPasswordFields {
@@ -28,67 +34,69 @@ const ForgotPassword = () => {
       email: "",
     },
     validationSchema: ForgotPasswordValidationSchema,
-    onSubmit: async (values: ForgotPasswordFields, { setErrors }) => {
-      const response = await makeRequest.post(
-        `/api/users/password/forgot`,
-        values,
-      );
+    onSubmit: async (values: ForgotPasswordFields) => {
+      try {
+        const response = await makeRequest.post(
+          `/api/users/password/forgot`,
+          values,
+        );
 
-      if (response.status === "OK") {
-        notify(response.message, "success");
-        navigate("/sign-in");
-      } else {
-        notify(response.message, "error");
+        if (response.status === "OK") {
+          notify(response.message, "success");
+          navigate("/sign-in");
+        } else {
+          notify(response.message, "error");
+        }
+      } catch (error) {
+        console.error(error); // eslint-disable-line no-console
+        notify("An error occurred", "error");
       }
     },
   });
 
   return (
     <Container className="h-100">
-      <Row className="h-100 justify-content-center align-items-center text-center">
-        <Col md="5">
-          <Form noValidate onSubmit={formik.handleSubmit}>
-            <h1 className="h3 mb-5 fw-normal">Forgot Password?</h1>
-            <div className="form-floating mb-3">
-              <Form.Control
-                type="email"
-                name="email"
-                placeholder="name@example.com"
-                value={formik.values.email}
-                onChange={formik.handleChange}
-                isInvalid={
-                  formik.touched.email && Boolean(formik.errors?.email)
-                }
-              />
-              <Form.Label>Email address</Form.Label>
-            </div>
-
-            <StandardButton
-              variant="primary"
-              type="submit"
-              className="w-100 mb-3 text-white"
-              size="lg"
+      <Grid
+        container
+        className="h-100 justify-content-center align-items-center text-center"
+      >
+        <Grid item xs={12} md={5}>
+          <Box component="form" onSubmit={formik.handleSubmit}>
+            <Typography sx={{ fontSize: "24px", margin: "100px 0 24px 0" }}>
+              Forgot Password?
+            </Typography>
+            <TextField
+              fullWidth
+              id="email"
+              name="email"
+              label="Email address"
+              variant="outlined"
+              value={formik.values.email}
+              onChange={formik.handleChange}
+              error={formik.touched.email && Boolean(formik.errors?.email)}
+              helperText={formik.touched.email && formik.errors?.email}
+              sx={{ marginBottom: "24px", background: "white" }}
+            />
+            <div
               style={{
-                background: "var(--main-purple-light)",
-                border: "none",
+                display: "flex",
+                justifyContent: "space-between",
               }}
             >
-              Submit
-            </StandardButton>
-            <Row className="mb-5">
-              <Col className="text-end">
-                <a
-                  href="/sign-in"
-                  className="small"
-                  style={{ color: "var(--details-blue)" }}
-                >
-                  Already have an account? Sign in
-                </a>
-              </Col>
-            </Row>
-          </Form>
-        </Col>
-      </Row>
+              <Link
+                href="/sign-in"
+                className="small"
+                style={{ color: "var(--details-blue)" }}
+              >
+                Already have an account? Sign in
+              </Link>
+              <Button color="info" variant="contained">
+                Submit
+              </Button>
+            </div>
+          </Box>
+        </Grid>
+      </Grid>
     </Container>
   );
 };

@@ -12,9 +12,10 @@ import {
 } from "src/store/notebook";
 import { useRings } from "src/store/rings";
 import { getPanels, usePanels } from "src/store/panels";
-import AddPanel from "../Panels/AddPanel";
 
-import StandardButton from "src/components/Buttons/StandardButton";
+import { Button } from "@mui/material";
+
+import AddPanel from "../Panels/AddPanel";
 import ConfirmModal from "src/components/Modals/ConfirmModal";
 import Loader from "src/components/Loader";
 import Panels from "src/components/Panels";
@@ -95,9 +96,18 @@ const Notebook = () => {
           <Grid item>
             {notebook && (
               <>
-                <StandardButton
-                  className="text-white float-end"
-                  variant="success"
+                <Button
+                  variant="contained"
+                  onClick={() => setConfirmVisible(true)}
+                  disabled={deletingNotebook}
+                  sx={{ marginRight: "12px" }}
+                  color="error"
+                >
+                  {deletingNotebook ? "Deleting..." : "Delete"}
+                </Button>
+                <Button
+                  color="success"
+                  variant="contained"
                   onClick={() => {
                     if (notebookTitle) {
                       dispatch(
@@ -113,36 +123,24 @@ const Notebook = () => {
                   disabled={savingNotebook || !notebookTitle}
                 >
                   {savingNotebook ? "Loading…" : "Save"}
-                </StandardButton>
-
-                <StandardButton
-                  className="text-white float-end me-2"
-                  variant="danger"
-                  onClick={() => setConfirmVisible(true)}
-                  disabled={deletingNotebook}
-                >
-                  {deletingNotebook ? "Deleting..." : "Delete"}
-                </StandardButton>
+                </Button>
               </>
             )}
 
             {!notebook && (
-              <StandardButton
-                className="text-white float-end"
-                variant="primary"
+              <Button
+                size="large"
+                color="success"
+                variant="contained"
                 onClick={() => {
                   if (notebookTitle) {
                     dispatch(createNotebook({ title: notebookTitle }));
                   }
                 }}
                 disabled={savingNotebook || !notebookTitle}
-                style={{
-                  background: "var(--sea-green)",
-                  border: "none",
-                }}
               >
                 {savingNotebook ? "Loading…" : "Create"}
-              </StandardButton>
+              </Button>
             )}
           </Grid>
         </Grid>

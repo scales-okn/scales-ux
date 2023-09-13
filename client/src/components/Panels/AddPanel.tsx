@@ -1,28 +1,29 @@
-import React, { FunctionComponent } from "react";
+import React from "react";
 import { usePanels } from "src/store/panels";
 import "./AddPanel.scss";
 import { useNotebook } from "src/store/notebook";
-import StandardButton from "src/components/Buttons/StandardButton";
+import { Button } from "@mui/material";
 
 type AddPanelProps = {
   notebookId: string | null;
 };
 
-const AddPanel: FunctionComponent<AddPanelProps> = ({ notebookId }) => {
+const AddPanel = ({ notebookId }: AddPanelProps) => {
   const { notebook } = useNotebook();
   const { createPanel } = usePanels(notebookId);
 
   return (
-    <StandardButton
-      className="add-panel-btn w-100"
-      style={{ marginBottom: "80px" }}
-      size="lg"
-      variant="link"
+    <Button
+      style={{ marginBottom: "80px", width: "100%" }}
+      size="large"
+      color="success"
+      variant="outlined"
       disabled={!notebook}
       onClick={() => createPanel()}
+      sx={{ border: "1px dashed grey" }}
     >
       Add Panel
-    </StandardButton>
+    </Button>
   );
 };
 

@@ -4,13 +4,12 @@ import React, { useEffect, FunctionComponent, useState } from "react";
 import { usePanel } from "src/store/panels";
 import { useRing } from "src/store/rings";
 
-import { Grid, Paper } from "@mui/material";
+import { Grid, Paper, Button } from "@mui/material";
 import AddIcon from "@mui/icons-material/Add";
 import uniqid from "uniqid";
 import _ from "lodash";
 
 import { Satyrn } from "src/models/Satyrn";
-import StandardButton from "src/components/Buttons/StandardButton";
 import { makeRequest } from "src/helpers/makeRequest";
 
 import { useNotify } from "../Notifications";
@@ -260,13 +259,13 @@ const Analysis: FunctionComponent<Props> = ({ panelId }) => {
             />
           </Grid>
           <Grid style={{ position: "absolute", top: "20px", right: "0" }}>
-            <StandardButton
-              size="sm"
-              variant="outline-danger"
+            <Button
+              variant="outlined"
+              color="error"
               onClick={() => handleRemoveAnalysis(id)}
             >
               Remove
-            </StandardButton>
+            </Button>
           </Grid>
           <Answers
             panelId={panelId}
@@ -286,17 +285,22 @@ const Analysis: FunctionComponent<Props> = ({ panelId }) => {
           boxShadow: "none",
         }}
       >
-        <StandardButton
-          variant="outline-dark"
-          className="me-2"
+        <Button
+          variant="outlined"
+          color="success"
           onClick={() => {
             addPanelAnalysis({
               id: uniqid(),
             });
           }}
+          sx={{
+            border: "1px solid black",
+            color: "black",
+            marginRight: "18px",
+          }}
         >
           <AddIcon fontSize="medium" />
-        </StandardButton>
+        </Button>
         Add Analysis
       </Paper>
     </div>

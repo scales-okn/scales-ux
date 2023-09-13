@@ -4,13 +4,12 @@ import { usePanel } from "src/store/panels";
 import { css } from "@emotion/css";
 import dayjs from "dayjs";
 import { isEmpty } from "lodash";
-import { Paper } from "@mui/material";
+import { Paper, Button } from "@mui/material";
 
 import renderHTML from "src/helpers/renderHTML";
 import useContainerDimensions from "src/hooks/useContainerDimensions";
 
 import Loader from "src/components/Loader";
-import StandardButton from "src/components/Buttons/StandardButton";
 import MultilineChartDisplay from "./MultilineChartDisplay";
 import LineChartDisplay from "./LineChartDisplay";
 import BarChartDisplay from "./BarChartDisplay";
@@ -194,13 +193,13 @@ const Answers = ({
       </div>
       {collapseIsVisible && (
         <div style={{ width: "300px" }}>
-          <StandardButton
-            variant="outline-success"
-            size="sm"
+          <Button
+            variant="outlined"
+            color="success"
             onClick={() => setExpanded((prev) => !prev)}
           >
             {expanded ? "collapse" : "expand"}
-          </StandardButton>
+          </Button>
         </div>
       )}
     </>

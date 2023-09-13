@@ -13,14 +13,20 @@ body {
 
 :root {
   --main-purple: #4e2a84;
-  --main-purple-light: #8655cf;
+  --main-purple-light: #915edd;
+  --main-purple-light-highlight: #a268f9;
   --main-purple-lightest: #e6d5ff;
   --details-blue: #4879c5;
   --light-green: #a2cd61;
   --success-green: #2a844e;
   --sea-green: #2a844e;
+  --sea-green-highlight: #32ae64;
   --baby-blue: #d7ffff;
   --light-grey: rgb(248, 249, 250);
+  --warning: #f5a623;
+  --warning-highlight: #f5a623;
+  --red: #bb182b;
+  --red-highlight: #f42039;
 }
 
 .cursor-pointer {

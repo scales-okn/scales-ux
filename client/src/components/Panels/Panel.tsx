@@ -20,7 +20,6 @@ import Dataset from "../Dataset";
 import Analysis from "../Analysis";
 import ConfirmModal from "src/components/Modals/ConfirmModal";
 import ColumnHeader from "src/components/ColumnHeader";
-import DeleteButton from "src/components/Buttons/DeleteButton";
 
 import "./Panel.scss";
 import { panelHeaderStyles } from "./styles";
@@ -50,12 +49,12 @@ const Panel: FunctionComponent<PanelProps> = ({ panelId }) => {
   useEffect(() => {
     if (!ring || ring.info || loadingRingInfo) return;
     getRingInfo(ring.version);
-  }, [ring]);
+  }, [ring]); // eslint-disable-line react-hooks/exhaustive-deps
 
   useEffect(() => {
     if (!info || collapsed || loadingPanelResults) return;
     getPanelResults();
-  }, [collapsed, info]);
+  }, [collapsed, info]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const rows = results?.results?.map((result) => ({
     ...result,
@@ -118,18 +117,25 @@ const Panel: FunctionComponent<PanelProps> = ({ panelId }) => {
     <Accordion expanded={!collapsed} className="mb-4">
       <div className={`panelHeaderStyles ${panelHeaderStyles}`}>
         <Typography
-          className="notebook-ring-name"
-          style={{
+          sx={{
             fontSize: "1.1rem",
           }}
         >
           {ring?.name}
         </Typography>
         <div className="ms-auto">
-          <DeleteButton
-            onClick={() => setConfirmVisible(true)}
-            sx={{ marginRight: "12px" }}
-          />
+          <Button
+            color="error"
+            variant="outlined"
+            size="small"
+            onClick={(e) => {
+              e.stopPropagation();
+              setConfirmVisible(true);
+            }}
+            sx={{ marginRight: "8px" }}
+          >
+            Delete
+          </Button>
           <Button
             variant="outlined"
             size="small"

@@ -2,7 +2,7 @@ import React, { FunctionComponent, useState } from "react";
 
 import { makeRequest } from "src/helpers/makeRequest";
 
-import StandardButton from "src/components/Buttons/StandardButton";
+import { Button } from "@mui/material";
 import { useNotify } from "src/components/Notifications";
 import ConfirmModal from "src/components/Modals/ConfirmModal";
 
@@ -26,17 +26,17 @@ const DeleteFeedback: FunctionComponent<Props> = ({ feedbackId }) => {
 
   return (
     <>
-      <StandardButton
-        className="text-white float-end me-2"
-        variant="danger"
+      <Button
+        color="error"
+        variant="outlined"
+        size="small"
         onClick={(e) => {
           e.stopPropagation();
           setConfirmVisible(true);
         }}
-        size="sm"
       >
         Delete
-      </StandardButton>
+      </Button>
       <ConfirmModal
         itemName="feedback"
         open={confirmVisible}

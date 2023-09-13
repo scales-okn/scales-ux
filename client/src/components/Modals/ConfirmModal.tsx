@@ -8,7 +8,7 @@ import {
   DialogContentText,
   DialogTitle,
 } from "@mui/material";
-import StandardButton from "src/components/Buttons/StandardButton";
+import Button from "@mui/material/Button";
 
 type ConfirmModalT = Omit<ModalProps, "children"> & {
   open: boolean;
@@ -47,16 +47,17 @@ const ConfirmModal = ({
           </DialogContentText>
         </DialogContent>
         <DialogActions>
-          <StandardButton variant="danger" onClick={handleClose}>
+          <Button variant="outlined" color="error" onClick={handleClose}>
             Cancel
-          </StandardButton>
-          <StandardButton
-            variant="primary"
+          </Button>
+          <Button
+            variant="contained"
+            color="error"
             onClick={onConfirm}
             style={{ color: "white" }}
           >
             Delete
-          </StandardButton>
+          </Button>
         </DialogActions>
       </Box>
     </Modal>

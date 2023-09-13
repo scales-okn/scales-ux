@@ -294,7 +294,7 @@ export const forgotPassword = async (req: Request, res: Response) => {
 
       return res.send_ok("Reset password link sent to your email!");
     } else {
-      return res.send_badRequest("Email not found!");
+      return res.status(400).json({ error: "Email not found in our records." });
     }
   } catch (error) {
     console.warn(error); // eslint-disable-line no-console
@@ -326,7 +326,7 @@ export const resetPassword = async (req: Request, res: Response) => {
       );
 
       return res.send_ok(
-        "Password successfully reset. You can now sign in using it."
+        "Password successfully reset. You will now be forwarded to the sign in page."
       );
     } else {
       return res.send_internalServerError("Failed to reset your password!");
