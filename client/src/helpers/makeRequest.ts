@@ -5,6 +5,8 @@ import store from "src/store";
 
 const baseURL = "http://localhost:8080";
 
+console.log(import.meta.env.MODE);
+
 const sendRequest = async ({
   method,
   path,
@@ -16,7 +18,13 @@ const sendRequest = async ({
   body?: Record<string, any>;
   options?: Record<string, unknown>;
 }) => {
-  const url = `${baseURL}${path}`;
+  const url = () => {
+    if (import.meta.env.MODE === "development") {
+      return `${baseURL}${path}`;
+    } else {
+      return path;
+    }
+  };
   const token = store.getState().auth.token;
   const authHeader = authorizationHeader(token);
 
@@ -30,7 +38,7 @@ const sendRequest = async ({
   };
 
   try {
-    const response = await fetch(url, fetchOptions);
+    const response = await fetch(url(), fetchOptions);
 
     if (!response.ok) {
       throw new Error(`HTTP error! Status: ${response.status}`);
