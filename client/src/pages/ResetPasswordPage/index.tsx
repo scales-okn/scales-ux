@@ -57,7 +57,7 @@ const ResetPassword: FunctionComponent = () => {
           notify(response.message, "error");
         }
       } catch (error) {
-        console.error(error);
+        console.error(error); // eslint-disable-line no-console
         notify("An error occurred", "error");
       }
     },

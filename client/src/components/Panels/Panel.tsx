@@ -21,7 +21,6 @@ import Analysis from "../Analysis";
 import ConfirmModal from "src/components/Modals/ConfirmModal";
 import ColumnHeader from "src/components/ColumnHeader";
 
-import "./Panel.scss";
 import { panelHeaderStyles } from "./styles";
 
 type PanelProps = {
@@ -47,7 +46,7 @@ const Panel: FunctionComponent<PanelProps> = ({ panelId }) => {
   const [confirmVisible, setConfirmVisible] = useState(false);
 
   useEffect(() => {
-    if (!ring || ring.info || loadingRingInfo) return;
+    if (!ring || !!ring.info || loadingRingInfo) return;
     getRingInfo(ring.version);
   }, [ring]); // eslint-disable-line react-hooks/exhaustive-deps
 

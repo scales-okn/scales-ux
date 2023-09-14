@@ -5,8 +5,6 @@ import store from "src/store";
 
 const baseURL = "http://localhost:8080";
 
-console.log(import.meta.env.MODE);
-
 const sendRequest = async ({
   method,
   path,

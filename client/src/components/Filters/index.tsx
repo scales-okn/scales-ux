@@ -50,7 +50,6 @@ const Filters = ({ panelId }: FiltersProps) => {
           {!filters?.length && <>Add a filter</>}
           <Button
             variant="contained"
-            color="info"
             onClick={() => getPanelResults(filters)}
             style={{ position: "absolute", right: "24px", top: "24px" }}
           >

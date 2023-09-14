@@ -1,7 +1,8 @@
 import React from "react";
+
 import { usePanels } from "src/store/panels";
-import "./AddPanel.scss";
 import { useNotebook } from "src/store/notebook";
+
 import { Button } from "@mui/material";
 
 type AddPanelProps = {
