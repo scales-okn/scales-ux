@@ -103,7 +103,7 @@ const SignUpPage = () => {
               <Typography variant="body1">{message}</Typography>
             ) : (
               <form noValidate onSubmit={formik.handleSubmit}>
-                <Grid container spacing={2}>
+                <Grid container spacing={2} sx={{ marginBottom: "16px" }}>
                   <Grid item xs={12} sm={6}>
                     <TextField
                       type="text"
@@ -121,7 +121,6 @@ const SignUpPage = () => {
                       helperText={
                         formik.touched.firstName && formik.errors?.firstName
                       }
-                      className="input"
                     />
                   </Grid>
                   <Grid item xs={12} sm={6}>
@@ -141,7 +140,6 @@ const SignUpPage = () => {
                       helperText={
                         formik.touched.lastName && formik.errors?.lastName
                       }
-                      className="input"
                     />
                   </Grid>
                 </Grid>
@@ -157,7 +155,7 @@ const SignUpPage = () => {
                   onBlur={formik.handleBlur}
                   error={formik.touched.email && Boolean(formik.errors?.email)}
                   helperText={formik.touched.email && formik.errors?.email}
-                  className="input"
+                  sx={{ marginBottom: "16px" }}
                 />
                 <TextField
                   type="password"
@@ -174,7 +172,7 @@ const SignUpPage = () => {
                   helperText={
                     formik.touched.password && formik.errors?.password
                   }
-                  className="input"
+                  sx={{ marginBottom: "16px" }}
                 />
                 <TextField
                   type="text"
@@ -189,7 +187,6 @@ const SignUpPage = () => {
                   onBlur={formik.handleBlur}
                   error={formik.touched.usage && Boolean(formik.errors?.usage)}
                   helperText={formik.touched.usage && formik.errors?.usage}
-                  className="input"
                 />
                 {formik.touched.tos && formik.errors.tos && (
                   <Typography

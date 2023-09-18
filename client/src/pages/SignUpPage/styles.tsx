@@ -9,9 +9,8 @@ export const signUpPageStyles = css`
     text-align: center;
   }
 
-  .input {
+  .MuiInputBase-root {
     background: white;
-    margin-bottom: 16px;
   }
 
   .buttonRow {

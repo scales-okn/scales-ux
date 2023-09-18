@@ -78,7 +78,7 @@ const App = () => {
 
   useEffect(() => {
     if (user) getHelpTexts();
-  }, []); // eslint-disable-line react-hooks/exhaustive-deps
+  }, [user]); // eslint-disable-line react-hooks/exhaustive-deps
 
   return (
     <ThemeProvider theme={theme}>

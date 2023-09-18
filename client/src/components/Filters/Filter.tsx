@@ -5,12 +5,15 @@ import { useRing } from "src/store/rings";
 
 import { debounce } from "lodash";
 
-import CircularProgress from "@mui/material/CircularProgress";
-import TextField from "@mui/material/TextField";
-import Autocomplete from "@mui/material/Autocomplete";
-import Switch from "@mui/material/Switch";
-import FormControlLabel from "@mui/material/FormControlLabel";
+import {
+  CircularProgress,
+  TextField,
+  FormControlLabel,
+  Switch,
+  Autocomplete,
+} from "@mui/material";
 import HighlightOffIcon from "@mui/icons-material/HighlightOff";
+
 import DateTimeRangePicker from "@wojtekmaj/react-datetimerange-picker";
 
 import { DATE_FORMAT } from "src/helpers/constants";
@@ -39,6 +42,7 @@ type Props = {
 const Filter = ({ panelId, filter }: Props) => {
   const { panel, filters, setPanelFilters, getPanelResults } =
     usePanel(panelId);
+
   const { ring, info } = useRing(panel.ringId);
   const { type, id, value } = filter;
 
