@@ -7,16 +7,7 @@ type PanelsProps = {
 };
 
 const Panels = ({ notebookId }: PanelsProps) => {
-  const {
-    panels = [],
-    // loadingPanels, getPanels
-  } = usePanels(notebookId);
-
-  // TODO: Do we need this call?
-  // useEffect(() => {
-  //   if (!notebookId || loadingPanels) return;
-  //   getPanels(notebookId);
-  // }, [notebookId]); // eslint-disable-line react-hooks/exhaustive-deps
+  const { panels = [] } = usePanels(notebookId);
 
   return (
     <>

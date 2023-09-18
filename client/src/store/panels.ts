@@ -20,7 +20,7 @@ const initialStateAnalysisItem: IPanelAnalysisItem = {
 const PanelInitialState = {
   loadingPanelResults: false,
   collapsed: true,
-  resultsCollapsed: true,
+  resultsCollapsed: false,
   updatingPanel: false,
   hasErrors: false,
   analysis: [],

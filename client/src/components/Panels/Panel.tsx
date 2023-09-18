@@ -1,6 +1,7 @@
 import React, { FunctionComponent, useState, useEffect, useMemo } from "react";
 import { usePanel } from "src/store/panels";
 import { useRing } from "src/store/rings";
+
 import {
   Accordion,
   CardContent,
@@ -14,6 +15,7 @@ import {
 import { Link } from "react-router-dom";
 import { DataGrid } from "@mui/x-data-grid";
 import uniqid from "uniqid";
+
 import Filters from "../Filters";
 import Loader from "../Loader";
 import Dataset from "../Dataset";
@@ -41,19 +43,27 @@ const Panel: FunctionComponent<PanelProps> = ({ panelId }) => {
     setPanelCollapsed,
   } = usePanel(panelId);
 
-  const { ring, info, getRingInfo, loadingRingInfo } = useRing(panel?.ringId);
+  const { ring, info, getRingInfo } = useRing(panel?.ringId);
 
   const [confirmVisible, setConfirmVisible] = useState(false);
 
+  const ringIdRef = React.useRef(null);
   useEffect(() => {
-    if (!ring || !!ring.info || loadingRingInfo) return;
-    getRingInfo(ring.version);
+    if (ring && !ring.info && ringIdRef.current !== ring.version) {
+      getRingInfo(ring.version);
+      ringIdRef.current = ring.id;
+    }
   }, [ring]); // eslint-disable-line react-hooks/exhaustive-deps
 
+  const panelIdRef = React.useRef(null);
+  // this panelIdRef not getting set ever
   useEffect(() => {
-    if (!info || collapsed || loadingPanelResults) return;
-    getPanelResults();
-  }, [collapsed, info]); // eslint-disable-line react-hooks/exhaustive-deps
+    // so the last part of this check doesn't work (not happening anymore?)
+    if (info && !collapsed && panel.id !== panelIdRef.current) {
+      getPanelResults();
+      panelIdRef.current = panel.id;
+    }
+  }, [collapsed, info, panel.id, getPanelResults]);
 
   const rows = results?.results?.map((result) => ({
     ...result,

@@ -51,9 +51,11 @@ const Notebook = () => {
     }
   }, [notebook]); // eslint-disable-line react-hooks/exhaustive-deps
 
+  const notebookRef = React.useRef(null);
   useEffect(() => {
-    if (notebook?.id) {
+    if (notebook?.id && notebookRef.current !== notebook?.id) {
       dispatch(getPanels(notebook?.id));
+      notebookRef.current = notebook?.id;
     }
   }, [notebook?.id]); // eslint-disable-line react-hooks/exhaustive-deps
 
