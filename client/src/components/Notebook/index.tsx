@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from "react";
-import { Grid, TextField } from "@mui/material";
 import { useSelector, useDispatch } from "react-redux";
 import { useNavigate, useLocation } from "react-router-dom";
 import { useEffectOnce } from "react-use";
@@ -13,7 +12,8 @@ import {
 import { useRings } from "src/store/rings";
 import { getPanels, usePanels } from "src/store/panels";
 
-import { Button } from "@mui/material";
+import { Grid, TextField, Button } from "@mui/material";
+import DeleteButton from "src/components/Buttons/DeleteButton";
 
 import AddPanel from "../Panels/AddPanel";
 import ConfirmModal from "src/components/Modals/ConfirmModal";
@@ -98,15 +98,10 @@ const Notebook = () => {
           <Grid item>
             {notebook && (
               <>
-                <Button
-                  variant="contained"
+                <DeleteButton
                   onClick={() => setConfirmVisible(true)}
                   disabled={deletingNotebook}
-                  sx={{ marginRight: "12px" }}
-                  color="error"
-                >
-                  {deletingNotebook ? "Deleting..." : "Delete"}
-                </Button>
+                />
                 <Button
                   color="success"
                   variant="contained"
@@ -124,7 +119,7 @@ const Notebook = () => {
                   }}
                   disabled={savingNotebook || !notebookTitle}
                 >
-                  {savingNotebook ? "Loading…" : "Save"}
+                  Save
                 </Button>
               </>
             )}

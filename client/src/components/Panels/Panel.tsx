@@ -24,6 +24,7 @@ import ConfirmModal from "src/components/Modals/ConfirmModal";
 import ColumnHeader from "src/components/ColumnHeader";
 
 import { panelHeaderStyles } from "./styles";
+import DeleteButton from "../Buttons/DeleteButton";
 
 type PanelProps = {
   panelId: string;
@@ -55,6 +56,7 @@ const Panel: FunctionComponent<PanelProps> = ({ panelId }) => {
     }
   }, [ring]); // eslint-disable-line react-hooks/exhaustive-deps
 
+  // TODO?
   const panelIdRef = React.useRef(null);
   // this panelIdRef not getting set ever
   useEffect(() => {
@@ -133,18 +135,13 @@ const Panel: FunctionComponent<PanelProps> = ({ panelId }) => {
           {ring?.name}
         </Typography>
         <div className="ms-auto">
-          <Button
-            color="error"
-            variant="outlined"
-            size="small"
-            onClick={(e) => {
-              e.stopPropagation();
+          <DeleteButton
+            onClick={() => {
               setConfirmVisible(true);
             }}
-            sx={{ marginRight: "8px" }}
-          >
-            Delete
-          </Button>
+            sx={{ height: "30.75px", width: "30.75px", marginRight: "8px" }}
+            variant="outlined"
+          />
           <Button
             variant="outlined"
             size="small"

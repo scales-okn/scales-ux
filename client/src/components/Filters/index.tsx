@@ -42,19 +42,25 @@ const Filters = ({ panelId }: FiltersProps) => {
             sx={{
               border: "1px solid black",
               color: "black",
-              marginRight: "18px",
+              marginRight: "12px",
+              width: "36px",
+              height: "36px",
+              minWidth: 0,
             }}
           >
             <AddIcon fontSize="medium" />
           </Button>
-          {!filters?.length && <>Add a filter</>}
-          <Button
-            variant="contained"
-            onClick={() => getPanelResults(filters)}
-            style={{ position: "absolute", right: "24px", top: "24px" }}
-          >
-            Update Results
-          </Button>
+          {filters?.length ? (
+            <Button
+              variant="contained"
+              onClick={() => getPanelResults(filters)}
+              style={{ position: "absolute", right: "24px", top: "32px" }}
+            >
+              Update Results
+            </Button>
+          ) : (
+            <>Add a filter</>
+          )}
         </div>
       </div>
     </div>

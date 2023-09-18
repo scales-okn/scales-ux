@@ -23,16 +23,17 @@ import Admin from "src/pages/AdminPage";
 
 const theme = createTheme({
   palette: {
-    // primary: {
-    //   main: "rgb(145, 94, 221)",
-    // },
-    secondary: {
-      main: hexToRgb("#2a844e"),
-      dark: hexToRgb("#32ae64"),
+    primary: {
+      main: hexToRgb("#0E54EB"),
+      dark: hexToRgb("#0742c3"),
+    },
+    success: {
+      main: hexToRgb("#099E0F"),
+      dark: hexToRgb("#087e0c"),
     },
     error: {
-      main: hexToRgb("#bb182b"),
-      dark: hexToRgb("#f42039"),
+      main: hexToRgb("#EB3C1A"),
+      dark: hexToRgb("#c2192c"),
     },
     info: {
       main: hexToRgb("#915edd"),

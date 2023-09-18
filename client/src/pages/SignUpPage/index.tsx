@@ -225,7 +225,7 @@ const SignUpPage = () => {
                   <Button
                     type="submit"
                     size="large"
-                    color="secondary"
+                    color="success"
                     variant="contained"
                   >
                     Register

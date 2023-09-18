@@ -1,7 +1,7 @@
-import React, { FunctionComponent } from "react";
+import React from "react";
 import { Link, Typography } from "@mui/material";
 
-const Copyright: FunctionComponent = () => (
+const Copyright = () => (
   <Typography
     variant="body2"
     color="textSecondary"

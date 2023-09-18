@@ -40,7 +40,6 @@ const LogoutMenu = () => {
       width: 36px;
       border-radius: 50%;
       background-color: var(--success-green);
-      color: var(--main-purple);
       text-decoration: none;
       cursor: pointer;
       color: white;

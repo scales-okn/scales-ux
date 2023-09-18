@@ -17,7 +17,7 @@ const AddPanel = ({ notebookId }: AddPanelProps) => {
     <Button
       style={{ marginBottom: "80px", width: "100%" }}
       size="large"
-      color="success"
+      color="primary"
       variant="outlined"
       disabled={!notebook}
       onClick={() => createPanel()}
