@@ -10,13 +10,21 @@ import {
   Legend,
 } from "recharts";
 
-type AnswersT = {
+type BarChartDisplayT = {
   data: any;
   chartWidth: number;
   chartMargins: Record<string, number>;
+  panelId: string;
+  answerText: React.ReactNode;
 };
 
-const Answers = ({ data, chartWidth, chartMargins }: AnswersT) => {
+const Answers = ({
+  data,
+  chartWidth,
+  chartMargins,
+  panelId,
+  answerText,
+}: BarChartDisplayT) => {
   const xUnits = data?.units?.results?.[0]?.[0];
   let yUnits = data?.units?.results?.[1]?.[1];
   if (yUnits === "Case" || yUnits === "Judge") yUnits += "s"; // unlike attributes, entities seem not to have nicenames
@@ -52,31 +60,37 @@ const Answers = ({ data, chartWidth, chartMargins }: AnswersT) => {
   }, [data]); // eslint-disable-line react-hooks/exhaustive-deps
 
   return (
-    <BarChart
-      width={chartWidth}
-      height={600}
-      data={barData}
-      margin={chartMargins}
+    <div
+      style={{ width: chartWidth, height: "650px", background: "white" }}
+      id={`data-chart-${panelId}`}
     >
-      <CartesianGrid strokeDasharray="3 3" />
-      <XAxis dataKey="name" />
-      <YAxis
-        domain={[0, Math.max(...data.results.map((i) => parseInt(i[1])))]}
-        tickFormatter={(value) =>
-          new Intl.NumberFormat("en-US", {
-            notation: "compact",
-            compactDisplay: "short",
-          }).format(value)
-        }
-      />
-      <Tooltip
-        formatter={(value) =>
-          new Intl.NumberFormat("en").format(value as number)
-        }
-      />
-      <Legend />
-      <Bar dataKey={yUnits} fill="#82ca9d" />
-    </BarChart>
+      {answerText}
+      <BarChart
+        height={600}
+        width={chartWidth}
+        data={barData}
+        margin={chartMargins}
+      >
+        <CartesianGrid strokeDasharray="3 3" />
+        <XAxis dataKey="name" />
+        <YAxis
+          domain={[0, Math.max(...data.results.map((i) => parseInt(i[1])))]}
+          tickFormatter={(value) =>
+            new Intl.NumberFormat("en-US", {
+              notation: "compact",
+              compactDisplay: "short",
+            }).format(value)
+          }
+        />
+        <Tooltip
+          formatter={(value) =>
+            new Intl.NumberFormat("en").format(value as number)
+          }
+        />
+        <Legend />
+        <Bar dataKey={yUnits} fill="#82ca9d" />
+      </BarChart>
+    </div>
   );
 };
 

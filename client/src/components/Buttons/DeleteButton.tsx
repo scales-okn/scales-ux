@@ -1,5 +1,5 @@
 import React from "react";
-import { Button } from "@mui/material";
+import { Button, Tooltip } from "@mui/material";
 import ClearIcon from "@mui/icons-material/Clear";
 
 type DeleteButtonT = {
@@ -16,15 +16,17 @@ const DeleteButton = ({
   variant = "contained",
 }: DeleteButtonT) => {
   return (
-    <Button
-      variant={variant}
-      onClick={onClick}
-      disabled={disabled}
-      sx={{ marginRight: "12px", minWidth: 0, width: "36px", ...sx }}
-      color="error"
-    >
-      <ClearIcon />
-    </Button>
+    <Tooltip title="Delete">
+      <Button
+        variant={variant}
+        onClick={onClick}
+        disabled={disabled}
+        sx={{ minWidth: 0, width: "36px", ...sx }}
+        color="error"
+      >
+        <ClearIcon />
+      </Button>
+    </Tooltip>
   );
 };
 

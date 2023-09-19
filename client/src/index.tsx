@@ -2,7 +2,7 @@ import React from "react";
 import { createRoot } from "react-dom/client";
 // import { PersistGate } from "redux-persist/integration/react";
 import store from "./store";
-// { persistor }
+// , { persistor }
 import { Provider } from "react-redux";
 import reportWebVitals from "./reportWebVitals";
 import "./hijackEffects";

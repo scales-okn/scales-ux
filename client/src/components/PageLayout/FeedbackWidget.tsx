@@ -89,7 +89,7 @@ const FeedbackWidget = () => {
               </Typography>
             </Box>
             <Box sx={{ padding: "24px 18px" }} textAlign="right">
-              <Button color="info" variant="contained">
+              <Button color="info" variant="contained" type="submit">
                 Submit
               </Button>
             </Box>

@@ -4,7 +4,10 @@ import { usePanel } from "src/store/panels";
 import { css } from "@emotion/css";
 import dayjs from "dayjs";
 import { isEmpty } from "lodash";
-import { Paper, Button } from "@mui/material";
+import { Paper, Button, Tooltip, Typography, Box } from "@mui/material";
+import { CameraAlt, UnfoldLess, UnfoldMore } from "@mui/icons-material";
+import * as htmlToImage from "html-to-image";
+import download from "downloadjs";
 
 import renderHTML from "src/helpers/renderHTML";
 import useContainerDimensions from "src/hooks/useContainerDimensions";
@@ -104,6 +107,7 @@ const Answers = ({
     answerType === "bar";
   const isLineChart = data?.length > 0 && answerType === "line";
   const isMultilineChart = data?.length > 0 && answerType === "multiline";
+  const plainTextAnswer = !isBarChart && !isLineChart && !isMultilineChart;
 
   const chartWidth = useMemo(() => {
     const divisor = isBarChart ? 15 : 12;
@@ -136,37 +140,53 @@ const Answers = ({
     margin-bottom: 20px;
   `;
 
+  const onCapture = () => {
+    htmlToImage
+      .toPng(document.getElementById(`data-chart-${panelId}`))
+      .then(function (dataUrl) {
+        download(dataUrl, "data.png");
+      });
+  };
+
+  const answerText = answer && (
+    <Box
+      sx={{
+        padding: plainTextAnswer ? "0 16px 16px 0px" : "16px",
+        boxShadow: "none",
+        display: "flex",
+        alignItems: "center",
+        background: "white",
+      }}
+    >
+      <Typography sx={{ fontSize: "20px", textTransform: "capitalize" }}>
+        {renderHTML(answer)}
+      </Typography>
+    </Box>
+  );
+
   return (
     <>
       <div ref={containerRef} className={`$answers ${styles}`}>
         <Loader isVisible={loadingAnswers}>
           <>
-            {answer && (
-              <Paper
-                elevation={3}
-                sx={{
-                  padding: "16px",
-                  boxShadow: "none",
-                }}
-              >
-                <i>Answer: </i>
-                {renderHTML(answer)}
-              </Paper>
-            )}
             {data && (
               <div
-                className="mt-5"
-                style={{ overflowX: "auto", overflowY: "visible" }}
+                style={{
+                  overflowX: "auto",
+                  overflowY: "visible",
+                  marginTop: "48px",
+                }}
               >
-                {data.length > 0 &&
-                  data.results?.[0]?.length === 2 &&
-                  answerType === "bar" && (
-                    <BarChartDisplay
-                      data={data}
-                      chartWidth={chartWidth}
-                      chartMargins={chartMargins}
-                    />
-                  )}
+                {plainTextAnswer ? answerText : null}
+                {isBarChart && (
+                  <BarChartDisplay
+                    data={data}
+                    chartWidth={chartWidth}
+                    chartMargins={chartMargins}
+                    panelId={panelId}
+                    answerText={answerText}
+                  />
+                )}
 
                 {isLineChart && (
                   <LineChartDisplay
@@ -175,6 +195,8 @@ const Answers = ({
                     statement={statement}
                     chartWidth={chartWidth}
                     chartMargins={chartMargins}
+                    panelId={panelId}
+                    answerText={answerText}
                   />
                 )}
 
@@ -184,6 +206,8 @@ const Answers = ({
                     expanded={expanded}
                     containerWidth={containerWidth}
                     chartMargins={chartMargins}
+                    panelId={panelId}
+                    answerText={answerText}
                   />
                 )}
               </div>
@@ -191,15 +215,31 @@ const Answers = ({
           </>
         </Loader>
       </div>
-      {collapseIsVisible && (
-        <div style={{ width: "300px" }}>
-          <Button
-            variant="outlined"
-            color="success"
-            onClick={() => setExpanded((prev) => !prev)}
-          >
-            {expanded ? "collapse" : "expand"}
+      {isBarChart || isLineChart || isMultilineChart ? (
+        <Tooltip title="Save Snapshot">
+          <Button onClick={onCapture} variant="outlined">
+            <CameraAlt />
           </Button>
+        </Tooltip>
+      ) : null}
+      {collapseIsVisible && (
+        <div>
+          <Tooltip title={expanded ? "Collapse" : "Expand"}>
+            <Button
+              variant="outlined"
+              onClick={() => setExpanded((prev) => !prev)}
+              sx={{
+                marginLeft: "12px",
+                width: "48px",
+                minWidth: "0",
+                "& svg": {
+                  transform: "rotate(90deg)",
+                },
+              }}
+            >
+              {expanded ? <UnfoldLess /> : <UnfoldMore />}
+            </Button>
+          </Tooltip>
         </div>
       )}
     </>

@@ -101,6 +101,7 @@ const Notebook = () => {
                 <DeleteButton
                   onClick={() => setConfirmVisible(true)}
                   disabled={deletingNotebook}
+                  sx={{ marginRight: "12px" }}
                 />
                 <Button
                   color="success"
