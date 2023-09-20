@@ -28,6 +28,7 @@ export const styles = css`
     font-size: 12px;
     transition: 0.2s ease-in-out;
     opacity: 0.8;
+    z-index: 2000;
 
     &:hover {
       opacity: 1;
