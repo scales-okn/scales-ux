@@ -10,7 +10,7 @@ import {
   LineChart,
   Line,
 } from "recharts";
-import { numberToMonth, formatXUnits } from "helpers/stringHelpers";
+import { numberToMonth, formatXUnits } from "src/helpers/stringHelpers";
 
 type LineChartDisplayT = {
   data: any;
@@ -18,6 +18,8 @@ type LineChartDisplayT = {
   chartWidth: number;
   chartMargins: Record<string, number>;
   expanded: boolean;
+  panelId: string;
+  answerText: React.ReactNode;
 };
 
 const LineChartDisplay = ({
@@ -26,6 +28,8 @@ const LineChartDisplay = ({
   chartMargins,
   chartWidth,
   expanded,
+  panelId,
+  answerText,
 }: LineChartDisplayT) => {
   const xUnits = data?.units?.results?.[0]?.[0];
   let yUnits = data?.units?.results?.[1]?.[1];
@@ -69,62 +73,68 @@ const LineChartDisplay = ({
   };
 
   return (
-    <ResponsiveContainer width={chartWidth}>
-      <LineChart
-        data={data.results.map((result) => {
-          return formatLineData(result);
-        })}
-        margin={chartMargins}
-      >
-        <XAxis height={80} scale="auto" dataKey={xUnits}>
-          <Label
-            angle={0}
-            value={xUnits}
-            position={expanded ? "left" : "insideBottom"}
-            offset={expanded ? -500 : 0}
-          />
-        </XAxis>
-        <YAxis
-          tickFormatter={(value) =>
-            new Intl.NumberFormat("en-US", {
-              notation: "compact",
-              compactDisplay: "short",
-            }).format(value)
-          }
-          width={100}
+    <div
+      style={{ width: chartWidth, background: "white" }}
+      id={`data-chart-${panelId}`}
+    >
+      {answerText}
+      <ResponsiveContainer>
+        <LineChart
+          data={data.results.map((result) => {
+            return formatLineData(result);
+          })}
+          margin={chartMargins}
         >
-          <Label
-            style={{
-              textAnchor: "middle",
-              textTransform: "capitalize",
-            }}
-            position="insideLeft"
-            angle={270}
-            value={yUnits}
+          <XAxis height={80} scale="auto" dataKey={xUnits}>
+            <Label
+              angle={0}
+              value={xUnits}
+              position={expanded ? "left" : "insideBottom"}
+              offset={expanded ? -500 : 0}
+            />
+          </XAxis>
+          <YAxis
+            tickFormatter={(value) =>
+              new Intl.NumberFormat("en-US", {
+                notation: "compact",
+                compactDisplay: "short",
+              }).format(value)
+            }
+            width={100}
+          >
+            <Label
+              style={{
+                textAnchor: "middle",
+                textTransform: "capitalize",
+              }}
+              position="insideLeft"
+              angle={270}
+              value={yUnits}
+            />
+          </YAxis>
+          <Tooltip
+            formatter={(value) =>
+              new Intl.NumberFormat("en").format(value as number)
+            }
+            content={singleLineTooltip}
           />
-        </YAxis>
-        <Tooltip
-          formatter={(value) =>
-            new Intl.NumberFormat("en").format(value as number)
-          }
-          content={singleLineTooltip}
-        />
-        <CartesianGrid stroke="#eee" strokeDasharray="5 5" />
-        <Line
-          type="monotone"
-          dataKey={yUnits}
-          stroke="#82ca9d"
-          dot={false}
-          activeDot={{ stroke: "white", strokeWidth: 2, r: 5 }}
-        />
-        {/* the below was plotting x-values (e.g. years) as y-values; not sure what the intended outcome was */}
-        {/* <Line
+          <CartesianGrid stroke="#eee" strokeDasharray="5 5" />
+          <Line
+            type="monotone"
+            dataKey={yUnits}
+            stroke="#82ca9d"
+            dot={false}
+            activeDot={{ stroke: "white", strokeWidth: 2, r: 5 }}
+          />
+          {/* the below was plotting x-values (e.g. years) as y-values; not sure what the intended outcome was */}
+          {/* <Line
                     type="monotone"
                     dataKey={data.units.results[0]?.[0]}
                     stroke="#82ca9d"
                   /> */}
-      </LineChart>
-    </ResponsiveContainer>
+        </LineChart>
+      </ResponsiveContainer>
+    </div>
   );
 };
 

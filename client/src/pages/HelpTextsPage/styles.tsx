@@ -18,12 +18,8 @@ export const detailStyles = css`
   .buttonRow {
     width: 100%;
     display: flex;
-    justify-content: space-between;
+    justify-content: flex-end;
     align-items: center;
     margin-top: 48px;
-
-    button {
-      color: white;
-    }
   }
 `;

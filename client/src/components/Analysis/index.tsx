@@ -1,21 +1,19 @@
 // @ts-nocheck
 import React, { useEffect, FunctionComponent, useState } from "react";
-import { useSelector } from "react-redux";
 
-import { authorizationHeader } from "utils";
-import { authSelector } from "store/auth";
-import { usePanel } from "store/panels";
-import { useRing } from "store/rings";
+import { usePanel } from "src/store/panels";
+import { useRing } from "src/store/rings";
 
-import { Grid, Paper } from "@mui/material";
+import { Grid, Paper, Button } from "@mui/material";
 import AddIcon from "@mui/icons-material/Add";
 import uniqid from "uniqid";
 import _ from "lodash";
 
-import { Satyrn } from "models/Satyrn";
-import { useNotify } from "../Notifications";
+import { Satyrn } from "src/models/Satyrn";
+import { makeRequest } from "src/helpers/makeRequest";
 
-import StandardButton from "components/Buttons/StandardButton";
+import DeleteButton from "src/components/Buttons/DeleteButton";
+import { useNotify } from "../Notifications";
 import Answers from "./Answers";
 import Parameters from "./Parameters";
 import Statements from "./Statements";
@@ -29,7 +27,6 @@ type Props = {
 const Analysis: FunctionComponent<Props> = ({ panelId }) => {
   const { panel, analysis, addPanelAnalysis, removePanelAnalysis, filters } =
     usePanel(panelId);
-  const { token } = useSelector(authSelector);
 
   const { ring, info } = useRing(panel?.ringId);
 
@@ -52,6 +49,7 @@ const Analysis: FunctionComponent<Props> = ({ panelId }) => {
 
   useEffect(() => {
     if (!info) return;
+
     const satyrnRes = new Satyrn(
       info.defaultEntity,
       info.operations,
@@ -66,6 +64,7 @@ const Analysis: FunctionComponent<Props> = ({ panelId }) => {
     const allTrue = Object.fromEntries(
       Object.entries(answersLoading).map(([key, value]) => [key, true]),
     );
+
     setAnswersLoading(allTrue);
 
     Object.keys(selectedStatements).map((statementId) => {
@@ -167,20 +166,16 @@ const Analysis: FunctionComponent<Props> = ({ panelId }) => {
 
       setPlans({ ...plans, [id]: resPlan });
       const fetchStem =
-        process.env.REACT_APP_SATYRN_ENV === "development"
+        import.meta.env.VITE_REACT_APP_SATYRN_ENV === "development"
           ? "http://127.0.0.1:5000/api"
           : "/proxy";
-      const authHeader = authorizationHeader(token);
-      const response = await fetch(
+
+      const response = await makeRequest.post(
         `${fetchStem}/analysis/${ring.rid}/${ring.version}/${info?.defaultEntity}/`,
-        {
-          method: "POST",
-          headers: { "Content-Type": "application/json", ...authHeader },
-          body: JSON.stringify(resPlan),
-        },
+        resPlan,
       );
-      const resData = await response.json();
-      setData({ ...data, [id]: resData });
+
+      setData({ ...data, [id]: response });
       setAnswersLoading({ ...answersLoading, [id]: false });
     } catch (error) {
       console.warn(error); // eslint-disable-line no-console
@@ -194,16 +189,12 @@ const Analysis: FunctionComponent<Props> = ({ panelId }) => {
     setLoadingAutosuggestions(true);
     setAutoCompleteSuggestions([]);
     try {
-      const authHeader = authorizationHeader(token);
-      const response = await fetch(
+      const response = await makeRequest.get(
         `/proxy/autocomplete/${ring.rid}/${ring.version}/${info?.defaultEntity}/${type}?query=${query}`,
-        {
-          headers: {
-            ...authHeader,
-          },
-        },
       );
-      if (response.status === 200) {
+
+      // TODO: confirm this still works
+      if (response.status === "OK") {
         const resData = await response.json();
         resData instanceof Array && setAutoCompleteSuggestions(resData);
         resData?.success === false &&
@@ -230,53 +221,58 @@ const Analysis: FunctionComponent<Props> = ({ panelId }) => {
   return (
     <div className="analysis">
       {analysis.map(({ id }) => (
-        <Grid
-          key={id}
-          container
-          spacing={2}
-          className="analysis-item"
-          style={{ padding: "16px" }}
-        >
-          <Grid item lg={11}>
-            <Statements
-              statements={statements}
-              setSelectedStatement={(statement) => {
-                setSelectedStatements({
-                  ...selectedStatements,
-                  [id]: statement,
-                });
-                getAnswers(statement, id);
-              }}
-              selectedStatement={selectedStatements[id]?.statement}
-            />
-            <Parameters
-              autoCompleteSuggestions={autoCompleteSuggestions}
-              parameters={selectedStatements[id]?.parameters}
-              selectedParameter={selectedStatements[id]?.selectedParameter}
-              setSelectedParameter={(params) => {
-                const newStatement = {
-                  ...selectedStatements[id],
-                  selectedParameter: params,
-                };
-                setSelectedStatements({
-                  ...selectedStatements,
-                  [id]: newStatement,
-                });
-                getAnswers(newStatement, id);
-              }}
-              fetchAutocompleteSuggestions={fetchAutocompleteSuggestions}
-              loadingAutosuggestions={loadingAutosuggestions}
-            />
-          </Grid>
-          <Grid lg="1" className="text-end">
-            <StandardButton
-              size="sm"
-              variant="outline-danger"
+        <Grid key={id} container className="analysis-item">
+          <Grid
+            item
+            sx={{
+              display: "flex",
+              alignItems: "flex-start",
+              justifyContent: "space-between",
+              width: "100%",
+              padding: 0,
+            }}
+          >
+            <Grid item>
+              <Statements
+                statements={statements}
+                setSelectedStatement={(statement) => {
+                  setSelectedStatements({
+                    ...selectedStatements,
+                    [id]: statement,
+                  });
+                  getAnswers(statement, id);
+                }}
+                selectedStatement={selectedStatements[id]?.statement}
+              />
+              <Parameters
+                autoCompleteSuggestions={autoCompleteSuggestions}
+                parameters={selectedStatements[id]?.parameters}
+                selectedParameter={selectedStatements[id]?.selectedParameter}
+                setSelectedParameter={(params) => {
+                  const newStatement = {
+                    ...selectedStatements[id],
+                    selectedParameter: params,
+                  };
+                  setSelectedStatements({
+                    ...selectedStatements,
+                    [id]: newStatement,
+                  });
+                  getAnswers(newStatement, id);
+                }}
+                fetchAutocompleteSuggestions={fetchAutocompleteSuggestions}
+                loadingAutosuggestions={loadingAutosuggestions}
+              />
+            </Grid>
+            <DeleteButton
               onClick={() => handleRemoveAnalysis(id)}
-            >
-              Remove
-            </StandardButton>
+              sx={{
+                marginTop: "16px",
+                marginRight: "0px",
+              }}
+              variant="outlined"
+            />
           </Grid>
+
           <Answers
             panelId={panelId}
             plan={plans[id]}
@@ -293,19 +289,29 @@ const Analysis: FunctionComponent<Props> = ({ panelId }) => {
         sx={{
           paddingLeft: "8px",
           boxShadow: "none",
+          alignItems: "center",
+          marginTop: "12px",
         }}
       >
-        <StandardButton
-          variant="outline-dark"
-          className="me-2"
+        <Button
+          variant="outlined"
           onClick={() => {
             addPanelAnalysis({
               id: uniqid(),
             });
           }}
+          sx={{
+            border: "1px solid black",
+            color: "black",
+            marginRight: "12px",
+
+            width: "36px",
+            height: "36px",
+            minWidth: 0,
+          }}
         >
           <AddIcon fontSize="medium" />
-        </StandardButton>
+        </Button>
         Add Analysis
       </Paper>
     </div>

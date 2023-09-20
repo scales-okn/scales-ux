@@ -43,6 +43,7 @@ const Statements = ({
         isOptionEqualToValue={(option, value) =>
           value === null || option.statement === value.statement
         }
+        sx={{ minWidth: "300px" }}
       />
     </FormControl>
   );

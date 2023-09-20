@@ -3,11 +3,12 @@ import { useNavigate, useParams } from "react-router-dom";
 import { useFormik } from "formik";
 import * as yup from "yup";
 
-import { useNotify } from "components/Notifications";
+import { Container, Typography, TextField, Grid } from "@mui/material";
 
-import { Col, Container, Form, Row } from "react-bootstrap";
-import PageLayout from "../../components/PageLayout";
-import StandardButton from "components/Buttons/StandardButton";
+import { makeRequest } from "src/helpers/makeRequest";
+
+import { useNotify } from "src/components/Notifications";
+import { Button } from "@mui/material";
 interface ResetPasswordFields {
   password: string;
   repassword: string;
@@ -19,7 +20,7 @@ const ResetPasswordValidationSchema = yup.object({
     .required()
     .matches(
       /^.*(?=.{8,})((?=.*[!@#$%^&*()\-_=+{};:,<.>]){1})(?=.*\d)((?=.*[a-z]){1})((?=.*[A-Z]){1}).*$/,
-      "Password must contain at least 8 characters, one uppercase, one number and one special case character",
+      "Password must contain at least 8 characters, one uppercase, one number, and one special character",
     ),
   repassword: yup
     .string()
@@ -37,92 +38,83 @@ const ResetPassword: FunctionComponent = () => {
       repassword: "",
     },
     validationSchema: ResetPasswordValidationSchema,
-    onSubmit: (values: ResetPasswordFields, { setErrors }) => {
-      fetch(`/api/users/password/reset`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ ...values, token }),
-      })
-        .then((response) => response.json())
-        .then((response) => {
-          try {
-            switch (response.code) {
-              case 200: {
-                notify(response.message, "success");
-                navigate("/sign-in");
-                break;
-              }
-              default: {
-                if (response.errors) {
-                  setErrors(response.errors);
-                }
-                notify(response.message, "error");
-                break;
-              }
-            }
-          } catch (error) {
-            console.warn(error); // eslint-disable-line no-console
-          }
+    onSubmit: async (values: ResetPasswordFields, { setErrors }) => {
+      try {
+        const response = await makeRequest.post(`/api/users/password/reset`, {
+          ...values,
+          token,
         });
+
+        if (response.status === "OK") {
+          notify(response.message, "success");
+          setTimeout(() => {
+            navigate("/sign-in");
+          }, 1000);
+        } else {
+          if (response.errors) {
+            setErrors(response.errors);
+          }
+          notify(response.message, "error");
+        }
+      } catch (error) {
+        console.error(error); // eslint-disable-line no-console
+        notify("An error occurred", "error");
+      }
     },
   });
 
   return (
-    <PageLayout>
-      <Container className="h-100">
-        <Row className="h-100 justify-content-center align-items-center text-center">
-          <Col md="5">
-            <Form noValidate onSubmit={formik.handleSubmit}>
-              <h1 className="h3 mb-5 mt-4 fw-normal">Set a New Password</h1>
-              <div className="form-floating">
-                <Form.Control
-                  type="password"
-                  name="password"
-                  placeholder="Password"
-                  className="rounded-0 rounded-top"
-                  value={formik.values.password}
-                  onChange={formik.handleChange}
-                  isInvalid={
-                    formik.touched.password && Boolean(formik.errors?.password)
-                  }
-                  style={{ marginBottom: "12px" }}
-                />
-                <Form.Label>Password</Form.Label>
-              </div>
-              <div className="form-floating mb-3">
-                <Form.Control
-                  type="password"
-                  name="repassword"
-                  placeholder="Confirm Password"
-                  className="rounded-0 rounded-bottom border-top-0"
-                  value={formik.values.repassword}
-                  onChange={formik.handleChange}
-                  isInvalid={
-                    formik.touched.repassword &&
-                    Boolean(formik.errors?.repassword)
-                  }
-                />
-                <Form.Label>Confirm Password</Form.Label>
-              </div>
-              <StandardButton
-                type="submit"
-                className="w-100 mb-3 text-white"
-                size="lg"
-                style={{
-                  background: "var(--main-purple-light)",
-                  border: "none",
-                  marginTop: "20px",
-                }}
-              >
+    <Container className="h-100">
+      <Grid
+        container
+        justifyContent="center"
+        alignItems="center"
+        className="h-100 text-center"
+      >
+        <Grid item md={5}>
+          <form noValidate onSubmit={formik.handleSubmit}>
+            <Typography variant="h4" className="mb-5 mt-5">
+              Set a New Password
+            </Typography>
+            <TextField
+              type="password"
+              name="password"
+              label="Password"
+              variant="outlined"
+              fullWidth
+              value={formik.values.password}
+              onChange={formik.handleChange}
+              error={
+                formik.touched.password && Boolean(formik.errors?.password)
+              }
+              helperText={formik.touched.password && formik.errors?.password}
+              sx={{ marginBottom: "12px", background: "white" }}
+            />
+            <TextField
+              type="password"
+              name="repassword"
+              label="Confirm Password"
+              variant="outlined"
+              fullWidth
+              value={formik.values.repassword}
+              onChange={formik.handleChange}
+              error={
+                formik.touched.repassword && Boolean(formik.errors?.repassword)
+              }
+              helperText={
+                formik.touched.repassword && formik.errors?.repassword
+              }
+              sx={{ marginBottom: "24px", background: "white" }}
+            />
+            <div style={{ display: "flex", justifyContent: "flex-end" }}>
+              <Button color="primary" variant="contained">
                 Reset Password
-              </StandardButton>
-            </Form>
-          </Col>
-        </Row>
-      </Container>
-    </PageLayout>
+              </Button>
+            </div>
+          </form>
+        </Grid>
+      </Grid>
+    </Container>
   );
 };
 

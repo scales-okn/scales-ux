@@ -1,9 +1,8 @@
 import { createSlice } from "@reduxjs/toolkit";
-import type { RootState, AppDispatch } from "store";
-import { authSelector } from "store/auth";
+import type { RootState, AppDispatch } from "src/store";
 import { useDispatch, useSelector } from "react-redux";
 import { notify } from "reapop";
-import { authorizationHeader } from "utils";
+import { makeRequest } from "src/helpers/makeRequest";
 
 interface InitialState {
   loadingRings: boolean;
@@ -80,18 +79,12 @@ export default ringsSlice.reducer;
 export const getRings = () => {
   return async (dispatch: AppDispatch, getState) => {
     try {
-      const { token } = authSelector(getState());
-      const authHeader = authorizationHeader(token);
       dispatch(ringsActions.getRings());
 
-      const response = await fetch(`/api/rings`, {
-        headers: {
-          ...authHeader,
-        },
-      });
-      const { data } = await response.json();
+      const response = await makeRequest.get(`/api/rings`);
+      const { data } = response;
 
-      if (response.status === 200) {
+      if (response.status === "OK") {
         dispatch(ringsActions.getRingsSuccess(data.rings));
       } else {
         dispatch(ringsActions.getRingsFailure());
@@ -104,28 +97,19 @@ export const getRings = () => {
 };
 
 export const getRingInfo = (rid: string, version: number) => {
-  return async (dispatch: AppDispatch, getState) => {
+  return async (dispatch: AppDispatch) => {
     const failedToGetRingInfoNotification = (
       message = "Failed to get ring info!",
     ) => dispatch(notify(message, "error"));
 
     try {
-      const { token } = authSelector(getState());
-      const authHeader = authorizationHeader(token);
       dispatch(ringsActions.getRingInfo());
-      const response = await fetch(`/proxy/rings/${rid}/${version}`, {
-        headers: {
-          ...authHeader,
-        },
-      });
-      const info = await response.json();
+      const response = await makeRequest.get(`/proxy/rings/${rid}/${version}`);
 
-      if (response.status === 200 && info?.success !== false) {
-        dispatch(ringsActions.getRingInfoSuccess({ rid, info }));
+      if (response) {
+        dispatch(ringsActions.getRingInfoSuccess({ rid, info: response }));
       } else {
-        failedToGetRingInfoNotification(
-          info?.message || "Failed to get ring info!",
-        );
+        failedToGetRingInfoNotification("Failed to get ring info!");
         dispatch(ringsActions.getRingInfoFailure());
       }
     } catch (error) {

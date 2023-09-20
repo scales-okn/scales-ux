@@ -1,19 +1,26 @@
 import React, { useState } from "react";
-import PageLayout from "components/PageLayout";
-import Loader from "components/Loader";
+import { useNavigate, useParams } from "react-router-dom";
+import { useUser } from "src/store/auth";
+import {
+  Container,
+  Grid,
+  Typography,
+  TextField,
+  MenuItem,
+  Button,
+} from "@mui/material";
+
 import { useFormik } from "formik";
 import * as yup from "yup";
-import { Form, Row, Col } from "react-bootstrap";
-import { useAuthHeader, useUser } from "store/auth";
-import { useNotify } from "components/Notifications";
-import { useNavigate, useParams } from "react-router-dom";
-import { useRing } from "store/rings";
-import ConfirmModal from "components/Modals/ConfirmModal";
-import Editor from "components/Editor";
+
+import Loader from "src/components/Loader";
+import { useNotify } from "src/components/Notifications";
+import { useRing } from "src/store/rings";
+import ConfirmModal from "src/components/Modals/ConfirmModal";
+import Editor from "src/components/Editor";
+import BackButton from "src/components/Buttons/BackButton";
 import "./jsoneditor-react-dark-mode.css";
-import { Container } from "@mui/material";
-import BackButton from "components/Buttons/BackButton";
-import StandardButton from "components/Buttons/StandardButton";
+import { makeRequest } from "src/helpers/makeRequest";
 
 type Params = {
   ringId: string | null;
@@ -23,7 +30,6 @@ const Ring: React.FC = () => {
   const { ringId = null } = useParams<Params>();
   const { ring } = useRing(Number(ringId));
   const [loading, setLoading] = useState(false);
-  const authHeader = useAuthHeader();
   const user = useUser();
   const { notify } = useNotify();
   const navigate = useNavigate();
@@ -55,59 +61,32 @@ const Ring: React.FC = () => {
     }),
     onSubmit: async (values) => {
       setLoading(true);
-      fetch(`/api/rings/${ringId || "create"}`, {
-        method: ringId ? "PUT" : "POST",
-        body: JSON.stringify(values),
-        headers: {
-          ...authHeader,
-          "Content-Type": "application/json",
-        },
-      })
-        .then((response) => response.json())
-        .then((response) => {
-          try {
-            if (response?.code === 200) {
-              notify(response.message, "success");
-              navigate("/admin/rings");
-            }
-          } catch (error) {
-            console.warn(error); // eslint-disable-line no-console
-            notify(error.message, "error");
-          }
-        })
-        .catch((error) => console.warn(error)) // eslint-disable-line no-console
-        .finally(() => setLoading(false));
+      let response;
+      if (ringId) {
+        response = await makeRequest.put(`/api/rings/${ringId}`, values);
+      } else {
+        response = await makeRequest.post(`/api/rings/create`, values);
+      }
+
+      if (response?.code === 200) {
+        notify(response.message, "success");
+        navigate("/admin/rings");
+      }
     },
   });
 
   const deleteRing = async (rid) => {
     setLoading(true);
-    fetch(`/api/rings/${rid}`, {
-      method: "DELETE",
-      headers: {
-        ...authHeader,
-        "Content-Type": "application/json",
-      },
-    })
-      .then((response) => response.json())
-      .then((response) => {
-        try {
-          switch (response?.code) {
-            case 200:
-              notify(response.message, "success");
-              navigate("/admin/rings");
-              break;
-            default:
-              notify(response.message, "error");
-              break;
-          }
-        } catch (error) {
-          console.warn(error); // eslint-disable-line no-console
-          notify(error.message, "error");
-        }
-      })
-      .catch((error) => console.warn(error)) // eslint-disable-line no-console
-      .finally(() => setLoading(false));
+    const response = await makeRequest.delete(`/api/rings/${rid}`);
+
+    if (response?.code === 200) {
+      notify(response.message, "success");
+      navigate("/admin/rings");
+    } else {
+      notify(response.message, "error");
+    }
+
+    setLoading(false);
   };
 
   const sanitizeData = (data) => {
@@ -125,153 +104,172 @@ const Ring: React.FC = () => {
   };
 
   return (
-    <PageLayout>
+    <>
       <BackButton onClick={() => navigate("/admin/rings")} />
 
       <Container sx={{ padding: "86px 0" }}>
         <Loader isVisible={loading}>
-          <Form onSubmit={formik.handleSubmit}>
-            <Row className="mb-3">
-              <Col>
-                <h3 className="mb-3">{ring ? "Edit Ring" : "Create Ring"}</h3>
-              </Col>
-              <Col>
-                <StandardButton
-                  variant="primary"
+          <form onSubmit={formik.handleSubmit}>
+            <Grid container spacing={3} mb={3}>
+              <Grid item xs={12}>
+                <Typography variant="h5" mb={3}>
+                  {ring ? "Edit Ring" : "Create Ring"}
+                </Typography>
+              </Grid>
+              <Grid
+                item
+                xs={12}
+                sx={{ display: "flex", justifyContent: "flex-end" }}
+              >
+                {ring && (
+                  <Button
+                    variant="contained"
+                    color="error"
+                    type="button"
+                    onClick={() => setConfirmVisible(true)}
+                    sx={{ marginRight: "12px" }}
+                  >
+                    Delete Ring
+                  </Button>
+                )}
+                <Button
+                  variant="contained"
+                  color="primary"
                   type="submit"
-                  className="text-white float-end ms-2"
-                  style={{
+                  sx={{
                     background: "var(--sea-green)",
-                    border: "none",
+                    "&:hover": {
+                      backgroundColor: "var(--sea-green-highlight)",
+                    },
                   }}
                 >
                   Submit
-                </StandardButton>
-                {ring && (
-                  <StandardButton
-                    variant="danger"
-                    type="button"
-                    onClick={() => setConfirmVisible(true)}
-                    className="float-end"
-                    style={{
-                      border: "none",
-                    }}
-                  >
-                    Delete Ring
-                  </StandardButton>
-                )}
-              </Col>
-            </Row>
-            <Row>
-              <Form.Group controlId="formName" className="mb-2" as={Col}>
-                <Form.Label>Name</Form.Label>
-                <Form.Control
-                  type="text"
+                </Button>
+              </Grid>
+            </Grid>
+            <Grid container spacing={3}>
+              <Grid item xs={12} sm={6}>
+                <TextField
+                  sx={{ background: "white", marginBottom: "24px" }}
+                  fullWidth
+                  id="formName"
+                  label="Name"
                   name="name"
-                  placeholder="Name"
+                  variant="outlined"
                   value={formik.values.name}
                   onChange={formik.handleChange}
                   onBlur={formik.handleBlur}
                 />
                 {formik.touched.name && formik.errors.name ? (
-                  <Form.Text className="text-danger">
+                  <Typography variant="body2" color="error">
                     {formik.errors.name}
-                  </Form.Text>
+                  </Typography>
                 ) : null}
-              </Form.Group>
-              <Form.Group controlId="formRID" className="mb-2" as={Col}>
-                <Form.Label>RID</Form.Label>
-                <Form.Control
-                  type="text"
+              </Grid>
+              <Grid item xs={12} sm={6}>
+                <TextField
+                  sx={{ background: "white", marginBottom: "24px" }}
+                  fullWidth
+                  id="formRID"
+                  label="RID"
                   name="rid"
-                  placeholder="Ring Id"
+                  variant="outlined"
                   value={formik.values.rid}
                   onChange={formik.handleChange}
                   onBlur={formik.handleBlur}
                 />
                 {formik.touched.rid && formik.errors.rid ? (
-                  <Form.Text className="text-danger">
+                  <Typography variant="body2" color="error">
                     {formik.errors.rid}
-                  </Form.Text>
+                  </Typography>
                 ) : null}
-              </Form.Group>
-            </Row>
-            <Form.Group controlId="formDescription" className="mb-2">
-              <Form.Label>Description</Form.Label>
-              <Form.Control
-                as="textarea"
-                rows={3}
-                name="description"
-                placeholder="Description"
-                value={formik.values.description}
-                onChange={formik.handleChange}
-                onBlur={formik.handleBlur}
-              />
-              {formik.touched.description && formik.errors.description ? (
-                <Form.Text className="text-danger">
-                  {formik.errors.description}
-                </Form.Text>
-              ) : null}
-            </Form.Group>
-            <Row>
-              <Form.Group controlId="formVersion" className="mb-2" as={Col}>
-                <Form.Label>Version</Form.Label>
-                <Form.Control
-                  type="number"
+              </Grid>
+            </Grid>
+            <TextField
+              sx={{ background: "white", marginBottom: "24px" }}
+              fullWidth
+              id="formDescription"
+              label="Description"
+              name="description"
+              variant="outlined"
+              multiline
+              rows={3}
+              value={formik.values.description}
+              onChange={formik.handleChange}
+              onBlur={formik.handleBlur}
+            />
+            {formik.touched.description && formik.errors.description ? (
+              <Typography variant="body2" color="error">
+                {formik.errors.description}
+              </Typography>
+            ) : null}
+            <Grid container spacing={3}>
+              <Grid item xs={12} sm={4}>
+                <TextField
+                  sx={{ background: "white", marginBottom: "24px" }}
+                  fullWidth
+                  id="formVersion"
+                  label="Version"
                   name="version"
-                  placeholder="Version"
+                  variant="outlined"
+                  type="number"
                   value={formik.values.version}
                   onChange={formik.handleChange}
                   onBlur={formik.handleBlur}
                 />
                 {formik.touched.version && formik.errors.version ? (
-                  <Form.Text className="text-danger">
+                  <Typography variant="body2" color="error">
                     {formik.errors.version}
-                  </Form.Text>
+                  </Typography>
                 ) : null}
-              </Form.Group>
-              <Form.Group
-                controlId="formSchemaVersion"
-                className="mb-2"
-                as={Col}
-              >
-                <Form.Label>Schema Version</Form.Label>
-                <Form.Control
-                  type="number"
+              </Grid>
+              <Grid item xs={12} sm={4}>
+                <TextField
+                  sx={{ background: "white", marginBottom: "24px" }}
+                  fullWidth
+                  id="formSchemaVersion"
+                  label="Schema Version"
                   name="schemaVersion"
-                  placeholder="Schema Version"
+                  variant="outlined"
+                  type="number"
                   value={formik.values.schemaVersion}
                   onChange={formik.handleChange}
                   onBlur={formik.handleBlur}
                 />
                 {formik.touched.schemaVersion && formik.errors.schemaVersion ? (
-                  <Form.Text className="text-danger">
+                  <Typography variant="body2" color="error">
                     {formik.errors.schemaVersion}
-                  </Form.Text>
+                  </Typography>
                 ) : null}
-              </Form.Group>
-              <Form.Group controlId="formVisibility" className="mb-3" as={Col}>
-                <Form.Label>Visibility</Form.Label>
-                <Form.Control
-                  as="select"
+              </Grid>
+              <Grid item xs={12} sm={4}>
+                <TextField
+                  sx={{ background: "white", marginBottom: "24px" }}
+                  fullWidth
+                  id="formVisibility"
+                  label="Visibility"
                   name="visibility"
+                  variant="outlined"
+                  select
                   value={formik.values.visibility}
                   onChange={formik.handleChange}
                   onBlur={formik.handleBlur}
                 >
-                  <option value="public">Public</option>
-                  <option value="private">Private</option>
-                </Form.Control>
+                  <MenuItem value="public">Public</MenuItem>
+                  <MenuItem value="private">Private</MenuItem>
+                </TextField>
                 {formik.touched.visibility && formik.errors.visibility ? (
-                  <Form.Text className="text-danger">
+                  <Typography variant="body2" color="error">
                     {formik.errors.visibility}
-                  </Form.Text>
+                  </Typography>
                 ) : null}
-              </Form.Group>
-            </Row>
-            <Row className="mb-3">
-              <Form.Group controlId="formDataSource" className="mb-2" as={Col}>
-                <Form.Label>Data Source</Form.Label>
+              </Grid>
+            </Grid>
+            <Grid container spacing={3}>
+              <Grid item xs={12}>
+                <Typography variant="h6" mb={2}>
+                  Data Source
+                </Typography>
                 <Editor
                   mode="tree"
                   allowedModes={["code", "tree"]}
@@ -285,15 +283,17 @@ const Ring: React.FC = () => {
                   }}
                 />
                 {formik.touched.dataSource && formik.errors.dataSource ? (
-                  <Form.Text className="text-danger">
+                  <Typography variant="body2" color="error">
                     {formik.errors.dataSource as string}
-                  </Form.Text>
+                  </Typography>
                 ) : null}
-              </Form.Group>
-            </Row>
-            <Row className="mb-3">
-              <Form.Group controlId="formOntology" className="mb-2" as={Col}>
-                <Form.Label>Ontology</Form.Label>
+              </Grid>
+            </Grid>
+            <Grid container spacing={3}>
+              <Grid item xs={12}>
+                <Typography variant="h6" mb={2}>
+                  Ontology
+                </Typography>
                 <Editor
                   mode="tree"
                   allowedModes={["code", "tree"]}
@@ -307,13 +307,13 @@ const Ring: React.FC = () => {
                   }}
                 />
                 {formik.touched.ontology && formik.errors.ontology ? (
-                  <Form.Text className="text-danger">
+                  <Typography variant="body2" color="error">
                     {formik.errors.ontology as string}
-                  </Form.Text>
+                  </Typography>
                 ) : null}
-              </Form.Group>
-            </Row>
-          </Form>
+              </Grid>
+            </Grid>
+          </form>
         </Loader>
       </Container>
       <ConfirmModal
@@ -322,7 +322,7 @@ const Ring: React.FC = () => {
         setOpen={setConfirmVisible}
         onConfirm={() => deleteRing(ring.rid)}
       />
-    </PageLayout>
+    </>
   );
 };
 

@@ -4,18 +4,26 @@ import { useSelector } from "react-redux";
 import { Link } from "react-router-dom";
 
 import { DataGrid, GridCellParams } from "@mui/x-data-grid";
-import { Form, Row, Col, InputGroup } from "react-bootstrap";
+import {
+  FormControl,
+  Select,
+  MenuItem,
+  TextField,
+  InputAdornment,
+  IconButton,
+  Grid,
+  Button,
+} from "@mui/material";
+
 import { useEffectOnce } from "react-use";
 import SearchIcon from "@mui/icons-material/Search";
 import dayjs from "dayjs";
 
-import { userSelector } from "store/auth";
-import { useNotebooks } from "store/notebooks";
+import { userSelector } from "src/store/auth";
+import { useNotebooks } from "src/store/notebooks";
 
-import StandardButton from "components/Buttons/StandardButton";
-import PageLayout from "components/PageLayout";
-import Loader from "components/Loader";
-import ColumnHeader from "components/ColumnHeader";
+import Loader from "src/components/Loader";
+import ColumnHeader from "src/components/ColumnHeader";
 
 import "./NotebooksPage.scss";
 
@@ -152,78 +160,84 @@ const NotebooksPage: FunctionComponent = () => {
   ];
 
   return (
-    <PageLayout>
-      <Loader isVisible={loadingNotebooks}>
-        <>
-          <Row>
-            <Col md>
-              <InputGroup>
-                <InputGroup.Text className="bg-white">Show:</InputGroup.Text>
-                <Form.Select
-                  className="border-start-0 ps-0"
-                  value={showNotebooks}
-                  onChange={(event: React.ChangeEvent<HTMLSelectElement>) =>
-                    setShowNotebooks(event.target.value)
-                  }
-                >
-                  <option value="my-notebooks">My Notebooks</option>
-                  <option value="shared-notebooks">Shared with me</option>
-                  <option value="public-notebooks">Public Notebooks</option>
-                </Form.Select>
-              </InputGroup>
-            </Col>
-            <Col md>
-              <InputGroup>
-                <InputGroup.Text className="bg-white">
-                  <SearchIcon />
-                </InputGroup.Text>
-                <Form.Control
-                  autoComplete="off"
-                  className="border-start-0 ps-0"
-                  id="filter-notebooks"
-                  placeholder="Filter Notebooks"
-                  onChange={(event: any) =>
-                    setFilterNotebooks(event.target.value)
-                  }
-                />
-              </InputGroup>
-            </Col>
-            <Col>
-              <Link
-                to="/notebooks/new"
-                className="text-white text-decoration-none"
+    <Loader isVisible={loadingNotebooks}>
+      <>
+        <Grid
+          container
+          spacing={2}
+          sx={{ alignItems: "center", marginTop: "80px" }}
+        >
+          <Grid item md={4}>
+            <FormControl fullWidth>
+              <Select
+                value={showNotebooks}
+                onChange={(event) =>
+                  setShowNotebooks(event.target.value as string)
+                }
+                sx={{ background: "white", borderRadius: "4px" }}
               >
-                <StandardButton
-                  className="text-white float-end px-5"
-                  variant="primary"
-                  style={{
-                    background: "var(--sea-green)",
-                    border: "none",
-                  }}
-                >
-                  Create Notebook
-                </StandardButton>
-              </Link>
-            </Col>
-          </Row>
-          <Row>
-            <div style={{ height: "60vh", width: "100%" }} className="mt-4">
-              <DataGrid
-                rows={notebooksData}
-                columns={columns}
-                disableColumnMenu
-                disableColumnFilter
-                hideFooterPagination
-                hideFooter={notebooks?.length <= 10 ? true : false}
-                rowCount={notebooks?.length}
-                checkboxSelection={false}
-                className="bg-white"
-              />
-            </div>
-          </Row>
-        </>
-      </Loader>
-    </PageLayout>
+                <MenuItem value="my-notebooks">My Notebooks</MenuItem>
+                <MenuItem value="shared-notebooks">Shared with me</MenuItem>
+                <MenuItem value="public-notebooks">Public Notebooks</MenuItem>
+              </Select>
+            </FormControl>
+          </Grid>
+          <Grid item md={4}>
+            <TextField
+              fullWidth
+              id="filter-notebooks"
+              placeholder="Filter Notebooks"
+              value={filterNotebooks}
+              onChange={(event: React.ChangeEvent<HTMLInputElement>) =>
+                setFilterNotebooks(event.target.value)
+              }
+              InputProps={{
+                startAdornment: (
+                  <InputAdornment position="start">
+                    <IconButton>
+                      <SearchIcon />
+                    </IconButton>
+                  </InputAdornment>
+                ),
+              }}
+              sx={{
+                background: "white",
+                borderRadius: "4px",
+                "& .MuiFormControl-root": { border: "none" },
+              }}
+            />
+          </Grid>
+          <Grid
+            item
+            md={4}
+            sx={{ display: "flex", justifyContent: "flex-end" }}
+          >
+            <Link
+              to="/notebooks/new"
+              className="text-white text-decoration-none"
+            >
+              <Button color="success" variant="contained">
+                Create Notebook
+              </Button>
+            </Link>
+          </Grid>
+        </Grid>
+
+        <div style={{ height: "60vh", width: "100%" }} className="mt-4">
+          <DataGrid
+            rows={notebooksData}
+            columns={columns}
+            disableColumnMenu
+            disableColumnFilter
+            hideFooterPagination
+            hideFooter={notebooks?.length <= 10 ? true : false}
+            rowCount={notebooks?.length}
+            checkboxSelection={false}
+            className="bg-white"
+          />
+        </div>
+      </>
+    </Loader>
   );
 };
 

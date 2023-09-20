@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from "react";
-import { Grid, TextField } from "@mui/material";
 import { useSelector, useDispatch } from "react-redux";
 import { useNavigate, useLocation } from "react-router-dom";
 import { useEffectOnce } from "react-use";
@@ -9,15 +8,17 @@ import {
   updateNotebook,
   deleteNotebook,
   createNotebook,
-} from "store/notebook";
-import { useRings } from "store/rings";
-import { getPanels, usePanels } from "store/panels";
-import AddPanel from "../Panels/AddPanel";
+} from "src/store/notebook";
+import { useRings } from "src/store/rings";
+import { getPanels, usePanels } from "src/store/panels";
 
-import StandardButton from "components/Buttons/StandardButton";
-import ConfirmModal from "components/Modals/ConfirmModal";
-import Loader from "components/Loader";
-import Panels from "components/Panels";
+import { Grid, TextField, Button } from "@mui/material";
+import DeleteButton from "src/components/Buttons/DeleteButton";
+
+import AddPanel from "../Panels/AddPanel";
+import ConfirmModal from "src/components/Modals/ConfirmModal";
+import Loader from "src/components/Loader";
+import Panels from "src/components/Panels";
 
 const Notebook = () => {
   const { getRings } = useRings();
@@ -50,11 +51,13 @@ const Notebook = () => {
     }
   }, [notebook]); // eslint-disable-line react-hooks/exhaustive-deps
 
+  const notebookRef = React.useRef(null);
   useEffect(() => {
-    if (notebook?.id) {
+    if (notebook?.id && notebookRef.current !== notebook?.id) {
       dispatch(getPanels(notebook?.id));
+      notebookRef.current = notebook?.id;
     }
-  }, [notebook?.id, dispatch]);
+  }, [notebook?.id]); // eslint-disable-line react-hooks/exhaustive-deps
 
   useEffectOnce(() => {
     getRings();
@@ -95,9 +98,14 @@ const Notebook = () => {
           <Grid item>
             {notebook && (
               <>
-                <StandardButton
-                  className="text-white float-end"
-                  variant="success"
+                <DeleteButton
+                  onClick={() => setConfirmVisible(true)}
+                  disabled={deletingNotebook}
+                  sx={{ marginRight: "12px" }}
+                />
+                <Button
+                  color="success"
+                  variant="contained"
                   onClick={() => {
                     if (notebookTitle) {
                       dispatch(
@@ -112,37 +120,25 @@ const Notebook = () => {
                   }}
                   disabled={savingNotebook || !notebookTitle}
                 >
-                  {savingNotebook ? "Loading…" : "Save"}
-                </StandardButton>
-
-                <StandardButton
-                  className="text-white float-end me-2"
-                  variant="danger"
-                  onClick={() => setConfirmVisible(true)}
-                  disabled={deletingNotebook}
-                >
-                  {deletingNotebook ? "Deleting..." : "Delete"}
-                </StandardButton>
+                  Save
+                </Button>
               </>
             )}
 
             {!notebook && (
-              <StandardButton
-                className="text-white float-end"
-                variant="primary"
+              <Button
+                size="large"
+                color="success"
+                variant="contained"
                 onClick={() => {
                   if (notebookTitle) {
                     dispatch(createNotebook({ title: notebookTitle }));
                   }
                 }}
                 disabled={savingNotebook || !notebookTitle}
-                style={{
-                  background: "var(--sea-green)",
-                  border: "none",
-                }}
               >
                 {savingNotebook ? "Loading…" : "Create"}
-              </StandardButton>
+              </Button>
             )}
           </Grid>
         </Grid>

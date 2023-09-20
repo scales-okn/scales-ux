@@ -1,12 +1,11 @@
 import React, { FunctionComponent, useEffect, useState } from "react";
-import { useHelpTexts } from "store/helpTexts";
+import { useHelpTexts } from "src/store/helpTexts";
 
 import * as yup from "yup";
 import { useFormik } from "formik";
-import { TextField } from "@mui/material";
+import { TextField, Button } from "@mui/material";
 
-import ModalContainer from "components/Modals/ModalContainer";
-import StandardButton from "components/Buttons/StandardButton";
+import ModalContainer from "src/components/Modals/ModalContainer";
 
 import { detailStyles } from "./styles";
 
@@ -137,15 +136,19 @@ const FeedbackDetailModal: FunctionComponent<FeedbackDetailModalT> = ({
           />
         </section>
         <div className="buttonRow">
-          <StandardButton variant="danger" onClick={handleDelete}>
-            {confirmVisible ? "Confirm Delete" : "Delete"}
-          </StandardButton>
-          <StandardButton
-            variant="primary"
-            onClick={() => formik.handleSubmit()}
+          <Button
+            color="error"
+            variant="outlined"
+            onClick={handleDelete}
+            sx={{
+              marginRight: "12px",
+            }}
           >
+            {confirmVisible ? "Confirm Delete" : "Delete"}
+          </Button>
+          <Button variant="contained" onClick={() => formik.handleSubmit()}>
             Update
-          </StandardButton>
+          </Button>
         </div>
       </div>
     </ModalContainer>

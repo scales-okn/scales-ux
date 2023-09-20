@@ -1,13 +1,14 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
 import { createSlice } from "@reduxjs/toolkit";
-import type { RootState, AppDispatch } from "store";
+import type { RootState, AppDispatch } from "src/store";
 import jwt_decode from "jwt-decode";
 import { useSelector, useDispatch } from "react-redux";
 import { Store, Dispatch, Action } from "redux";
 import { notify } from "reapop";
-import { useUnknownErrorNotificationMessage } from "components/Notifications";
-import { authorizationHeader } from "utils";
+import { useUnknownErrorNotificationMessage } from "src/components/Notifications";
+import { authorizationHeader } from "src/helpers/authorizationHeader";
+import { makeRequest } from "src/helpers/makeRequest";
 
 interface InitialState extends DecodedToken {
   hasErrors: boolean;
@@ -68,14 +69,13 @@ export const login = (email: string, password: string, rememberMe = false) => {
   return async (dispatch: AppDispatch) => {
     dispatch(authActions.signIn());
     try {
-      const response = await fetch(`/api/users/login`, {
-        method: "POST",
-        body: JSON.stringify({ email, password, rememberMe }),
-        headers: {
-          "Content-Type": "application/json",
-        },
+      const response = await makeRequest.post(`/api/users/login`, {
+        email,
+        password,
+        rememberMe,
       });
-      const { data, code, message, errors } = await response.json();
+
+      const { data, code, message, errors } = response;
       let decodedToken: DecodedToken = null;
 
       switch (code) {
@@ -135,9 +135,7 @@ export const useAuth = () => {
 export const authMiddleware =
   (store: Store) => (next: Dispatch) => (action: Action) => {
     next(action);
-    if (action.type === "auth/signOut") {
-      setTimeout(() => store.dispatch(notify("You have been logged out")), 300);
-    } else {
+    if (action.type !== "auth/signOut") {
       const { exp, iat } = store.getState().auth;
       if (exp && iat) {
         const now = new Date().getTime() / 1000;

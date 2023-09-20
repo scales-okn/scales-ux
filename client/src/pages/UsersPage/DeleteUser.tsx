@@ -1,10 +1,11 @@
 import React, { FunctionComponent, useState } from "react";
 
-import { useAuthHeader } from "store/auth";
+import { Button } from "@mui/material";
 
-import { useNotify } from "components/Notifications";
-import ConfirmModal from "components/Modals/ConfirmModal";
-import StandardButton from "components/Buttons/StandardButton";
+import { makeRequest } from "src/helpers/makeRequest";
+
+import { useNotify } from "src/components/Notifications";
+import ConfirmModal from "src/components/Modals/ConfirmModal";
 
 type Props = {
   userId: number;
@@ -12,47 +13,33 @@ type Props = {
 };
 
 const DeleteUser: FunctionComponent<Props> = ({ userId, disabled = false }) => {
-  const authHeader = useAuthHeader();
   const { notify } = useNotify();
   const [confirmVisible, setConfirmVisible] = useState(false);
 
-  const deleteUser = () => {
-    fetch(`/api/users/${userId}`, {
-      method: "DELETE",
-      headers: {
-        ...authHeader,
-        "Content-Type": "application/json",
-      },
-    })
-      .then((response) => response.json())
-      .then((response) => {
-        try {
-          switch (response.code) {
-            case 200:
-              notify(response.message, "success");
-              window.location.reload();
-              break;
-            default:
-              notify(response.message, "error");
-          }
-        } catch (error) {
-          console.warn(error); // eslint-disable-line no-console
-        }
-      })
-      .catch((error) => console.warn(error)); // eslint-disable-line no-console
+  const deleteUser = async () => {
+    const response = await makeRequest.delete(`/api/users/${userId}`);
+
+    if (response.status === "OK") {
+      notify(response.message, "success");
+      window.location.reload();
+    } else {
+      notify(response.message, "error");
+    }
   };
 
   return (
     <>
-      <StandardButton
-        className="text-white float-end me-2"
-        variant="danger"
-        onClick={() => setConfirmVisible(true)}
-        disabled={disabled}
-        size="sm"
+      <Button
+        color="error"
+        variant="outlined"
+        size="small"
+        onClick={(e) => {
+          e.stopPropagation();
+          setConfirmVisible(true);
+        }}
       >
         Delete
-      </StandardButton>
+      </Button>
       <ConfirmModal
         itemName="user"
         open={confirmVisible}

@@ -1,11 +1,7 @@
-import React, { FunctionComponent, useState } from "react";
+import React, { FunctionComponent, useState, useEffect } from "react";
 import { useParams } from "react-router";
-import { authSelector } from "store/auth";
-import { authorizationHeader } from "utils";
-import { useSelector } from "react-redux";
-import PageLayout from "../../components/PageLayout";
 import Loader from "../../components/Loader";
-import { useEffectOnce } from "react-use";
+import { makeRequest } from "src/helpers/makeRequest";
 
 type Params = {
   ringId: string | null;
@@ -22,8 +18,6 @@ const DocumentPage: FunctionComponent = () => {
     docId = null,
   } = useParams<Params>();
   const [html, setHtml] = useState("");
-  const { token } = useSelector(authSelector);
-  const authHeader = authorizationHeader(token);
   const docUrl = `/proxy/document/${ringId}/${ringVersion}/${entityType}/${docId}`;
   const receiptStart1 = `<table width="400"`,
     receiptStart2 = `<table border="1"`,
@@ -31,25 +25,19 @@ const DocumentPage: FunctionComponent = () => {
 
   const fetchDocument = async () => {
     try {
-      const response = await fetch(docUrl, {
-        method: "GET",
-        headers: {
-          "Content-Type": "text/html",
-          ...authHeader,
-        },
-      });
+      const response = await makeRequest.get(docUrl, { responseType: "text" });
 
-      if (response.status === 200) {
-        const html = await response.text();
-        return setHtml(
-          html
+      if (response) {
+        const html =
+          response
             .replaceAll("onclick", "onclick-removed-by-satyrn")
             .split("</script>")
             .slice(-1)[0]
             .split(receiptStart1)[0]
             .split(receiptStart2)[0]
-            .split(receiptStart3)[0] + "<br><br>",
-        );
+            .split(receiptStart3)[0] + "<br><br>";
+
+        return setHtml(html);
       } else {
         return "<div>There was an error retrieving this document.</div>";
       }
@@ -58,16 +46,14 @@ const DocumentPage: FunctionComponent = () => {
     }
   };
 
-  useEffectOnce(() => {
+  useEffect(() => {
     fetchDocument();
-  });
+  }, [docId]); // eslint-disable-line react-hooks/exhaustive-deps
 
   return (
-    <PageLayout>
-      <Loader isVisible={!html}>
-        <div dangerouslySetInnerHTML={{ __html: html }}></div>
-      </Loader>
-    </PageLayout>
+    <Loader isVisible={!html}>
+      <div dangerouslySetInnerHTML={{ __html: html }}></div>
+    </Loader>
   );
 };
 

@@ -1,56 +1,41 @@
 import React, { useState } from "react";
-import { useAuthHeader } from "store/auth";
-import { useNotify } from "components/Notifications";
-import ConfirmModal from "components/Modals/ConfirmModal";
-import StandardButton from "components/Buttons/StandardButton";
+import { makeRequest } from "src/helpers/makeRequest";
+
+import { useNotify } from "src/components/Notifications";
+import ConfirmModal from "src/components/Modals/ConfirmModal";
+import { Button } from "@mui/material";
 
 type Props = {
   feedbackId: number;
 };
 
 const DeleteFeedback = ({ feedbackId }: Props) => {
-  const authHeader = useAuthHeader();
   const { notify } = useNotify();
   const [confirmVisible, setConfirmVisible] = useState(false);
 
-  const DeleteFeedback = () => {
-    fetch(`/api/feedback/${feedbackId}`, {
-      method: "DELETE",
-      headers: {
-        ...authHeader,
-        "Content-Type": "application/json",
-      },
-    })
-      .then((response) => response.json())
-      .then((response) => {
-        try {
-          switch (response.code) {
-            case 200:
-              window.location.reload();
-              break;
-            default:
-              notify(response.message, "error");
-          }
-        } catch (error) {
-          console.warn(error); // eslint-disable-line no-console
-        }
-      })
-      .catch((error) => console.warn(error)); // eslint-disable-line no-console
+  const DeleteFeedback = async () => {
+    const response = await makeRequest.delete(`/api/feedback/${feedbackId}`);
+
+    if (response.status === "OK") {
+      window.location.reload();
+    } else {
+      notify(response.message, "error");
+    }
   };
 
   return (
     <>
-      <StandardButton
-        className="text-white float-end me-2"
-        variant="danger"
+      <Button
+        color="error"
+        variant="outlined"
+        size="small"
         onClick={(e) => {
           e.stopPropagation();
           setConfirmVisible(true);
         }}
-        size="sm"
       >
         Delete
-      </StandardButton>
+      </Button>
       <ConfirmModal
         itemName="feedback"
         open={confirmVisible}

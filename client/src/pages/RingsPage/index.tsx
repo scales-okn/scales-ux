@@ -1,14 +1,14 @@
 import React from "react";
 import { Link } from "react-router-dom";
-import { useRings } from "store/rings";
+import { useRings } from "src/store/rings";
 
 import { useEffectOnce } from "react-use";
 import { DataGrid, GridCellParams } from "@mui/x-data-grid";
+import { Button } from "@mui/material";
 import dayjs from "dayjs";
 
-import ColumnHeader from "components/ColumnHeader";
-import Loader from "components/Loader";
-import StandardButton from "components/Buttons/StandardButton";
+import ColumnHeader from "src/components/ColumnHeader";
+import Loader from "src/components/Loader";
 
 const RingsPage: React.FC = () => {
   const { getRings, rings, loadingRings } = useRings();
@@ -80,22 +80,27 @@ const RingsPage: React.FC = () => {
   return (
     <>
       <Loader isVisible={loadingRings}>
-        <div style={{ display: "flex", flexDirection: "column" }}>
+        <div
+          style={{
+            display: "flex",
+            flexDirection: "column",
+            alignItems: "flex-end",
+          }}
+        >
           <Link
             to="/admin/rings/create"
             className="text-white text-decoration-none"
           >
-            <StandardButton
-              variant="primary"
-              className="mb-3 text-white float-end me-3"
-              style={{
+            <Button
+              color="success"
+              variant="contained"
+              sx={{
                 minWidth: "200px",
-                background: "var(--sea-green)",
-                border: "none",
+                marginBottom: "24px",
               }}
             >
               Create Ring
-            </StandardButton>
+            </Button>
           </Link>
           <div style={{ height: "60vh", width: "100%", margin: "0 auto" }}>
             <DataGrid

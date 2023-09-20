@@ -3,9 +3,9 @@ import React, { useMemo } from "react";
 import AddIcon from "@mui/icons-material/Add";
 import uniqid from "uniqid";
 
-import { usePanel } from "store/panels";
+import { usePanel } from "src/store/panels";
 
-import StandardButton from "components/Buttons/StandardButton";
+import Button from "@mui/material/Button";
 import Filter from "./Filter";
 
 import { filterContainerStyles } from "./styles";
@@ -30,27 +30,37 @@ const Filters = ({ panelId }: FiltersProps) => {
       <div className="filters">
         {filterElements}
         <div className="d-inline-block">
-          <StandardButton
-            variant="outline-dark"
-            className="me-2"
+          <Button
+            variant="outlined"
+            color="success"
             onClick={() => {
               setPanelFilters([
                 ...(filters || []),
                 { id: uniqid(), value: "" },
               ]);
             }}
+            sx={{
+              border: "1px solid black",
+              color: "black",
+              marginRight: "12px",
+              width: "36px",
+              height: "36px",
+              minWidth: 0,
+            }}
           >
             <AddIcon fontSize="medium" />
-          </StandardButton>
-          {!filters?.length && <>Add a filter</>}
-          <StandardButton
-            variant="primary"
-            className="text-white"
-            onClick={() => getPanelResults(filters)}
-            style={{ position: "absolute", right: "24px", top: "24px" }}
-          >
-            Update Results
-          </StandardButton>
+          </Button>
+          {filters?.length ? (
+            <Button
+              variant="contained"
+              onClick={() => getPanelResults(filters)}
+              style={{ position: "absolute", right: "24px", top: "32px" }}
+            >
+              Update Results
+            </Button>
+          ) : (
+            <>Add a filter</>
+          )}
         </div>
       </div>
     </div>

@@ -1,8 +1,11 @@
-import React, { FunctionComponent, useState, useCallback } from "react";
+import React, { FunctionComponent, useState } from "react";
 import { useParams, Link, useNavigate } from "react-router-dom";
 
 import { useEffectOnce } from "react-use";
-import Loader from "components/Loader";
+
+import { makeRequest } from "src/helpers/makeRequest";
+
+import Loader from "src/components/Loader";
 import { styles } from "./styles";
 
 const EmailVerificationPage: FunctionComponent = () => {
@@ -26,29 +29,20 @@ const EmailVerificationPage: FunctionComponent = () => {
     }, 1000);
   };
 
-  const verifyEmail = useCallback(async () => {
+  const verifyEmail = async () => {
     try {
-      const response = await fetch(`/api/users/verify-email`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          token,
-        }),
+      const response = await makeRequest.post(`/api/users/verify-email`, {
+        token,
       });
-      const { code } = await response.json();
-
-      if (code === 200) {
+      if (response.status === "OK") {
         setTimer();
       }
-
       setIsLoading(false);
-      setStatus(code);
+      setStatus(response.code);
     } catch (error) {
       console.warn(error); // eslint-disable-line no-console
     }
-  }, [token]); // eslint-disable-line react-hooks/exhaustive-deps
+  }; // eslint-disable-line react-hooks/exhaustive-deps
 
   useEffectOnce(() => {
     verifyEmail();

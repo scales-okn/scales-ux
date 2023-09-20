@@ -5,16 +5,15 @@ import { DataGrid, GridColDef, GridCellParams } from "@mui/x-data-grid";
 import { Tooltip, Typography } from "@mui/material";
 import { useEffectOnce } from "react-use";
 
-import { useAuthHeader, userSelector } from "store/auth";
+import { userSelector } from "src/store/auth";
 
 import UserFieldToggle from "./UserFieldToggle";
-import NotAuthorized from "components/NotAuthorized";
-import ColumnHeader from "components/ColumnHeader";
+import NotAuthorized from "src/components/NotAuthorized";
+import ColumnHeader from "src/components/ColumnHeader";
 import DeleteUser from "./DeleteUser";
+import { makeRequest } from "src/helpers/makeRequest";
 
 const AdminUsersPages = () => {
-  const authorizationHeader = useAuthHeader();
-
   const [rows, setRows] = useState([]);
   const { role, id } = useSelector(userSelector);
 
@@ -61,20 +60,20 @@ const AdminUsersPages = () => {
         </Tooltip>
       ),
     },
-    {
-      field: "approved",
-      headerName: "Approved",
-      width: 140,
-      renderHeader,
-      renderCell: (params: GridCellParams) => (
-        <UserFieldToggle
-          userId={params.row.id}
-          fieldName="approved"
-          value={params.row.approved}
-          disabled={params.row.id === id}
-        />
-      ),
-    },
+    // {
+    //   field: "approved",
+    //   headerName: "Approved",
+    //   width: 140,
+    //   renderHeader,
+    //   renderCell: (params: GridCellParams) => (
+    //     <UserFieldToggle
+    //       userId={params.row.id}
+    //       fieldName="approved"
+    //       value={params.row.approved}
+    //       disabled={params.row.id === id}
+    //     />
+    //   ),
+    // },
     {
       field: "blocked",
       headerName: "Blocked",
@@ -120,16 +119,12 @@ const AdminUsersPages = () => {
   }
 
   useEffectOnce(() => {
-    fetch(`/api/users`, {
-      headers: {
-        ...authorizationHeader,
-        "Content-Type": "application/json",
-      },
-    })
-      .then((response) => response.json())
-      .then((response) => {
-        setRows(response.data.users);
-      });
+    const fetchData = async () => {
+      const response = await makeRequest.get("/api/users");
+      setRows(response.data.users);
+    };
+
+    fetchData();
   });
 
   // TODO: add pagination?
