@@ -61,7 +61,7 @@ const Answers = ({
 
   return (
     <div
-      style={{ width: chartWidth, height: "650px", background: "white" }}
+      style={{ width: chartWidth, height: "680px", background: "white" }}
       id={`data-chart-${panelId}`}
     >
       {answerText}
