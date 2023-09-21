@@ -1,5 +1,4 @@
 import { configureStore } from "@reduxjs/toolkit";
-// import { combineReducers, applyMiddleware } from "redux";
 import { combineReducers } from "redux";
 import { TypedUseSelectorHook, useDispatch, useSelector } from "react-redux";
 import { persistReducer, persistStore } from "redux-persist";
@@ -10,34 +9,30 @@ import { reducer as notificationsReducer } from "reapop";
 // Reducers
 import auth, { authMiddleware } from "./auth";
 import rings from "./rings";
-import notebooks from "./notebooks";
 import notebook from "./notebook";
 import panels from "./panels";
 import helpTexts from "./helpTexts";
 
-// Root reducer
-const reducers = combineReducers({
-  auth,
-  rings,
-  notebooks,
-  notebook,
-  panels,
-  helpTexts,
-  notifications: notificationsReducer(),
-});
-
-const persistConfig = {
-  key: "satyrn",
-  version:
-    // @ts-ignore
-    Number(import.meta.env.VITE_REACT_APP_VERSION.replace(/\./g, "")) || 1,
+// Create a separate reducer for the auth slice
+const authPersistConfig = {
+  key: "auth",
   storage,
-  blacklist: ["notifications"],
+  blacklist: [], // You can blacklist any keys within the auth slice that you don't want to persist
 };
+
+// Use persistReducer for the auth slice
+const persistedAuthReducer = persistReducer(authPersistConfig, auth);
 
 // Store
 const store = configureStore({
-  reducer: persistReducer(persistConfig, reducers),
+  reducer: combineReducers({
+    auth: persistedAuthReducer,
+    rings,
+    notebook,
+    panels,
+    helpTexts,
+    notifications: notificationsReducer(),
+  }),
   // @ts-ignore
   devTools: import.meta.env.MODE !== "production",
   middleware: [thunk, authMiddleware],

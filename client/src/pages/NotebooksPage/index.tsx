@@ -20,7 +20,7 @@ import SearchIcon from "@mui/icons-material/Search";
 import dayjs from "dayjs";
 
 import { userSelector } from "src/store/auth";
-import { useNotebooks } from "src/store/notebooks";
+import { useNotebook } from "src/store/notebook";
 
 import Loader from "src/components/Loader";
 import ColumnHeader from "src/components/ColumnHeader";
@@ -32,7 +32,13 @@ const NotebooksPage: FunctionComponent = () => {
   const user = useSelector(userSelector);
   const [showNotebooks, setShowNotebooks] = useState("my-notebooks");
   const [filterNotebooks, setFilterNotebooks] = useState("");
-  const { fetchNotebooks, notebooks, loadingNotebooks } = useNotebooks();
+  const { fetchNotebooks, loadingNotebooks, notebooks } = useNotebook();
+  console.log(
+    "🚀 ~ file: index.tsx:36 ~ fetchNotebooks, loadingNotebooks, notebooks:",
+    fetchNotebooks,
+    loadingNotebooks,
+    notebooks,
+  );
 
   useEffectOnce(() => {
     fetchNotebooks();
@@ -75,7 +81,8 @@ const NotebooksPage: FunctionComponent = () => {
     {
       field: "title",
       headerName: "Name",
-      width: 250,
+      minWidth: 250,
+      flex: 1,
       editable: true,
       sortable: false,
       renderHeader,
@@ -151,9 +158,13 @@ const NotebooksPage: FunctionComponent = () => {
     {
       field: "delete",
       headerName: "Delete",
-      width: 150,
+      width: 75,
       renderCell: (params: GridCellParams) => {
-        return <DeleteNotebook notebookId={params.row.id} />;
+        return (
+          <div style={{ paddingLeft: "5px" }}>
+            <DeleteNotebook notebookId={params.row.id} />
+          </div>
+        );
       },
       renderHeader,
     },

@@ -26,12 +26,17 @@ import ConfirmModal from "src/components/Modals/ConfirmModal";
 import ColumnHeader from "src/components/ColumnHeader";
 import DeleteButton from "../Buttons/DeleteButton";
 import { panelHeaderStyles } from "./styles";
+import { useEffectOnce } from "react-use";
 
 type PanelProps = {
   panelId: string;
+  defaultCollapsed: boolean;
 };
 
-const Panel: FunctionComponent<PanelProps> = ({ panelId }) => {
+const Panel: FunctionComponent<PanelProps> = ({
+  panelId,
+  defaultCollapsed,
+}) => {
   const {
     panel,
     deletePanel,
@@ -44,6 +49,13 @@ const Panel: FunctionComponent<PanelProps> = ({ panelId }) => {
     resultsCollapsed,
     setPanelCollapsed,
   } = usePanel(panelId);
+
+  // Pop first panel on page load
+  useEffectOnce(() => {
+    if (!defaultCollapsed) {
+      setPanelCollapsed(false);
+    }
+  });
 
   const { ring, info, getRingInfo } = useRing(panel?.ringId);
 

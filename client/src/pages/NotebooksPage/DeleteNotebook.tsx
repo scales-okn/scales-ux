@@ -3,32 +3,29 @@ import { useDispatch } from "react-redux";
 import { deleteNotebook } from "src/store/notebook";
 import ConfirmModal from "src/components/Modals/ConfirmModal";
 import { Button } from "@mui/material";
+import DeleteButton from "src/components/Buttons/DeleteButton";
 
-type Props = {
+type DeleteNotebookT = {
   notebookId: string;
 };
 
-const DeleteNotebook = ({ notebookId }: Props) => {
+const DeleteNotebook = ({ notebookId }: DeleteNotebookT) => {
   const dispatch = useDispatch();
   const [confirmVisible, setConfirmVisible] = useState(false);
 
   const handleDelete = () => {
     dispatch(deleteNotebook(notebookId));
+    setConfirmVisible(false);
   };
 
   return (
     <>
-      <Button
-        color="error"
+      <DeleteButton
         variant="outlined"
-        size="small"
-        onClick={(e) => {
-          e.stopPropagation();
+        onClick={() => {
           setConfirmVisible(true);
         }}
-      >
-        Delete
-      </Button>
+      />
       <ConfirmModal
         itemName="notebook"
         open={confirmVisible}
