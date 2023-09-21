@@ -26,22 +26,13 @@ import Loader from "src/components/Loader";
 import ColumnHeader from "src/components/ColumnHeader";
 
 import "./NotebooksPage.scss";
+import DeleteNotebook from "./DeleteNotebook";
 
 const NotebooksPage: FunctionComponent = () => {
   const user = useSelector(userSelector);
   const [showNotebooks, setShowNotebooks] = useState("my-notebooks");
   const [filterNotebooks, setFilterNotebooks] = useState("");
   const { fetchNotebooks, notebooks, loadingNotebooks } = useNotebooks();
-
-  // const handleOnEditCellChangeCommitted = async (values, event) => {
-  //   await updateNotebook(values.id, {
-  //     [values.field]:
-  //       values.field === "collaborators"
-  //         ? //@ts-ignore
-  //         values.props?.value?.split(",")
-  //         : values.props.value,
-  //   });
-  // };
 
   useEffectOnce(() => {
     fetchNotebooks();
@@ -156,6 +147,15 @@ const NotebooksPage: FunctionComponent = () => {
         }
         return <>{params.row.collaborators}</>;
       },
+    },
+    {
+      field: "delete",
+      headerName: "Delete",
+      width: 150,
+      renderCell: (params: GridCellParams) => {
+        return <DeleteNotebook notebookId={params.row.id} />;
+      },
+      renderHeader,
     },
   ];
 
