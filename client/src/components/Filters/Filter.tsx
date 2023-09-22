@@ -20,6 +20,7 @@ import { DATE_FORMAT } from "src/helpers/constants";
 import { makeRequest } from "src/helpers/makeRequest";
 import { useNotify } from "src/components/Notifications";
 import FilterTypeDropDown from "./FilterTypeDropDown";
+import StateAutocomplete from "./StateAutocomplete";
 
 import { filterStyles } from "./styles";
 
@@ -291,6 +292,11 @@ const Filter = ({ panelId, filter }: Props) => {
             }
             if (filterOptions?.type === "date") {
               return datePickerElement;
+            }
+            if (filterOptions?.nicename === "Court State") {
+              return (
+                <StateAutocomplete setFilter={setFilter} filter={filter} />
+              );
             }
             if (filterOptions?.autocomplete) {
               return autocompleteElement;
