@@ -114,9 +114,12 @@ const Filter = ({ panelId, filter }: Props) => {
   };
 
   useEffect(() => {
-    console.log(filter.type);
-    const autoFetchExpemptions = ["filing_date"];
-    if (filter.type && !autoFetchExpemptions.includes(filter.type)) {
+    setAutoCompleteSuggestions([]);
+    // Autofetch autocomplete suggestions for non-state autocomplete types
+    const barredFilterTypes = ["range", "boolean", "date"];
+    const isAutocomplete = !barredFilterTypes.includes(filterOptions?.type);
+
+    if (filter.type && isAutocomplete && type !== "state_abbrev") {
       fetchAutocompleteSuggestions("");
     }
   }, [filter.type]);
@@ -160,35 +163,28 @@ const Filter = ({ panelId, filter }: Props) => {
           {...params}
           variant="outlined"
           label={filterOptions?.nicename}
+          sx={{ textTransform: "capitalize" }}
         />
       )}
       disableClearable
       onInputChange={(_, value) => {
-        const minChar = [
-          "case_type",
-          "state_abbrev",
-          "circuit_abbrev",
-        ].includes(filter.type)
-          ? 1
-          : 3;
+        // If we can get all options on load, we don't need to fetch for autocomplete
+        const shortFilterTypes = ["state_abbrev", "case_status"];
 
-        if (value.length >= minChar) {
+        const minChar = 3;
+        if (value.length >= minChar && !shortFilterTypes.includes(type)) {
           debouncedSearch(value);
           setIsLoading(true);
         }
-        // if (value.length === 0) {
-        // if (autocompleteOpen) setAutocompleteOpen(false);
-        // } else {
         if (!autocompleteOpen) setAutocompleteOpen(true);
-        // }
       }}
       onClose={() => {
         setAutocompleteOpen(false);
       }}
       onFocus={() => {
-        if (autoCompleteSuggestions.length > 0) {
-          setAutocompleteOpen(true);
-        }
+        // if (autoCompleteSuggestions.length > 0) {
+        setAutocompleteOpen(true);
+        // }
       }}
       onChange={(_, fieldValue) => {
         if (!filter) {
