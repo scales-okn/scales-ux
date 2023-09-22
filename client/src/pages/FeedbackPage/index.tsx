@@ -91,7 +91,11 @@ const AdminFeedbackPage: FunctionComponent = () => {
           <DataGrid
             rows={rows}
             columns={columns}
-            onRowClick={(row) => setFeedbackDetail(row)}
+            onCellClick={(cell) => {
+              if (cell.field !== "delete") {
+                setFeedbackDetail(cell);
+              }
+            }}
             hideFooterPagination
             checkboxSelection={false}
             className="bg-white p-0"

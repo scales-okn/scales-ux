@@ -3,7 +3,7 @@ import { makeRequest } from "src/helpers/makeRequest";
 
 import { useNotify } from "src/components/Notifications";
 import ConfirmModal from "src/components/Modals/ConfirmModal";
-import { Button } from "@mui/material";
+import DeleteButton from "src/components/Buttons/DeleteButton";
 
 type Props = {
   feedbackId: number;
@@ -13,7 +13,7 @@ const DeleteFeedback = ({ feedbackId }: Props) => {
   const { notify } = useNotify();
   const [confirmVisible, setConfirmVisible] = useState(false);
 
-  const DeleteFeedback = async () => {
+  const handleDelete = async () => {
     const response = await makeRequest.delete(`/api/feedback/${feedbackId}`);
 
     if (response.status === "OK") {
@@ -25,22 +25,17 @@ const DeleteFeedback = ({ feedbackId }: Props) => {
 
   return (
     <>
-      <Button
-        color="error"
-        variant="outlined"
-        size="small"
-        onClick={(e) => {
-          e.stopPropagation();
+      <DeleteButton
+        variant="text"
+        onClick={() => {
           setConfirmVisible(true);
         }}
-      >
-        Delete
-      </Button>
+      />
       <ConfirmModal
         itemName="feedback"
         open={confirmVisible}
         setOpen={setConfirmVisible}
-        onConfirm={DeleteFeedback}
+        onConfirm={handleDelete}
       />
     </>
   );

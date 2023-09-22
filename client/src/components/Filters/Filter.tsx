@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 
 import { usePanel } from "src/store/panels";
 import { useRing } from "src/store/rings";
@@ -112,6 +112,14 @@ const Filter = ({ panelId, filter }: Props) => {
     }
   };
 
+  useEffect(() => {
+    console.log(filter.type);
+    const autoFetchExpemptions = ["filing_date"];
+    if (filter.type && !autoFetchExpemptions.includes(filter.type)) {
+      fetchAutocompleteSuggestions("");
+    }
+  }, [filter.type]);
+
   const debouncedSearch = debounce(fetchAutocompleteSuggestions, 1500);
 
   const handleClear = async () => {
@@ -160,20 +168,27 @@ const Filter = ({ panelId, filter }: Props) => {
           "state_abbrev",
           "circuit_abbrev",
         ].includes(filter.type)
-          ? 0
-          : 2;
+          ? 1
+          : 3;
 
-        if (value.length > minChar) {
+        if (value.length >= minChar) {
           debouncedSearch(value);
           setIsLoading(true);
         }
-        if (value.length === 0) {
-          if (autocompleteOpen) setAutocompleteOpen(false);
-        } else {
-          if (!autocompleteOpen) setAutocompleteOpen(true);
+        // if (value.length === 0) {
+        // if (autocompleteOpen) setAutocompleteOpen(false);
+        // } else {
+        if (!autocompleteOpen) setAutocompleteOpen(true);
+        // }
+      }}
+      onClose={() => {
+        setAutocompleteOpen(false);
+      }}
+      onFocus={() => {
+        if (autoCompleteSuggestions.length > 0) {
+          setAutocompleteOpen(true);
         }
       }}
-      onClose={() => setAutocompleteOpen(false)}
       onChange={(_, fieldValue) => {
         if (!filter) {
           return false;

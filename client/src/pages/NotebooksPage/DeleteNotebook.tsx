@@ -2,7 +2,6 @@ import React, { useState } from "react";
 import { useDispatch } from "react-redux";
 import { deleteNotebook } from "src/store/notebook";
 import ConfirmModal from "src/components/Modals/ConfirmModal";
-import { Button } from "@mui/material";
 import DeleteButton from "src/components/Buttons/DeleteButton";
 
 type DeleteNotebookT = {
@@ -21,7 +20,7 @@ const DeleteNotebook = ({ notebookId }: DeleteNotebookT) => {
   return (
     <>
       <DeleteButton
-        variant="outlined"
+        variant="text"
         onClick={() => {
           setConfirmVisible(true);
         }}
