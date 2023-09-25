@@ -52,8 +52,13 @@ const Filter = ({ panelId, filter }: Props) => {
   const [autoCompleteSuggestions, setAutoCompleteSuggestions] = useState<
     FilterOptionT[]
   >([]);
+  const [autocompleteValues, setAutocompleteValues] = useState([]);
   const [dateValue, setDateValue] = useState<Date | null>(null);
   const { notify } = useNotify();
+
+  useEffect(() => {
+    setAutocompleteValues([]);
+  }, [type]);
 
   const setFilter = (filter: FilterT) => {
     try {
@@ -156,6 +161,7 @@ const Filter = ({ panelId, filter }: Props) => {
       open={autocompleteOpen}
       noOptionsText={isLoading ? <CircularProgress /> : <>No Results Found</>}
       multiple
+      value={autocompleteValues}
       options={autoCompleteSuggestions || []}
       getOptionLabel={(option: FilterOptionT) => option.label}
       renderInput={(params) => (
@@ -168,11 +174,16 @@ const Filter = ({ panelId, filter }: Props) => {
       )}
       disableClearable
       onInputChange={(_, value) => {
-        // If we can get all options on load, we don't need to fetch for autocomplete
-        const shortFilterTypes = ["state_abbrev", "case_status"];
+        // We get all options on load, don't server autocomplete for:
+        const localFilterTypes = [
+          "case_status",
+          "ontology_labels",
+          "case_type",
+          "circuit_abbrev",
+        ];
 
         const minChar = 3;
-        if (value.length >= minChar && !shortFilterTypes.includes(type)) {
+        if (value.length >= minChar && !localFilterTypes.includes(type)) {
           debouncedSearch(value);
           setIsLoading(true);
         }
@@ -182,9 +193,7 @@ const Filter = ({ panelId, filter }: Props) => {
         setAutocompleteOpen(false);
       }}
       onFocus={() => {
-        // if (autoCompleteSuggestions.length > 0) {
         setAutocompleteOpen(true);
-        // }
       }}
       onChange={(_, fieldValue) => {
         if (!filter) {
@@ -194,6 +203,7 @@ const Filter = ({ panelId, filter }: Props) => {
           ...filter,
           value: fieldValue.map((x) => x.value).join("|"),
         });
+        setAutocompleteValues(fieldValue);
       }}
       sx={{
         minWidth: "250px",

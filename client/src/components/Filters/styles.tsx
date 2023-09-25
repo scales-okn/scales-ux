@@ -8,7 +8,7 @@ export const filterContainerStyles = css`
   align-items: center;
 
   .filters {
-    max-width: calc(100% - 120px);
+    max-width: calc(100% - 150px);
     display: flex;
     align-items: center;
     flex-wrap: wrap;

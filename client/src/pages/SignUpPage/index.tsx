@@ -98,7 +98,7 @@ const SignUpPage = () => {
             </Typography>
           )}
 
-          <Loader isVisible={isLoading} contentHeight="700px">
+          <Loader isVisible={isLoading}>
             {message ? (
               <Typography variant="body1">{message}</Typography>
             ) : (

@@ -69,11 +69,8 @@ const Panel: FunctionComponent<PanelProps> = ({
     }
   }, [ring]); // eslint-disable-line react-hooks/exhaustive-deps
 
-  // TODO?
   const panelIdRef = React.useRef(null);
-  // this panelIdRef not getting set ever
   useEffect(() => {
-    // so the last part of this check doesn't work (not happening anymore?)
     if (info && !collapsed && panel.id !== panelIdRef.current) {
       getPanelResults();
       panelIdRef.current = panel.id;
