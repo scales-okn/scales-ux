@@ -33,12 +33,6 @@ const NotebooksPage: FunctionComponent = () => {
   const [showNotebooks, setShowNotebooks] = useState("my-notebooks");
   const [filterNotebooks, setFilterNotebooks] = useState("");
   const { fetchNotebooks, loadingNotebooks, notebooks } = useNotebook();
-  console.log(
-    "🚀 ~ file: index.tsx:36 ~ fetchNotebooks, loadingNotebooks, notebooks:",
-    fetchNotebooks,
-    loadingNotebooks,
-    notebooks,
-  );
 
   useEffectOnce(() => {
     fetchNotebooks();
@@ -128,6 +122,7 @@ const NotebooksPage: FunctionComponent = () => {
       sortable: false,
       renderHeader,
       renderCell: (params: GridCellParams) => {
+        console.log(params.row.userId);
         if (params.row.userId === user.id) {
           return <>You</>;
         }

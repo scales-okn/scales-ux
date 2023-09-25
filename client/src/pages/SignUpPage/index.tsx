@@ -227,6 +227,7 @@ const SignUpPage = () => {
                     size="large"
                     color="success"
                     variant="contained"
+                    sx={{ marginTop: "22px" }}
                   >
                     Register
                   </Button>
