@@ -127,7 +127,7 @@ const Filter = ({ panelId, filter }: Props) => {
     if (filter.type && isAutocomplete && type !== "state_abbrev") {
       fetchAutocompleteSuggestions("");
     }
-  }, [filter.type]);
+  }, [filter.type]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const debouncedSearch = debounce(fetchAutocompleteSuggestions, 1500);
 
