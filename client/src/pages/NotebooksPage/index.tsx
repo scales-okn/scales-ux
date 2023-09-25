@@ -122,7 +122,6 @@ const NotebooksPage: FunctionComponent = () => {
       sortable: false,
       renderHeader,
       renderCell: (params: GridCellParams) => {
-        console.log(params.row.userId);
         if (params.row.userId === user.id) {
           return <>You</>;
         }
