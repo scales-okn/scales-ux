@@ -9,24 +9,36 @@ interface LoaderT {
   size?: number;
 }
 
-const Loader = ({
-  isVisible = false,
-  size = 40,
-  children,
-  contentHeight,
-}: LoaderT) => {
-  if (isVisible) {
-    return (
-      <div
-        className="d-flex justify-content-center p-2"
-        style={{
-          height: contentHeight || "100%",
-        }}
-      >
-        <CircularProgress className="align-self-center" size={size} />
-      </div>
-    );
-  }
+const Loader = ({ isVisible = false, size = 60, children }: LoaderT) => {
+  return (
+    <div
+      style={{
+        position: "relative",
+        height: "100%",
+        width: "100%",
+        minHeight: isVisible ? "100px" : "0px",
+        transition: ".2s all",
+      }}
+    >
+      {isVisible && (
+        <div
+          style={{
+            position: "absolute",
+            zIndex: 1000,
+            top: "40%",
+            left: "50%",
+          }}
+        >
+          <CircularProgress
+            className="align-self-center"
+            size={size}
+            thickness={5}
+          />
+        </div>
+      )}
+      {children}
+    </div>
+  );
 
   return children;
 };

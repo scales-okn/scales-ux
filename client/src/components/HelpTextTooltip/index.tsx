@@ -69,8 +69,8 @@ const FilterTooltip = ({
           </a>
         </p>
       ) : (
-        <li>
-          <p key={option}>{option}</p>
+        <li key={option}>
+          <p>{option}</p>
         </li>
       );
     };

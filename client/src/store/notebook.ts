@@ -12,8 +12,10 @@ interface InitialState {
   creatingNotebook: boolean;
   savingNotebook: boolean;
   deletingNotebook: boolean;
-  hasErrors: boolean;
   notebook: any;
+  loadingNotebooks: boolean;
+  hasErrors: boolean;
+  notebooks: any;
 }
 
 export const initialState: InitialState = {
@@ -23,6 +25,8 @@ export const initialState: InitialState = {
   deletingNotebook: false,
   hasErrors: false,
   notebook: null,
+  loadingNotebooks: true,
+  notebooks: [],
 };
 
 const notebookSlice = createSlice({
@@ -84,15 +88,33 @@ const notebookSlice = createSlice({
       ...state,
       deletingNotebook: true,
     }),
-    removeNotebookSuccess: (state) => ({
+    removeNotebookSuccess: (state, action) => ({
       ...state,
       deletingNotebook: false,
       hasErrors: false,
       notebook: null,
+      notebooks: state.notebooks.filter(
+        (notebook) => notebook.id !== action.payload.id,
+      ),
     }),
     removeNotebookFailure: (state) => ({
       ...state,
       deletingNotebook: false,
+      hasErrors: true,
+    }),
+    fetchNotebooks: (state) => ({
+      ...state,
+      loadingNotebooks: true,
+    }),
+    fetchNotebooksSuccess: (state, { payload }) => ({
+      ...state,
+      notebooks: payload,
+      loadingNotebooks: false,
+      hasErrors: false,
+    }),
+    fetchNotebooksFailure: (state) => ({
+      ...state,
+      loadingNotebooks: false,
       hasErrors: true,
     }),
   },
@@ -106,6 +128,21 @@ export const notebookSelector = (state: RootState) => state.notebook;
 
 // The reducer
 export default notebookSlice.reducer;
+
+export function fetchNotebooks() {
+  return async (dispatch: AppDispatch) => {
+    dispatch(notebookActions.fetchNotebooks());
+
+    try {
+      const { data } = await makeRequest.get(`/api/notebooks`);
+
+      dispatch(notebookActions.fetchNotebooksSuccess(data.notebooks));
+    } catch (error) {
+      console.warn(error); // eslint-disable-line no-console
+      dispatch(notebookActions.fetchNotebooksFailure());
+    }
+  };
+}
 
 export function fetchNotebook(id: string) {
   return async (dispatch: AppDispatch) => {
@@ -154,7 +191,6 @@ export function createNotebook(payload: any) {
       const response = await makeRequest.post(`/api/notebooks`, payload);
       const { data, message } = response;
       if (response.status === "OK") {
-        // dispatch(notify(message, "success"));
         dispatch(notebookActions.createNotebookSuccess(data.notebook));
       } else {
         dispatch(notify(message, "error"));
@@ -175,7 +211,7 @@ export function deleteNotebook(id: string) {
       if (response.status === "OK") {
         dispatch(notebookActions.clearNotebook());
         dispatch(notify(message, "success"));
-        dispatch(notebookActions.removeNotebookSuccess());
+        dispatch(notebookActions.removeNotebookSuccess({ id }));
       } else {
         dispatch(notify(message, "error"));
         dispatch(notebookActions.removeNotebookFailure());
@@ -188,13 +224,17 @@ export function deleteNotebook(id: string) {
 
 // Hooks
 export function useNotebook() {
-  const { notebook, loadingNotebook, hasErrors } =
+  const { notebook, loadingNotebook, hasErrors, loadingNotebooks, notebooks } =
     useSelector(notebookSelector);
+
   const dispatch = useDispatch();
   return {
     notebook,
     loadingNotebook,
     hasErrors,
+    loadingNotebooks,
+    notebooks,
+    fetchNotebooks: () => dispatch(fetchNotebooks()),
     fetchNotebook: (id: string) => dispatch(fetchNotebook(id)),
     updateNotebook: (id: string, payload: any) =>
       dispatch(updateNotebook(id, payload)),

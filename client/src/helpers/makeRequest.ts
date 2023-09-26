@@ -38,15 +38,18 @@ const sendRequest = async ({
   try {
     const response = await fetch(url(), fetchOptions);
 
-    if (!response.ok) {
-      throw new Error(`HTTP error! Status: ${response.status}`);
-    }
-
     let data;
     if (options?.responseType === "text") {
       data = await response.text();
     } else {
       data = await response.json();
+    }
+
+    if (data.error) {
+      console.error(data.error);
+    }
+    if (!response.ok) {
+      console.error(`HTTP error! Status: ${response.status}`);
     }
 
     return data;

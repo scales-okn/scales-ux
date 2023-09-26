@@ -20,6 +20,8 @@ type AnswersT = {
   chartMargins: Record<string, number>;
   expanded: boolean;
   containerWidth: number;
+  panelId: string;
+  answerText: React.ReactNode;
 };
 
 const Answers = ({
@@ -27,6 +29,8 @@ const Answers = ({
   chartMargins,
   expanded,
   containerWidth,
+  panelId,
+  answerText,
 }: AnswersT) => {
   // for multiline, assumes the order of unit names is line label, x, y
   const xUnits = data?.units?.results?.[1]?.[0];
@@ -109,84 +113,90 @@ const Answers = ({
   }, [containerWidth, expanded, xLabels.length]);
 
   return (
-    <ResponsiveContainer width={chartWidth} height="80%">
-      <LineChart margin={chartMargins}>
-        <XAxis
-          height={80}
-          scale="auto"
-          dataKey={xUnits}
-          interval={expanded ? 0 : undefined}
-          type={
-            /^[a-zA-Z ]+$/.test(data.results?.[0]?.series?.[0][0])
-              ? "category"
-              : "number"
-          }
-          domain={domain()}
-          tickCount={xLabels.length}
-          allowDuplicatedCategory={false}
-          tickFormatter={(value) => {
-            return data.results?.[0]?.series?.[0][0]?.includes("/") /* hack */
-              ? dayjs(value).format("M/YYYY")
-              : value;
-          }}
-        >
-          <Label
-            angle={0}
-            value={xUnits}
-            position={expanded ? "left" : "insideBottom"}
-            offset={expanded ? -500 : 0}
-          />
-        </XAxis>
-        <YAxis
-          tickFormatter={(value) =>
-            new Intl.NumberFormat("en-US", {
-              notation: "compact",
-              compactDisplay: "short",
-            }).format(value)
-          }
-          width={100}
-        >
-          <Label
-            style={{
-              textAnchor: "middle",
-              textTransform: "capitalize",
+    <div
+      style={{ width: chartWidth, background: "white" }}
+      id={`data-chart-${panelId}`}
+    >
+      {answerText}
+      <ResponsiveContainer height="80%">
+        <LineChart margin={chartMargins}>
+          <XAxis
+            height={80}
+            scale="auto"
+            dataKey={xUnits}
+            interval={expanded ? 0 : undefined}
+            type={
+              /^[a-zA-Z ]+$/.test(data.results?.[0]?.series?.[0][0])
+                ? "category"
+                : "number"
+            }
+            domain={domain()}
+            tickCount={xLabels.length}
+            allowDuplicatedCategory={false}
+            tickFormatter={(value) => {
+              return data.results?.[0]?.series?.[0][0]?.includes("/") /* hack */
+                ? dayjs(value).format("M/YYYY")
+                : value;
             }}
-            position="insideLeft"
-            angle={270}
-            value={yUnits}
-          />
-        </YAxis>
-        <Tooltip
-          formatter={(value) =>
-            new Intl.NumberFormat("en").format(value as number)
-          }
-          content={multiLineTooltip}
-        />
-        {/* hack */}
-        <CartesianGrid stroke="#eee" strokeDasharray="5 5" />
-        {data.results?.map((line_data) => {
-          if (line_data.label === -1) {
-            line_data.label = "criminal";
-          }
-          if (typeof line_data.label == "boolean") {
-            line_data.label = String(line_data.label);
-          }
-          return (
-            <Line
-              key={line_data.label}
-              data={line_data.series?.map((result) => {
-                return formatMultilineData(result, line_data.label);
-              })}
-              type="monotone"
-              dataKey={line_data.label}
-              stroke={getRandomColor()}
-              dot={false}
-              activeDot={{ stroke: "white", strokeWidth: 2, r: 5 }}
+          >
+            <Label
+              angle={0}
+              value={xUnits}
+              position={expanded ? "left" : "insideBottom"}
+              offset={expanded ? -500 : 0}
             />
-          );
-        })}
-      </LineChart>
-    </ResponsiveContainer>
+          </XAxis>
+          <YAxis
+            tickFormatter={(value) =>
+              new Intl.NumberFormat("en-US", {
+                notation: "compact",
+                compactDisplay: "short",
+              }).format(value)
+            }
+            width={100}
+          >
+            <Label
+              style={{
+                textAnchor: "middle",
+                textTransform: "capitalize",
+              }}
+              position="insideLeft"
+              angle={270}
+              value={yUnits}
+            />
+          </YAxis>
+          <Tooltip
+            formatter={(value) =>
+              new Intl.NumberFormat("en").format(value as number)
+            }
+            content={multiLineTooltip}
+          />
+          {/* hack */}
+          <CartesianGrid stroke="#eee" strokeDasharray="5 5" />
+          {data.results?.map((line_data) => {
+            if (line_data.label === -1) {
+              line_data.label = "criminal";
+            }
+            if (typeof line_data.label == "boolean") {
+              line_data.label = String(line_data.label);
+            }
+            return (
+              <Line
+                key={line_data.label}
+                data={line_data.series?.map((result) => {
+                  return formatMultilineData(result, line_data.label);
+                })}
+                type="monotone"
+                dataKey={line_data.label}
+                stroke={getRandomColor()}
+                dot={false}
+                activeDot={{ stroke: "white", strokeWidth: 2, r: 5 }}
+              />
+            );
+          })}
+        </LineChart>
+      </ResponsiveContainer>
+    </div>
   );
 };
 

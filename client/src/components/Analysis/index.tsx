@@ -12,6 +12,7 @@ import _ from "lodash";
 import { Satyrn } from "src/models/Satyrn";
 import { makeRequest } from "src/helpers/makeRequest";
 
+import DeleteButton from "src/components/Buttons/DeleteButton";
 import { useNotify } from "../Notifications";
 import Answers from "./Answers";
 import Parameters from "./Parameters";
@@ -220,53 +221,58 @@ const Analysis: FunctionComponent<Props> = ({ panelId }) => {
   return (
     <div className="analysis">
       {analysis.map(({ id }) => (
-        <Grid
-          key={id}
-          container
-          spacing={2}
-          className="analysis-item"
-          style={{ padding: "16px", position: "relative" }}
-        >
-          <Grid item lg={11}>
-            <Statements
-              statements={statements}
-              setSelectedStatement={(statement) => {
-                setSelectedStatements({
-                  ...selectedStatements,
-                  [id]: statement,
-                });
-                getAnswers(statement, id);
-              }}
-              selectedStatement={selectedStatements[id]?.statement}
-            />
-            <Parameters
-              autoCompleteSuggestions={autoCompleteSuggestions}
-              parameters={selectedStatements[id]?.parameters}
-              selectedParameter={selectedStatements[id]?.selectedParameter}
-              setSelectedParameter={(params) => {
-                const newStatement = {
-                  ...selectedStatements[id],
-                  selectedParameter: params,
-                };
-                setSelectedStatements({
-                  ...selectedStatements,
-                  [id]: newStatement,
-                });
-                getAnswers(newStatement, id);
-              }}
-              fetchAutocompleteSuggestions={fetchAutocompleteSuggestions}
-              loadingAutosuggestions={loadingAutosuggestions}
-            />
-          </Grid>
-          <Grid style={{ position: "absolute", top: "20px", right: "0" }}>
-            <Button
-              variant="outlined"
-              color="error"
+        <Grid key={id} container className="analysis-item">
+          <Grid
+            item
+            sx={{
+              display: "flex",
+              alignItems: "flex-start",
+              justifyContent: "space-between",
+              width: "100%",
+              padding: 0,
+            }}
+          >
+            <Grid item>
+              <Statements
+                statements={statements}
+                setSelectedStatement={(statement) => {
+                  setSelectedStatements({
+                    ...selectedStatements,
+                    [id]: statement,
+                  });
+                  getAnswers(statement, id);
+                }}
+                selectedStatement={selectedStatements[id]?.statement}
+              />
+              <Parameters
+                autoCompleteSuggestions={autoCompleteSuggestions}
+                parameters={selectedStatements[id]?.parameters}
+                selectedParameter={selectedStatements[id]?.selectedParameter}
+                setSelectedParameter={(params) => {
+                  const newStatement = {
+                    ...selectedStatements[id],
+                    selectedParameter: params,
+                  };
+                  setSelectedStatements({
+                    ...selectedStatements,
+                    [id]: newStatement,
+                  });
+                  getAnswers(newStatement, id);
+                }}
+                fetchAutocompleteSuggestions={fetchAutocompleteSuggestions}
+                loadingAutosuggestions={loadingAutosuggestions}
+              />
+            </Grid>
+            <DeleteButton
               onClick={() => handleRemoveAnalysis(id)}
-            >
-              Remove
-            </Button>
+              sx={{
+                marginTop: "16px",
+                marginRight: "0px",
+              }}
+              variant="outlined"
+            />
           </Grid>
+
           <Answers
             panelId={panelId}
             plan={plans[id]}
@@ -283,11 +289,12 @@ const Analysis: FunctionComponent<Props> = ({ panelId }) => {
         sx={{
           paddingLeft: "8px",
           boxShadow: "none",
+          alignItems: "center",
+          marginTop: "12px",
         }}
       >
         <Button
           variant="outlined"
-          color="success"
           onClick={() => {
             addPanelAnalysis({
               id: uniqid(),
@@ -296,7 +303,11 @@ const Analysis: FunctionComponent<Props> = ({ panelId }) => {
           sx={{
             border: "1px solid black",
             color: "black",
-            marginRight: "18px",
+            marginRight: "12px",
+
+            width: "36px",
+            height: "36px",
+            minWidth: 0,
           }}
         >
           <AddIcon fontSize="medium" />

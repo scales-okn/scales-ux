@@ -24,8 +24,8 @@ import Admin from "src/pages/AdminPage";
 const theme = createTheme({
   palette: {
     primary: {
-      main: hexToRgb("#0E54EB"),
-      dark: hexToRgb("#0742c3"),
+      main: hexToRgb("#0e54ebd3"),
+      dark: hexToRgb("#0b44bfd2"),
     },
     success: {
       main: hexToRgb("#099E0F"),

@@ -56,8 +56,7 @@ const AdminFeedbackPage: FunctionComponent = () => {
       headerName: "Created At",
       description: "This column has a value getter and is not sortable.",
       sortable: false,
-      minWidth: 200,
-      flex: 1,
+      width: 300,
       renderCell: (params: GridCellParams) => {
         return (
           <div>{dayjs(params.row.createdAt).format("dddd, MMMM D YYYY")}</div>
@@ -91,7 +90,11 @@ const AdminFeedbackPage: FunctionComponent = () => {
           <DataGrid
             rows={rows}
             columns={columns}
-            onRowClick={(row) => setFeedbackDetail(row)}
+            onCellClick={(cell) => {
+              if (cell.field !== "delete") {
+                setFeedbackDetail(cell);
+              }
+            }}
             hideFooterPagination
             checkboxSelection={false}
             className="bg-white p-0"
