@@ -3,6 +3,8 @@ import { useSelector } from "react-redux";
 
 import { DataGrid, GridColDef, GridCellParams } from "@mui/x-data-grid";
 import { Tooltip, Typography } from "@mui/material";
+import CheckCircleIcon from "@mui/icons-material/CheckCircle";
+import CancelIcon from "@mui/icons-material/Cancel";
 import { useEffectOnce } from "react-use";
 import dayjs from "dayjs";
 
@@ -67,7 +69,15 @@ const AdminUsersPages = () => {
       sortable: false,
       width: 120,
       renderCell: (params: GridCellParams) => {
-        return <div>{params.row.emailIsVerified ? "True" : "False"}</div>;
+        return (
+          <div>
+            {params.row.emailIsVerified ? (
+              <CheckCircleIcon sx={{ marginLeft: "16px" }} color="success" />
+            ) : (
+              <CancelIcon sx={{ marginLeft: "16px" }} color="error" />
+            )}
+          </div>
+        );
       },
       renderHeader,
     },
