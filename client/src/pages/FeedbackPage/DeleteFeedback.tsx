@@ -30,6 +30,7 @@ const DeleteFeedback = ({ feedbackId }: Props) => {
         onClick={() => {
           setConfirmVisible(true);
         }}
+        sx={{ marginLeft: "6px" }}
       />
       <ConfirmModal
         itemName="feedback"
