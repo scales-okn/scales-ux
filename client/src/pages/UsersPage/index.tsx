@@ -64,24 +64,6 @@ const AdminUsersPages = () => {
       ),
     },
     {
-      field: "verified",
-      headerName: "Verified",
-      sortable: false,
-      width: 120,
-      renderCell: (params: GridCellParams) => {
-        return (
-          <div>
-            {params.row.emailIsVerified ? (
-              <CheckCircleIcon sx={{ marginLeft: "16px" }} color="success" />
-            ) : (
-              <CancelIcon sx={{ marginLeft: "16px" }} color="error" />
-            )}
-          </div>
-        );
-      },
-      renderHeader,
-    },
-    {
       field: "usage",
       headerName: "Usage",
       width: 120,
@@ -108,6 +90,38 @@ const AdminUsersPages = () => {
     //     />
     //   ),
     // },
+    // {
+    //   field: "verified",
+    //   headerName: "Verified",
+    //   sortable: false,
+    //   width: 120,
+    //   renderCell: (params: GridCellParams) => {
+    //     return (
+    //       <div>
+    //         {params.row.emailIsVerified ? (
+    //           <CheckCircleIcon sx={{ marginLeft: "16px" }} color="success" />
+    //         ) : (
+    //           <CancelIcon sx={{ marginLeft: "16px" }} color="error" />
+    //         )}
+    //       </div>
+    //     );
+    //   },
+    //   renderHeader,
+    // },
+    {
+      field: "userIsVerified",
+      headerName: "Verified",
+      width: 140,
+      renderHeader,
+      renderCell: (params: GridCellParams) => (
+        <UserFieldToggle
+          userId={params.row.id}
+          fieldName="emailIsVerified"
+          value={params.row.emailIsVerified}
+          disabled={params.row.emailIsVerified === true}
+        />
+      ),
+    },
     {
       field: "blocked",
       headerName: "Blocked",
