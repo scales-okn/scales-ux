@@ -54,7 +54,6 @@ const AdminFeedbackPage: FunctionComponent = () => {
     {
       field: "createdAt",
       headerName: "Created At",
-      description: "This column has a value getter and is not sortable.",
       sortable: false,
       minWidth: 200,
       flex: 1,
