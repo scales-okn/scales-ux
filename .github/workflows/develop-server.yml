@@ -17,8 +17,12 @@ jobs:
       - name: Build image
         working-directory: ./server
         run: docker build -t registry.digitalocean.com/scales-okn/scales-ux-server:latest .
-      - name: Authenticate Docker
-        run: docker login -u ${{ secrets.DIGITAL_OCEAN_ACCESS_TOKEN }} -p ${{ secrets.DIGITAL_OCEAN_ACCESS_TOKEN }} registry.digitalocean.com 
+      - name: Install doctl
+        uses: digitalocean/action-doctl@v2
+        with:
+          token: ${{ secrets.DIGITAL_OCEAN_ACCESS_TOKEN }}
+      - name: Log in to DO Container Registry
+        run: doctl registry login --expiry-seconds 600
       - name: Push image to DO Container Registry
         run: docker push registry.digitalocean.com/scales-okn/scales-ux-server:latest
       - name: Clean up DO Container Registry
