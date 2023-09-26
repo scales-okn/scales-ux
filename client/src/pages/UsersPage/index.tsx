@@ -4,6 +4,7 @@ import { useSelector } from "react-redux";
 import { DataGrid, GridColDef, GridCellParams } from "@mui/x-data-grid";
 import { Tooltip, Typography } from "@mui/material";
 import { useEffectOnce } from "react-use";
+import dayjs from "dayjs";
 
 import { userSelector } from "src/store/auth";
 
@@ -29,7 +30,7 @@ const AdminUsersPages = () => {
   };
 
   const columns: GridColDef[] = [
-    { field: "id", headerName: "ID", width: 100, renderHeader },
+    { field: "id", headerName: "ID", width: 50, renderHeader },
     {
       field: "fullName",
       headerName: "Full name",
@@ -47,6 +48,19 @@ const AdminUsersPages = () => {
       },
     },
     { field: "email", headerName: "Email", width: 240, renderHeader },
+    {
+      field: "createdAt",
+      headerName: "Created At",
+      width: 120,
+      renderHeader,
+      renderCell: (params: GridCellParams) => (
+        <Tooltip title={params.row.createdAt}>
+          <Typography noWrap variant="body2">
+            <div>{dayjs(params.row.createdAt).format("MM/DD/YYYY")}</div>
+          </Typography>
+        </Tooltip>
+      ),
+    },
     {
       field: "usage",
       headerName: "Usage",
