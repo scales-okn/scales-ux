@@ -27,6 +27,7 @@ interface UserSignUpFields extends UserSignInFields {
   lastName: string;
   usage: string;
   tos: boolean;
+  passwordConfirmation: string;
 }
 
 const SignUpPage = () => {
@@ -44,12 +45,18 @@ const SignUpPage = () => {
       lastName: "",
       email: "",
       password: "",
+      passwordConfirmation: "",
       usage: "",
       tos: true,
     },
     validationSchema: UserSignUpValidationSchema,
     onSubmit: async (values: UserSignUpFields, { setErrors }) => {
       setIsLoading(true);
+
+      if (values.password !== values.passwordConfirmation) {
+        setErrors({ passwordConfirmation: "Passwords do not match" });
+        return;
+      }
 
       const response = await makeRequest.post(`/api/users/create`, values);
 
@@ -175,13 +182,32 @@ const SignUpPage = () => {
                   sx={{ marginBottom: "16px" }}
                 />
                 <TextField
+                  type="password"
+                  name="passwordConfirmation" // Name should match the field name in initialValues
+                  label="Confirm Password" // Change label
+                  variant="outlined"
+                  fullWidth
+                  value={formik.values.passwordConfirmation} // Use passwordConfirmation value
+                  onChange={formik.handleChange}
+                  onBlur={formik.handleBlur}
+                  error={
+                    formik.touched.passwordConfirmation &&
+                    Boolean(formik.errors?.passwordConfirmation) // Update error handling
+                  }
+                  helperText={
+                    formik.touched.passwordConfirmation &&
+                    formik.errors?.passwordConfirmation // Update error handling
+                  }
+                  sx={{ marginBottom: "16px" }}
+                />
+                <TextField
                   type="text"
                   name="usage"
                   label="Account Usage"
                   variant="outlined"
                   fullWidth
                   multiline
-                  rows={3}
+                  rows={4}
                   value={formik.values.usage}
                   onChange={formik.handleChange}
                   onBlur={formik.handleBlur}

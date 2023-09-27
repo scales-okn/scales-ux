@@ -16,6 +16,10 @@ export const UserSignUpValidationSchema = UserSignInValidationSchema.concat(
         /^.*(?=.{8,})((?=.*[!@#$%^&*()\-_=+{};:,<.>]){1})(?=.*\d)((?=.*[a-z]){1})((?=.*[A-Z]){1}).*$/,
         "Password must contain at least 8 characters, one uppercase, one number and one special case character",
       ),
+    passwordConfirmation: yup
+      .string()
+      .oneOf([yup.ref("password"), null], "Passwords must match")
+      .required("Password confirmation is required"),
     tos: yup
       .boolean()
       .required("The terms and conditions must be accepted.")
