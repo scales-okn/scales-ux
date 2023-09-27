@@ -56,6 +56,9 @@ const Dataset = ({ panelId }: DatasetProps) => {
                 background: "white",
                 div: { padding: "12px 10px 10px 12px" },
               }}
+              MenuProps={{
+                disableScrollLock: true,
+              }}
             >
               {rings?.map((ring, index) => (
                 <MenuItem key={index} value={ring.name}>

@@ -175,6 +175,9 @@ const NotebooksPage: FunctionComponent = () => {
           <Grid item md={4}>
             <FormControl fullWidth>
               <Select
+                MenuProps={{
+                  disableScrollLock: true,
+                }}
                 value={showNotebooks}
                 onChange={(event) =>
                   setShowNotebooks(event.target.value as string)
