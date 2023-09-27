@@ -28,17 +28,21 @@ const Notebook = () => {
   const location = useLocation();
   const isNewNotebook = location.pathname.includes("new");
 
-  useEffect(() => {
-    if (isNewNotebook) {
-      setNotebookTitle("");
-    }
-  }, [isNewNotebook]); // eslint-disable-line react-hooks/exhaustive-deps
-
   const [confirmVisible, setConfirmVisible] = useState(false);
   const [notebookTitle, setNotebookTitle] = useState(notebook?.title || "");
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const { panels, updatePanel } = usePanels(notebook?.id);
+
+  useEffect(() => {
+    if (isNewNotebook) {
+      setNotebookTitle("");
+    } else {
+      if (notebook?.title) {
+        setNotebookTitle(notebook.title);
+      }
+    }
+  }, [isNewNotebook, notebook]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const handleDeleteNotebook = () => {
     dispatch(deleteNotebook(notebook?.id));

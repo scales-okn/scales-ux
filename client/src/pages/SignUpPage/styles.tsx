@@ -5,7 +5,7 @@ export const signUpPageStyles = css`
     display: flex;
     flex-direction: column;
     align-items: center;
-    padding-top: 40px;
+    padding-top: 20px;
     text-align: center;
   }
 

@@ -119,7 +119,6 @@ const FilterTypeDropDown = (props: FilterTypeProps) => {
       >
         <ArrowDropDownIcon sx={{ color: "royalblue" }} />
       </Box>
-
       <Menu
         anchorEl={anchorEl}
         open={Boolean(anchorEl)}
@@ -130,6 +129,7 @@ const FilterTypeDropDown = (props: FilterTypeProps) => {
             overflowY: "auto",
           },
         }}
+        disableScrollLock={true}
       >
         <MenuItem>
           <ListItemText className="text-muted fs-6 ms-3">

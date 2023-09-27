@@ -20,28 +20,19 @@ import SearchIcon from "@mui/icons-material/Search";
 import dayjs from "dayjs";
 
 import { userSelector } from "src/store/auth";
-import { useNotebooks } from "src/store/notebooks";
+import { useNotebook } from "src/store/notebook";
 
 import Loader from "src/components/Loader";
 import ColumnHeader from "src/components/ColumnHeader";
 
 import "./NotebooksPage.scss";
+import DeleteNotebook from "./DeleteNotebook";
 
 const NotebooksPage: FunctionComponent = () => {
   const user = useSelector(userSelector);
   const [showNotebooks, setShowNotebooks] = useState("my-notebooks");
   const [filterNotebooks, setFilterNotebooks] = useState("");
-  const { fetchNotebooks, notebooks, loadingNotebooks } = useNotebooks();
-
-  // const handleOnEditCellChangeCommitted = async (values, event) => {
-  //   await updateNotebook(values.id, {
-  //     [values.field]:
-  //       values.field === "collaborators"
-  //         ? //@ts-ignore
-  //         values.props?.value?.split(",")
-  //         : values.props.value,
-  //   });
-  // };
+  const { fetchNotebooks, loadingNotebooks, notebooks } = useNotebook();
 
   useEffectOnce(() => {
     fetchNotebooks();
@@ -84,7 +75,8 @@ const NotebooksPage: FunctionComponent = () => {
     {
       field: "title",
       headerName: "Name",
-      width: 250,
+      minWidth: 250,
+      flex: 1,
       editable: true,
       sortable: false,
       renderHeader,
@@ -157,6 +149,19 @@ const NotebooksPage: FunctionComponent = () => {
         return <>{params.row.collaborators}</>;
       },
     },
+    {
+      field: "delete",
+      headerName: "Delete",
+      width: 75,
+      renderCell: (params: GridCellParams) => {
+        return (
+          <div style={{ paddingLeft: "5px" }}>
+            <DeleteNotebook notebookId={params.row.id} />
+          </div>
+        );
+      },
+      renderHeader,
+    },
   ];
 
   return (
@@ -170,6 +175,9 @@ const NotebooksPage: FunctionComponent = () => {
           <Grid item md={4}>
             <FormControl fullWidth>
               <Select
+                MenuProps={{
+                  disableScrollLock: true,
+                }}
                 value={showNotebooks}
                 onChange={(event) =>
                   setShowNotebooks(event.target.value as string)

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 
 import { usePanel } from "src/store/panels";
 import { useRing } from "src/store/rings";
@@ -52,8 +52,13 @@ const Filter = ({ panelId, filter }: Props) => {
   const [autoCompleteSuggestions, setAutoCompleteSuggestions] = useState<
     FilterOptionT[]
   >([]);
+  const [autocompleteValues, setAutocompleteValues] = useState([]);
   const [dateValue, setDateValue] = useState<Date | null>(null);
   const { notify } = useNotify();
+
+  useEffect(() => {
+    setAutocompleteValues([]);
+  }, [type]);
 
   const setFilter = (filter: FilterT) => {
     try {
@@ -113,6 +118,17 @@ const Filter = ({ panelId, filter }: Props) => {
     }
   };
 
+  useEffect(() => {
+    setAutoCompleteSuggestions([]);
+    // Autofetch autocomplete suggestions for non-state autocomplete types
+    const barredFilterTypes = ["range", "boolean", "date"];
+    const isAutocomplete = !barredFilterTypes.includes(filterOptions?.type);
+
+    if (filter.type && isAutocomplete && type !== "state_abbrev") {
+      fetchAutocompleteSuggestions("");
+    }
+  }, [filter.type]); // eslint-disable-line react-hooks/exhaustive-deps
+
   const debouncedSearch = debounce(fetchAutocompleteSuggestions, 1500);
 
   const handleClear = async () => {
@@ -145,6 +161,7 @@ const Filter = ({ panelId, filter }: Props) => {
       open={autocompleteOpen}
       noOptionsText={isLoading ? <CircularProgress /> : <>No Results Found</>}
       multiple
+      value={autocompleteValues}
       options={autoCompleteSuggestions || []}
       getOptionLabel={(option: FilterOptionT) => option.label}
       renderInput={(params) => (
@@ -152,29 +169,32 @@ const Filter = ({ panelId, filter }: Props) => {
           {...params}
           variant="outlined"
           label={filterOptions?.nicename}
+          sx={{ textTransform: "capitalize" }}
         />
       )}
       disableClearable
       onInputChange={(_, value) => {
-        const minChar = [
+        // We get all options on load, don't server autocomplete for:
+        const localFilterTypes = [
+          "case_status",
+          "ontology_labels",
           "case_type",
-          "state_abbrev",
           "circuit_abbrev",
-        ].includes(filter.type)
-          ? 0
-          : 2;
+        ];
 
-        if (value.length > minChar) {
+        const minChar = 3;
+        if (value.length >= minChar && !localFilterTypes.includes(type)) {
           debouncedSearch(value);
           setIsLoading(true);
         }
-        if (value.length === 0) {
-          if (autocompleteOpen) setAutocompleteOpen(false);
-        } else {
-          if (!autocompleteOpen) setAutocompleteOpen(true);
-        }
+        if (!autocompleteOpen) setAutocompleteOpen(true);
       }}
-      onClose={() => setAutocompleteOpen(false)}
+      onClose={() => {
+        setAutocompleteOpen(false);
+      }}
+      onFocus={() => {
+        setAutocompleteOpen(true);
+      }}
       onChange={(_, fieldValue) => {
         if (!filter) {
           return false;
@@ -183,6 +203,7 @@ const Filter = ({ panelId, filter }: Props) => {
           ...filter,
           value: fieldValue.map((x) => x.value).join("|"),
         });
+        setAutocompleteValues(fieldValue);
       }}
       sx={{
         minWidth: "250px",

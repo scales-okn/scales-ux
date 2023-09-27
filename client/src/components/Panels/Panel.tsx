@@ -26,12 +26,17 @@ import ConfirmModal from "src/components/Modals/ConfirmModal";
 import ColumnHeader from "src/components/ColumnHeader";
 import DeleteButton from "../Buttons/DeleteButton";
 import { panelHeaderStyles } from "./styles";
+import { useEffectOnce } from "react-use";
 
 type PanelProps = {
   panelId: string;
+  defaultCollapsed: boolean;
 };
 
-const Panel: FunctionComponent<PanelProps> = ({ panelId }) => {
+const Panel: FunctionComponent<PanelProps> = ({
+  panelId,
+  defaultCollapsed,
+}) => {
   const {
     panel,
     deletePanel,
@@ -45,6 +50,13 @@ const Panel: FunctionComponent<PanelProps> = ({ panelId }) => {
     setPanelCollapsed,
   } = usePanel(panelId);
 
+  // Pop first panel on page load
+  useEffectOnce(() => {
+    if (!defaultCollapsed) {
+      setPanelCollapsed(false);
+    }
+  });
+
   const { ring, info, getRingInfo } = useRing(panel?.ringId);
 
   const [confirmVisible, setConfirmVisible] = useState(false);
@@ -57,11 +69,8 @@ const Panel: FunctionComponent<PanelProps> = ({ panelId }) => {
     }
   }, [ring]); // eslint-disable-line react-hooks/exhaustive-deps
 
-  // TODO?
   const panelIdRef = React.useRef(null);
-  // this panelIdRef not getting set ever
   useEffect(() => {
-    // so the last part of this check doesn't work (not happening anymore?)
     if (info && !collapsed && panel.id !== panelIdRef.current) {
       getPanelResults();
       panelIdRef.current = panel.id;

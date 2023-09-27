@@ -12,9 +12,9 @@ const Panels = ({ notebookId }: PanelsProps) => {
   return (
     <>
       {panels?.length > 0 &&
-        panels.map((panel) => (
+        panels.map((panel, idx) => (
           <div key={panel.id}>
-            <Panel panelId={panel.id} />
+            <Panel panelId={panel.id} defaultCollapsed={idx !== 0} />
           </div>
         ))}
     </>

@@ -12,7 +12,7 @@ type InitialStateT = {
 const initialState: InitialStateT = {
   loadingHelpTexts: false,
   hasErrors: false,
-  helpTexts: null,
+  helpTexts: [],
 };
 
 // A slice for helpTexts

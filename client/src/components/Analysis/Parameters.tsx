@@ -73,6 +73,9 @@ const Parameters: FunctionComponent<Props> = ({
                 value={selectedParameter || "year"}
                 multiple={parameter.allowMultiple}
                 onChange={(e) => setSelectedParameter(e.target.value)}
+                MenuProps={{
+                  disableScrollLock: true,
+                }}
               >
                 {(parameter.options.length === 6
                   ? parameter.options

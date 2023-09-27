@@ -45,7 +45,7 @@ const ForgotPassword = () => {
           notify(response.message, "success");
           navigate("/sign-in");
         } else {
-          notify(response.message, "error");
+          notify(response.error, "error");
         }
       } catch (error) {
         console.error(error); // eslint-disable-line no-console
@@ -90,7 +90,7 @@ const ForgotPassword = () => {
               >
                 Already have an account? Sign in
               </Link>
-              <Button color="info" variant="contained">
+              <Button color="info" variant="contained" type="submit">
                 Submit
               </Button>
             </div>

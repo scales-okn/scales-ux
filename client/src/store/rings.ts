@@ -15,7 +15,7 @@ const initialState: InitialState = {
   loadingRings: false,
   loadingRingInfo: false,
   hasErrors: false,
-  rings: null,
+  rings: [],
 };
 
 // A slice for rings with our three reducers
