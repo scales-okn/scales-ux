@@ -76,6 +76,13 @@ const notebookSlice = createSlice({
     saveNotebookSuccess: (state, { payload }) => ({
       ...state,
       notebook: { ...state.notebook, ...payload },
+      notebooks: state.notebooks.map((notebook) => {
+        if (notebook.id === payload.id) {
+          return payload;
+        } else {
+          return notebook;
+        }
+      }),
       savingNotebook: false,
       hasErrors: false,
     }),
@@ -172,7 +179,7 @@ export function updateNotebook(id: string, payload: any) {
       if (response.status === "OK") {
         const { data, message } = response;
         dispatch(notify(message, "success"));
-        dispatch(notebookActions.saveNotebookSuccess(data.notebook));
+        dispatch(notebookActions.saveNotebookSuccess(data));
       } else {
         dispatch(notify(response.statusText, "error"));
         dispatch(notebookActions.saveNotebookFailure());
