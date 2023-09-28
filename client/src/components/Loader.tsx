@@ -17,7 +17,7 @@ const Loader = ({ isVisible = false, size = 60, children }: LoaderT) => {
         height: "100%",
         width: "100%",
         minHeight: isVisible ? "120px" : "0px",
-        transition: ".2s all",
+        border: "1px solid red",
       }}
     >
       {isVisible && (

@@ -94,212 +94,214 @@ const Notebook = () => {
 
   return (
     <Loader isVisible={loadingNotebook}>
-      <>
+      <Grid
+        container
+        sx={{
+          borderRadius: "6px",
+          background: "white",
+          padding: "10px 24px 24px 24px",
+          marginBottom: "36px",
+          boxShadow: "0px 2px 4px rgba(0, 0, 0, 0.1)",
+          "*": {
+            transition: ".2s all",
+          },
+        }}
+      >
         <Grid
           container
-          sx={{
-            borderRadius: "6px",
-            background: "white",
-            padding: "10px 24px 24px 24px",
-            marginBottom: "36px",
-            boxShadow: "0px 2px 4px rgba(0, 0, 0, 0.1)",
-          }}
+          alignItems="center"
+          justifyContent="space-between"
+          sx={{ marginBottom: "36px" }}
         >
-          <Grid
-            container
-            alignItems="center"
-            justifyContent="space-between"
-            sx={{ marginBottom: "36px" }}
-          >
-            <Grid item lg={4}>
-              <TextField
-                fullWidth
-                size="medium"
-                placeholder="Notebook Title"
-                variant="standard"
-                error={!notebookTitle && !isNewNotebook}
-                onChange={(event) => {
-                  setNotebookTitle(event.target.value);
-                }}
-                value={notebookTitle}
-                sx={{
-                  input: {
-                    fontSize: "48px",
-                    color: "GrayText",
-                    paddingBottom: "0",
-                  },
-                }}
-              />
-            </Grid>
+          <Grid item lg={4}>
+            <TextField
+              fullWidth
+              size="medium"
+              placeholder="Notebook Title"
+              variant="standard"
+              error={!notebookTitle && !isNewNotebook}
+              onChange={(event) => {
+                setNotebookTitle(event.target.value);
+              }}
+              value={notebookTitle}
+              sx={{
+                input: {
+                  fontSize: "48px",
+                  color: "#333",
+                  paddingBottom: "0",
+                },
+              }}
+            />
+          </Grid>
 
-            <Grid item>
-              {notebook && (
-                <>
-                  <DeleteButton
-                    onClick={() => setConfirmVisible(true)}
-                    disabled={deletingNotebook}
-                    sx={{ marginRight: "12px" }}
-                  />
-                  <Button
-                    color="success"
-                    variant="contained"
-                    onClick={() => {
-                      if (notebookTitle) {
-                        updateNotebook(notebook?.id, {
-                          title: notebookTitle,
-                        });
-                        // hacky, need to fix
-                        panels.forEach((panel) => {
-                          updatePanel(panel.id, panel);
-                        });
-                      }
-                    }}
-                    disabled={savingNotebook || !notebookTitle}
-                  >
-                    Save
-                  </Button>
-                </>
-              )}
-
-              {!notebook && (
+          <Grid item>
+            {notebook && (
+              <>
+                <DeleteButton
+                  onClick={() => setConfirmVisible(true)}
+                  disabled={deletingNotebook}
+                  sx={{ marginRight: "12px" }}
+                />
                 <Button
-                  size="large"
                   color="success"
                   variant="contained"
                   onClick={() => {
                     if (notebookTitle) {
-                      createNotebook({ title: notebookTitle });
+                      updateNotebook(notebook?.id, {
+                        title: notebookTitle,
+                      });
+                      // hacky, need to fix
+                      panels.forEach((panel) => {
+                        updatePanel(panel.id, panel);
+                      });
                     }
                   }}
                   disabled={savingNotebook || !notebookTitle}
                 >
-                  {savingNotebook ? "Loading…" : "Create"}
+                  Save
                 </Button>
-              )}
-            </Grid>
-          </Grid>
+              </>
+            )}
 
-          <Grid
-            item
-            xs={12}
-            sm={6}
-            md={6}
-            sx={{
-              "& h6": {
-                fontWeight: "700",
-              },
-            }}
-          >
-            <Grid
-              container
-              direction="column"
-              alignItems="flex-start"
-              sx={{ paddingRight: "56px" }}
-            >
-              <Grid item>
-                <h6>Collaborators:</h6>
-              </Grid>
-              <Grid item sx={{ width: "100%" }}>
-                <Autocomplete
-                  multiple
-                  id="collaborators"
-                  options={users}
-                  value={
-                    notebook?.collaborators?.map((collaboratorId) => {
-                      return users.find((u) => u.id === collaboratorId);
-                    }) || []
+            {!notebook && (
+              <Button
+                size="large"
+                color="success"
+                variant="contained"
+                onClick={() => {
+                  if (notebookTitle) {
+                    createNotebook({ title: notebookTitle });
                   }
-                  onChange={updateNotebookCollaborators}
-                  getOptionLabel={(option) => {
-                    return `${option.firstName} ${option.lastName}`;
-                  }}
-                  renderInput={(params) => (
-                    <TextField {...params} variant="outlined" />
-                  )}
-                  sx={{
-                    width: "100%",
-                    background: "white",
-                    "& .MuiAutocomplete-root": {
-                      border: "none",
-                    },
-                  }}
-                />
-              </Grid>
-            </Grid>
-          </Grid>
-          <Grid
-            item
-            xs={3}
-            md={1.5}
-            sx={{
-              "& h6": {
-                fontWeight: "700",
-              },
-            }}
-          >
-            <Grid container direction="column" alignItems="flex-start">
-              <Grid item>
-                <h6>Public:</h6>
-              </Grid>
-              <Grid
-                item
-                sx={{
-                  height: "56px",
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "center",
                 }}
+                disabled={savingNotebook || !notebookTitle}
               >
-                <Switch
-                  disabled={notebook?.userId !== sessionUser.id}
-                  checked={notebook?.visibility === "public"}
-                  onChange={() =>
-                    updateNotebookVisibility(notebook.id, notebook.visibility)
-                  }
-                  color="primary"
-                />
-              </Grid>
-            </Grid>
-          </Grid>
-          <Grid
-            item
-            sm={3}
-            md={3}
-            sx={{
-              "& h6": {
-                fontWeight: "700",
-              },
-            }}
-          >
-            <Grid container direction="column" alignItems="flex-start">
-              <Grid item>
-                <h6>Owner:</h6>
-              </Grid>
-              <Grid
-                item
-                sx={{
-                  height: "56px",
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "center",
-                  "& span": {
-                    color: "GrayText",
-                    fontSize: "16px",
-                    fontWeight: "600",
-                  },
-                }}
-              >
-                <span>
-                  {notebook?.user.firstName} {notebook?.user.lastName}
-                </span>
-              </Grid>
-            </Grid>
+                {savingNotebook ? "Loading…" : "Create"}
+              </Button>
+            )}
           </Grid>
         </Grid>
 
-        {notebook && <Panels notebookId={notebook?.id} />}
-        <AddPanel notebookId={notebook?.id} />
-      </>
+        <Grid
+          item
+          xs={12}
+          sm={6}
+          md={6}
+          sx={{
+            "& h6": {
+              fontWeight: "700",
+            },
+          }}
+        >
+          <Grid
+            container
+            direction="column"
+            alignItems="flex-start"
+            sx={{ paddingRight: "56px" }}
+          >
+            <Grid item>
+              <h6>Collaborators:</h6>
+            </Grid>
+            <Grid item sx={{ width: "100%" }}>
+              <Autocomplete
+                multiple
+                id="collaborators"
+                options={users}
+                value={
+                  notebook?.collaborators?.map((collaboratorId) => {
+                    return users.find((u) => u.id === collaboratorId);
+                  }) || []
+                }
+                onChange={updateNotebookCollaborators}
+                getOptionLabel={(option) => {
+                  return `${option.firstName} ${option.lastName}`;
+                }}
+                renderInput={(params) => (
+                  <TextField {...params} variant="outlined" />
+                )}
+                sx={{
+                  width: "100%",
+                  background: "white",
+                  "& .MuiAutocomplete-root": {
+                    border: "none",
+                  },
+                }}
+              />
+            </Grid>
+          </Grid>
+        </Grid>
+        <Grid
+          item
+          xs={3}
+          md={1.5}
+          sx={{
+            "& h6": {
+              fontWeight: "700",
+            },
+          }}
+        >
+          <Grid container direction="column" alignItems="flex-start">
+            <Grid item>
+              <h6>Public:</h6>
+            </Grid>
+            <Grid
+              item
+              sx={{
+                height: "56px",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+              }}
+            >
+              <Switch
+                disabled={notebook?.userId !== sessionUser.id}
+                checked={notebook?.visibility === "public"}
+                onChange={() =>
+                  updateNotebookVisibility(notebook.id, notebook.visibility)
+                }
+                color="primary"
+              />
+            </Grid>
+          </Grid>
+        </Grid>
+        <Grid
+          item
+          sm={3}
+          md={3}
+          sx={{
+            "& h6": {
+              fontWeight: "700",
+            },
+          }}
+        >
+          <Grid container direction="column" alignItems="flex-start">
+            <Grid item>
+              <h6>Owner:</h6>
+            </Grid>
+            <Grid
+              item
+              sx={{
+                height: "56px",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                "& span": {
+                  color: "GrayText",
+                  fontSize: "16px",
+                  fontWeight: "600",
+                },
+              }}
+            >
+              <span>
+                {notebook?.user.firstName} {notebook?.user.lastName}
+              </span>
+            </Grid>
+          </Grid>
+        </Grid>
+      </Grid>
+
+      {notebook && <Panels notebookId={notebook?.id} />}
+      <AddPanel notebookId={notebook?.id} />
+
       <ConfirmModal
         itemName="notebook"
         open={confirmVisible}
