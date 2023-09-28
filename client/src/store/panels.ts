@@ -450,6 +450,52 @@ export const getPanelResults =
     }
   };
 
+export const downloadCsv = 
+  (panelId) => 
+  async (dispatch: AppDispatch, getState) => {
+    try {
+      const panel = panelSelector(getState(), panelId);
+      const { filters, ringId } = panel;
+
+      // @ts-ignore
+      const { rid, info, version } = ringSelector(getState(), ringId);
+      const filterParams = filters
+      ?.map((filter) => {
+        if (!filter.value) return null;
+
+        if (
+          filter.type === "filing_date" ||
+          filter.type === "terminating_date"
+        ) {
+          const start = dayjs(filter.value[0]).format("YYYY-M-DD");
+          const end = dayjs(filter.value[1]).format("YYYY-M-DD");
+          return `${filter.type}=${start},${end}`;
+        }
+
+        return `${filter.type}=${encodeURIComponent(filter.value)}`;
+      })
+      .join("&");
+
+      const response = await makeRequest.get(
+        appendQuery(
+          `/proxy/download-csv/${rid}/${version}/${info.defaultEntity}`,
+          filterParams,
+          { encodeComponents: false },
+        ),
+        { responseType: "blob" }
+      );
+
+      if (!response) {
+        dispatch(notify("Error fetching results", "error"));
+        dispatch(panelsActions.getPanelResultsFailure({ panelId }));
+      }
+    } catch (error) {
+      console.warn(error); // eslint-disable-line no-console
+      dispatch(notify("Error fetching results", "error"));
+      dispatch(panelsActions.getPanelResultsFailure({ panelId }));
+    }
+  };
+
 // Hooks
 export const usePanels = (notebookId) => {
   const { panels, loadingPanels, hasErrors, creatingPanel, deletingPanel } =
@@ -527,5 +573,7 @@ export const usePanel = (panelId: string) => {
     deletePanel: () => dispatch(deletePanel(panelId)),
     getPanelResults: (filters = [], page = 0, batchSize = 10) =>
       dispatch(getPanelResults(panelId, filters, page, batchSize)),
+    downloadCsv: () =>
+      dispatch(downloadCsv(panelId)),
   };
 };

@@ -2,6 +2,7 @@ import React, { FunctionComponent, useState, useEffect, useMemo } from "react";
 import { Link } from "react-router-dom";
 import { usePanel } from "src/store/panels";
 import { useRing } from "src/store/rings";
+import { appendQuery } from "append-query";
 
 import {
   Accordion,
@@ -15,7 +16,7 @@ import {
   Tooltip,
 } from "@mui/material";
 import { DataGrid } from "@mui/x-data-grid";
-import { UnfoldLess, UnfoldMore } from "@mui/icons-material";
+import { Download, UnfoldLess, UnfoldMore } from "@mui/icons-material";
 import uniqid from "uniqid";
 
 import Filters from "../Filters";
@@ -27,6 +28,7 @@ import ColumnHeader from "src/components/ColumnHeader";
 import DeleteButton from "../Buttons/DeleteButton";
 import { panelHeaderStyles } from "./styles";
 import { useEffectOnce } from "react-use";
+import DownloadButton from "../Buttons/DownloadButton";
 
 type PanelProps = {
   panelId: string;
@@ -48,6 +50,8 @@ const Panel: FunctionComponent<PanelProps> = ({
     setPanelDescription,
     resultsCollapsed,
     setPanelCollapsed,
+    downloadCsv,
+    filters,
   } = usePanel(panelId);
 
   // Pop first panel on page load
@@ -151,6 +155,11 @@ const Panel: FunctionComponent<PanelProps> = ({
             }}
             sx={{ height: "30.75px", width: "30.75px" }}
             variant="outlined"
+          />
+          <DownloadButton
+            onClick={() => downloadCsv()}
+            variant="outlined"
+            sx={{ marginLeft: "8px", height: "30.75px", width: "30.75px" }}
           />
           <Tooltip title={collapsed ? "Expand" : "Collapse"}>
             <Button
