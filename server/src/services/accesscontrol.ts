@@ -134,7 +134,7 @@ accessControl
       .update.where(userIsRingOwner)
         .onFields("*", "!deleted")
 
-export const permisionsFieldsFilter = (data, permission) => {
+export const permissionsFieldsFilter = (data, permission) => {
   try {
     return Object.keys(data).reduce((filteredData, field) => {
       if (permission.field(field)) {

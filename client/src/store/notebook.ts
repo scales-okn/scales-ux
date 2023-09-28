@@ -173,7 +173,6 @@ export function fetchNotebook(id: string) {
 export function updateNotebook(id: string, payload: any) {
   return async (dispatch: AppDispatch, getState) => {
     dispatch(notebookActions.saveNotebook());
-
     try {
       const response = await makeRequest.put(`/api/notebooks/${id}`, payload);
       if (response.status === "OK") {
@@ -231,16 +230,25 @@ export function deleteNotebook(id: string) {
 
 // Hooks
 export function useNotebook() {
-  const { notebook, loadingNotebook, hasErrors, loadingNotebooks, notebooks } =
-    useSelector(notebookSelector);
-
-  const dispatch = useDispatch();
-  return {
+  const {
     notebook,
     loadingNotebook,
+    savingNotebook,
+    deletingNotebook,
     hasErrors,
     loadingNotebooks,
     notebooks,
+  } = useSelector(notebookSelector);
+
+  const dispatch = useDispatch();
+  return {
+    notebooks,
+    loadingNotebooks,
+    notebook,
+    loadingNotebook,
+    savingNotebook,
+    deletingNotebook,
+    hasErrors,
     fetchNotebooks: () => dispatch(fetchNotebooks()),
     fetchNotebook: (id: string) => dispatch(fetchNotebook(id)),
     updateNotebook: (id: string, payload: any) =>

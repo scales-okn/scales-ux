@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import { useUser } from "src/store/auth";
+import { useAuthUser } from "src/store/auth";
 import {
   Container,
   Grid,
@@ -30,7 +30,7 @@ const Ring: React.FC = () => {
   const { ringId = null } = useParams<Params>();
   const { ring } = useRing(Number(ringId));
   const [loading, setLoading] = useState(false);
-  const user = useUser();
+  const user = useAuthUser();
   const { notify } = useNotify();
   const navigate = useNavigate();
 

@@ -2,7 +2,7 @@ import { Request, Response } from "express";
 import { sequelize } from "../database";
 import accessControl from "../services/accesscontrol";
 import { Op } from "sequelize";
-import { permisionsFieldsFilter } from "../services/accesscontrol";
+import { permissionsFieldsFilter } from "../services/accesscontrol";
 
 // Resources validations are made with validateResources middleware and validations schemas
 // server/middlewares/validateResources.ts
@@ -93,6 +93,7 @@ export const findById = async (req: Request, res: Response) => {
     const notebook = await sequelize.models.Notebook.findOne({
       where,
     });
+
     if (!notebook) {
       return res.send_notFound("Notebook not found!");
     }
@@ -107,8 +108,12 @@ export const findById = async (req: Request, res: Response) => {
       return res.send_forbidden("Not allowed!");
     }
 
+    const user = await sequelize.models.User.findOne({
+      where: { id: notebook.userId },
+    });
+
     return res.send_ok("", {
-      notebook: notebook.dataValues,
+      notebook: { ...notebook.dataValues, user },
     });
   } catch (error) {
     console.warn(error); // eslint-disable-line no-console
@@ -173,7 +178,7 @@ export const update = async (req: Request, res: Response) => {
       return res.send_forbidden("Not allowed!");
     }
 
-    const payload = permisionsFieldsFilter(req.body, permission);
+    const payload = permissionsFieldsFilter(req.body, permission);
 
     if (Object.keys(payload).length === 0) {
       return res.send_notModified("Notebook has not been updated!");

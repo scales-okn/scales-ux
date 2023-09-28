@@ -4,7 +4,7 @@ import { Request, Response } from "express";
 import { sequelize } from "../database";
 import { sendEmail } from "../services/sesMailer";
 import accessControl, {
-  permisionsFieldsFilter,
+  permissionsFieldsFilter,
 } from "../services/accesscontrol";
 
 // Resources validations are made with validateResources middleware and validations schemas
@@ -157,7 +157,7 @@ export const findById = async (req: Request, res: Response) => {
     }
 
     return res.send_ok("", {
-      user: permisionsFieldsFilter(user.dataValues, permission),
+      user: permissionsFieldsFilter(user.dataValues, permission),
     });
   } catch (error) {
     console.warn(error); // eslint-disable-line no-console
@@ -183,7 +183,7 @@ export const update = async (req: Request, res: Response) => {
       return res.send_forbidden("Not allowed!");
     }
 
-    const payload = permisionsFieldsFilter(req.body, permission);
+    const payload = permissionsFieldsFilter(req.body, permission);
     if (payload.password) {
       const salt = await bcrypt.genSalt(10);
       const hash = await bcrypt.hash(payload.password, salt);
@@ -211,7 +211,7 @@ export const update = async (req: Request, res: Response) => {
 
     const updatedUser = result[1][0].dataValues;
     return res.send_ok("User has been updated!", {
-      user: permisionsFieldsFilter(updatedUser, permission),
+      user: permissionsFieldsFilter(updatedUser, permission),
     });
   } catch (error) {
     console.warn(error); // eslint-disable-line no-console

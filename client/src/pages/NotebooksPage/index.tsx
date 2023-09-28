@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import React, { FunctionComponent, useState } from "react";
-import { useSelector, useDispatch } from "react-redux";
+import { useSelector } from "react-redux";
 import { Link } from "react-router-dom";
 
 import { DataGrid, GridCellParams } from "@mui/x-data-grid";
@@ -14,14 +14,17 @@ import {
   Grid,
   Switch,
   Button,
+  Avatar,
+  Tooltip,
 } from "@mui/material";
 
 import { useEffectOnce } from "react-use";
 import SearchIcon from "@mui/icons-material/Search";
 import dayjs from "dayjs";
 
-import { userSelector } from "src/store/auth";
-import { useNotebook, updateNotebook } from "src/store/notebook";
+import { sessionUserSelector } from "src/store/auth";
+import { useNotebook } from "src/store/notebook";
+import { useUser } from "src/store/user";
 
 import Loader from "src/components/Loader";
 import ColumnHeader from "src/components/ColumnHeader";
@@ -30,24 +33,25 @@ import "./NotebooksPage.scss";
 import DeleteNotebook from "./DeleteNotebook";
 
 const NotebooksPage: FunctionComponent = () => {
-  const user = useSelector(userSelector);
-  const dispatch = useDispatch();
+  const user = useSelector(sessionUserSelector);
 
   const [showNotebooks, setShowNotebooks] = useState("my-notebooks");
   const [filterNotebooks, setFilterNotebooks] = useState("");
-  const { fetchNotebooks, loadingNotebooks, notebooks } = useNotebook();
+  const { fetchNotebooks, loadingNotebooks, updateNotebook, notebooks } =
+    useNotebook();
+  const { fetchUsers, users } = useUser();
 
   useEffectOnce(() => {
     fetchNotebooks();
+    fetchUsers();
   });
 
-  const updateNotebookData = (id, visibility) => {
+  const updateNotebookVisibility = (id, visibility) => {
     const out = visibility === "public" ? "private" : "public";
-    dispatch(
-      updateNotebook(id, {
-        visibility: out,
-      }),
-    );
+
+    updateNotebook(id, {
+      visibility: out,
+    });
   };
 
   const notebooksData = notebooks
@@ -55,9 +59,9 @@ const NotebooksPage: FunctionComponent = () => {
       if (showNotebooks === "my-notebooks") {
         return notebook.userId === user.id;
       }
-      // if (showNotebooks === "shared-notebooks") {
-      //   return notebook.collaborators.includes(user.id);
-      // }
+      if (showNotebooks === "shared-notebooks") {
+        return notebook.collaborators.includes(user.id);
+      }
       if (showNotebooks === "public-notebooks") {
         return notebook.visibility === "public";
       }
@@ -129,7 +133,7 @@ const NotebooksPage: FunctionComponent = () => {
             disabled={params.row.userId !== user.id}
             checked={params.row.visibility === "public"}
             onChange={() =>
-              updateNotebookData(params.row.id, params.row.visibility)
+              updateNotebookVisibility(params.row.id, params.row.visibility)
             }
             color="primary"
           />
@@ -145,30 +149,58 @@ const NotebooksPage: FunctionComponent = () => {
       renderCell: (params: GridCellParams) => {
         if (params.row.userId === user.id) {
           return <>You</>;
+        } else {
+          const user = users.find((u) => u.id === params.row.userId);
+          return (
+            <Link to={`/users/${user.id}`} className="ms-2">
+              {user.firstName} {user.lastName}
+            </Link>
+          );
         }
-        // TODO: Users Initials call.
       },
     },
-    // {
-    //   field: "collaborators",
-    //   headerName: "Shared With",
-    //   width: 150,
-    //   editable: true,
-    //   sortable: false,
-    //   renderHeader,
-    //   renderCell: (params: GridCellParams) => {
-    //     if (params.row.collaborators.length === 0) {
-    //       return <>Nobody</>;
-    //     }
-    //     if (params.row.collaborators.includes(1)) {
-    //       return <span className="user-initials-pill">AT</span>;
-    //     }
-    //     if (params.row.collaborators.includes(user.id)) {
-    //       return <>You</>;
-    //     }
-    //     return <>{params.row.collaborators}</>;
-    //   },
-    // },
+    {
+      field: "collaborators",
+      headerName: "Collaborators",
+      width: 200,
+      editable: true,
+      sortable: false,
+      renderHeader,
+      renderCell: (params: GridCellParams) => {
+        const collaborators = users.filter((u) =>
+          params.row.collaborators.includes(u.id),
+        );
+
+        if (collaborators.length === 0) {
+          return <>None</>;
+        } else {
+          return (
+            <>
+              {collaborators.map((collaborator) => {
+                return (
+                  <Tooltip
+                    key={collaborator.id}
+                    title={`${collaborator.firstName} ${collaborator.lastName}`}
+                  >
+                    <Avatar
+                      sx={{
+                        width: 24,
+                        height: 24,
+                        fontSize: "9px",
+                        marginRight: "4px",
+                      }}
+                    >
+                      {collaborator.firstName.charAt(0).toUpperCase()}
+                      {collaborator.lastName.charAt(0).toUpperCase()}
+                    </Avatar>
+                  </Tooltip>
+                );
+              })}
+            </>
+          );
+        }
+      },
+    },
     {
       field: "delete",
       headerName: "Delete",
@@ -205,7 +237,7 @@ const NotebooksPage: FunctionComponent = () => {
                 sx={{ background: "white", borderRadius: "4px" }}
               >
                 <MenuItem value="my-notebooks">My Notebooks</MenuItem>
-                {/* <MenuItem value="shared-notebooks">Shared with me</MenuItem> */}
+                <MenuItem value="shared-notebooks">Shared with me</MenuItem>
                 <MenuItem value="public-notebooks">Public Notebooks</MenuItem>
               </Select>
             </FormControl>
