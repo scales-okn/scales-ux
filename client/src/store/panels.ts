@@ -21,6 +21,7 @@ const PanelInitialState = {
   loadingPanelResults: false,
   collapsed: true,
   resultsCollapsed: false,
+  downloadingCsv: false,
   updatingPanel: false,
   hasErrors: false,
   analysis: [],
@@ -276,6 +277,30 @@ const panelsSlice = createSlice({
           : panel,
       ),
     }),
+    getCsv: (state, { payload }) => ({
+      ...state,
+      panels: state.panels.map((panel) =>
+        panel.id === payload.panelId
+          ? { ...panel, downloadingCsv: true }
+          : panel,
+      ),
+    }),
+    getCsvSuccess: (state, { payload }) => ({
+      ...state,
+      panels: state.panels.map((panel) =>
+        panel.id === payload.panelId
+          ? { ...panel, downloadingCsv: false }
+          : panel,
+      ),
+    }),
+    getCsvFailure: (state, { payload }) => ({
+      ...state,
+      panels: state.panels.map((panel) =>
+        panel.id === payload.panelId
+          ? { ...panel, downloadingCsv: false, hasErrors: true }
+          : panel,
+      ),
+    }),
   },
 });
 
@@ -459,6 +484,7 @@ export const downloadCsv =
 
       // @ts-ignore
       const { rid, info, version } = ringSelector(getState(), ringId);
+      dispatch(panelsActions.getCsv({ panelId }));
       const filterParams = filters
       ?.map((filter) => {
         if (!filter.value) return null;
@@ -478,21 +504,23 @@ export const downloadCsv =
 
       const response = await makeRequest.get(
         appendQuery(
-          `/proxy/download-csv/${rid}/${version}/${info.defaultEntity}`,
+          `/proxy/download-csv/${rid}/${version}/${info.defaultEntity}/`,
           filterParams,
           { encodeComponents: false },
         ),
         { responseType: "blob" }
       );
 
-      if (!response) {
+      if(response) {
+        dispatch(panelsActions.getCsvSuccess({ panelId }));
+      } else {
         dispatch(notify("Error fetching results", "error"));
-        dispatch(panelsActions.getPanelResultsFailure({ panelId }));
+        dispatch(panelsActions.getCsvFailure({ panelId }));
       }
     } catch (error) {
       console.warn(error); // eslint-disable-line no-console
       dispatch(notify("Error fetching results", "error"));
-      dispatch(panelsActions.getPanelResultsFailure({ panelId }));
+      dispatch(panelsActions.getCsvFailure({ panelId }));
     }
   };
 
@@ -537,6 +565,7 @@ export const usePanel = (panelId: string) => {
     loadingPanelResults,
     resultsCollapsed,
     collapsed,
+    downloadingCsv,
     updatingPanel,
     hasErrors,
   } = panel;
@@ -552,6 +581,7 @@ export const usePanel = (panelId: string) => {
     updatingPanel,
     hasErrors,
     analysis,
+    downloadingCsv,
     addPanelAnalysis: (analysis) =>
       dispatch(panelsActions.addPanelAnalysis({ panelId, analysis })),
     removePanelAnalysis: (id) =>

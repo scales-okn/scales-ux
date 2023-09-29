@@ -37,20 +37,19 @@ const sendRequest = async ({
 
   try {
     const response = await fetch(url(), fetchOptions);
-
+    
     let data;
     if (options?.responseType === "text") {
       data = await response.text();
     } else if (options?.responseType === "blob") {
-      const blob = await response.blob();
-      const fileURL = window.URL.createObjectURL(blob);
+      data = await response.blob();
+      const fileURL = window.URL.createObjectURL(data);
       const alink = document.createElement('a');
       alink.href = fileURL;
-      alink.download = 'data.csv';
+      alink.download = 'scales-okn-data.csv';
       document.body.appendChild(alink);
       alink.click();
       alink.remove();
-      return;
     } else {
       data = await response.json();
     }

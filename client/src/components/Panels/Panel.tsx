@@ -2,7 +2,6 @@ import React, { FunctionComponent, useState, useEffect, useMemo } from "react";
 import { Link } from "react-router-dom";
 import { usePanel } from "src/store/panels";
 import { useRing } from "src/store/rings";
-import { appendQuery } from "append-query";
 
 import {
   Accordion,
@@ -16,7 +15,7 @@ import {
   Tooltip,
 } from "@mui/material";
 import { DataGrid } from "@mui/x-data-grid";
-import { Download, UnfoldLess, UnfoldMore } from "@mui/icons-material";
+import { UnfoldLess, UnfoldMore } from "@mui/icons-material";
 import uniqid from "uniqid";
 
 import Filters from "../Filters";
@@ -26,9 +25,9 @@ import Analysis from "../Analysis";
 import ConfirmModal from "src/components/Modals/ConfirmModal";
 import ColumnHeader from "src/components/ColumnHeader";
 import DeleteButton from "../Buttons/DeleteButton";
+import DownloadButton from "../Buttons/DownloadButton";
 import { panelHeaderStyles } from "./styles";
 import { useEffectOnce } from "react-use";
-import DownloadButton from "../Buttons/DownloadButton";
 
 type PanelProps = {
   panelId: string;
@@ -51,7 +50,7 @@ const Panel: FunctionComponent<PanelProps> = ({
     resultsCollapsed,
     setPanelCollapsed,
     downloadCsv,
-    filters,
+    downloadingCsv,
   } = usePanel(panelId);
 
   // Pop first panel on page load
@@ -158,6 +157,7 @@ const Panel: FunctionComponent<PanelProps> = ({
           />
           <DownloadButton
             onClick={() => downloadCsv()}
+            downloading={downloadingCsv}
             variant="outlined"
             sx={{ marginLeft: "8px", height: "30.75px", width: "30.75px" }}
           />
