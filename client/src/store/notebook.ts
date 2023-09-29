@@ -249,6 +249,7 @@ export function useNotebook() {
     savingNotebook,
     deletingNotebook,
     hasErrors,
+    clearNotebook: () => dispatch(notebookActions.clearNotebook()),
     fetchNotebooks: () => dispatch(fetchNotebooks()),
     fetchNotebook: (id: string) => dispatch(fetchNotebook(id)),
     updateNotebook: (id: string, payload: any) =>

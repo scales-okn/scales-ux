@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
-import { useNavigate, useLocation } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { useEffectOnce } from "react-use";
 
 import { useRings } from "src/store/rings";
@@ -12,7 +12,7 @@ import { sessionUserSelector } from "src/store/auth";
 import { Grid, TextField, Button, Autocomplete, Switch } from "@mui/material";
 import DeleteButton from "src/components/Buttons/DeleteButton";
 
-import AddPanel from "../Panels/AddPanel";
+import AddPanel from "src/components/Panels/AddPanel";
 import ConfirmModal from "src/components/Modals/ConfirmModal";
 import Loader from "src/components/Loader";
 import Panels from "src/components/Panels";
@@ -24,31 +24,40 @@ const Notebook = () => {
 
   const {
     notebook,
+    fetchNotebook,
     loadingNotebook,
     updateNotebook,
     deleteNotebook,
     createNotebook,
     deletingNotebook,
     savingNotebook,
+    clearNotebook,
   } = useNotebook();
-
-  const location = useLocation();
-  const isNewNotebook = location.pathname.includes("new");
+  const { notebookId } = useParams();
 
   const [confirmVisible, setConfirmVisible] = useState(false);
   const [notebookTitle, setNotebookTitle] = useState(notebook?.title || "");
   const navigate = useNavigate();
   const { panels, updatePanel } = usePanels(notebook?.id);
 
+  useEffectOnce(() => {
+    clearNotebook();
+    getRings();
+    fetchUsers();
+
+    return () => {
+      clearNotebook();
+    };
+  });
+
   useEffect(() => {
-    if (isNewNotebook) {
-      setNotebookTitle("");
-    } else {
-      if (notebook?.title) {
-        setNotebookTitle(notebook.title);
-      }
+    if (notebookId !== "new") {
+      fetchNotebook(notebookId);
     }
-  }, [isNewNotebook, notebook]); // eslint-disable-line react-hooks/exhaustive-deps
+    if (notebook?.id) {
+      navigate(`/notebooks/${notebook?.id}`);
+    }
+  }, [notebook?.id]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const handleDeleteNotebook = () => {
     deleteNotebook(notebook?.id);
@@ -68,15 +77,6 @@ const Notebook = () => {
       notebookRef.current = notebook?.id;
     }
   }, [notebook?.id]); // eslint-disable-line react-hooks/exhaustive-deps
-
-  useEffectOnce(() => {
-    getRings();
-    fetchUsers();
-
-    return () => {
-      setNotebookTitle("");
-    };
-  });
 
   const updateNotebookCollaborators = (e, selectedCollaborators) => {
     updateNotebook(notebook.id, {
@@ -119,7 +119,7 @@ const Notebook = () => {
               size="medium"
               placeholder="Notebook Title"
               variant="standard"
-              error={!notebookTitle && !isNewNotebook}
+              error={!notebookTitle && notebook?.id}
               onChange={(event) => {
                 setNotebookTitle(event.target.value);
               }}
@@ -181,122 +181,130 @@ const Notebook = () => {
           </Grid>
         </Grid>
 
-        <Grid
-          item
-          xs={12}
-          sm={6}
-          md={6}
-          sx={{
-            "& h6": {
-              fontWeight: "700",
-            },
-          }}
-        >
-          <Grid
-            container
-            direction="column"
-            alignItems="flex-start"
-            sx={{ paddingRight: "56px" }}
-          >
-            <Grid item>
-              <h6>Collaborators:</h6>
-            </Grid>
-            <Grid item sx={{ width: "100%" }}>
-              <Autocomplete
-                multiple
-                id="collaborators"
-                options={users}
-                value={
-                  notebook?.collaborators?.map((collaboratorId) => {
-                    return users.find((u) => u.id === collaboratorId);
-                  }) || []
-                }
-                onChange={updateNotebookCollaborators}
-                getOptionLabel={(option) => {
-                  return `${option.firstName} ${option.lastName}`;
-                }}
-                renderInput={(params) => (
-                  <TextField {...params} variant="outlined" />
-                )}
-                sx={{
-                  width: "100%",
-                  background: "white",
-                  "& .MuiAutocomplete-root": {
-                    border: "none",
-                  },
-                }}
-              />
-            </Grid>
-          </Grid>
-        </Grid>
-        <Grid
-          item
-          xs={3}
-          md={1.5}
-          sx={{
-            "& h6": {
-              fontWeight: "700",
-            },
-          }}
-        >
-          <Grid container direction="column" alignItems="flex-start">
-            <Grid item>
-              <h6>Public:</h6>
-            </Grid>
+        {notebook?.id && (
+          <>
             <Grid
               item
+              xs={12}
+              sm={6}
+              md={6}
               sx={{
-                height: "56px",
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-              }}
-            >
-              <Switch
-                disabled={notebook?.userId !== sessionUser.id}
-                checked={notebook?.visibility === "public"}
-                onChange={() =>
-                  updateNotebookVisibility(notebook.id, notebook.visibility)
-                }
-                color="primary"
-              />
-            </Grid>
-          </Grid>
-        </Grid>
-        <Grid
-          item
-          sm={3}
-          md={3}
-          sx={{
-            "& h6": {
-              fontWeight: "700",
-            },
-          }}
-        >
-          <Grid container direction="column" alignItems="flex-start">
-            <Grid item>
-              <h6>Owner:</h6>
-            </Grid>
-            <Grid
-              item
-              sx={{
-                height: "56px",
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-                "& span": {
-                  color: "GrayText",
-                  fontSize: "16px",
-                  fontWeight: "600",
+                "& h6": {
+                  fontWeight: "700",
                 },
               }}
             >
-              <span>
-                {notebook?.user.firstName} {notebook?.user.lastName}
-              </span>
+              <Grid
+                container
+                direction="column"
+                alignItems="flex-start"
+                sx={{ paddingRight: "56px" }}
+              >
+                <Grid item>
+                  <h6>Collaborators:</h6>
+                </Grid>
+                <Grid item sx={{ width: "100%" }}>
+                  <Autocomplete
+                    multiple
+                    id="collaborators"
+                    options={users}
+                    value={
+                      notebook?.collaborators?.map((collaboratorId) => {
+                        return users.find((u) => u.id === collaboratorId);
+                      }) || []
+                    }
+                    onChange={updateNotebookCollaborators}
+                    getOptionLabel={(option) => {
+                      return `${option.firstName} ${option.lastName}`;
+                    }}
+                    renderInput={(params) => (
+                      <TextField {...params} variant="outlined" />
+                    )}
+                    sx={{
+                      width: "100%",
+                      background: "white",
+                      "& .MuiAutocomplete-root": {
+                        border: "none",
+                      },
+                    }}
+                  />
+                </Grid>
+              </Grid>
             </Grid>
-          </Grid>
-        </Grid>
+
+            <Grid
+              item
+              xs={3}
+              md={1.5}
+              sx={{
+                "& h6": {
+                  fontWeight: "700",
+                },
+              }}
+            >
+              <Grid container direction="column" alignItems="flex-start">
+                <Grid item>
+                  <h6>Public:</h6>
+                </Grid>
+                <Grid
+                  item
+                  sx={{
+                    height: "56px",
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                  }}
+                >
+                  <Switch
+                    disabled={notebook?.userId !== sessionUser.id}
+                    checked={notebook?.visibility === "public"}
+                    onChange={() =>
+                      updateNotebookVisibility(
+                        notebook?.id,
+                        notebook.visibility,
+                      )
+                    }
+                    color="primary"
+                  />
+                </Grid>
+              </Grid>
+            </Grid>
+            <Grid
+              item
+              sm={3}
+              md={3}
+              sx={{
+                "& h6": {
+                  fontWeight: "700",
+                },
+              }}
+            >
+              <Grid container direction="column" alignItems="flex-start">
+                <Grid item>
+                  <h6>Owner:</h6>
+                </Grid>
+                <Grid
+                  item
+                  sx={{
+                    height: "56px",
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    "& span": {
+                      color: "GrayText",
+                      fontSize: "16px",
+                      fontWeight: "600",
+                    },
+                  }}
+                >
+                  <span>
+                    {notebook?.user?.firstName} {notebook?.user?.lastName}
+                  </span>
+                </Grid>
+              </Grid>
+            </Grid>
+          </>
+        )}
       </Grid>
 
       {notebook && <Panels notebookId={notebook?.id} />}

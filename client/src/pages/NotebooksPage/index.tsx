@@ -34,6 +34,8 @@ import DeleteNotebook from "./DeleteNotebook";
 
 const NotebooksPage: FunctionComponent = () => {
   const user = useSelector(sessionUserSelector);
+  const { role } = useSelector(sessionUserSelector);
+  const isAdmin = role === "admin";
 
   const [showNotebooks, setShowNotebooks] = useState("my-notebooks");
   const [filterNotebooks, setFilterNotebooks] = useState("");
@@ -142,7 +144,7 @@ const NotebooksPage: FunctionComponent = () => {
     },
     {
       field: "userId",
-      headerName: "Owned By",
+      headerName: "Owner",
       width: 150,
       sortable: false,
       renderHeader,
@@ -151,10 +153,14 @@ const NotebooksPage: FunctionComponent = () => {
           return <>You</>;
         } else {
           const user = users.find((u) => u.id === params.row.userId);
-          return (
-            <Link to={`/users/${user.id}`} className="ms-2">
+          return isAdmin ? (
+            <Link to="/admin/users">
               {user.firstName} {user.lastName}
             </Link>
+          ) : (
+            <span>
+              {user.firstName} {user.lastName}
+            </span>
           );
         }
       },
