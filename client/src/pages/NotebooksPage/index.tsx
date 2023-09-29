@@ -152,6 +152,7 @@ const NotebooksPage: FunctionComponent = () => {
         if (params.row.userId === user.id) {
           return <>You</>;
         } else {
+          // hacky workaround to accommodate existing db schema, should fix. Users should be populated in notebooks call
           const user = users.find((u) => u.id === params.row.userId);
           return isAdmin ? (
             <Link to="/admin/users">
