@@ -2,6 +2,7 @@
 /* eslint-disable */
 import { authorizationHeader } from "src/helpers/authorizationHeader";
 import store from "src/store";
+import streamSaver from 'streamsaver';
 
 const baseURL = "http://localhost:8080";
 
@@ -41,15 +42,27 @@ const sendRequest = async ({
     let data;
     if (options?.responseType === "text") {
       data = await response.text();
-    } else if (options?.responseType === "blob") {
-      data = await response.blob();
-      const fileURL = window.URL.createObjectURL(data);
-      const alink = document.createElement('a');
-      alink.href = fileURL;
-      alink.download = 'scales-okn-data.csv';
-      document.body.appendChild(alink);
-      alink.click();
-      alink.remove();
+    } else if (options?.responseType === "stream") {
+      const fileStream = streamSaver.createWriteStream('scales-okn-data.csv');
+      const readableStream = response.body;
+
+      // use pipeTo if it's available; easier and faster
+      if(window.WritableStream && readableStream.pipeTo) {
+        await readableStream.pipeTo(fileStream)
+        return { message: 'Successfully downloaded file'}
+      }
+
+      // if pipeTo isn't available, we fallback to the polyfill
+      window.writer = fileStream.getWriter();
+      const reader = response.body.getReader();
+      const pump = () => reader.read()
+        .then(({ done, value }) => done
+          ? window.writer.close()
+          : window.writer.write(value).then(pump));
+
+      pump();
+
+      data = { message: 'Successfully downloaded file'}
     } else {
       data = await response.json();
     }

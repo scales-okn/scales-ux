@@ -508,7 +508,7 @@ export const downloadCsv =
           filterParams,
           { encodeComponents: false },
         ),
-        { responseType: "blob" }
+        { responseType: "stream" }
       );
 
       if(response) {
