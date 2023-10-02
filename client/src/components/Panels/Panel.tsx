@@ -25,6 +25,7 @@ import Analysis from "../Analysis";
 import ConfirmModal from "src/components/Modals/ConfirmModal";
 import ColumnHeader from "src/components/ColumnHeader";
 import DeleteButton from "../Buttons/DeleteButton";
+import DownloadButton from "../Buttons/DownloadButton";
 import { panelHeaderStyles } from "./styles";
 import { useEffectOnce } from "react-use";
 
@@ -48,6 +49,8 @@ const Panel: FunctionComponent<PanelProps> = ({
     setPanelDescription,
     resultsCollapsed,
     setPanelCollapsed,
+    downloadCsv,
+    downloadingCsv,
   } = usePanel(panelId);
 
   // Pop first panel on page load
@@ -151,6 +154,12 @@ const Panel: FunctionComponent<PanelProps> = ({
             }}
             sx={{ height: "30.75px", width: "30.75px" }}
             variant="outlined"
+          />
+          <DownloadButton
+            onClick={() => downloadCsv()}
+            downloading={downloadingCsv}
+            variant="outlined"
+            sx={{ marginLeft: "8px", height: "30.75px", width: "30.75px" }}
           />
           <Tooltip title={collapsed ? "Expand" : "Collapse"}>
             <Button

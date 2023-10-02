@@ -21,6 +21,7 @@ const PanelInitialState = {
   loadingPanelResults: false,
   collapsed: true,
   resultsCollapsed: false,
+  downloadingCsv: false,
   updatingPanel: false,
   hasErrors: false,
   analysis: [],
@@ -276,6 +277,30 @@ const panelsSlice = createSlice({
           : panel,
       ),
     }),
+    getCsv: (state, { payload }) => ({
+      ...state,
+      panels: state.panels.map((panel) =>
+        panel.id === payload.panelId
+          ? { ...panel, downloadingCsv: true }
+          : panel,
+      ),
+    }),
+    getCsvSuccess: (state, { payload }) => ({
+      ...state,
+      panels: state.panels.map((panel) =>
+        panel.id === payload.panelId
+          ? { ...panel, downloadingCsv: false }
+          : panel,
+      ),
+    }),
+    getCsvFailure: (state, { payload }) => ({
+      ...state,
+      panels: state.panels.map((panel) =>
+        panel.id === payload.panelId
+          ? { ...panel, downloadingCsv: false, hasErrors: true }
+          : panel,
+      ),
+    }),
   },
 });
 
@@ -450,6 +475,55 @@ export const getPanelResults =
     }
   };
 
+export const downloadCsv = 
+  (panelId) => 
+  async (dispatch: AppDispatch, getState) => {
+    try {
+      const panel = panelSelector(getState(), panelId);
+      const { filters, ringId } = panel;
+
+      // @ts-ignore
+      const { rid, info, version } = ringSelector(getState(), ringId);
+      dispatch(panelsActions.getCsv({ panelId }));
+      const filterParams = filters
+      ?.map((filter) => {
+        if (!filter.value) return null;
+
+        if (
+          filter.type === "filing_date" ||
+          filter.type === "terminating_date"
+        ) {
+          const start = dayjs(filter.value[0]).format("YYYY-M-DD");
+          const end = dayjs(filter.value[1]).format("YYYY-M-DD");
+          return `${filter.type}=${start},${end}`;
+        }
+
+        return `${filter.type}=${encodeURIComponent(filter.value)}`;
+      })
+      .join("&");
+
+      const response = await makeRequest.get(
+        appendQuery(
+          `/proxy/download-csv/${rid}/${version}/${info.defaultEntity}/`,
+          filterParams,
+          { encodeComponents: false },
+        ),
+        { responseType: "stream" }
+      );
+
+      if(response) {
+        dispatch(panelsActions.getCsvSuccess({ panelId }));
+      } else {
+        dispatch(notify("Error fetching results", "error"));
+        dispatch(panelsActions.getCsvFailure({ panelId }));
+      }
+    } catch (error) {
+      console.warn(error); // eslint-disable-line no-console
+      dispatch(notify("Error fetching results", "error"));
+      dispatch(panelsActions.getCsvFailure({ panelId }));
+    }
+  };
+
 // Hooks
 export const usePanels = (notebookId) => {
   const { panels, loadingPanels, hasErrors, creatingPanel, deletingPanel } =
@@ -491,6 +565,7 @@ export const usePanel = (panelId: string) => {
     loadingPanelResults,
     resultsCollapsed,
     collapsed,
+    downloadingCsv,
     updatingPanel,
     hasErrors,
   } = panel;
@@ -506,6 +581,7 @@ export const usePanel = (panelId: string) => {
     updatingPanel,
     hasErrors,
     analysis,
+    downloadingCsv,
     addPanelAnalysis: (analysis) =>
       dispatch(panelsActions.addPanelAnalysis({ panelId, analysis })),
     removePanelAnalysis: (id) =>
@@ -527,5 +603,7 @@ export const usePanel = (panelId: string) => {
     deletePanel: () => dispatch(deletePanel(panelId)),
     getPanelResults: (filters = [], page = 0, batchSize = 10) =>
       dispatch(getPanelResults(panelId, filters, page, batchSize)),
+    downloadCsv: () =>
+      dispatch(downloadCsv(panelId)),
   };
 };
