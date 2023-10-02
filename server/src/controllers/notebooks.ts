@@ -48,22 +48,17 @@ export const findAll = async (req: Request, res: Response) => {
       return res.send_forbidden("Not allowed!");
     }
 
-    let where = { deleted: false };
-    if (role !== "admin") {
+    let where = {};
+
+    if (req.query.type === "public") {
+      where[Op.or] = [{ visibility: "public" }];
+    } else {
       where[Op.or] = [
-        { visibility: "public" },
         { collaborators: { [Op.contains]: [userId] } },
         { userId },
       ];
-      // where = {
-      //   deleted: false,
-      //   [Op.or]: [
-      //     { visibility: "public" },
-      //     { collaborators: { [Op.contains]: [userId] } },
-      //     { userId },
-      //   ],
-      // };
     }
+
     const notebooks = await sequelize.models.Notebook.findAll({
       where,
       order: [["id", "DESC"]],
@@ -85,10 +80,6 @@ export const findById = async (req: Request, res: Response) => {
     const { role, id: reqUserId } = req.user;
 
     let where = { id: notebookId };
-    if (role !== "admin") {
-      // @ts-ignore
-      where = { ...where, deleted: false };
-    }
 
     const notebook = await sequelize.models.Notebook.findOne({
       where,
@@ -158,10 +149,6 @@ export const update = async (req: Request, res: Response) => {
     const { role, id: reqUserId } = req.user;
 
     let where = { id: notebookId };
-    if (role !== "admin") {
-      // @ts-ignore
-      where = { ...where, deleted: false };
-    }
 
     const notebook = await sequelize.models.Notebook.findOne({
       where,
@@ -237,19 +224,18 @@ export const update = async (req: Request, res: Response) => {
 export const deleteNotebook = async (req: Request, res: Response) => {
   try {
     const { notebookId } = req.params;
-    // const { role, id: userId } = req.user;
-    const result = await sequelize.models.Notebook.update(
-      {
-        deleted: true,
-      },
-      {
-        where: { id: notebookId },
-      }
-    );
-    if (result) {
-      return res.send_ok("Notebook has been deleted successfully!");
+
+    const notebook = await sequelize.models.Notebook.findOne({
+      where: { id: notebookId },
+    });
+
+    if (!notebook) {
+      return res.send_notFound("Notebook not found");
     }
-    return res.send_internalServerError("Failed to delete notebook!");
+
+    await notebook.destroy();
+
+    return res.send_ok("Notebook deleted successfully");
   } catch (error) {
     console.warn(error); // eslint-disable-line no-console
 
@@ -281,7 +267,7 @@ export const panels = async (req: Request, res: Response) => {
     }
 
     const panels = await sequelize.models.Panel.findAll({
-      where: { notebookId, deleted: false },
+      where: { notebookId },
       order: [["id", "DESC"]],
     });
 

@@ -26,6 +26,10 @@ const sendRequest = async ({
   const token = store.getState().auth.token;
   const authHeader = authorizationHeader(token);
 
+  const fullPath = options?.params
+    ? `${url()}?${new URLSearchParams(options.params).toString()}`
+    : url();
+
   const fetchOptions: RequestInit = {
     method,
     headers: {
@@ -36,7 +40,7 @@ const sendRequest = async ({
   };
 
   try {
-    const response = await fetch(url(), fetchOptions);
+    const response = await fetch(fullPath, fetchOptions);
 
     let data;
     if (options?.responseType === "text") {

@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import React, { FunctionComponent, useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useSelector } from "react-redux";
 import { Link } from "react-router-dom";
 
@@ -32,21 +32,24 @@ import ColumnHeader from "src/components/ColumnHeader";
 import "./NotebooksPage.scss";
 import DeleteNotebook from "./DeleteNotebook";
 
-const NotebooksPage: FunctionComponent = () => {
+const NotebooksPage = () => {
   const user = useSelector(sessionUserSelector);
   const { role } = useSelector(sessionUserSelector);
   const isAdmin = role === "admin";
 
-  const [showNotebooks, setShowNotebooks] = useState("my-notebooks");
+  const [notebooksType, setNotebooksType] = useState("my-notebooks");
   const [filterNotebooks, setFilterNotebooks] = useState("");
   const { fetchNotebooks, loadingNotebooks, updateNotebook, notebooks } =
     useNotebook();
   const { fetchUsers, users } = useUser();
 
   useEffectOnce(() => {
-    fetchNotebooks();
     fetchUsers();
   });
+
+  useEffect(() => {
+    fetchNotebooks({ type: notebooksType });
+  }, [notebooksType]);
 
   const updateNotebookVisibility = (id, visibility) => {
     const out = visibility === "public" ? "private" : "public";
@@ -58,13 +61,13 @@ const NotebooksPage: FunctionComponent = () => {
 
   const notebooksData = notebooks
     .filter((notebook) => {
-      if (showNotebooks === "my-notebooks") {
+      if (notebooksType === "my-notebooks") {
         return notebook.userId === user.id;
       }
-      if (showNotebooks === "shared-notebooks") {
+      if (notebooksType === "shared") {
         return notebook.collaborators.includes(user.id);
       }
-      if (showNotebooks === "public-notebooks") {
+      if (notebooksType === "public") {
         return notebook.visibility === "public";
       }
 
@@ -213,9 +216,10 @@ const NotebooksPage: FunctionComponent = () => {
       headerName: "Delete",
       width: 75,
       renderCell: (params: GridCellParams) => {
+        const canDelete = params.row.userId === user.id;
         return (
           <div style={{ paddingLeft: "5px" }}>
-            <DeleteNotebook notebookId={params.row.id} />
+            {canDelete ? <DeleteNotebook notebookId={params.row.id} /> : null}
           </div>
         );
       },
@@ -237,15 +241,15 @@ const NotebooksPage: FunctionComponent = () => {
                 MenuProps={{
                   disableScrollLock: true,
                 }}
-                value={showNotebooks}
+                value={notebooksType}
                 onChange={(event) =>
-                  setShowNotebooks(event.target.value as string)
+                  setNotebooksType(event.target.value as string)
                 }
                 sx={{ background: "white", borderRadius: "4px" }}
               >
                 <MenuItem value="my-notebooks">My Notebooks</MenuItem>
-                <MenuItem value="shared-notebooks">Shared with me</MenuItem>
-                <MenuItem value="public-notebooks">Public Notebooks</MenuItem>
+                <MenuItem value="shared">Shared with me</MenuItem>
+                <MenuItem value="public">Public Notebooks</MenuItem>
               </Select>
             </FormControl>
           </Grid>

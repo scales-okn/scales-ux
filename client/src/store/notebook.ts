@@ -136,12 +136,14 @@ export const notebookSelector = (state: RootState) => state.notebook;
 // The reducer
 export default notebookSlice.reducer;
 
-export function fetchNotebooks() {
+export function fetchNotebooks(type: string) {
   return async (dispatch: AppDispatch) => {
     dispatch(notebookActions.fetchNotebooks());
 
     try {
-      const { data } = await makeRequest.get(`/api/notebooks`);
+      const { data } = await makeRequest.get(`/api/notebooks`, {
+        params: { type },
+      });
 
       dispatch(notebookActions.fetchNotebooksSuccess(data.notebooks));
     } catch (error) {
@@ -250,7 +252,8 @@ export function useNotebook() {
     deletingNotebook,
     hasErrors,
     clearNotebook: () => dispatch(notebookActions.clearNotebook()),
-    fetchNotebooks: () => dispatch(fetchNotebooks()),
+    fetchNotebooks: ({ type }: { type: string }) =>
+      dispatch(fetchNotebooks(type)),
     fetchNotebook: (id: string) => dispatch(fetchNotebook(id)),
     updateNotebook: (id: string, payload: any) =>
       dispatch(updateNotebook(id, payload)),

@@ -1,35 +1,31 @@
 module.exports = {
-  title: 'NotebookSchema',
-  type: 'object',
-  required: ['id', 'userId', 'description', 'title'],
+  title: "NotebookSchema",
+  type: "object",
+  required: ["id", "userId", "description", "title"],
   properties: {
     id: {
-      type: 'number',
-		},
-		userId: {
-      type: 'number'
+      type: "number",
     },
-		title: {
-			type: 'string',
-		},
-		collaborators: {
-      type: 'array',
-		},
-		visibility: {
-			type: 'string',
-		},
+    userId: {
+      type: "number",
+    },
+    title: {
+      type: "string",
+    },
+    collaborators: {
+      type: "array",
+    },
+    visibility: {
+      type: "string",
+    },
     description: {
-      type: ['string', 'null'],
+      type: ["string", "null"],
     },
-		deleted: {
-			type: 'boolean',
-		},
-		createdAt: {
-			type: 'string',
-		},
-		updatedAt: {
-			type: 'string',
-		},
-  }
-}
- 
+    createdAt: {
+      type: "string",
+    },
+    updatedAt: {
+      type: "string",
+    },
+  },
+};
