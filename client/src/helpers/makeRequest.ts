@@ -6,8 +6,8 @@ import streamSaver from 'streamsaver';
 
 const baseURL = "http://localhost:8080";
 
-// host the service worker in production instead of going to author's github page
-streamSaver.mitm = 'https://satyrn.scales-okn.org/streamsaver/mitm.html';
+// host stream saver service worker locally
+streamSaver.mitm = '/streamsaver/mitm.html';
 
 const sendRequest = async ({
   method,
