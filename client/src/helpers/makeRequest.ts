@@ -6,8 +6,8 @@ import streamSaver from 'streamsaver';
 
 const baseURL = "http://localhost:8080";
 
-// host the service worker locally instead of going to author's github page
-streamSaver.mitm = '/streamsaver/mitm.html';
+// host the service worker in production instead of going to author's github page
+streamSaver.mitm = 'https://satyrn.scales-okn.org/streamsaver/mitm.html';
 
 const sendRequest = async ({
   method,
@@ -84,6 +84,10 @@ const sendRequest = async ({
     return data;
   } catch (error) {
     // Handle network or fetch errors
+    if(options?.responseType === "stream" && error === undefined) {
+      // file download cancelled
+      return { message: 'File download cancelled' }
+    }
     console.error("Request failed:", error);
     throw error;
   }
