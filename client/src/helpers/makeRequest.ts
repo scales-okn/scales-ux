@@ -6,6 +6,9 @@ import streamSaver from 'streamsaver';
 
 const baseURL = "http://localhost:8080";
 
+// host the service worker locally instead of going to author's github page
+streamSaver.mitm = '/streamsaver/mitm.html';
+
 const sendRequest = async ({
   method,
   path,
