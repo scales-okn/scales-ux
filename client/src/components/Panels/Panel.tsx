@@ -1,4 +1,4 @@
-import React, { FunctionComponent, useState, useEffect, useMemo } from "react";
+import React, { useState, useEffect, useMemo } from "react";
 import { Link } from "react-router-dom";
 import { usePanel } from "src/store/panels";
 import { useRing } from "src/store/rings";
@@ -8,7 +8,7 @@ import {
   CardContent,
   Typography,
   FormControl,
-  Input,
+  TextField,
   Button,
   Grid,
   AccordionDetails,
@@ -29,15 +29,12 @@ import DownloadButton from "../Buttons/DownloadButton";
 import { panelHeaderStyles } from "./styles";
 import { useEffectOnce } from "react-use";
 
-type PanelProps = {
+type PanelT = {
   panelId: string;
   defaultCollapsed: boolean;
 };
 
-const Panel: FunctionComponent<PanelProps> = ({
-  panelId,
-  defaultCollapsed,
-}) => {
+const Panel = ({ panelId, defaultCollapsed }: PanelT) => {
   const {
     panel,
     deletePanel,
@@ -51,6 +48,7 @@ const Panel: FunctionComponent<PanelProps> = ({
     setPanelCollapsed,
     downloadCsv,
     downloadingCsv,
+    updatePanel,
   } = usePanel(panelId);
 
   // Pop first panel on page load
@@ -186,11 +184,11 @@ const Panel: FunctionComponent<PanelProps> = ({
           }}
         >
           <FormControl sx={{ width: "100%" }}>
-            <Input
+            <TextField
               onClick={(event) => {
                 event.stopPropagation();
               }}
-              placeholder="Your Panel Description Here"
+              placeholder="Enter Panel Description"
               onChange={(event) => {
                 setPanelDescription(event.target.value);
               }}
@@ -199,10 +197,18 @@ const Panel: FunctionComponent<PanelProps> = ({
                 fontSize: "0.9rem",
               }}
               className="description"
+              onBlur={() => {
+                updatePanel({ description: panel?.description });
+              }}
               sx={{
                 background: "var(--light-grey)",
                 height: "56px",
-                paddingLeft: "16px",
+                "& fieldset": {
+                  borderRadius: "0",
+                  borderTop: "none",
+                  borderLeft: "none",
+                  borderRight: "none",
+                },
               }}
             />
           </FormControl>

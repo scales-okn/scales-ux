@@ -3,7 +3,7 @@
 import { createSlice } from "@reduxjs/toolkit";
 import type { RootState, AppDispatch } from "./index";
 import { authSelector } from "./auth";
-import { notebookSelector } from "./notebook";
+import notebook, { notebookSelector } from "./notebook";
 import { notify } from "reapop";
 import { ringSelector } from "./rings";
 import appendQuery from "append-query";
@@ -96,7 +96,12 @@ const panelsSlice = createSlice({
       ...state,
       panels: state.panels.map((panel) =>
         panel.id === payload.id
-          ? { ...panel, ...payload, updatingPanel: false }
+          ? {
+              ...panel,
+              ...payload,
+              updatingPanel: false,
+              results: panel.results,
+            }
           : panel,
       ),
       hasErrors: false,
@@ -390,7 +395,7 @@ export const updatePanel =
       );
 
       if (code === 200) {
-        // dispatch(notify(message, "success"));
+        dispatch(notify(message, "success"));
         dispatch(panelsActions.updatePanelSuccess(data.panel));
       } else {
         dispatch(notify(message, "error"));
@@ -541,7 +546,7 @@ export const usePanels = (notebookId) => {
     creatingPanel,
     deletingPanel,
     updatePanel: (panelId, payload) => dispatch(updatePanel(panelId, payload)),
-    getPanels: (notebookId) => dispatch(getPanels(notebookId)),
+    getPanels: () => dispatch(getPanels(notebookId)),
     createPanel: (payload: any = {}) => dispatch(createPanel(payload)),
     deletePanel: (panelId) => dispatch(deletePanel(panelId)),
   };

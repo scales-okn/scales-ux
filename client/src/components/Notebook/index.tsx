@@ -4,9 +4,9 @@ import { useNavigate, useParams } from "react-router-dom";
 import { useEffectOnce } from "react-use";
 
 import { useRings } from "src/store/rings";
-import { getPanels, usePanels } from "src/store/panels";
 import { useNotebook } from "src/store/notebook";
 import { useUser } from "src/store/user";
+import { usePanels } from "src/store/panels";
 import { sessionUserSelector } from "src/store/auth";
 
 import { Grid, TextField, Button, Autocomplete, Switch } from "@mui/material";
@@ -33,12 +33,18 @@ const Notebook = () => {
     savingNotebook,
     clearNotebook,
   } = useNotebook();
-  const { notebookId } = useParams();
+
+  const updateDisabled =
+    notebook?.userId !== sessionUser.id &&
+    notebook?.collaborators?.indexOf(sessionUser.id) === -1;
+
+  const { getPanels } = usePanels(notebook?.id);
+
+  const { notebookId: notebookIdParam } = useParams();
 
   const [confirmVisible, setConfirmVisible] = useState(false);
   const [notebookTitle, setNotebookTitle] = useState(notebook?.title || "");
   const navigate = useNavigate();
-  const { panels, updatePanel } = usePanels(notebook?.id);
 
   useEffectOnce(() => {
     clearNotebook();
@@ -51,13 +57,16 @@ const Notebook = () => {
   });
 
   useEffect(() => {
-    if (notebookId !== "new") {
-      fetchNotebook(notebookId);
-    }
     if (notebook?.id) {
       navigate(`/notebooks/${notebook?.id}`);
     }
   }, [notebook?.id]); // eslint-disable-line react-hooks/exhaustive-deps
+
+  useEffect(() => {
+    if (notebookIdParam && notebookIdParam !== "new") {
+      fetchNotebook(notebookIdParam);
+    }
+  }, [notebookIdParam]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const handleDeleteNotebook = () => {
     deleteNotebook(notebook?.id);
@@ -71,9 +80,10 @@ const Notebook = () => {
   }, [notebook]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const notebookRef = React.useRef(null);
+
   useEffect(() => {
     if (notebook?.id && notebookRef.current !== notebook?.id) {
-      getPanels(notebook?.id);
+      getPanels();
       notebookRef.current = notebook?.id;
     }
   }, [notebook?.id]); // eslint-disable-line react-hooks/exhaustive-deps
@@ -99,7 +109,7 @@ const Notebook = () => {
         sx={{
           borderRadius: "6px",
           background: "white",
-          padding: "10px 24px 24px 24px",
+          padding: "16px 24px 24px 24px",
           marginBottom: "36px",
           boxShadow: "0px 2px 4px rgba(0, 0, 0, 0.1)",
           "*": {
@@ -124,9 +134,18 @@ const Notebook = () => {
                 setNotebookTitle(event.target.value);
               }}
               value={notebookTitle}
+              onBlur={() => {
+                if (
+                  notebookTitle &&
+                  notebook?.title &&
+                  notebookTitle !== notebook?.title
+                ) {
+                  updateNotebook(notebook?.id, { title: notebookTitle });
+                }
+              }}
               sx={{
                 input: {
-                  fontSize: "48px",
+                  fontSize: "36px",
                   color: "#333",
                   paddingBottom: "0",
                 },
@@ -136,31 +155,11 @@ const Notebook = () => {
 
           <Grid item>
             {notebook && (
-              <>
-                <DeleteButton
-                  onClick={() => setConfirmVisible(true)}
-                  disabled={deletingNotebook}
-                  sx={{ marginRight: "12px" }}
-                />
-                <Button
-                  color="success"
-                  variant="contained"
-                  onClick={() => {
-                    if (notebookTitle) {
-                      updateNotebook(notebook?.id, {
-                        title: notebookTitle,
-                      });
-                      // hacky, need to fix
-                      panels.forEach((panel) => {
-                        updatePanel(panel.id, panel);
-                      });
-                    }
-                  }}
-                  disabled={savingNotebook || !notebookTitle}
-                >
-                  Save
-                </Button>
-              </>
+              <DeleteButton
+                onClick={() => setConfirmVisible(true)}
+                disabled={deletingNotebook || updateDisabled}
+                variant="outlined"
+              />
             )}
 
             {!notebook && (
@@ -207,6 +206,7 @@ const Notebook = () => {
                   <Autocomplete
                     multiple
                     id="collaborators"
+                    disabled={updateDisabled}
                     options={users}
                     value={
                       notebook?.collaborators?.map((collaboratorId) => {
@@ -223,6 +223,7 @@ const Notebook = () => {
                     sx={{
                       width: "100%",
                       background: "white",
+                      pointerEvents: updateDisabled ? "none" : "auto",
                       "& .MuiAutocomplete-root": {
                         border: "none",
                       },
@@ -256,7 +257,7 @@ const Notebook = () => {
                   }}
                 >
                   <Switch
-                    disabled={notebook?.userId !== sessionUser.id}
+                    disabled={updateDisabled}
                     checked={notebook?.visibility === "public"}
                     onChange={() =>
                       updateNotebookVisibility(

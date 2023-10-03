@@ -257,6 +257,7 @@ export const panels = async (req: Request, res: Response) => {
     }
 
     const { visibility, collaborators, userId } = notebook;
+    // what does userId !== userId mean??
     if (
       role !== "admin" &&
       visibility !== "public" &&
