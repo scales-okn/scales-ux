@@ -49,7 +49,7 @@ const NotebooksPage = () => {
 
   useEffect(() => {
     fetchNotebooks({ type: notebooksType });
-  }, [notebooksType]);
+  }, [notebooksType]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const updateNotebookVisibility = (id, visibility) => {
     const out = visibility === "public" ? "private" : "public";
