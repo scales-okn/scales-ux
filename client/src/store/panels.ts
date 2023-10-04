@@ -3,7 +3,7 @@
 import { createSlice } from "@reduxjs/toolkit";
 import type { RootState, AppDispatch } from "./index";
 import { authSelector } from "./auth";
-import notebook, { notebookSelector } from "./notebook";
+import { notebookSelector } from "./notebook";
 import { notify } from "reapop";
 import { ringSelector } from "./rings";
 import appendQuery from "append-query";
@@ -395,7 +395,6 @@ export const updatePanel =
       );
 
       if (code === 200) {
-        dispatch(notify(message, "success"));
         dispatch(panelsActions.updatePanelSuccess(data.panel));
       } else {
         dispatch(notify(message, "error"));
@@ -480,9 +479,8 @@ export const getPanelResults =
     }
   };
 
-export const downloadCsv = 
-  (panelId) => 
-  async (dispatch: AppDispatch, getState) => {
+export const downloadCsv =
+  (panelId) => async (dispatch: AppDispatch, getState) => {
     try {
       const panel = panelSelector(getState(), panelId);
       const { filters, ringId } = panel;
@@ -491,21 +489,21 @@ export const downloadCsv =
       const { rid, info, version } = ringSelector(getState(), ringId);
       dispatch(panelsActions.getCsv({ panelId }));
       const filterParams = filters
-      ?.map((filter) => {
-        if (!filter.value) return null;
+        ?.map((filter) => {
+          if (!filter.value) return null;
 
-        if (
-          filter.type === "filing_date" ||
-          filter.type === "terminating_date"
-        ) {
-          const start = dayjs(filter.value[0]).format("YYYY-M-DD");
-          const end = dayjs(filter.value[1]).format("YYYY-M-DD");
-          return `${filter.type}=${start},${end}`;
-        }
+          if (
+            filter.type === "filing_date" ||
+            filter.type === "terminating_date"
+          ) {
+            const start = dayjs(filter.value[0]).format("YYYY-M-DD");
+            const end = dayjs(filter.value[1]).format("YYYY-M-DD");
+            return `${filter.type}=${start},${end}`;
+          }
 
-        return `${filter.type}=${encodeURIComponent(filter.value)}`;
-      })
-      .join("&");
+          return `${filter.type}=${encodeURIComponent(filter.value)}`;
+        })
+        .join("&");
 
       const response = await makeRequest.get(
         appendQuery(
@@ -513,10 +511,10 @@ export const downloadCsv =
           filterParams,
           { encodeComponents: false },
         ),
-        { responseType: "stream" }
+        { responseType: "stream" },
       );
 
-      if(response) {
+      if (response) {
         dispatch(panelsActions.getCsvSuccess({ panelId }));
       } else {
         dispatch(notify("Error fetching results", "error"));
@@ -545,6 +543,7 @@ export const usePanels = (notebookId) => {
     hasErrors,
     creatingPanel,
     deletingPanel,
+    clearPanels: () => dispatch(panelsActions.clearPanels()),
     updatePanel: (panelId, payload) => dispatch(updatePanel(panelId, payload)),
     getPanels: () => dispatch(getPanels(notebookId)),
     createPanel: (payload: any = {}) => dispatch(createPanel(payload)),
@@ -608,7 +607,6 @@ export const usePanel = (panelId: string) => {
     deletePanel: () => dispatch(deletePanel(panelId)),
     getPanelResults: (filters = [], page = 0, batchSize = 10) =>
       dispatch(getPanelResults(panelId, filters, page, batchSize)),
-    downloadCsv: () =>
-      dispatch(downloadCsv(panelId)),
+    downloadCsv: () => dispatch(downloadCsv(panelId)),
   };
 };

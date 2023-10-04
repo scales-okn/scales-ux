@@ -179,7 +179,7 @@ export function updateNotebook(id: string, payload: any) {
       const response = await makeRequest.put(`/api/notebooks/${id}`, payload);
       if (response.status === "OK") {
         const { data, message } = response;
-        dispatch(notify(message, "success"));
+        // dispatch(notify(message, "success"));
         dispatch(notebookActions.saveNotebookSuccess(data));
       } else {
         dispatch(notify(response.statusText, "error"));

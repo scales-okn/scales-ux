@@ -106,7 +106,7 @@ export const deletePanel = async (req: Request, res: Response) => {
     }
 
     await panel.destroy();
-    return res.send_ok("Notebook deleted successfully");
+    return res.send_ok("Panel deleted successfully");
   } catch (error) {
     console.warn(error); // eslint-disable-line no-console
 

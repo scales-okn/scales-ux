@@ -18,7 +18,7 @@ import {
   // Box, Tooltip
 } from "@mui/material";
 import DeleteButton from "src/components/Buttons/DeleteButton";
-import { useTheme } from "@mui/material/styles";
+// import { useTheme } from "@mui/material/styles";
 
 import AddPanel from "src/components/Panels/AddPanel";
 import ConfirmModal from "src/components/Modals/ConfirmModal";
@@ -31,7 +31,7 @@ const Notebook = () => {
   const { fetchUsers } = useUser();
   const sessionUser = useSelector(sessionUserSelector);
 
-  const theme = useTheme();
+  // const theme = useTheme();
 
   const {
     notebook,
@@ -47,7 +47,7 @@ const Notebook = () => {
 
   const updateDisabled = notebook?.userId !== sessionUser.id;
 
-  const { getPanels } = usePanels(notebook?.id);
+  const { getPanels, clearPanels } = usePanels(notebook?.id);
 
   const { notebookId: notebookIdParam } = useParams();
 
@@ -56,15 +56,15 @@ const Notebook = () => {
   const [notebookTitle, setNotebookTitle] = useState(notebook?.title || "");
   const navigate = useNavigate();
 
-  useEffectOnce(() => {
-    clearNotebook();
+  useEffect(() => {
     getRings();
     fetchUsers();
 
     return () => {
       clearNotebook();
+      clearPanels();
     };
-  });
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   const notebookRef = React.useRef(null);
 

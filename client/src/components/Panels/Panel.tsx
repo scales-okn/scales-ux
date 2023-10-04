@@ -61,6 +61,7 @@ const Panel = ({ panelId, defaultCollapsed }: PanelT) => {
   const { ring, info, getRingInfo } = useRing(panel?.ringId);
 
   const [confirmVisible, setConfirmVisible] = useState(false);
+  const [description, setDescription] = useState(panel?.description);
 
   const ringIdRef = React.useRef(null);
   useEffect(() => {
@@ -199,7 +200,10 @@ const Panel = ({ panelId, defaultCollapsed }: PanelT) => {
               }}
               className="description"
               onBlur={() => {
-                updatePanel({ description: panel?.description });
+                if (panel?.description !== description) {
+                  updatePanel({ description: panel?.description });
+                  setDescription(panel?.description);
+                }
               }}
               sx={{
                 background: "var(--light-grey)",
