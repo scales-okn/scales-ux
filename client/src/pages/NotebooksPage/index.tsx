@@ -14,8 +14,6 @@ import {
   Grid,
   Switch,
   Button,
-  Avatar,
-  Tooltip,
 } from "@mui/material";
 
 import { useEffectOnce } from "react-use";
@@ -63,9 +61,6 @@ const NotebooksPage = () => {
     .filter((notebook) => {
       if (notebooksType === "my-notebooks") {
         return notebook.userId === user.id;
-      }
-      if (notebooksType === "shared") {
-        return notebook.collaborators.includes(user.id);
       }
       if (notebooksType === "public") {
         return notebook.visibility === "public";
@@ -170,48 +165,6 @@ const NotebooksPage = () => {
       },
     },
     {
-      field: "collaborators",
-      headerName: "Collaborators",
-      width: 200,
-      editable: true,
-      sortable: false,
-      renderHeader,
-      renderCell: (params: GridCellParams) => {
-        const collaborators = users.filter((u) =>
-          params.row.collaborators.includes(u.id),
-        );
-
-        if (collaborators.length === 0) {
-          return <>None</>;
-        } else {
-          return (
-            <>
-              {collaborators.map((collaborator) => {
-                return (
-                  <Tooltip
-                    key={collaborator.id}
-                    title={`${collaborator.firstName} ${collaborator.lastName}`}
-                  >
-                    <Avatar
-                      sx={{
-                        width: 24,
-                        height: 24,
-                        fontSize: "9px",
-                        marginRight: "4px",
-                      }}
-                    >
-                      {collaborator.firstName.charAt(0).toUpperCase()}
-                      {collaborator.lastName.charAt(0).toUpperCase()}
-                    </Avatar>
-                  </Tooltip>
-                );
-              })}
-            </>
-          );
-        }
-      },
-    },
-    {
       field: "delete",
       headerName: "Delete",
       width: 75,
@@ -248,7 +201,6 @@ const NotebooksPage = () => {
                 sx={{ background: "white", borderRadius: "4px" }}
               >
                 <MenuItem value="my-notebooks">My Notebooks</MenuItem>
-                <MenuItem value="shared">Shared with me</MenuItem>
                 <MenuItem value="public">Public Notebooks</MenuItem>
               </Select>
             </FormControl>
