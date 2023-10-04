@@ -270,6 +270,7 @@ const Analysis: FunctionComponent<Props> = ({ panelId }) => {
                 marginRight: "0px",
               }}
               variant="outlined"
+              titleAddon="Analysis"
             />
           </Grid>
 

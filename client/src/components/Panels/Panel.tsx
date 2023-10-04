@@ -152,6 +152,7 @@ const Panel = ({ panelId, defaultCollapsed }: PanelT) => {
             }}
             sx={{ height: "30.75px", width: "30.75px" }}
             variant="outlined"
+            titleAddon="Panel"
           />
           <DownloadButton
             onClick={() => downloadCsv()}

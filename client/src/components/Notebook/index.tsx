@@ -9,18 +9,23 @@ import { useUser } from "src/store/user";
 import { usePanels } from "src/store/panels";
 import { sessionUserSelector } from "src/store/auth";
 
-import { Grid, TextField, Button, Autocomplete, Switch } from "@mui/material";
+import ContentCopyIcon from "@mui/icons-material/ContentCopy";
+import { Grid, TextField, Button, Switch, Box, Tooltip } from "@mui/material";
 import DeleteButton from "src/components/Buttons/DeleteButton";
+import { useTheme } from "@mui/material/styles";
 
 import AddPanel from "src/components/Panels/AddPanel";
 import ConfirmModal from "src/components/Modals/ConfirmModal";
 import Loader from "src/components/Loader";
 import Panels from "src/components/Panels";
+import DuplicateNotebookModal from "./DuplicateNotebookModal";
 
 const Notebook = () => {
   const { getRings } = useRings();
-  const { fetchUsers, users } = useUser();
+  const { fetchUsers } = useUser();
   const sessionUser = useSelector(sessionUserSelector);
+
+  const theme = useTheme();
 
   const {
     notebook,
@@ -34,14 +39,13 @@ const Notebook = () => {
     clearNotebook,
   } = useNotebook();
 
-  const updateDisabled =
-    notebook?.userId !== sessionUser.id &&
-    notebook?.collaborators?.indexOf(sessionUser.id) === -1;
+  const updateDisabled = notebook?.userId !== sessionUser.id;
 
   const { getPanels } = usePanels(notebook?.id);
 
   const { notebookId: notebookIdParam } = useParams();
 
+  const [copyModalOpen, setCopyModalOpen] = useState(false);
   const [confirmVisible, setConfirmVisible] = useState(false);
   const [notebookTitle, setNotebookTitle] = useState(notebook?.title || "");
   const navigate = useNavigate();
@@ -56,13 +60,26 @@ const Notebook = () => {
     };
   });
 
+  const notebookRef = React.useRef(null);
+
   useEffect(() => {
+    // If we have a notebook id, navigate to it
     if (notebook?.id) {
       navigate(`/notebooks/${notebook?.id}`);
+    }
+    // If the notebook title has changed, set the local state
+    if (notebook?.title && notebook?.title !== notebookTitle) {
+      setNotebookTitle(notebook.title);
+    }
+    // If the notebook id has changed, fetch the panels
+    if (notebook?.id && notebookRef.current !== notebook?.id) {
+      getPanels();
+      notebookRef.current = notebook?.id;
     }
   }, [notebook?.id]); // eslint-disable-line react-hooks/exhaustive-deps
 
   useEffect(() => {
+    // If we have a notebook id, fetch the notebook
     if (notebookIdParam && notebookIdParam !== "new") {
       fetchNotebook(notebookIdParam);
     }
@@ -71,27 +88,6 @@ const Notebook = () => {
   const handleDeleteNotebook = () => {
     deleteNotebook(notebook?.id);
     navigate("/notebooks");
-  };
-
-  useEffect(() => {
-    if (notebook?.title && !notebookTitle) {
-      setNotebookTitle(notebook.title);
-    }
-  }, [notebook]); // eslint-disable-line react-hooks/exhaustive-deps
-
-  const notebookRef = React.useRef(null);
-
-  useEffect(() => {
-    if (notebook?.id && notebookRef.current !== notebook?.id) {
-      getPanels();
-      notebookRef.current = notebook?.id;
-    }
-  }, [notebook?.id]); // eslint-disable-line react-hooks/exhaustive-deps
-
-  const updateNotebookCollaborators = (e, selectedCollaborators) => {
-    updateNotebook(notebook.id, {
-      collaborators: selectedCollaborators.map((u) => u.id),
-    });
   };
 
   const updateNotebookVisibility = (id, visibility) => {
@@ -117,12 +113,7 @@ const Notebook = () => {
           },
         }}
       >
-        <Grid
-          container
-          alignItems="center"
-          justifyContent="space-between"
-          sx={{ marginBottom: "36px" }}
-        >
+        <Grid container alignItems="center" justifyContent="space-between">
           <Grid item lg={4}>
             <TextField
               fullWidth
@@ -144,8 +135,9 @@ const Notebook = () => {
                 }
               }}
               sx={{
+                marginBottom: "6px",
                 input: {
-                  fontSize: "36px",
+                  fontSize: "32px",
                   color: "#333",
                   paddingBottom: "0",
                 },
@@ -153,109 +145,64 @@ const Notebook = () => {
             />
           </Grid>
 
-          <Grid item>
-            {notebook && (
-              <DeleteButton
-                onClick={() => setConfirmVisible(true)}
-                disabled={deletingNotebook || updateDisabled}
-                variant="outlined"
-              />
-            )}
-
-            {!notebook && (
-              <Button
-                size="large"
-                color="success"
-                variant="contained"
-                onClick={() => {
-                  if (notebookTitle) {
-                    createNotebook({ title: notebookTitle });
-                  }
-                }}
-                disabled={savingNotebook || !notebookTitle}
-              >
-                {savingNotebook ? "Loading…" : "Create"}
-              </Button>
-            )}
-          </Grid>
-        </Grid>
-
-        {notebook?.id && (
-          <>
-            <Grid
-              item
-              xs={12}
-              sm={6}
-              md={6}
-              sx={{
-                "& h6": {
-                  fontWeight: "700",
-                },
-              }}
-            >
-              <Grid
-                container
-                direction="column"
-                alignItems="flex-start"
-                sx={{ paddingRight: "56px" }}
-              >
-                <Grid item>
-                  <h6>Collaborators:</h6>
-                </Grid>
-                <Grid item sx={{ width: "100%" }}>
-                  <Autocomplete
-                    multiple
-                    id="collaborators"
-                    disabled={updateDisabled}
-                    options={users}
-                    value={
-                      notebook?.collaborators?.map((collaboratorId) => {
-                        return users.find((u) => u.id === collaboratorId);
-                      }) || []
-                    }
-                    onChange={updateNotebookCollaborators}
-                    getOptionLabel={(option) => {
-                      return `${option.firstName} ${option.lastName}`;
-                    }}
-                    renderInput={(params) => (
-                      <TextField {...params} variant="outlined" />
-                    )}
+          {notebook?.id ? (
+            <>
+              <Grid item sx={{ display: "flex", alignItems: "center" }}>
+                <Tooltip title="Make a Copy">
+                  <Box
                     sx={{
-                      width: "100%",
-                      background: "white",
-                      pointerEvents: updateDisabled ? "none" : "auto",
-                      "& .MuiAutocomplete-root": {
-                        border: "none",
-                      },
+                      border: `1px solid ${theme.palette.success.main}`,
+                      borderRadius: "4px",
+                      padding: "4px",
+                      height: "36px",
+                      width: "36px",
+                      marginRight: "10px",
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "center",
+                      cursor: "pointer",
                     }}
-                  />
-                </Grid>
+                    onClick={() => setCopyModalOpen(true)}
+                  >
+                    <ContentCopyIcon
+                      color="success"
+                      sx={{ fontSize: "22px" }}
+                    />
+                  </Box>
+                </Tooltip>
+                <DeleteButton
+                  onClick={() => setConfirmVisible(true)}
+                  disabled={deletingNotebook || updateDisabled}
+                  variant="outlined"
+                  titleAddon="Notebook"
+                />
               </Grid>
-            </Grid>
+              <Grid
+                item
+                xs={12}
+                sx={{
+                  marginTop: "24px",
+                  "& .title": {
+                    fontSize: "18px",
+                    fontWeight: "600",
+                    marginRight: "12px",
+                  },
 
-            <Grid
-              item
-              xs={3}
-              md={1.5}
-              sx={{
-                "& h6": {
-                  fontWeight: "700",
-                },
-              }}
-            >
-              <Grid container direction="column" alignItems="flex-start">
-                <Grid item>
-                  <h6>Public:</h6>
-                </Grid>
-                <Grid
-                  item
-                  sx={{
-                    height: "56px",
-                    display: "flex",
-                    alignItems: "center",
-                    justifyContent: "center",
-                  }}
-                >
+                  "& .name": {
+                    color: "GrayText",
+                    fontSize: "16px",
+                    fontWeight: "600",
+                  },
+                }}
+              >
+                <div>
+                  <span className="title">Owner:</span>
+                  <span className="name">
+                    {notebook?.user?.firstName} {notebook?.user?.lastName}
+                  </span>
+                </div>
+                <div>
+                  <span className="title">Public:</span>
                   <Switch
                     disabled={updateDisabled}
                     checked={notebook?.visibility === "public"}
@@ -266,46 +213,29 @@ const Notebook = () => {
                       )
                     }
                     color="primary"
+                    sx={{ marginLeft: "-8px" }}
                   />
-                </Grid>
+                </div>
               </Grid>
-            </Grid>
-            <Grid
-              item
-              sm={3}
-              md={3}
-              sx={{
-                "& h6": {
-                  fontWeight: "700",
-                },
+            </>
+          ) : (
+            <Button
+              size="large"
+              color="success"
+              variant="contained"
+              onClick={() => {
+                if (notebookTitle) {
+                  createNotebook({ title: notebookTitle });
+                }
               }}
+              disabled={savingNotebook || !notebookTitle}
             >
-              <Grid container direction="column" alignItems="flex-start">
-                <Grid item>
-                  <h6>Owner:</h6>
-                </Grid>
-                <Grid
-                  item
-                  sx={{
-                    height: "56px",
-                    display: "flex",
-                    alignItems: "center",
-                    justifyContent: "center",
-                    "& span": {
-                      color: "GrayText",
-                      fontSize: "16px",
-                      fontWeight: "600",
-                    },
-                  }}
-                >
-                  <span>
-                    {notebook?.user?.firstName} {notebook?.user?.lastName}
-                  </span>
-                </Grid>
-              </Grid>
-            </Grid>
-          </>
-        )}
+              {savingNotebook ? "Loading…" : "Create"}
+            </Button>
+          )}
+        </Grid>
+
+        {notebook?.id && <></>}
       </Grid>
 
       {notebook && <Panels notebookId={notebook?.id} />}
@@ -317,6 +247,7 @@ const Notebook = () => {
         setOpen={setConfirmVisible}
         onConfirm={handleDeleteNotebook}
       />
+      {copyModalOpen && <DuplicateNotebookModal setOpen={setCopyModalOpen} />}
     </Loader>
   );
 };
