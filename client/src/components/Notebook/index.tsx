@@ -9,8 +9,14 @@ import { useUser } from "src/store/user";
 import { usePanels } from "src/store/panels";
 import { sessionUserSelector } from "src/store/auth";
 
-import ContentCopyIcon from "@mui/icons-material/ContentCopy";
-import { Grid, TextField, Button, Switch, Box, Tooltip } from "@mui/material";
+// import ContentCopyIcon from "@mui/icons-material/ContentCopy";
+import {
+  Grid,
+  TextField,
+  Button,
+  Switch,
+  // Box, Tooltip
+} from "@mui/material";
 import DeleteButton from "src/components/Buttons/DeleteButton";
 import { useTheme } from "@mui/material/styles";
 
@@ -148,7 +154,7 @@ const Notebook = () => {
           {notebook?.id ? (
             <>
               <Grid item sx={{ display: "flex", alignItems: "center" }}>
-                <Tooltip title="Make a Copy">
+                {/* <Tooltip title="Make a Copy">
                   <Box
                     sx={{
                       border: `1px solid ${theme.palette.success.main}`,
@@ -169,7 +175,7 @@ const Notebook = () => {
                       sx={{ fontSize: "22px" }}
                     />
                   </Box>
-                </Tooltip>
+                </Tooltip> */}
                 <DeleteButton
                   onClick={() => setConfirmVisible(true)}
                   disabled={deletingNotebook || updateDisabled}
