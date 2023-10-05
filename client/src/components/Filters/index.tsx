@@ -19,7 +19,7 @@ const Filters = ({ panelId }: FiltersProps) => {
     filters = [],
     setPanelFilters,
     getPanelResults,
-    updatePanel,
+    // updatePanel,
   } = usePanel(panelId);
 
   const filterElements = useMemo(() => {
@@ -34,7 +34,7 @@ const Filters = ({ panelId }: FiltersProps) => {
     getPanelResults();
     // updatePanel({ filters: [] });
   };
-
+  console.log(filters);
   return (
     <div className={`filter-container ${filterContainerStyles}`}>
       <div className="filters">
@@ -60,14 +60,14 @@ const Filters = ({ panelId }: FiltersProps) => {
           >
             <AddIcon fontSize="medium" />
           </Button>
-          {filters?.length === 0 ? <>Add a filter</> : null}
+          {filters?.length > 0 ? null : <>Add a filter</>}
           <Button
             variant="contained"
             onClick={handleUpdateResults}
             style={{
               position: "absolute",
               right: "24px",
-              top: filters?.length === 0 ? "24px" : "32px",
+              top: filters?.length > 0 ? "32px" : "24px",
             }}
           >
             Update Results
