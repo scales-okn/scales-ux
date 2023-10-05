@@ -32,7 +32,7 @@ const Filters = ({ panelId }: FiltersProps) => {
 
   const handleUpdateResults = () => {
     getPanelResults();
-    updatePanel({ filters });
+    updatePanel({ filters: [] }); // TODO: replace with real filter update instead of resetting
   };
 
   return (
