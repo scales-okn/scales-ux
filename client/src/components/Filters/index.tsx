@@ -60,17 +60,18 @@ const Filters = ({ panelId }: FiltersProps) => {
           >
             <AddIcon fontSize="medium" />
           </Button>
-          {filters?.length ? (
-            <Button
-              variant="contained"
-              onClick={handleUpdateResults}
-              style={{ position: "absolute", right: "24px", top: "32px" }}
-            >
-              Update Results
-            </Button>
-          ) : (
-            <>Add a filter</>
-          )}
+          {filters?.length === 0 ? <>Add a filter</> : null}
+          <Button
+            variant="contained"
+            onClick={handleUpdateResults}
+            style={{
+              position: "absolute",
+              right: "24px",
+              top: filters?.length === 0 ? "24px" : "32px",
+            }}
+          >
+            Update Results
+          </Button>
         </div>
       </div>
     </div>
