@@ -66,7 +66,7 @@ const Filter = ({ panelId, filter }: Props) => {
     });
     const out = activeFilter.value === "" ? [] : values;
     setAutocompleteValues(out);
-  }, []);
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   const setFilter = (filter: FilterT) => {
     try {
