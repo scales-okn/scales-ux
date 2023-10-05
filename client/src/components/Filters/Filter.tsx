@@ -16,6 +16,7 @@ import HighlightOffIcon from "@mui/icons-material/HighlightOff";
 
 import DateTimeRangePicker from "@wojtekmaj/react-datetimerange-picker";
 
+import useDebounce from "src/hooks/useDebounce";
 import { DATE_FORMAT } from "src/helpers/constants";
 import { makeRequest } from "src/helpers/makeRequest";
 import { useNotify } from "src/components/Notifications";
@@ -126,23 +127,30 @@ const Filter = ({ panelId, filter }: Props) => {
     }
   };
 
-  useEffect(() => {
-    setAutoCompleteSuggestions([]);
-    // Autofetch autocomplete suggestions for non-state autocomplete types
-    const barredFilterTypes = ["range", "boolean", "date"];
-    const isAutocomplete = !barredFilterTypes.includes(filterOptions?.type);
+  const barredFilterTypes = ["range", "boolean", "date"];
+  const isAutocomplete = !barredFilterTypes.includes(filterOptions?.type);
 
+  const resetAndSearch = (searchParams) => {
+    setAutoCompleteSuggestions([]);
     if (
       filter.type &&
       isAutocomplete &&
       type !== "state_abbrev" &&
       info?.defaultEntity
     ) {
-      fetchAutocompleteSuggestions("");
+      fetchAutocompleteSuggestions(searchParams);
     }
-  }, [filter.type]); // eslint-disable-line react-hooks/exhaustive-deps
+  };
 
-  const debouncedSearch = debounce(fetchAutocompleteSuggestions, 1500);
+  const [rawSearch, setRawSearch] = useState("");
+  const debouncedSearch = useDebounce(rawSearch, 1000);
+  useEffect(() => {
+    resetAndSearch(debouncedSearch);
+  }, [debouncedSearch]); // eslint-disable-line react-hooks/exhaustive-deps
+
+  useEffect(() => {
+    resetAndSearch("");
+  }, [filter.type]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const handleClear = async () => {
     const newFilters = [
@@ -199,7 +207,7 @@ const Filter = ({ panelId, filter }: Props) => {
 
         const minChar = 3;
         if (value.length >= minChar && !localFilterTypes.includes(type)) {
-          debouncedSearch(value);
+          setRawSearch(value);
           setIsLoading(true);
         }
         if (!autocompleteOpen) setAutocompleteOpen(true);
@@ -209,8 +217,8 @@ const Filter = ({ panelId, filter }: Props) => {
       }}
       onFocus={() => {
         setAutocompleteOpen(true);
-        if (autoCompleteSuggestions.length === 0) {
-          debouncedSearch(value);
+        if (autoCompleteSuggestions.length === 0 && !!filter?.type) {
+          fetchAutocompleteSuggestions("");
           setIsLoading(true);
         }
       }}
