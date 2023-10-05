@@ -4,7 +4,7 @@ import { Request, Response } from "express";
 import { sequelize } from "../database";
 import { sendEmail } from "../services/sesMailer";
 import accessControl, {
-  permisionsFieldsFilter,
+  permissionsFieldsFilter,
 } from "../services/accesscontrol";
 
 // Resources validations are made with validateResources middleware and validations schemas
@@ -58,7 +58,9 @@ export const login = async (req: Request, res: Response) => {
     // Check if user exists
     if (!user) {
       console.warn("User not found!", { email, password });
-      return res.send_badRequest("Something went wrong. Please try again."); // We will send bad request in this case to not have a user checking breach.
+      return res.send_badRequest(
+        "Login failed. Please check your username and password."
+      );
     }
     const {
       id,
@@ -79,11 +81,6 @@ export const login = async (req: Request, res: Response) => {
         "Access restricted! Please verify your email before signing in."
       );
     }
-
-    // // we're no longer doing manual approval
-    // if (!approved) {
-    //   return res.send_forbidden("Access restricted! Please wait for approval email!");
-    // }
 
     const passwordsMatch = await bcrypt.compare(
       password,
@@ -106,7 +103,7 @@ export const login = async (req: Request, res: Response) => {
       });
     }
     return res.send_unauthorized("Login Failed!", {
-      password: "Credentials are not correct!",
+      password: "Login failed. Please check your username and password.",
     });
   } catch (error) {
     console.warn(error); // eslint-disable-line no-console
@@ -119,10 +116,11 @@ export const login = async (req: Request, res: Response) => {
 export const findAllUsers = async (req: Request, res: Response) => {
   try {
     // @ts-ignore
-    const permission = await accessControl.can(req.user.role, "users:read");
-    if (!permission.granted) {
-      return res.send_forbidden("Not allowed!");
-    }
+    // Removing for collaborator assignment
+    // const permission = await accessControl.can(req.user.role, "users:read");
+    // if (!permission.granted) {
+    //   return res.send_forbidden("Not allowed!");
+    // }
 
     const users = await sequelize.models.User.findAll({
       attributes: { exclude: ["password"] },
@@ -157,7 +155,7 @@ export const findById = async (req: Request, res: Response) => {
     }
 
     return res.send_ok("", {
-      user: permisionsFieldsFilter(user.dataValues, permission),
+      user: permissionsFieldsFilter(user.dataValues, permission),
     });
   } catch (error) {
     console.warn(error); // eslint-disable-line no-console
@@ -183,7 +181,7 @@ export const update = async (req: Request, res: Response) => {
       return res.send_forbidden("Not allowed!");
     }
 
-    const payload = permisionsFieldsFilter(req.body, permission);
+    const payload = permissionsFieldsFilter(req.body, permission);
     if (payload.password) {
       const salt = await bcrypt.genSalt(10);
       const hash = await bcrypt.hash(payload.password, salt);
@@ -211,7 +209,7 @@ export const update = async (req: Request, res: Response) => {
 
     const updatedUser = result[1][0].dataValues;
     return res.send_ok("User has been updated!", {
-      user: permisionsFieldsFilter(updatedUser, permission),
+      user: permissionsFieldsFilter(updatedUser, permission),
     });
   } catch (error) {
     console.warn(error); // eslint-disable-line no-console

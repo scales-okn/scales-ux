@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import { useHelpTexts } from "src/store/helpTexts";
-import { userSelector } from "src/store/auth";
+import { sessionUserSelector } from "src/store/auth";
 
 import { DataGrid, GridColDef } from "@mui/x-data-grid";
 import { useParams, useNavigate } from "react-router-dom";
@@ -20,7 +20,7 @@ const HelpTextsPage = () => {
 
   const feedbackDetail = rows.find((row) => row.slug === helpTextSlug);
 
-  const { role } = useSelector(userSelector);
+  const { role } = useSelector(sessionUserSelector);
   const isAdmin = role === "admin";
 
   useEffect(() => {

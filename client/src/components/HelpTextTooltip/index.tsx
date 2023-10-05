@@ -6,7 +6,7 @@ import Tooltip, { TooltipProps, tooltipClasses } from "@mui/material/Tooltip";
 import { styled } from "@mui/material/styles";
 import VisibilityIcon from "@mui/icons-material/Visibility";
 
-import { userSelector } from "src/store/auth";
+import { sessionUserSelector } from "src/store/auth";
 
 import { tooltipTitleStyles } from "../Filters/styles";
 
@@ -34,7 +34,7 @@ const FilterTooltip = ({
   helpText,
   children = <VisibilityIcon />,
 }: FilterTooltipT) => {
-  const { role } = useSelector(userSelector);
+  const { role } = useSelector(sessionUserSelector);
   const isAdmin = role === "admin";
 
   const {

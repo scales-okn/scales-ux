@@ -2,8 +2,12 @@
 /* eslint-disable */
 import { authorizationHeader } from "src/helpers/authorizationHeader";
 import store from "src/store";
+import streamSaver from 'streamsaver';
 
 const baseURL = "http://localhost:8080";
+
+// host stream saver service worker locally
+streamSaver.mitm = '/streamsaver/mitm.html';
 
 const sendRequest = async ({
   method,
@@ -26,6 +30,10 @@ const sendRequest = async ({
   const token = store.getState().auth.token;
   const authHeader = authorizationHeader(token);
 
+  const fullPath = options?.params
+    ? `${url()}?${new URLSearchParams(options.params).toString()}`
+    : url();
+
   const fetchOptions: RequestInit = {
     method,
     headers: {
@@ -36,11 +44,32 @@ const sendRequest = async ({
   };
 
   try {
-    const response = await fetch(url(), fetchOptions);
+    const response = await fetch(fullPath, fetchOptions);
 
     let data;
     if (options?.responseType === "text") {
       data = await response.text();
+    } else if (options?.responseType === "stream") {
+      const fileStream = streamSaver.createWriteStream('scales-okn-data.csv');
+      const readableStream = response.body;
+
+      // use pipeTo if it's available; easier and faster
+      if(window.WritableStream && readableStream.pipeTo) {
+        await readableStream.pipeTo(fileStream)
+        return { message: 'Successfully downloaded file'}
+      }
+
+      // if pipeTo isn't available, we fallback to the polyfill
+      window.writer = fileStream.getWriter();
+      const reader = response.body.getReader();
+      const pump = () => reader.read()
+        .then(({ done, value }) => done
+          ? window.writer.close()
+          : window.writer.write(value).then(pump));
+
+      pump();
+
+      data = { message: 'Successfully downloaded file'}
     } else {
       data = await response.json();
     }
@@ -55,6 +84,10 @@ const sendRequest = async ({
     return data;
   } catch (error) {
     // Handle network or fetch errors
+    if(options?.responseType === "stream" && error === undefined) {
+      // file download cancelled
+      return { message: 'File download cancelled' }
+    }
     console.error("Request failed:", error);
     throw error;
   }

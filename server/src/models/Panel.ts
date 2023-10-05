@@ -20,10 +20,6 @@ export default (sequelize, options) => {
         type: DataTypes.JSON,
         defaultValue: [],
       },
-      deleted: {
-        type: DataTypes.BOOLEAN,
-        defaultValue: false,
-      },
     },
     options
   );

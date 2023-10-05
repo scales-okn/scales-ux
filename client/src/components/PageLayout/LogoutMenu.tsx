@@ -2,7 +2,7 @@ import React from "react";
 import { useSelector, useDispatch } from "react-redux";
 
 import { css } from "@emotion/css";
-import { userSelector, logout } from "../../store/auth";
+import { sessionUserSelector, logout } from "../../store/auth";
 
 import Popover from "@mui/material/Popover";
 import ArrowDropDownIcon from "@mui/icons-material/ArrowDropDown";
@@ -22,7 +22,7 @@ const LogoutMenu = () => {
 
   const open = Boolean(anchorEl);
 
-  const user = useSelector(userSelector);
+  const user = useSelector(sessionUserSelector);
   const dispatch = useDispatch();
 
   const containerStyles = css`

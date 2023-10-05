@@ -76,6 +76,13 @@ const notebookSlice = createSlice({
     saveNotebookSuccess: (state, { payload }) => ({
       ...state,
       notebook: { ...state.notebook, ...payload },
+      notebooks: state.notebooks.map((notebook) => {
+        if (notebook.id === payload.id) {
+          return payload;
+        } else {
+          return notebook;
+        }
+      }),
       savingNotebook: false,
       hasErrors: false,
     }),
@@ -129,12 +136,14 @@ export const notebookSelector = (state: RootState) => state.notebook;
 // The reducer
 export default notebookSlice.reducer;
 
-export function fetchNotebooks() {
+export function fetchNotebooks(type: string) {
   return async (dispatch: AppDispatch) => {
     dispatch(notebookActions.fetchNotebooks());
 
     try {
-      const { data } = await makeRequest.get(`/api/notebooks`);
+      const { data } = await makeRequest.get(`/api/notebooks`, {
+        params: { type },
+      });
 
       dispatch(notebookActions.fetchNotebooksSuccess(data.notebooks));
     } catch (error) {
@@ -166,13 +175,12 @@ export function fetchNotebook(id: string) {
 export function updateNotebook(id: string, payload: any) {
   return async (dispatch: AppDispatch, getState) => {
     dispatch(notebookActions.saveNotebook());
-
     try {
       const response = await makeRequest.put(`/api/notebooks/${id}`, payload);
       if (response.status === "OK") {
         const { data, message } = response;
-        dispatch(notify(message, "success"));
-        dispatch(notebookActions.saveNotebookSuccess(data.notebook));
+        // dispatch(notify(message, "success"));
+        dispatch(notebookActions.saveNotebookSuccess(data));
       } else {
         dispatch(notify(response.statusText, "error"));
         dispatch(notebookActions.saveNotebookFailure());
@@ -224,17 +232,28 @@ export function deleteNotebook(id: string) {
 
 // Hooks
 export function useNotebook() {
-  const { notebook, loadingNotebook, hasErrors, loadingNotebooks, notebooks } =
-    useSelector(notebookSelector);
-
-  const dispatch = useDispatch();
-  return {
+  const {
     notebook,
     loadingNotebook,
+    savingNotebook,
+    deletingNotebook,
     hasErrors,
     loadingNotebooks,
     notebooks,
-    fetchNotebooks: () => dispatch(fetchNotebooks()),
+  } = useSelector(notebookSelector);
+
+  const dispatch = useDispatch();
+  return {
+    notebooks,
+    loadingNotebooks,
+    notebook,
+    loadingNotebook,
+    savingNotebook,
+    deletingNotebook,
+    hasErrors,
+    clearNotebook: () => dispatch(notebookActions.clearNotebook()),
+    fetchNotebooks: ({ type }: { type: string }) =>
+      dispatch(fetchNotebooks(type)),
     fetchNotebook: (id: string) => dispatch(fetchNotebook(id)),
     updateNotebook: (id: string, payload: any) =>
       dispatch(updateNotebook(id, payload)),

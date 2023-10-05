@@ -30,6 +30,7 @@ interface IPanel {
   analysis: Array<IPanelAnalysisItem>;
   loadingPanelResults: boolean;
   collapsed: boolean;
+  downloadingCsv: boolean;
   resultsCollapsed: boolean;
   updatingPanel: boolean;
   hasErrors: boolean;

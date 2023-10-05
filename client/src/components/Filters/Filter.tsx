@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 
 import { usePanel } from "src/store/panels";
 import { useRing } from "src/store/rings";
@@ -41,8 +41,7 @@ type Props = {
 };
 
 const Filter = ({ panelId, filter }: Props) => {
-  const { panel, filters, setPanelFilters, getPanelResults } =
-    usePanel(panelId);
+  const { panel, filters, setPanelFilters } = usePanel(panelId);
 
   const { ring, info } = useRing(panel.ringId);
   const { type, id, value } = filter;
@@ -59,6 +58,15 @@ const Filter = ({ panelId, filter }: Props) => {
   useEffect(() => {
     setAutocompleteValues([]);
   }, [type]);
+
+  useEffect(() => {
+    const activeFilter = filters.find((filter) => filter.type === type);
+    const values = activeFilter.value.split("|").map((value) => {
+      return { label: value, value: value };
+    });
+    const out = activeFilter.value === "" ? [] : values;
+    setAutocompleteValues(out);
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   const setFilter = (filter: FilterT) => {
     try {
@@ -124,7 +132,12 @@ const Filter = ({ panelId, filter }: Props) => {
     const barredFilterTypes = ["range", "boolean", "date"];
     const isAutocomplete = !barredFilterTypes.includes(filterOptions?.type);
 
-    if (filter.type && isAutocomplete && type !== "state_abbrev") {
+    if (
+      filter.type &&
+      isAutocomplete &&
+      type !== "state_abbrev" &&
+      info?.defaultEntity
+    ) {
       fetchAutocompleteSuggestions("");
     }
   }, [filter.type]); // eslint-disable-line react-hooks/exhaustive-deps
@@ -136,7 +149,6 @@ const Filter = ({ panelId, filter }: Props) => {
       ...filters.filter((filter: FilterT) => filter.id !== id),
     ];
     setPanelFilters(newFilters);
-    getPanelResults(newFilters);
   };
 
   const rangeInputElement = (
@@ -156,6 +168,8 @@ const Filter = ({ panelId, filter }: Props) => {
     </>
   );
 
+  const autocompleteRef = useRef(null);
+
   const autocompleteElement = (
     <Autocomplete
       open={autocompleteOpen}
@@ -169,6 +183,7 @@ const Filter = ({ panelId, filter }: Props) => {
           {...params}
           variant="outlined"
           label={filterOptions?.nicename}
+          inputRef={autocompleteRef}
           sx={{ textTransform: "capitalize" }}
         />
       )}
@@ -194,6 +209,10 @@ const Filter = ({ panelId, filter }: Props) => {
       }}
       onFocus={() => {
         setAutocompleteOpen(true);
+        if (autoCompleteSuggestions.length === 0) {
+          debouncedSearch(value);
+          setIsLoading(true);
+        }
       }}
       onChange={(_, fieldValue) => {
         if (!filter) {
@@ -204,6 +223,7 @@ const Filter = ({ panelId, filter }: Props) => {
           value: fieldValue.map((x) => x.value).join("|"),
         });
         setAutocompleteValues(fieldValue);
+        autocompleteRef.current?.blur();
       }}
       sx={{
         minWidth: "250px",

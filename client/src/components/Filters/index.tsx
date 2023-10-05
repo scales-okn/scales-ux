@@ -15,7 +15,12 @@ type FiltersProps = {
 };
 
 const Filters = ({ panelId }: FiltersProps) => {
-  const { filters = [], setPanelFilters, getPanelResults } = usePanel(panelId);
+  const {
+    filters = [],
+    setPanelFilters,
+    getPanelResults,
+    // updatePanel,
+  } = usePanel(panelId);
 
   const filterElements = useMemo(() => {
     return (
@@ -24,6 +29,11 @@ const Filters = ({ panelId }: FiltersProps) => {
       }) || []
     );
   }, [filters]); // eslint-disable-line react-hooks/exhaustive-deps
+
+  const handleUpdateResults = () => {
+    getPanelResults();
+    // updatePanel({ filters: [] });
+  };
 
   return (
     <div className={`filter-container ${filterContainerStyles}`}>
@@ -50,17 +60,18 @@ const Filters = ({ panelId }: FiltersProps) => {
           >
             <AddIcon fontSize="medium" />
           </Button>
-          {filters?.length ? (
-            <Button
-              variant="contained"
-              onClick={() => getPanelResults(filters)}
-              style={{ position: "absolute", right: "24px", top: "32px" }}
-            >
-              Update Results
-            </Button>
-          ) : (
-            <>Add a filter</>
-          )}
+          {filters?.length > 0 ? null : <>Add a filter</>}
+          <Button
+            variant="contained"
+            onClick={handleUpdateResults}
+            style={{
+              position: "absolute",
+              right: "24px",
+              top: filters?.length > 0 ? "32px" : "24px",
+            }}
+          >
+            Update Results
+          </Button>
         </div>
       </div>
     </div>

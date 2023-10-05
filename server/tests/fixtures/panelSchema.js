@@ -1,38 +1,41 @@
 module.exports = {
-  title: 'PanelSchema',
-  type: 'object',
-  required: ['notebookId', 'ringId', 'ringVersion', 'filters', 'results', 'contents'],
+  title: "PanelSchema",
+  type: "object",
+  required: [
+    "notebookId",
+    "ringId",
+    "ringVersion",
+    "filters",
+    "results",
+    "contents",
+  ],
   properties: {
     id: {
-      type: 'number',
+      type: "number",
     },
     description: {
-      type: ['string', 'null'],
+      type: ["string", "null"],
     },
     notebookId: {
-      type: 'number',
+      type: "number",
     },
     ringId: {
-      type: 'number',
+      type: "number",
     },
     ringVersion: {
-      type: 'string',
+      type: "string",
     },
     filters: {
-      type: 'object',
+      type: "object",
     },
     results: {
-      type: 'object',
+      type: "object",
     },
     contents: {
-      type: 'object',
+      type: "object",
     },
     analysis: {
-      type: 'array',
-    },
-    deleted: {
-      type: 'boolean',
-      defaultValue: false,
+      type: "array",
     },
   },
-}
+};

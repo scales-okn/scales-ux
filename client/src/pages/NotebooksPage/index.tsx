@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import React, { FunctionComponent, useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useSelector } from "react-redux";
 import { Link } from "react-router-dom";
 
@@ -12,6 +12,7 @@ import {
   InputAdornment,
   IconButton,
   Grid,
+  Switch,
   Button,
 } from "@mui/material";
 
@@ -19,8 +20,9 @@ import { useEffectOnce } from "react-use";
 import SearchIcon from "@mui/icons-material/Search";
 import dayjs from "dayjs";
 
-import { userSelector } from "src/store/auth";
+import { sessionUserSelector } from "src/store/auth";
 import { useNotebook } from "src/store/notebook";
+import { useUser } from "src/store/user";
 
 import Loader from "src/components/Loader";
 import ColumnHeader from "src/components/ColumnHeader";
@@ -28,29 +30,40 @@ import ColumnHeader from "src/components/ColumnHeader";
 import "./NotebooksPage.scss";
 import DeleteNotebook from "./DeleteNotebook";
 
-const NotebooksPage: FunctionComponent = () => {
-  const user = useSelector(userSelector);
-  const [showNotebooks, setShowNotebooks] = useState("my-notebooks");
+const NotebooksPage = () => {
+  const user = useSelector(sessionUserSelector);
+  const { role } = useSelector(sessionUserSelector);
+  const isAdmin = role === "admin";
+
+  const [notebooksType, setNotebooksType] = useState("my-notebooks");
   const [filterNotebooks, setFilterNotebooks] = useState("");
-  const { fetchNotebooks, loadingNotebooks, notebooks } = useNotebook();
+  const { fetchNotebooks, loadingNotebooks, updateNotebook, notebooks } =
+    useNotebook();
+  const { fetchUsers, users } = useUser();
 
   useEffectOnce(() => {
-    fetchNotebooks();
+    fetchUsers();
   });
+
+  useEffect(() => {
+    fetchNotebooks({ type: notebooksType });
+  }, [notebooksType]); // eslint-disable-line react-hooks/exhaustive-deps
+
+  const updateNotebookVisibility = (id, visibility) => {
+    const out = visibility === "public" ? "private" : "public";
+
+    updateNotebook(id, {
+      visibility: out,
+    });
+  };
 
   const notebooksData = notebooks
     .filter((notebook) => {
-      if (showNotebooks === "my-notebooks") {
+      if (notebooksType === "my-notebooks") {
         return notebook.userId === user.id;
       }
-      if (showNotebooks === "shared-notebooks") {
-        return notebook.collaborators.includes(user.id);
-      }
-      if (showNotebooks === "public-notebooks") {
-        return (
-          !notebook.collaborators.includes(user.id) &&
-          notebook.userId !== user.id
-        );
+      if (notebooksType === "public") {
+        return notebook.visibility === "public";
       }
 
       return true;
@@ -110,43 +123,45 @@ const NotebooksPage: FunctionComponent = () => {
     },
     {
       field: "visibility",
-      headerName: "Visibility",
+      headerName: "Public",
       width: 130,
       editable: false,
       renderHeader,
+      renderCell: (params: GridCellParams) => {
+        return (
+          <Switch
+            disabled={params.row.userId !== user.id}
+            checked={params.row.visibility === "public"}
+            onChange={() =>
+              updateNotebookVisibility(params.row.id, params.row.visibility)
+            }
+            color="primary"
+          />
+        );
+      },
     },
     {
       field: "userId",
-      headerName: "Owned By",
+      headerName: "Owner",
       width: 150,
       sortable: false,
       renderHeader,
       renderCell: (params: GridCellParams) => {
         if (params.row.userId === user.id) {
           return <>You</>;
+        } else {
+          // hacky workaround to accommodate existing db schema, should fix. Users should be populated in notebooks call
+          const user = users.find((u) => u.id === params.row.userId);
+          return isAdmin ? (
+            <Link to="/admin/users">
+              {user.firstName} {user.lastName}
+            </Link>
+          ) : (
+            <span>
+              {user.firstName} {user.lastName}
+            </span>
+          );
         }
-        // TODO: Users Initials call.
-      },
-    },
-
-    {
-      field: "collaborators",
-      headerName: "Shared With",
-      width: 150,
-      editable: true,
-      sortable: false,
-      renderHeader,
-      renderCell: (params: GridCellParams) => {
-        if (params.row.collaborators.length === 0) {
-          return <>Nobody</>;
-        }
-        if (params.row.collaborators.includes(1)) {
-          return <span className="user-initials-pill">AT</span>;
-        }
-        if (params.row.collaborators.includes(user.id)) {
-          return <>You</>;
-        }
-        return <>{params.row.collaborators}</>;
       },
     },
     {
@@ -154,9 +169,10 @@ const NotebooksPage: FunctionComponent = () => {
       headerName: "Delete",
       width: 75,
       renderCell: (params: GridCellParams) => {
+        const canDelete = params.row.userId === user.id;
         return (
           <div style={{ paddingLeft: "5px" }}>
-            <DeleteNotebook notebookId={params.row.id} />
+            {canDelete ? <DeleteNotebook notebookId={params.row.id} /> : null}
           </div>
         );
       },
@@ -178,15 +194,14 @@ const NotebooksPage: FunctionComponent = () => {
                 MenuProps={{
                   disableScrollLock: true,
                 }}
-                value={showNotebooks}
+                value={notebooksType}
                 onChange={(event) =>
-                  setShowNotebooks(event.target.value as string)
+                  setNotebooksType(event.target.value as string)
                 }
                 sx={{ background: "white", borderRadius: "4px" }}
               >
                 <MenuItem value="my-notebooks">My Notebooks</MenuItem>
-                <MenuItem value="shared-notebooks">Shared with me</MenuItem>
-                <MenuItem value="public-notebooks">Public Notebooks</MenuItem>
+                <MenuItem value="public">Public Notebooks</MenuItem>
               </Select>
             </FormControl>
           </Grid>

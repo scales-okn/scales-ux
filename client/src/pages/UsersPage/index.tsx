@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React from "react";
 import { useSelector } from "react-redux";
 
 import { DataGrid, GridColDef, GridCellParams } from "@mui/x-data-grid";
@@ -6,17 +6,17 @@ import { Tooltip, Typography } from "@mui/material";
 import { useEffectOnce } from "react-use";
 import dayjs from "dayjs";
 
-import { userSelector } from "src/store/auth";
+import { sessionUserSelector } from "src/store/auth";
+import { useUser } from "src/store/user";
 
 import UserFieldToggle from "./UserFieldToggle";
 import NotAuthorized from "src/components/NotAuthorized";
 import ColumnHeader from "src/components/ColumnHeader";
 import DeleteUser from "./DeleteUser";
-import { makeRequest } from "src/helpers/makeRequest";
 
 const AdminUsersPages = () => {
-  const [rows, setRows] = useState([]);
-  const { role, id } = useSelector(userSelector);
+  const { role, id } = useSelector(sessionUserSelector);
+  const { fetchUsers, users } = useUser();
 
   const isAdmin = role === "admin";
 
@@ -147,15 +147,8 @@ const AdminUsersPages = () => {
   }
 
   useEffectOnce(() => {
-    const fetchData = async () => {
-      const response = await makeRequest.get("/api/users");
-      setRows(response.data.users);
-    };
-
-    fetchData();
+    fetchUsers();
   });
-
-  // TODO: add pagination?
 
   return (
     <>
@@ -171,7 +164,7 @@ const AdminUsersPages = () => {
           }}
         >
           <DataGrid
-            rows={rows}
+            rows={users}
             columns={columns}
             disableColumnMenu
             disableColumnFilter

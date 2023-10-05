@@ -38,7 +38,14 @@ const Dataset = ({ panelId }: DatasetProps) => {
 
   return (
     <Loader isVisible={loadingRings}>
-      <Container className="bg-light border p-5 mb-4">
+      <Container
+        className="bg-light border p-5 mb-4"
+        sx={{
+          "*": {
+            transition: ".2s all",
+          },
+        }}
+      >
         <Grid container justifyContent="center" className="mb-4">
           <Grid>
             <span style={{ fontSize: "18px", marginRight: "18px" }}>
@@ -80,17 +87,21 @@ const Dataset = ({ panelId }: DatasetProps) => {
         <Loader isVisible={ring && loadingRingInfo}>
           <Grid container justifyContent="center">
             <Grid item xs={12} sm={6} className="justify-content-center d-flex">
-              <Button
-                variant="contained"
-                disabled={!info}
-                onClick={() => {
-                  updatePanel({ ringId: selectedRing.id });
-                  setPanelCollapsed(false);
-                }}
-                sx={{ marginTop: "12px" }}
-              >
-                Start Exploring
-              </Button>
+              {ring && loadingRingInfo ? (
+                <div style={{ marginTop: "12px" }} />
+              ) : (
+                <Button
+                  variant="contained"
+                  disabled={!info}
+                  onClick={() => {
+                    updatePanel({ ringId: selectedRing.id });
+                    setPanelCollapsed(false);
+                  }}
+                  sx={{ marginTop: "12px" }}
+                >
+                  Start Exploring
+                </Button>
+              )}
             </Grid>
           </Grid>
         </Loader>

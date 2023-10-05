@@ -1,4 +1,4 @@
-import React, { FunctionComponent, useState, useEffect, useMemo } from "react";
+import React, { useState, useEffect, useMemo } from "react";
 import { Link } from "react-router-dom";
 import { usePanel } from "src/store/panels";
 import { useRing } from "src/store/rings";
@@ -8,7 +8,7 @@ import {
   CardContent,
   Typography,
   FormControl,
-  Input,
+  TextField,
   Button,
   Grid,
   AccordionDetails,
@@ -25,18 +25,16 @@ import Analysis from "../Analysis";
 import ConfirmModal from "src/components/Modals/ConfirmModal";
 import ColumnHeader from "src/components/ColumnHeader";
 import DeleteButton from "../Buttons/DeleteButton";
+import DownloadButton from "../Buttons/DownloadButton";
 import { panelHeaderStyles } from "./styles";
 import { useEffectOnce } from "react-use";
 
-type PanelProps = {
+type PanelT = {
   panelId: string;
   defaultCollapsed: boolean;
 };
 
-const Panel: FunctionComponent<PanelProps> = ({
-  panelId,
-  defaultCollapsed,
-}) => {
+const Panel = ({ panelId, defaultCollapsed }: PanelT) => {
   const {
     panel,
     deletePanel,
@@ -48,6 +46,9 @@ const Panel: FunctionComponent<PanelProps> = ({
     setPanelDescription,
     resultsCollapsed,
     setPanelCollapsed,
+    downloadCsv,
+    downloadingCsv,
+    updatePanel,
   } = usePanel(panelId);
 
   // Pop first panel on page load
@@ -60,6 +61,7 @@ const Panel: FunctionComponent<PanelProps> = ({
   const { ring, info, getRingInfo } = useRing(panel?.ringId);
 
   const [confirmVisible, setConfirmVisible] = useState(false);
+  const [description, setDescription] = useState(panel?.description);
 
   const ringIdRef = React.useRef(null);
   useEffect(() => {
@@ -151,6 +153,13 @@ const Panel: FunctionComponent<PanelProps> = ({
             }}
             sx={{ height: "30.75px", width: "30.75px" }}
             variant="outlined"
+            titleAddon="Panel"
+          />
+          <DownloadButton
+            onClick={() => downloadCsv()}
+            downloading={downloadingCsv}
+            variant="outlined"
+            sx={{ marginLeft: "8px", height: "30.75px", width: "30.75px" }}
           />
           <Tooltip title={collapsed ? "Expand" : "Collapse"}>
             <Button
@@ -177,11 +186,11 @@ const Panel: FunctionComponent<PanelProps> = ({
           }}
         >
           <FormControl sx={{ width: "100%" }}>
-            <Input
+            <TextField
               onClick={(event) => {
                 event.stopPropagation();
               }}
-              placeholder="Your Panel Description Here"
+              placeholder="Enter Panel Description"
               onChange={(event) => {
                 setPanelDescription(event.target.value);
               }}
@@ -190,10 +199,21 @@ const Panel: FunctionComponent<PanelProps> = ({
                 fontSize: "0.9rem",
               }}
               className="description"
+              onBlur={() => {
+                if (panel?.description !== description) {
+                  updatePanel({ description: panel?.description });
+                  setDescription(panel?.description);
+                }
+              }}
               sx={{
                 background: "var(--light-grey)",
                 height: "56px",
-                paddingLeft: "16px",
+                "& fieldset": {
+                  borderRadius: "0",
+                  borderTop: "none",
+                  borderLeft: "none",
+                  borderRight: "none",
+                },
               }}
             />
           </FormControl>
