@@ -144,7 +144,7 @@ const Answers = ({
     htmlToImage
       .toPng(document.getElementById(`data-chart-${panelId}`))
       .then(function (dataUrl) {
-        download(dataUrl, "data.png");
+        download(dataUrl, "snapshot.png");
       });
   };
 

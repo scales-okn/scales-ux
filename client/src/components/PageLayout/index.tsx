@@ -2,7 +2,7 @@ import React, { ReactNode, useState } from "react";
 import { useSelector } from "react-redux";
 import { Link, useLocation } from "react-router-dom";
 
-import { userSelector } from "src/store/auth";
+import { sessionUserSelector } from "src/store/auth";
 import useWindowSize from "src/hooks/useWindowSize";
 
 import AppBar from "@mui/material/AppBar";
@@ -46,7 +46,7 @@ const PageLayout = ({ id = "", children, pageTitle }: PageLayoutT) => {
 
   const location = useLocation();
   const isAdminView = location.pathname.includes("admin");
-  const user = useSelector(userSelector);
+  const user = useSelector(sessionUserSelector);
   const isAdmin = user?.role === "admin";
 
   const { width } = useWindowSize();

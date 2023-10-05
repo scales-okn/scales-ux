@@ -12,6 +12,7 @@ import rings from "./rings";
 import notebook from "./notebook";
 import panels from "./panels";
 import helpTexts from "./helpTexts";
+import user from "./user";
 
 // Create a separate reducer for the auth slice
 const authPersistConfig = {
@@ -29,6 +30,7 @@ const store = configureStore({
     auth: persistedAuthReducer,
     rings,
     notebook,
+    user,
     panels,
     helpTexts,
     notifications: notificationsReducer(),

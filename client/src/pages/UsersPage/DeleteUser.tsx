@@ -33,6 +33,7 @@ const DeleteUser: FunctionComponent<Props> = ({ userId, disabled = false }) => {
         onClick={() => {
           setConfirmVisible(true);
         }}
+        titleAddon="User"
       />
       <ConfirmModal
         itemName="user"

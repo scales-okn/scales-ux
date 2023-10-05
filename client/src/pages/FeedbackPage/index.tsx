@@ -1,6 +1,6 @@
 import React, { FunctionComponent, useState } from "react";
 import { useSelector } from "react-redux";
-import { userSelector } from "src/store/auth";
+import { sessionUserSelector } from "src/store/auth";
 
 import { DataGrid, GridCellParams, GridColDef } from "@mui/x-data-grid";
 import dayjs from "dayjs";
@@ -18,7 +18,7 @@ const AdminFeedbackPage: FunctionComponent = () => {
 
   const [feedbackDetail, setFeedbackDetail] = useState(null);
 
-  const { role } = useSelector(userSelector);
+  const { role } = useSelector(sessionUserSelector);
   const isAdmin = role === "admin";
 
   useEffectOnce(() => {

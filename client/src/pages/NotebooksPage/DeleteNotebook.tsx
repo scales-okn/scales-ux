@@ -24,6 +24,7 @@ const DeleteNotebook = ({ notebookId }: DeleteNotebookT) => {
         onClick={() => {
           setConfirmVisible(true);
         }}
+        titleAddon="Notebook"
       />
       <ConfirmModal
         itemName="notebook"

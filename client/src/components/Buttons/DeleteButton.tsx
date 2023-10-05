@@ -7,6 +7,7 @@ type DeleteButtonT = {
   disabled?: boolean;
   sx?: Record<string, unknown>;
   variant?: "text" | "outlined" | "contained";
+  titleAddon?: string;
 };
 
 const DeleteButton = ({
@@ -14,9 +15,10 @@ const DeleteButton = ({
   disabled,
   sx,
   variant = "contained",
+  titleAddon = "",
 }: DeleteButtonT) => {
   return (
-    <Tooltip title="Delete">
+    <Tooltip title={`Delete ${titleAddon}`}>
       <Button
         variant={variant}
         onClick={onClick}

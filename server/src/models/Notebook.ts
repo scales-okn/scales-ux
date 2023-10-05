@@ -31,10 +31,6 @@ export default (sequelize, options) => {
         type: DataTypes.STRING,
         allowNull: true,
       },
-      deleted: {
-        type: DataTypes.BOOLEAN,
-        defaultValue: false,
-      },
     },
     options
   );

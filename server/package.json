@@ -22,10 +22,11 @@
     "nodemailer-pug-engine": "^2.0.1",
     "passport": "^0.5.2",
     "passport-jwt": "^4.0.0",
-    "pg": "^8.7.1",
+    "pg": "^8.11.3",
+    "pg-hstore": "^2.3.4",
     "pm2": "^5.2.0",
     "responser": "^2.5.2",
-    "sequelize": "^6.12.5",
+    "sequelize": "^6.33.0",
     "sequelize-paper-trail": "^3.0.1",
     "sequelize-version": "^0.0.58",
     "yup": "^0.32.11"
@@ -54,6 +55,7 @@
     "mocha": "^9.2.0",
     "nodemon": "^2.0.15",
     "prettier": "^2.5.1",
+    "sequelize-cli": "^6.6.1",
     "supertest": "^6.2.2",
     "ts-node": "^10.4.0",
     "typescript": "^4.5.4"

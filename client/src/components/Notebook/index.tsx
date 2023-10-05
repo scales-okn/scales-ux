@@ -1,161 +1,259 @@
 import React, { useEffect, useState } from "react";
-import { useSelector, useDispatch } from "react-redux";
-import { useNavigate, useLocation } from "react-router-dom";
-import { useEffectOnce } from "react-use";
+import { useSelector } from "react-redux";
+import { useNavigate, useParams } from "react-router-dom";
+// import { useEffectOnce } from "react-use";
 
-import {
-  notebookSelector,
-  updateNotebook,
-  deleteNotebook,
-  createNotebook,
-} from "src/store/notebook";
 import { useRings } from "src/store/rings";
-import { getPanels, usePanels } from "src/store/panels";
+import { useNotebook } from "src/store/notebook";
+import { useUser } from "src/store/user";
+import { usePanels } from "src/store/panels";
+import { sessionUserSelector } from "src/store/auth";
 
-import { Grid, TextField, Button } from "@mui/material";
+// import ContentCopyIcon from "@mui/icons-material/ContentCopy";
+import {
+  Grid,
+  TextField,
+  Button,
+  Switch,
+  // Box, Tooltip
+} from "@mui/material";
 import DeleteButton from "src/components/Buttons/DeleteButton";
+// import { useTheme } from "@mui/material/styles";
 
-import AddPanel from "../Panels/AddPanel";
+import AddPanel from "src/components/Panels/AddPanel";
 import ConfirmModal from "src/components/Modals/ConfirmModal";
 import Loader from "src/components/Loader";
 import Panels from "src/components/Panels";
+import DuplicateNotebookModal from "./DuplicateNotebookModal";
 
 const Notebook = () => {
   const { getRings } = useRings();
-  const { notebook, loadingNotebook, savingNotebook, deletingNotebook } =
-    useSelector(notebookSelector);
+  const { fetchUsers } = useUser();
+  const sessionUser = useSelector(sessionUserSelector);
 
-  const location = useLocation();
-  const isNewNotebook = location.pathname.includes("new");
+  // const theme = useTheme();
 
+  const {
+    notebook,
+    fetchNotebook,
+    loadingNotebook,
+    updateNotebook,
+    deleteNotebook,
+    createNotebook,
+    deletingNotebook,
+    savingNotebook,
+    clearNotebook,
+  } = useNotebook();
+
+  const updateDisabled = notebook?.userId !== sessionUser.id;
+
+  const { getPanels, clearPanels } = usePanels(notebook?.id);
+
+  const { notebookId: notebookIdParam } = useParams();
+
+  const [copyModalOpen, setCopyModalOpen] = useState(false);
   const [confirmVisible, setConfirmVisible] = useState(false);
   const [notebookTitle, setNotebookTitle] = useState(notebook?.title || "");
-  const dispatch = useDispatch();
   const navigate = useNavigate();
-  const { panels, updatePanel } = usePanels(notebook?.id);
 
   useEffect(() => {
-    if (isNewNotebook) {
-      setNotebookTitle("");
-    } else {
-      if (notebook?.title) {
-        setNotebookTitle(notebook.title);
-      }
-    }
-  }, [isNewNotebook, notebook]); // eslint-disable-line react-hooks/exhaustive-deps
+    getRings();
+    fetchUsers();
 
-  const handleDeleteNotebook = () => {
-    dispatch(deleteNotebook(notebook?.id));
-    navigate("/notebooks");
-  };
-
-  useEffect(() => {
-    if (notebook?.title && !notebookTitle) {
-      setNotebookTitle(notebook.title);
-    }
-  }, [notebook]); // eslint-disable-line react-hooks/exhaustive-deps
+    return () => {
+      clearNotebook();
+      clearPanels();
+    };
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   const notebookRef = React.useRef(null);
+
   useEffect(() => {
+    // If we have a notebook id, navigate to it
+    if (notebook?.id) {
+      navigate(`/notebooks/${notebook?.id}`);
+    }
+    // If the notebook title has changed, set the local state
+    if (notebook?.title && notebook?.title !== notebookTitle) {
+      setNotebookTitle(notebook.title);
+    }
+    // If the notebook id has changed, fetch the panels
     if (notebook?.id && notebookRef.current !== notebook?.id) {
-      dispatch(getPanels(notebook?.id));
+      getPanels();
       notebookRef.current = notebook?.id;
     }
   }, [notebook?.id]); // eslint-disable-line react-hooks/exhaustive-deps
 
-  useEffectOnce(() => {
-    getRings();
+  useEffect(() => {
+    // If we have a notebook id, fetch the notebook
+    if (notebookIdParam && notebookIdParam !== "new") {
+      fetchNotebook(notebookIdParam);
+    }
+  }, [notebookIdParam]); // eslint-disable-line react-hooks/exhaustive-deps
 
-    return () => {
-      setNotebookTitle("");
-    };
-  });
+  const handleDeleteNotebook = () => {
+    deleteNotebook(notebook?.id);
+    navigate("/notebooks");
+  };
+
+  const updateNotebookVisibility = (id, visibility) => {
+    const out = visibility === "public" ? "private" : "public";
+
+    updateNotebook(id, {
+      visibility: out,
+    });
+  };
 
   return (
     <Loader isVisible={loadingNotebook}>
-      <>
-        <Grid
-          container
-          alignItems="center"
-          justifyContent="space-between"
-          sx={{
-            marginBottom: "32px",
-            padding: "18px 16px",
-            borderRadius: "6px",
-          }}
-        >
+      <Grid
+        container
+        sx={{
+          borderRadius: "6px",
+          background: "white",
+          padding: "16px 24px 24px 24px",
+          marginBottom: "36px",
+          boxShadow: "0px 2px 4px rgba(0, 0, 0, 0.1)",
+          "*": {
+            transition: ".2s all",
+          },
+        }}
+      >
+        <Grid container alignItems="center" justifyContent="space-between">
           <Grid item lg={4}>
             <TextField
               fullWidth
               size="medium"
               placeholder="Notebook Title"
               variant="standard"
-              error={!notebookTitle && !isNewNotebook}
+              error={!notebookTitle && notebook?.id}
               onChange={(event) => {
                 setNotebookTitle(event.target.value);
               }}
               value={notebookTitle}
-              sx={{ input: { fontSize: "22px" } }}
+              onBlur={() => {
+                if (
+                  notebookTitle &&
+                  notebook?.title &&
+                  notebookTitle !== notebook?.title
+                ) {
+                  updateNotebook(notebook?.id, { title: notebookTitle });
+                }
+              }}
+              sx={{
+                marginBottom: "6px",
+                input: {
+                  fontSize: "32px",
+                  color: "#333",
+                  paddingBottom: "0",
+                },
+              }}
             />
           </Grid>
 
-          <Grid item>
-            {notebook && (
-              <>
+          {notebook?.id ? (
+            <>
+              <Grid item sx={{ display: "flex", alignItems: "center" }}>
+                {/* <Tooltip title="Make a Copy">
+                  <Box
+                    sx={{
+                      border: `1px solid ${theme.palette.success.main}`,
+                      borderRadius: "4px",
+                      padding: "4px",
+                      height: "36px",
+                      width: "36px",
+                      marginRight: "10px",
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "center",
+                      cursor: "pointer",
+                    }}
+                    onClick={() => setCopyModalOpen(true)}
+                  >
+                    <ContentCopyIcon
+                      color="success"
+                      sx={{ fontSize: "22px" }}
+                    />
+                  </Box>
+                </Tooltip> */}
                 <DeleteButton
                   onClick={() => setConfirmVisible(true)}
-                  disabled={deletingNotebook}
-                  sx={{ marginRight: "12px" }}
+                  disabled={deletingNotebook || updateDisabled}
+                  variant="outlined"
+                  titleAddon="Notebook"
                 />
-                <Button
-                  color="success"
-                  variant="contained"
-                  onClick={() => {
-                    if (notebookTitle) {
-                      dispatch(
-                        updateNotebook(notebook?.id, {
-                          title: notebookTitle,
-                        }),
-                      );
-                      panels.forEach((panel) => {
-                        updatePanel(panel.id, panel);
-                      });
-                    }
-                  }}
-                  disabled={savingNotebook || !notebookTitle}
-                >
-                  Save
-                </Button>
-              </>
-            )}
+              </Grid>
+              <Grid
+                item
+                xs={12}
+                sx={{
+                  marginTop: "24px",
+                  "& .title": {
+                    fontSize: "18px",
+                    fontWeight: "600",
+                    marginRight: "12px",
+                  },
 
-            {!notebook && (
-              <Button
-                size="large"
-                color="success"
-                variant="contained"
-                onClick={() => {
-                  if (notebookTitle) {
-                    dispatch(createNotebook({ title: notebookTitle }));
-                  }
+                  "& .name": {
+                    color: "GrayText",
+                    fontSize: "16px",
+                    fontWeight: "600",
+                  },
                 }}
-                disabled={savingNotebook || !notebookTitle}
               >
-                {savingNotebook ? "Loading…" : "Create"}
-              </Button>
-            )}
-          </Grid>
+                <div>
+                  <span className="title">Owner:</span>
+                  <span className="name">
+                    {notebook?.user?.firstName} {notebook?.user?.lastName}
+                  </span>
+                </div>
+                <div>
+                  <span className="title">Public:</span>
+                  <Switch
+                    disabled={updateDisabled}
+                    checked={notebook?.visibility === "public"}
+                    onChange={() =>
+                      updateNotebookVisibility(
+                        notebook?.id,
+                        notebook.visibility,
+                      )
+                    }
+                    color="primary"
+                    sx={{ marginLeft: "-8px" }}
+                  />
+                </div>
+              </Grid>
+            </>
+          ) : (
+            <Button
+              size="large"
+              color="success"
+              variant="contained"
+              onClick={() => {
+                if (notebookTitle) {
+                  createNotebook({ title: notebookTitle });
+                }
+              }}
+              disabled={savingNotebook || !notebookTitle}
+            >
+              {savingNotebook ? "Loading…" : "Create"}
+            </Button>
+          )}
         </Grid>
 
-        {notebook && <Panels notebookId={notebook?.id} />}
-        <AddPanel notebookId={notebook?.id} />
-      </>
+        {notebook?.id && <></>}
+      </Grid>
+
+      {notebook && <Panels notebookId={notebook?.id} />}
+      <AddPanel notebookId={notebook?.id} />
+
       <ConfirmModal
         itemName="notebook"
         open={confirmVisible}
         setOpen={setConfirmVisible}
         onConfirm={handleDeleteNotebook}
       />
+      {copyModalOpen && <DuplicateNotebookModal setOpen={setCopyModalOpen} />}
     </Loader>
   );
 };

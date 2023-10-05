@@ -95,19 +95,18 @@ export const update = async (req: Request, res: Response) => {
 // Delete a Panel
 export const deletePanel = async (req: Request, res: Response) => {
   try {
-    const id = req.params.panelId;
-    const result = await sequelize.models.Panel.update(
-      {
-        deleted: true,
-      },
-      {
-        where: { id },
-      }
-    );
-    if (result) {
-      return res.send_ok("Panel has been deleted successfully!");
+    const { panelId } = req.params;
+
+    const panel = await sequelize.models.Panel.findOne({
+      where: { id: panelId },
+    });
+
+    if (!panel) {
+      return res.send_notFound("Panel not found");
     }
-    return res.send_internalServerError("Failed to delete panel!");
+
+    await panel.destroy();
+    return res.send_ok("Panel deleted successfully");
   } catch (error) {
     console.warn(error); // eslint-disable-line no-console
 

@@ -58,7 +58,7 @@ export const authActions = authSlice.actions;
 
 // Selectors
 export const authSelector = (state: RootState) => state.auth;
-export const userSelector = (state: RootState) => state.auth?.user;
+export const sessionUserSelector = (state: RootState) => state.auth?.user;
 export const tokenSelector = (state: RootState) => state.auth?.token;
 
 // The reducer
@@ -146,7 +146,7 @@ export const authMiddleware =
     }
   };
 
-export const useUser = () => {
+export const useAuthUser = () => {
   const { user } = useSelector(authSelector);
   return user;
 };
