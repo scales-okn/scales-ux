@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import { useNavigate, useParams } from "react-router-dom";
-import { useEffectOnce } from "react-use";
+// import { useEffectOnce } from "react-use";
 
 import { useRings } from "src/store/rings";
 import { useNotebook } from "src/store/notebook";
