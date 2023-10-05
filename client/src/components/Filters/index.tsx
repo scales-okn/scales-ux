@@ -34,7 +34,7 @@ const Filters = ({ panelId }: FiltersProps) => {
     getPanelResults();
     // updatePanel({ filters: [] });
   };
-  console.log(filters);
+
   return (
     <div className={`filter-container ${filterContainerStyles}`}>
       <div className="filters">
