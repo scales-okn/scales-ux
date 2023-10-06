@@ -7,6 +7,7 @@ import { useHelpTexts } from "./store/helpTexts";
 import { ErrorBoundary } from "react-error-boundary";
 import { ThemeProvider, createTheme } from "@mui/material/styles";
 import { Button, hexToRgb } from "@mui/material";
+import ReactGA from "react-ga4";
 
 import PageLayout from "./components/PageLayout";
 import DocumentPage from "src/pages/DocumentPage";
@@ -80,6 +81,8 @@ const App = () => {
   useEffect(() => {
     if (user) getHelpTexts();
   }, [user]); // eslint-disable-line react-hooks/exhaustive-deps
+
+  ReactGA.initialize("G-02JQP9G088");
 
   return (
     <ThemeProvider theme={theme}>
