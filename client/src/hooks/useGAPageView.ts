@@ -4,7 +4,6 @@ import ReactGA from "react-ga4";
 
 export const useGoogleAnalytics = () => {
   const location = useLocation();
-  // find out if we're in development mode
   const isProduction = process.env.NODE_ENV === "production";
 
   useEffect(() => {
