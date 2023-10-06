@@ -1,6 +1,6 @@
 import React, { useEffect } from "react";
 import { useSelector } from "react-redux";
-import { BrowserRouter, Route, Routes, Navigate } from "react-router-dom";
+import { BrowserRouter } from "react-router-dom";
 import { authSelector } from "./store/auth";
 import { useHelpTexts } from "./store/helpTexts";
 
@@ -9,18 +9,9 @@ import { ThemeProvider, createTheme } from "@mui/material/styles";
 import { Button, hexToRgb } from "@mui/material";
 import ReactGA from "react-ga4";
 
+import AppRoutes from "./AppRoutes";
 import PageLayout from "./components/PageLayout";
-import DocumentPage from "src/pages/DocumentPage";
-import SignInPage from "src/pages/SignInPage";
-import SignUpPage from "src/pages/SignUpPage";
-import NotebooksPage from "src/pages/NotebooksPage";
-import NotebookPage from "src/pages/NotebookPage";
-import EmailVerificationPage from "src/pages/EmailVerificationPage";
-import ForgotPasswordPage from "src/pages/ForgotPasswordPage";
-import ResetPasswordPage from "src/pages/ResetPasswordPage";
 import Notifications from "src/components/Notifications";
-import Ring from "src/pages/RingsPage/Ring";
-import Admin from "src/pages/AdminPage";
 
 const theme = createTheme({
   palette: {
@@ -70,13 +61,6 @@ const ErrorFallback = ({ error, resetErrorBoundary }) => {
 const App = () => {
   const { getHelpTexts } = useHelpTexts();
   const { user } = useSelector(authSelector);
-  const requireAuth = (element) => {
-    if (!user) {
-      return <Navigate to="/sign-in" />;
-    }
-
-    return element;
-  };
 
   useEffect(() => {
     if (user) getHelpTexts();
@@ -85,6 +69,9 @@ const App = () => {
   ReactGA.initialize([
     {
       trackingId: "G-02JQP9G088",
+      gaOptions: {
+        debug: true,
+      },
     },
   ]);
 
@@ -100,58 +87,7 @@ const App = () => {
           <Notifications />
           <BrowserRouter>
             <PageLayout>
-              <Routes>
-                <Route path="/" element={requireAuth(<NotebooksPage />)} />
-                <Route
-                  path="/notebooks/:notebookId"
-                  element={requireAuth(<NotebookPage />)}
-                />
-                <Route
-                  path="/document/:ringId/:ringVersion/:entityType/:docId"
-                  element={<DocumentPage />}
-                />
-                <Route path="/sign-in" element={<SignInPage />} />
-                <Route path="/sign-up" element={<SignUpPage />} />
-                <Route
-                  path="/forgot-password"
-                  element={<ForgotPasswordPage />}
-                />
-                <Route
-                  path="/reset-password/:token"
-                  element={<ResetPasswordPage />}
-                />
-                <Route
-                  path="/verify-email/:token"
-                  element={<EmailVerificationPage />}
-                />
-
-                {/* Admin Routes */}
-                <Route path="/admin/users" element={requireAuth(<Admin />)} />
-                <Route
-                  path="/admin/feedback"
-                  element={requireAuth(<Admin />)}
-                />
-                <Route
-                  path="/admin/help-texts/:helpTextSlug?"
-                  element={requireAuth(<Admin />)}
-                />
-                <Route path="/admin/rings" element={requireAuth(<Admin />)} />
-                <Route
-                  path="/admin/rings/create"
-                  element={requireAuth(<Ring />)}
-                />
-                <Route
-                  path="/admin/rings/:ringId"
-                  element={requireAuth(<Ring />)}
-                />
-                <Route
-                  path="/admin/*"
-                  element={<Navigate to="/admin/rings" replace />}
-                />
-
-                {/* Default Redirect */}
-                <Route path="*" element={<Navigate to="/" replace />} />
-              </Routes>
+              <AppRoutes />
             </PageLayout>
           </BrowserRouter>
         </ErrorBoundary>
