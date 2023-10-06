@@ -56,22 +56,24 @@ const FilterTypeDropDown = (props: FilterTypeProps) => {
     nicename: filterOptions?.nicename,
   });
 
-  useEffect(() => {
+  const resetFilterState = (input) => {
     try {
-      if (filterInput) {
+      if (input) {
         // when changing filter type, reset the value
-        const { type: dataType } = getFilterOptionsByKey(filterInput.key) || {};
+        const { type: dataType } = getFilterOptionsByKey(input.key) || {};
 
         setFilter({
           ...filter,
-          type: filterInput.key,
+          type: input.key,
           value: dataType === "boolean" ? "false" : "",
         });
       }
     } catch (error) {
       console.warn(error); // eslint-disable-line no-console
     }
-  }, [filterInput]); // eslint-disable-line react-hooks/exhaustive-deps
+  };
+
+  // useEffect(() => {}, [filterInput]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const filtersToRender = getFiltersNormalized()
     ?.filter(
@@ -144,6 +146,7 @@ const FilterTypeDropDown = (props: FilterTypeProps) => {
               <MenuItem
                 onClick={() => {
                   setFilterInput({ key, nicename });
+                  resetFilterState({ key, nicename });
                   handleMenuClose();
                 }}
                 disabled={disabled}

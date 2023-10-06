@@ -33,7 +33,8 @@ const Filters = ({ panelId }: FiltersProps) => {
   // console.log(filters.map((f) => f.value));
   const handleUpdateResults = () => {
     getPanelResults();
-    updatePanel({ filters });
+    const activeFilters = filters.filter((f) => f.value !== "");
+    updatePanel({ filters: activeFilters });
   };
 
   return (

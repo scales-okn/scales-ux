@@ -65,8 +65,9 @@ const Filter = ({ panelId, filter }: Props) => {
       ?.toString()
       .split("|")
       .map((value) => {
-        return { label: value, value: value };
+        return { label: value, value };
       });
+
     const out = filter.value === "" ? [] : values;
     setAutocompleteValues(out);
   }, [filter.value]); // eslint-disable-line react-hooks/exhaustive-deps
@@ -323,7 +324,11 @@ const Filter = ({ panelId, filter }: Props) => {
             }
             if (filterOptions?.nicename === "Court State") {
               return (
-                <StateAutocomplete setFilter={setFilter} filter={filter} />
+                <StateAutocomplete
+                  setFilter={setFilter}
+                  filter={filter}
+                  autocompleteValues={autocompleteValues}
+                />
               );
             }
             if (filterOptions?.autocomplete) {

@@ -3,7 +3,7 @@ import Autocomplete from "@mui/material/Autocomplete";
 import TextField from "@mui/material/TextField";
 import { usStates } from "./usStates";
 
-const StateAutocomplete = ({ setFilter, filter }) => {
+const StateAutocomplete = ({ setFilter, filter, autocompleteValues }) => {
   const [inputValue, setInputValue] = useState("");
 
   const handleInputChange = (event, newInputValue) => {
@@ -35,6 +35,7 @@ const StateAutocomplete = ({ setFilter, filter }) => {
       options={usStates}
       getOptionLabel={(option) => option.label}
       isOptionEqualToValue={(option, value) => option.label === value.label}
+      value={autocompleteValues}
       inputValue={inputValue}
       onInputChange={handleInputChange}
       renderInput={(params) => (
