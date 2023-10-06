@@ -52,6 +52,7 @@ const Filter = ({ panelId, filter }: Props) => {
     FilterOptionT[]
   >([]);
   const [autocompleteValues, setAutocompleteValues] = useState([]);
+
   const [dateValue, setDateValue] = useState<Date | null>(null);
   const { notify } = useNotify();
 
@@ -60,13 +61,15 @@ const Filter = ({ panelId, filter }: Props) => {
   }, [type]);
 
   useEffect(() => {
-    const activeFilter = filters.find((filter) => filter.type === type);
-    const values = activeFilter.value.split("|").map((value) => {
-      return { label: value, value: value };
-    });
-    const out = activeFilter.value === "" ? [] : values;
+    const values = filter.value
+      ?.toString()
+      .split("|")
+      .map((value) => {
+        return { label: value, value: value };
+      });
+    const out = filter.value === "" ? [] : values;
     setAutocompleteValues(out);
-  }, []); // eslint-disable-line react-hooks/exhaustive-deps
+  }, [filter.value]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const setFilter = (filter: FilterT) => {
     try {
@@ -222,7 +225,6 @@ const Filter = ({ panelId, filter }: Props) => {
           ...filter,
           value: fieldValue.map((x) => x.value).join("|"),
         });
-        setAutocompleteValues(fieldValue);
         autocompleteRef.current?.blur();
       }}
       sx={{

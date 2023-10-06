@@ -16,6 +16,7 @@ const DuplicateNotebookModal = ({ setOpen }: DuplicateNotebookModalT) => {
   const sessionUser = useSelector(sessionUserSelector);
 
   const { notebook, createNotebook } = useNotebook();
+
   const [titleValue, setTitleValue] = useState(notebook?.title);
 
   const handleCopyNotebook = () => {
@@ -23,6 +24,7 @@ const DuplicateNotebookModal = ({ setOpen }: DuplicateNotebookModalT) => {
       ...notebook,
       userId: sessionUser.id,
       title: titleValue,
+      visibility: "private",
     });
     setOpen(false);
     // we also need to copy all panels, filters, and analyses
@@ -31,7 +33,11 @@ const DuplicateNotebookModal = ({ setOpen }: DuplicateNotebookModalT) => {
   return (
     <ModalContainer open onClose={() => setOpen(false)}>
       <Box
-        sx={{ display: "flex", flexDirection: "column", alignItems: "center" }}
+        sx={{
+          display: "flex",
+          flexDirection: "column",
+          alignItems: "center",
+        }}
       >
         <Typography variant="h4" sx={{ marginBottom: "12px" }}>
           Duplicate Notebook
@@ -40,9 +46,9 @@ const DuplicateNotebookModal = ({ setOpen }: DuplicateNotebookModalT) => {
           variant="body2"
           sx={{ fontStyle: "italic", color: "GrayText", marginBottom: "24px" }}
         >
-          This will create a copy of this notebook that you can edit. The copy
-          will be saved in your notebook list. The original notebook will remain
-          unchanged. You can delete the copy at any time.
+          This will create a copy of this notebook that you can edit. It will be
+          saved in your notebook list. The original notebook will remain
+          unchanged. You can delete your copy at any time.
         </Typography>
         <Typography variant="h6" sx={{ marginBottom: "8px" }}>
           New Notebook Title

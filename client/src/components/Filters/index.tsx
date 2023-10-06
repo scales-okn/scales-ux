@@ -19,7 +19,7 @@ const Filters = ({ panelId }: FiltersProps) => {
     filters = [],
     setPanelFilters,
     getPanelResults,
-    // updatePanel,
+    updatePanel,
   } = usePanel(panelId);
 
   const filterElements = useMemo(() => {
@@ -30,9 +30,10 @@ const Filters = ({ panelId }: FiltersProps) => {
     );
   }, [filters]); // eslint-disable-line react-hooks/exhaustive-deps
 
+  // console.log(filters.map((f) => f.value));
   const handleUpdateResults = () => {
     getPanelResults();
-    // updatePanel({ filters: [] });
+    updatePanel({ filters });
   };
 
   return (
