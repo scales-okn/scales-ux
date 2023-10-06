@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import { useNavigate, useParams } from "react-router-dom";
-// import { useEffectOnce } from "react-use";
 
 import { useRings } from "src/store/rings";
 import { useNotebook } from "src/store/notebook";
@@ -9,16 +8,10 @@ import { useUser } from "src/store/user";
 import { usePanels } from "src/store/panels";
 import { sessionUserSelector } from "src/store/auth";
 
-// import ContentCopyIcon from "@mui/icons-material/ContentCopy";
-import {
-  Grid,
-  TextField,
-  Button,
-  Switch,
-  // Box, Tooltip
-} from "@mui/material";
+import ContentCopyIcon from "@mui/icons-material/ContentCopy";
+import { Grid, TextField, Button, Switch, Box, Tooltip } from "@mui/material";
 import DeleteButton from "src/components/Buttons/DeleteButton";
-// import { useTheme } from "@mui/material/styles";
+import { useTheme } from "@mui/material/styles";
 
 import AddPanel from "src/components/Panels/AddPanel";
 import ConfirmModal from "src/components/Modals/ConfirmModal";
@@ -31,7 +24,7 @@ const Notebook = () => {
   const { fetchUsers } = useUser();
   const sessionUser = useSelector(sessionUserSelector);
 
-  // const theme = useTheme();
+  const theme = useTheme(); // mui theme
 
   const {
     notebook,
@@ -154,7 +147,7 @@ const Notebook = () => {
           {notebook?.id ? (
             <>
               <Grid item sx={{ display: "flex", alignItems: "center" }}>
-                {/* <Tooltip title="Make a Copy">
+                <Tooltip title="Make a Copy">
                   <Box
                     sx={{
                       border: `1px solid ${theme.palette.success.main}`,
@@ -175,7 +168,7 @@ const Notebook = () => {
                       sx={{ fontSize: "22px" }}
                     />
                   </Box>
-                </Tooltip> */}
+                </Tooltip>
                 <DeleteButton
                   onClick={() => setConfirmVisible(true)}
                   disabled={deletingNotebook || updateDisabled}
