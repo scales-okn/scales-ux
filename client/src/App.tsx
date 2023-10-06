@@ -82,7 +82,11 @@ const App = () => {
     if (user) getHelpTexts();
   }, [user]); // eslint-disable-line react-hooks/exhaustive-deps
 
-  ReactGA.initialize("G-02JQP9G088");
+  ReactGA.initialize([
+    {
+      trackingId: "G-02JQP9G088",
+    },
+  ]);
 
   return (
     <ThemeProvider theme={theme}>
