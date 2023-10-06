@@ -16,6 +16,7 @@ import HighlightOffIcon from "@mui/icons-material/HighlightOff";
 
 import DateTimeRangePicker from "@wojtekmaj/react-datetimerange-picker";
 
+import { usStates } from "./usStates";
 import { DATE_FORMAT } from "src/helpers/constants";
 import { makeRequest } from "src/helpers/makeRequest";
 import { useNotify } from "src/components/Notifications";
@@ -65,6 +66,9 @@ const Filter = ({ panelId, filter }: Props) => {
       ?.toString()
       .split("|")
       .map((value) => {
+        if (type === "state_abbrev") {
+          return usStates.find((state) => state.value === value);
+        }
         return { label: value, value };
       });
 
@@ -322,7 +326,7 @@ const Filter = ({ panelId, filter }: Props) => {
             if (filterOptions?.type === "date") {
               return datePickerElement;
             }
-            if (filterOptions?.nicename === "Court State") {
+            if (type === "state_abbrev") {
               return (
                 <StateAutocomplete
                   setFilter={setFilter}
