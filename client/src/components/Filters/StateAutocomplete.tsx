@@ -3,7 +3,12 @@ import Autocomplete from "@mui/material/Autocomplete";
 import TextField from "@mui/material/TextField";
 import { usStates } from "./usStates";
 
-const StateAutocomplete = ({ setFilter, filter, autocompleteValues }) => {
+const StateAutocomplete = ({
+  setFilter,
+  filter,
+  autocompleteValues,
+  disabled,
+}) => {
   const [inputValue, setInputValue] = useState("");
 
   const handleInputChange = (event, newInputValue) => {
@@ -21,6 +26,7 @@ const StateAutocomplete = ({ setFilter, filter, autocompleteValues }) => {
   return (
     <Autocomplete
       multiple
+      disabled={disabled}
       disableClearable
       filterOptions={filterOptions}
       onChange={(_, fieldValue) => {

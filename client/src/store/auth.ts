@@ -146,7 +146,7 @@ export const authMiddleware =
     }
   };
 
-export const useAuthUser = () => {
+export const useSessionUser = () => {
   const { user } = useSelector(authSelector);
   return user;
 };

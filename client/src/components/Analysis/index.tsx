@@ -3,6 +3,7 @@ import React, { useEffect, FunctionComponent, useState } from "react";
 
 import { usePanel } from "src/store/panels";
 import { useRing } from "src/store/rings";
+import { useSessionUser } from "src/store/auth";
 
 import { Grid, Paper, Button } from "@mui/material";
 import AddIcon from "@mui/icons-material/Add";
@@ -29,6 +30,9 @@ const Analysis: FunctionComponent<Props> = ({ panelId }) => {
     usePanel(panelId);
 
   const { ring, info } = useRing(panel?.ringId);
+
+  const sessionUser = useSessionUser();
+  const sessionUserCanEdit = sessionUser?.id === panel?.userId;
 
   const [selectedStatements, setSelectedStatements] = useState([]);
 
@@ -301,11 +305,11 @@ const Analysis: FunctionComponent<Props> = ({ panelId }) => {
               id: uniqid(),
             });
           }}
+          disabled={!sessionUserCanEdit}
           sx={{
             border: "1px solid black",
             color: "black",
             marginRight: "12px",
-
             width: "36px",
             height: "36px",
             minWidth: 0,

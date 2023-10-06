@@ -1,12 +1,11 @@
 import React, { useEffect, useState } from "react";
-import { useSelector } from "react-redux";
 import { useNavigate, useParams } from "react-router-dom";
 
 import { useRings } from "src/store/rings";
 import { useNotebook } from "src/store/notebook";
 import { useUser } from "src/store/user";
 import { usePanels } from "src/store/panels";
-import { sessionUserSelector } from "src/store/auth";
+import { useSessionUser } from "src/store/auth";
 
 import ContentCopyIcon from "@mui/icons-material/ContentCopy";
 import { Grid, TextField, Button, Switch, Box, Tooltip } from "@mui/material";
@@ -22,10 +21,6 @@ import DuplicateNotebookModal from "./DuplicateNotebookModal";
 const Notebook = () => {
   const { getRings } = useRings();
   const { fetchUsers } = useUser();
-  const sessionUser = useSelector(sessionUserSelector);
-
-  const theme = useTheme(); // mui theme
-
   const {
     notebook,
     fetchNotebook,
@@ -37,10 +32,12 @@ const Notebook = () => {
     savingNotebook,
     clearNotebook,
   } = useNotebook();
-
-  const updateDisabled = notebook?.userId !== sessionUser.id;
-
   const { getPanels, clearPanels } = usePanels(notebook?.id);
+
+  const sessionUser = useSessionUser();
+  const sessionUserCanEdit = sessionUser?.id === notebook?.userId;
+
+  const theme = useTheme(); // mui theme
 
   const { notebookId: notebookIdParam } = useParams();
 
@@ -117,6 +114,7 @@ const Notebook = () => {
             <TextField
               fullWidth
               size="medium"
+              disabled={!sessionUserCanEdit}
               placeholder="Notebook Title"
               variant="standard"
               error={!notebookTitle && notebook?.id}
@@ -171,7 +169,7 @@ const Notebook = () => {
                 </Tooltip>
                 <DeleteButton
                   onClick={() => setConfirmVisible(true)}
-                  disabled={deletingNotebook || updateDisabled}
+                  disabled={deletingNotebook || !sessionUserCanEdit}
                   variant="outlined"
                   titleAddon="Notebook"
                 />
@@ -203,7 +201,7 @@ const Notebook = () => {
                 <div>
                   <span className="title">Public:</span>
                   <Switch
-                    disabled={updateDisabled}
+                    disabled={!sessionUserCanEdit}
                     checked={notebook?.visibility === "public"}
                     onChange={() =>
                       updateNotebookVisibility(
