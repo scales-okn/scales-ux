@@ -12,24 +12,65 @@ import { permissionsFieldsFilter } from "../services/accesscontrol";
 export const create = async (req: Request, res: Response) => {
   try {
     const {
+      id = null, // ID of original notebook if this is a copy
       title,
       collaborators = [],
       contents,
       visibility,
       parent = null,
     } = req.body;
+    //@ts-ignore
+    const userId = req.user.id;
 
-    const notebook = await sequelize.models.Notebook.create({
+    const newNotebook = await sequelize.models.Notebook.create({
       title,
-      //@ts-ignore
-      userId: req.user.id,
+      userId,
       collaborators,
       contents,
       visibility,
       parent,
     });
+    const newNotebookId = newNotebook.id;
 
-    return res.send_ok("Notebook created successfully!", { notebook });
+    // Duplicate Panels
+    if (id) {
+      const originalNotebook = await sequelize.models.Notebook.findOne({
+        where: { id },
+      });
+      const originalPanels = await sequelize.models.Panel.findAll({
+        where: { notebookId: originalNotebook.id },
+      });
+
+      if (!originalNotebook || !originalPanels.length) return;
+
+      originalPanels.map((panel) => {
+        const {
+          description,
+          ringId,
+          ringVersion,
+          filters,
+          results,
+          contents,
+          analysis,
+        } = panel;
+
+        sequelize.models.Panel.create({
+          description,
+          notebookId: newNotebookId,
+          ringId,
+          ringVersion,
+          filters,
+          results,
+          contents,
+          analysis,
+          userId: userId,
+        });
+      });
+    }
+
+    return res.send_ok("Notebook created successfully!", {
+      notebook: newNotebook,
+    });
   } catch (error) {
     console.warn(error); // eslint-disable-line no-console
 

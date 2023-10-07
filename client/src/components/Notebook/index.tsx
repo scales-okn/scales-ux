@@ -8,7 +8,15 @@ import { usePanels } from "src/store/panels";
 import { useSessionUser } from "src/store/auth";
 
 import ContentCopyIcon from "@mui/icons-material/ContentCopy";
-import { Grid, TextField, Button, Switch, Box, Tooltip } from "@mui/material";
+import {
+  Grid,
+  TextField,
+  Button,
+  Switch,
+  Box,
+  Tooltip,
+  Typography,
+} from "@mui/material";
 import DeleteButton from "src/components/Buttons/DeleteButton";
 import { useTheme } from "@mui/material/styles";
 
@@ -110,7 +118,7 @@ const Notebook = () => {
         }}
       >
         <Grid container alignItems="center" justifyContent="space-between">
-          <Grid item lg={4}>
+          <Grid item xs={8}>
             <TextField
               fullWidth
               size="medium"
@@ -140,6 +148,18 @@ const Notebook = () => {
                 },
               }}
             />
+            {!sessionUserCanEdit && (
+              <Typography
+                sx={{
+                  fontStyle: "italic",
+                  fontSize: "14px",
+                  color: "GrayText",
+                }}
+              >
+                This is a read-only, public notebook. Use the copy button to
+                clone your own version.
+              </Typography>
+            )}
           </Grid>
 
           {notebook?.id ? (
