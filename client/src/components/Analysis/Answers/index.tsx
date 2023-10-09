@@ -44,7 +44,7 @@ const Answers = ({
   }, [answer]);
 
   useEffect(() => {
-    if (!data || !statement || !plan || !satyrn) return;
+    if (isEmpty(data) || !statement || !plan || !satyrn) return;
     setAnswerType(getAnswersDisplayType(plan, data.results));
 
     const currentFilters = statement?.plan?.query?.["AND"];
@@ -133,11 +133,6 @@ const Answers = ({
     expanded,
   ]);
 
-  const styles = css`
-    width: 100%;
-    margin-bottom: 20px;
-  `;
-
   const onCapture = () => {
     htmlToImage
       .toPng(document.getElementById(`data-chart-${panelId}`))
@@ -164,10 +159,17 @@ const Answers = ({
 
   return (
     <>
-      <div ref={containerRef} className={`answers ${styles}`}>
+      <Box
+        ref={containerRef}
+        sx={{
+          width: "100%",
+          marginBottom: isEmpty(data) ? "0px" : "20px",
+          transition: ".2s all",
+        }}
+      >
         <Loader isVisible={loadingAnswers}>
           <>
-            {data && (
+            {!isEmpty(data) && (
               <div
                 style={{
                   overflowX: "auto",
@@ -212,7 +214,7 @@ const Answers = ({
             )}
           </>
         </Loader>
-      </div>
+      </Box>
       {isBarChart || isLineChart || isMultilineChart ? (
         <Tooltip title="Save Snapshot">
           <Button onClick={onCapture} variant="outlined">

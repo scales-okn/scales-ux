@@ -5,7 +5,7 @@ import { usePanel } from "src/store/panels";
 import { useRing } from "src/store/rings";
 import { useSessionUser } from "src/store/auth";
 
-import { Grid, Paper, Button } from "@mui/material";
+import { Grid, Paper, Button, Box } from "@mui/material";
 import AddIcon from "@mui/icons-material/Add";
 import uniqid from "uniqid";
 import _ from "lodash";
@@ -73,12 +73,12 @@ const Analysis: FunctionComponent<Props> = ({ panelId }) => {
       }
       return null;
     });
-  }, [analysis, statements]); // eslint-disable-line react-hooks/exhaustive-deps
+  }, [info, statements]); // eslint-disable-line react-hooks/exhaustive-deps
 
-  const getAnswers = async (statement, id, skipFetch) => {
+  const getAnswers = async (statement, analysisId, skipFetch = false) => {
     try {
       const statementSrc = statements.find((s) => {
-        // hacky
+        // TODO: hacky, why does this vary?
         return (
           s.statement === statement.statement.statement ||
           s.statement === statement.statement
@@ -170,7 +170,7 @@ const Analysis: FunctionComponent<Props> = ({ panelId }) => {
 
       if (!skipFetch) {
         setAnswersLoading(() => {
-          return { ...answersLoading, [id]: true };
+          return { ...answersLoading, [analysisId]: true };
         });
 
         const fetchStem =
@@ -184,22 +184,25 @@ const Analysis: FunctionComponent<Props> = ({ panelId }) => {
         );
 
         updatePanel({
-          analysis: { ...analysis, [id]: { ...statement, results: response } },
+          analysis: {
+            ...analysis,
+            [analysisId]: { ...statement, results: response },
+          },
         });
         setTimeout(() => {
           setAnswersLoading(() => {
-            return { ...answersLoading, [id]: false };
+            return { ...answersLoading, [analysisId]: false };
           });
         }, 500);
       }
 
       setPlans((prev) => {
-        return { ...prev, [id]: resPlan };
+        return { ...prev, [analysisId]: resPlan };
       });
     } catch (error) {
       console.log("🚀 ~ file: index.tsx:203 ~ error:", error); // eslint-disable-line no-console
       setAnswersLoading(() => {
-        return { ...answersLoading, [id]: false };
+        return { ...answersLoading, [analysisId]: false };
       });
       notify("Could not fetch results", "error");
     }
@@ -288,15 +291,29 @@ const Analysis: FunctionComponent<Props> = ({ panelId }) => {
                   loadingAutosuggestions={loadingAutosuggestions}
                 />
               </Grid>
-              <DeleteButton
-                onClick={() => handleRemoveAnalysis(id)}
+              <Box
                 sx={{
+                  display: "flex",
+                  alignItems: "center",
                   marginTop: "16px",
-                  marginRight: "0px",
                 }}
-                variant="outlined"
-                titleAddon="Analysis"
-              />
+              >
+                <Button
+                  variant="contained"
+                  // disabled={!sessionUserCanEdit}
+                  onClick={() => getAnswers(analysis[id], id)}
+                >
+                  Update Analysis
+                </Button>
+                <DeleteButton
+                  onClick={() => handleRemoveAnalysis(id)}
+                  sx={{
+                    marginLeft: "12px",
+                  }}
+                  variant="outlined"
+                  titleAddon="Analysis"
+                />
+              </Box>
             </Grid>
 
             <Answers

@@ -39,7 +39,19 @@ const Filters = ({ panelId }: FiltersProps) => {
     if (sessionUserCanEdit) {
       getPanelResults();
       const activeFilters = filters.filter((f) => f.value !== "");
-      updatePanel({ filters: activeFilters });
+
+      const freshAnalyses = {};
+      Object.keys(panel.analysis).map((key) => {
+        freshAnalyses[key] = {
+          ...panel.analysis[key],
+          results: {}, // Set "results" to an empty object
+        };
+      });
+
+      updatePanel({
+        filters: activeFilters,
+        analysis: freshAnalyses,
+      });
     }
   };
 
