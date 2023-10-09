@@ -103,6 +103,7 @@ const Analysis: FunctionComponent<Props> = ({ panelId }) => {
         }
       });
 
+      console.log("🚀 ~ file: index.tsx:107 ~ getAnswers ~ filters:", filters);
       const queryFilters = filters
         ? filters?.map((filter) => {
             if (filter.type === "dateFiled") {

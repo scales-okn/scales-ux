@@ -1,7 +1,6 @@
 import React, { memo, useEffect, useState, useRef, useMemo } from "react";
 import { usePanel } from "src/store/panels";
 
-import { css } from "@emotion/css";
 import dayjs from "dayjs";
 import { isEmpty } from "lodash";
 import { Button, Tooltip, Typography, Box } from "@mui/material";
@@ -47,7 +46,7 @@ const Answers = ({
     if (isEmpty(data) || !statement || !plan || !satyrn) return;
     setAnswerType(getAnswersDisplayType(plan, data.results));
 
-    const currentFilters = statement?.plan?.query?.["AND"];
+    const currentFilters = plan?.query?.["AND"];
 
     const formatString = (str) => {
       return str.replace(/\|/g, "");
@@ -88,7 +87,7 @@ const Answers = ({
           return acc;
         }, {})
       : {};
-
+    console.log(formattedFilters);
     setAnswer(satyrn.responseManager.generate(formattedFilters, plan, data));
   }, [data, plan, satyrn, statement, filters]); // eslint-disable-line react-hooks/exhaustive-deps
 
