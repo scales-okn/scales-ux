@@ -19,7 +19,7 @@ export const create = async (req: Request, res: Response) => {
       userId,
     });
 
-    return res.send_ok("Panel created succesfully!", { panel });
+    return res.send_ok("Panel created successfully!", { panel });
   } catch (error) {
     console.warn(error); // eslint-disable-line no-console
 

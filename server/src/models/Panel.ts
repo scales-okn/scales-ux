@@ -18,7 +18,7 @@ export default (sequelize, options) => {
       contents: DataTypes.JSON,
       analysis: {
         type: DataTypes.JSON,
-        defaultValue: [],
+        defaultValue: {},
       },
     },
     options

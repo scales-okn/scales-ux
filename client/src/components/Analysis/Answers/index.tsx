@@ -89,9 +89,7 @@ const Answers = ({
         }, {})
       : {};
 
-    setAnswer(
-      satyrn.responseManager.generate(formattedFilters, statement?.plan, data),
-    );
+    setAnswer(satyrn.responseManager.generate(formattedFilters, plan, data));
   }, [data, plan, satyrn, statement, filters]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const chartMargins = {
@@ -166,7 +164,7 @@ const Answers = ({
 
   return (
     <>
-      <div ref={containerRef} className={`$answers ${styles}`}>
+      <div ref={containerRef} className={`answers ${styles}`}>
         <Loader isVisible={loadingAnswers}>
           <>
             {data && (

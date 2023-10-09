@@ -26,15 +26,12 @@ type Props = {
 };
 
 const Analysis: FunctionComponent<Props> = ({ panelId }) => {
-  const { panel, analysis, addPanelAnalysis, removePanelAnalysis, filters } =
-    usePanel(panelId);
+  const { panel, analysis, updatePanel, filters } = usePanel(panelId);
 
   const { ring, info } = useRing(panel?.ringId);
 
   const sessionUser = useSessionUser();
   const sessionUserCanEdit = sessionUser?.id === panel?.userId;
-
-  const [selectedStatements, setSelectedStatements] = useState([]);
 
   const [statements, setStatements] = useState([]);
 
@@ -46,7 +43,6 @@ const Analysis: FunctionComponent<Props> = ({ panelId }) => {
     string[]
   >([]);
 
-  const [data, setData] = useState(null);
   const [satyrn, setSatyrn] = useState(null);
   const [plans, setPlans] = useState([]);
 
@@ -66,23 +62,39 @@ const Analysis: FunctionComponent<Props> = ({ panelId }) => {
   }, [info]); // eslint-disable-line react-hooks/exhaustive-deps
 
   useEffect(() => {
-    Object.keys(selectedStatements).map((statementId) => {
-      getAnswers(selectedStatements[statementId], statementId, true);
+    if (_.isEmpty(statements) || !info) return;
+
+    Object.keys(analysis).map((statementId) => {
+      const noExistingResults = _.isEmpty(analysis[statementId].results);
+      const hasStatement = analysis[statementId].statement;
+
+      if (hasStatement) {
+        getAnswers(
+          analysis[statementId],
+          statementId,
+          false,
+          !noExistingResults,
+        );
+      }
       return null;
     });
-  }, [panel?.results?.results]); // eslint-disable-line react-hooks/exhaustive-deps
+  }, [analysis, statements]); // eslint-disable-line react-hooks/exhaustive-deps
 
-  const getStatement = (statement) => {
-    return statements.find((s) => s.statement === statement);
-  };
-
-  const getAnswers = async (statement, id, withoutLoading = false) => {
+  const getAnswers = async (
+    statement,
+    id,
+    withoutLoading = false,
+    skipFetch,
+  ) => {
     try {
-      setData({ ...data, [id]: null });
-      if (!withoutLoading) setAnswersLoading({ ...answersLoading, [id]: true });
-      const statementSrc = getStatement(statement.statement); // probably unnecessary
+      const statementSrc = statements.find((s) => {
+        return s.statement === statement.statement.statement;
+      });
+
+      // console.log(statements, statement);
       const resPlan = statementSrc?.plan;
       resPlan.rings = [ring.rid];
+
       // inject value on param slot path
       statement.parameters?.forEach((param) => {
         if (
@@ -163,23 +175,39 @@ const Analysis: FunctionComponent<Props> = ({ panelId }) => {
         resPlan.query = {};
       }
 
-      setPlans({ ...plans, [id]: resPlan });
-      const fetchStem =
-        import.meta.env.VITE_REACT_APP_SATYRN_ENV === "development"
-          ? "http://127.0.0.1:5000/api"
-          : "/proxy";
+      if (!skipFetch) {
+        setAnswersLoading(() => {
+          return { ...answersLoading, [id]: true };
+        });
 
-      const response = await makeRequest.post(
-        `${fetchStem}/analysis/${ring.rid}/${ring.version}/${info?.defaultEntity}/`,
-        resPlan,
-      );
+        const fetchStem =
+          import.meta.env.VITE_REACT_APP_SATYRN_ENV === "development"
+            ? "http://127.0.0.1:5000/api"
+            : "/proxy";
 
-      setData({ ...data, [id]: response });
-      setAnswersLoading({ ...answersLoading, [id]: false });
+        const response = await makeRequest.post(
+          `${fetchStem}/analysis/${ring.rid}/${ring.version}/${info?.defaultEntity}/`,
+          resPlan,
+        );
+
+        updatePanel({
+          analysis: { ...analysis, [id]: { ...statement, results: response } },
+        });
+        setTimeout(() => {
+          setAnswersLoading(() => {
+            return { ...answersLoading, [id]: false };
+          });
+        }, 500);
+      }
+
+      setPlans((prev) => {
+        return { ...prev, [id]: resPlan };
+      });
     } catch (error) {
-      console.warn(error); // eslint-disable-line no-console
-      setData(null);
-      setAnswersLoading({ ...answersLoading, [id]: false });
+      console.log("🚀 ~ file: index.tsx:203 ~ error:", error); // eslint-disable-line no-console
+      setAnswersLoading(() => {
+        return { ...answersLoading, [id]: false };
+      });
       notify("Could not fetch results", "error");
     }
   };
@@ -211,77 +239,84 @@ const Analysis: FunctionComponent<Props> = ({ panelId }) => {
       setLoadingAutosuggestions(false);
     }
   };
-
   const handleRemoveAnalysis = (id) => {
-    removePanelAnalysis(id);
+    updatePanel({ analysis: _.omit(analysis, id) });
   };
 
   return (
     <div className="analysis">
-      {analysis.map(({ id }) => (
-        <Grid key={id} container className="analysis-item">
-          <Grid
-            item
-            sx={{
-              display: "flex",
-              alignItems: "flex-start",
-              justifyContent: "space-between",
-              width: "100%",
-              padding: 0,
-            }}
-          >
-            <Grid item>
-              <Statements
-                statements={statements}
-                setSelectedStatement={(statement) => {
-                  setSelectedStatements({
-                    ...selectedStatements,
-                    [id]: statement,
-                  });
-                  getAnswers(statement, id);
+      {Object.keys(analysis).map((id) => {
+        return (
+          <Grid key={id} container className="analysis-item">
+            <Grid
+              item
+              sx={{
+                display: "flex",
+                alignItems: "flex-start",
+                justifyContent: "space-between",
+                width: "100%",
+                padding: 0,
+              }}
+            >
+              <Grid item>
+                <Statements
+                  statements={statements}
+                  setPanelStatement={(statement) => {
+                    updatePanel({
+                      analysis: {
+                        ...analysis,
+                        [id]: { ...analysis[id], statement, results: {} },
+                      },
+                    });
+                  }}
+                  selectedStatement={analysis[id].statement}
+                />
+                <Parameters
+                  autoCompleteSuggestions={autoCompleteSuggestions}
+                  parameters={analysis[id]?.parameters}
+                  selectedParameter={analysis[id]?.selectedParameter}
+                  setPanelStatement={(params) => {
+                    const newStatement = {
+                      ...analysis[id].statement,
+                      parameters: params,
+                    };
+                    updatePanel({
+                      analysis: {
+                        ...analysis,
+                        [id]: {
+                          ...analysis[id],
+                          statement: newStatement,
+                          results: {},
+                        },
+                      },
+                    });
+                  }}
+                  fetchAutocompleteSuggestions={fetchAutocompleteSuggestions}
+                  loadingAutosuggestions={loadingAutosuggestions}
+                />
+              </Grid>
+              <DeleteButton
+                onClick={() => handleRemoveAnalysis(id)}
+                sx={{
+                  marginTop: "16px",
+                  marginRight: "0px",
                 }}
-                selectedStatement={selectedStatements[id]?.statement}
-              />
-              <Parameters
-                autoCompleteSuggestions={autoCompleteSuggestions}
-                parameters={selectedStatements[id]?.parameters}
-                selectedParameter={selectedStatements[id]?.selectedParameter}
-                setSelectedParameter={(params) => {
-                  const newStatement = {
-                    ...selectedStatements[id],
-                    selectedParameter: params,
-                  };
-                  setSelectedStatements({
-                    ...selectedStatements,
-                    [id]: newStatement,
-                  });
-                  getAnswers(newStatement, id);
-                }}
-                fetchAutocompleteSuggestions={fetchAutocompleteSuggestions}
-                loadingAutosuggestions={loadingAutosuggestions}
+                variant="outlined"
+                titleAddon="Analysis"
               />
             </Grid>
-            <DeleteButton
-              onClick={() => handleRemoveAnalysis(id)}
-              sx={{
-                marginTop: "16px",
-                marginRight: "0px",
-              }}
-              variant="outlined"
-              titleAddon="Analysis"
+
+            <Answers
+              panelId={panelId}
+              plan={plans[id]}
+              statement={analysis[id]}
+              data={analysis[id].results}
+              satyrn={satyrn}
+              loadingAnswers={answersLoading[id]}
             />
           </Grid>
-
-          <Answers
-            panelId={panelId}
-            plan={plans[id]}
-            statement={selectedStatements[id]}
-            data={data?.[id]}
-            satyrn={satyrn}
-            loadingAnswers={answersLoading[id]}
-          />
-        </Grid>
-      ))}
+        );
+      })}
 
       <Paper
         elevation={3}
@@ -295,8 +330,11 @@ const Analysis: FunctionComponent<Props> = ({ panelId }) => {
         <Button
           variant="outlined"
           onClick={() => {
-            addPanelAnalysis({
-              id: uniqid(),
+            updatePanel({
+              analysis: {
+                ...analysis,
+                [uniqid()]: {},
+              },
             });
           }}
           disabled={!sessionUserCanEdit}
