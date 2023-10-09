@@ -221,7 +221,7 @@ const Filter = ({ panelId, filter }: Props) => {
 
         const minChar = 3;
         if (value.length >= minChar && !noFetchFilterTypes.includes(type)) {
-          debouncedSearch(value);
+          setRawSearch(value);
           setIsLoading(true);
         }
         if (!autocompleteOpen) setAutocompleteOpen(true);

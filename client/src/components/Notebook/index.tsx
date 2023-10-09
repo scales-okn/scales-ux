@@ -42,13 +42,14 @@ const Notebook = () => {
   } = useNotebook();
   const { getPanels, clearPanels } = usePanels(notebook?.id);
 
-  const sessionUser = useSessionUser();
-  const sessionUserCanEdit = sessionUser?.id === notebook?.userId;
-
-  const theme = useTheme(); // mui theme
-
   const { notebookId: notebookIdParam } = useParams();
   const isNewNotebook = notebookIdParam === "new";
+
+  const sessionUser = useSessionUser();
+  const sessionUserCanEdit = sessionUser?.id === notebook?.userId;
+  const updatesDisabled = !sessionUserCanEdit && !isNewNotebook;
+
+  const theme = useTheme(); // mui theme
 
   const [copyModalOpen, setCopyModalOpen] = useState(false);
   const [confirmVisible, setConfirmVisible] = useState(false);
@@ -124,7 +125,7 @@ const Notebook = () => {
             <TextField
               fullWidth
               size="medium"
-              disabled={!sessionUserCanEdit}
+              disabled={updatesDisabled}
               placeholder="Notebook Title"
               variant="standard"
               error={!notebookTitle && notebook?.id}
@@ -151,7 +152,7 @@ const Notebook = () => {
                 },
               }}
             />
-            {!sessionUserCanEdit && (
+            {updatesDisabled && (
               <Typography
                 sx={{
                   fontStyle: "italic",
@@ -192,7 +193,7 @@ const Notebook = () => {
                 </Tooltip>
                 <DeleteButton
                   onClick={() => setConfirmVisible(true)}
-                  disabled={deletingNotebook || !sessionUserCanEdit}
+                  disabled={deletingNotebook || updatesDisabled}
                   variant="outlined"
                   titleAddon="Notebook"
                 />
