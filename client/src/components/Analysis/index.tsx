@@ -39,6 +39,7 @@ const Analysis: FunctionComponent<Props> = ({ panelId }) => {
   const [statements, setStatements] = useState([]);
 
   const [answersLoading, setAnswersLoading] = useState(false);
+
   const [loadingAutosuggestions, setLoadingAutosuggestions] =
     useState<boolean>(false);
   const [autoCompleteSuggestions, setAutoCompleteSuggestions] = useState<
@@ -65,12 +66,6 @@ const Analysis: FunctionComponent<Props> = ({ panelId }) => {
   }, [info]); // eslint-disable-line react-hooks/exhaustive-deps
 
   useEffect(() => {
-    const allTrue = Object.fromEntries(
-      Object.entries(answersLoading).map(([key, value]) => [key, true]),
-    );
-
-    setAnswersLoading(allTrue);
-
     Object.keys(selectedStatements).map((statementId) => {
       getAnswers(selectedStatements[statementId], statementId, true);
       return null;
@@ -83,7 +78,7 @@ const Analysis: FunctionComponent<Props> = ({ panelId }) => {
 
   const getAnswers = async (statement, id, withoutLoading = false) => {
     try {
-      setData(null);
+      setData({ ...data, [id]: null });
       if (!withoutLoading) setAnswersLoading({ ...answersLoading, [id]: true });
       const statementSrc = getStatement(statement.statement); // probably unnecessary
       const resPlan = statementSrc?.plan;
@@ -197,13 +192,12 @@ const Analysis: FunctionComponent<Props> = ({ panelId }) => {
         `/proxy/autocomplete/${ring.rid}/${ring.version}/${info?.defaultEntity}/${type}?query=${query}`,
       );
 
-      // TODO: confirm this still works
+      // TODO: Do we need this?
       if (response.status === "OK") {
-        const resData = await response.json();
-        resData instanceof Array && setAutoCompleteSuggestions(resData);
-        resData?.success === false &&
+        response instanceof Array && setAutoCompleteSuggestions(response);
+        response?.success === false &&
           notify(
-            resData?.message || "Could not fetch autocomplete suggestions",
+            response?.message || "Could not fetch autocomplete suggestions",
             "error",
           );
         setLoadingAutosuggestions(false);
