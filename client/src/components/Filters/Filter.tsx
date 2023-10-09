@@ -240,9 +240,12 @@ const Filter = ({ panelId, filter }: Props) => {
         if (!filter) {
           return false;
         }
+        const arr = fieldValue.map((value) => value.value.toString());
+        const uniqValues = Array.from(new Set(arr));
+
         setFilter({
           ...filter,
-          value: fieldValue.map((x) => x.value).join("|"),
+          value: uniqValues.join("|"),
         });
         autocompleteRef.current?.blur();
       }}

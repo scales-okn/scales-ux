@@ -244,44 +244,44 @@ const panelsSlice = createSlice({
           : panel,
       ),
     }),
-    addPanelAnalysisStatement: (state, { payload }) => ({
-      ...state,
-      panels: state.panels.map((panel) =>
-        panel.id === payload.panelId
-          ? {
-              ...panel,
-              analysis: panel.analysis.map((analysis) =>
-                analysis.id === payload.analysisId
-                  ? {
-                      ...analysis,
-                      statements: [...analysis.statements, payload.statement],
-                    }
-                  : analysis,
-              ),
-            }
-          : panel,
-      ),
-    }),
-    removePanelAnalysisStatement: (state, { payload }) => ({
-      ...state,
-      panels: state.panels.map((panel) =>
-        panel.id === payload.panelId
-          ? {
-              ...panel,
-              analysis: panel.analysis.map((analysis) =>
-                analysis.id === payload.analysisId
-                  ? {
-                      ...analysis,
-                      statements: analysis.statements.filter(
-                        (statement) => statement.id !== payload.statementId,
-                      ),
-                    }
-                  : analysis,
-              ),
-            }
-          : panel,
-      ),
-    }),
+    // addPanelAnalysisStatement: (state, { payload }) => ({
+    //   ...state,
+    //   panels: state.panels.map((panel) =>
+    //     panel.id === payload.panelId
+    //       ? {
+    //           ...panel,
+    //           analysis: panel.analysis.map((analysis) =>
+    //             analysis.id === payload.analysisId
+    //               ? {
+    //                   ...analysis,
+    //                   statements: [...analysis.statements, payload.statement],
+    //                 }
+    //               : analysis,
+    //           ),
+    //         }
+    //       : panel,
+    //   ),
+    // }),
+    // removePanelAnalysisStatement: (state, { payload }) => ({
+    //   ...state,
+    //   panels: state.panels.map((panel) =>
+    //     panel.id === payload.panelId
+    //       ? {
+    //           ...panel,
+    //           analysis: panel.analysis.map((analysis) =>
+    //             analysis.id === payload.analysisId
+    //               ? {
+    //                   ...analysis,
+    //                   statements: analysis.statements.filter(
+    //                     (statement) => statement.id !== payload.statementId,
+    //                   ),
+    //                 }
+    //               : analysis,
+    //           ),
+    //         }
+    //       : panel,
+    //   ),
+    // }),
     getCsv: (state, { payload }) => ({
       ...state,
       panels: state.panels.map((panel) =>
@@ -590,10 +590,10 @@ export const usePanel = (panelId: string) => {
       dispatch(panelsActions.addPanelAnalysis({ panelId, analysis })),
     removePanelAnalysis: (id) =>
       dispatch(panelsActions.removePanelAnalysis({ panelId, analysisId: id })),
-    addPanelAnalysisStatement: (payload) =>
-      dispatch(panelsActions.addPanelAnalysisStatement(payload)),
-    removePanelAnalysisStatement: (payload) =>
-      dispatch(panelsActions.removePanelAnalysisStatement(payload)),
+    // addPanelAnalysisStatement: (payload) =>
+    //   dispatch(panelsActions.addPanelAnalysisStatement(payload)),
+    // removePanelAnalysisStatement: (payload) =>
+    //   dispatch(panelsActions.removePanelAnalysisStatement(payload)),
     setPanelDescription: (description) =>
       dispatch(panelsActions.setPanelDescription({ panelId, description })),
     setPanelCollapsed: (collapsed: boolean) =>
