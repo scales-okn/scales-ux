@@ -69,29 +69,22 @@ const Analysis: FunctionComponent<Props> = ({ panelId }) => {
       const hasStatement = analysis[statementId].statement;
 
       if (hasStatement) {
-        getAnswers(
-          analysis[statementId],
-          statementId,
-          false,
-          !noExistingResults,
-        );
+        getAnswers(analysis[statementId], statementId, !noExistingResults);
       }
       return null;
     });
   }, [analysis, statements]); // eslint-disable-line react-hooks/exhaustive-deps
 
-  const getAnswers = async (
-    statement,
-    id,
-    withoutLoading = false,
-    skipFetch,
-  ) => {
+  const getAnswers = async (statement, id, skipFetch) => {
     try {
       const statementSrc = statements.find((s) => {
-        return s.statement === statement.statement.statement;
+        // hacky
+        return (
+          s.statement === statement.statement.statement ||
+          s.statement === statement.statement
+        );
       });
 
-      // console.log(statements, statement);
       const resPlan = statementSrc?.plan;
       resPlan.rings = [ring.rid];
 
