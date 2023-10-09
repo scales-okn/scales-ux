@@ -27,7 +27,6 @@ const DuplicateNotebookModal = ({ setOpen }: DuplicateNotebookModalT) => {
       visibility: "private",
     });
     setOpen(false);
-    // we also need to copy all panels, filters, and analyses
   };
 
   return (
