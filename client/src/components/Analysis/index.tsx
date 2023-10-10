@@ -35,7 +35,7 @@ const Analysis: FunctionComponent<Props> = ({ panelId }) => {
 
   const [statements, setStatements] = useState([]);
 
-  const [answersLoading, setAnswersLoading] = useState(false);
+  const [answersLoading, setAnswersLoading] = useState({});
 
   const [loadingAutosuggestions, setLoadingAutosuggestions] =
     useState<boolean>(false);
@@ -300,7 +300,12 @@ const Analysis: FunctionComponent<Props> = ({ panelId }) => {
               >
                 <Button
                   variant="contained"
-                  // disabled={!sessionUserCanEdit}
+                  disabled={
+                    !sessionUserCanEdit ||
+                    Object.values(answersLoading).some(
+                      (value) => value === true,
+                    )
+                  }
                   onClick={() => getAnswers(analysis[id], id)}
                 >
                   Update Analysis
