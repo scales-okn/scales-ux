@@ -308,7 +308,7 @@ const Analysis: FunctionComponent<Props> = ({ panelId }) => {
                   }
                   onClick={() => getAnswers(analysis[id], id)}
                 >
-                  Update Analysis
+                  Run Analysis
                 </Button>
                 <DeleteButton
                   onClick={() => handleRemoveAnalysis(id)}
