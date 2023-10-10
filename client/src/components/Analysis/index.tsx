@@ -300,18 +300,16 @@ const Analysis: FunctionComponent<Props> = ({ panelId }) => {
               >
                 <Button
                   variant="contained"
-                  disabled={
-                    !sessionUserCanEdit ||
-                    Object.values(answersLoading).some(
-                      (value) => value === true,
-                    )
-                  }
+                  disabled={Object.values(answersLoading).some(
+                    (value) => value === true,
+                  )}
                   onClick={() => getAnswers(analysis[id], id)}
                 >
                   Run Analysis
                 </Button>
                 <DeleteButton
                   onClick={() => handleRemoveAnalysis(id)}
+                  disabled={!sessionUserCanEdit}
                   sx={{
                     marginLeft: "12px",
                   }}
