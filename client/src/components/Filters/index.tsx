@@ -44,8 +44,9 @@ const Filters = ({ panelId }: FiltersProps) => {
       Object.keys(panel.analysis).map((key) => {
         freshAnalyses[key] = {
           ...panel.analysis[key],
-          results: {}, // Set "results" to an empty object
+          results: {},
         };
+        return null;
       });
 
       updatePanel({

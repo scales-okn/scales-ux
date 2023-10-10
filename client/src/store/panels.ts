@@ -368,14 +368,11 @@ export const getPanelResults =
       const filterParams = filters
         ?.map((filter) => {
           if (!filter.value) return null;
-
           if (
             filter.type === "filing_date" ||
             filter.type === "terminating_date"
           ) {
-            const start = dayjs(filter.value[0]).format("YYYY-M-DD");
-            const end = dayjs(filter.value[1]).format("YYYY-M-DD");
-            return `${filter.type}=${start},${end}`;
+            return `${filter.type}=${filter.value}`;
           }
 
           return `${filter.type}=${encodeURIComponent(filter.value)}`;

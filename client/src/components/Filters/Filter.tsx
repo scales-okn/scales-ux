@@ -4,8 +4,8 @@ import { usePanel } from "src/store/panels";
 import { useRing } from "src/store/rings";
 import { useSessionUser } from "src/store/auth";
 
-import { debounce } from "lodash";
-
+// import { debounce } from "lodash";
+import dayjs from "dayjs";
 import {
   CircularProgress,
   TextField,
@@ -14,8 +14,10 @@ import {
   Autocomplete,
 } from "@mui/material";
 import HighlightOffIcon from "@mui/icons-material/HighlightOff";
-
 import DateTimeRangePicker from "@wojtekmaj/react-datetimerange-picker";
+import "@wojtekmaj/react-datetimerange-picker/dist/DateTimeRangePicker.css";
+import "react-calendar/dist/Calendar.css";
+import "react-clock/dist/Clock.css";
 
 import { usStates } from "./usStates";
 import useDebounce from "src/hooks/useDebounce";
@@ -43,8 +45,12 @@ type Props = {
   panelId: string;
 };
 
+type RangeItemT = Date | null;
+type DateRangeT = RangeItemT | [RangeItemT, RangeItemT];
+
 const Filter = ({ panelId, filter }: Props) => {
-  const { panel, filters, setPanelFilters } = usePanel(panelId);
+  const { panel, filters, setPanelFilters, updatePanel } = usePanel(panelId);
+
   const sessionUser = useSessionUser();
   const sessionUserCanEdit = sessionUser?.id === panel?.userId;
 
@@ -58,7 +64,7 @@ const Filter = ({ panelId, filter }: Props) => {
   >([]);
   const [autocompleteValues, setAutocompleteValues] = useState([]);
 
-  const [dateValue, setDateValue] = useState<Date | null>(null);
+  const [dateValue, setDateValue] = useState<DateRangeT>([null, null]);
   const { notify } = useNotify();
 
   useEffect(() => {
@@ -90,6 +96,7 @@ const Filter = ({ panelId, filter }: Props) => {
       });
 
       setPanelFilters(newFilters);
+      updatePanel({ filters: newFilters });
     } catch (error) {
       console.warn(error); // eslint-disable-line no-console
     }
@@ -116,6 +123,18 @@ const Filter = ({ panelId, filter }: Props) => {
   };
 
   const filterOptions = getFilterOptionsByKey(type);
+
+  useEffect(() => {
+    if (filterOptions?.type === "date") {
+      let out;
+      if (filter.value) {
+        out = filter.value.toString().split(",");
+      } else {
+        out = [null, null];
+      }
+      setDateValue(out);
+    }
+  }, [filter, filterOptions]);
 
   const fetchAutocompleteSuggestions = async (query) => {
     setIsLoading(true);
@@ -316,10 +335,15 @@ const Filter = ({ panelId, filter }: Props) => {
         format={DATE_FORMAT}
         disabled={!sessionUserCanEdit}
         onChange={(value) => {
+          const first = dayjs(value[0]).format("YYYY-MM-DD");
+          const second = dayjs(value[1]).format("YYYY-MM-DD");
+
           setDateValue(value);
-          setFilter({ ...filter, value: value });
+          setFilter({ ...filter, value: `${first},${second}` });
         }}
         value={dateValue}
+        disableCalendar={false}
+        disableClock
       />
     </div>
   );

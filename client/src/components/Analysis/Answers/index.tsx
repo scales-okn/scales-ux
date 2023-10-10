@@ -43,10 +43,10 @@ const Answers = ({
   }, [answer]);
 
   useEffect(() => {
-    if (isEmpty(data) || !statement || !plan || !satyrn) return;
+    if (!data || !statement || !plan || !satyrn) return;
     setAnswerType(getAnswersDisplayType(plan, data.results));
 
-    const currentFilters = plan?.query?.["AND"];
+    const currentFilters = statement?.plan?.query?.["AND"];
 
     const formatString = (str) => {
       return str.replace(/\|/g, "");
