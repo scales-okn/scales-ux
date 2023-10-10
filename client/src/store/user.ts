@@ -4,7 +4,7 @@ import { createSlice } from "@reduxjs/toolkit";
 import type { RootState, AppDispatch } from "src/store";
 import { useSelector, useDispatch } from "react-redux";
 // import { Store, Dispatch, Action } from "redux";
-import { sessionUserSelector } from "src/store/auth";
+// import { sessionUserSelector } from "src/store/auth";
 import { notify } from "reapop";
 
 import { makeRequest } from "src/helpers/makeRequest";

@@ -178,7 +178,7 @@ export function updateNotebook(id: string, payload: any) {
     try {
       const response = await makeRequest.put(`/api/notebooks/${id}`, payload);
       if (response.status === "OK") {
-        const { data, message } = response;
+        const { data } = response;
         // dispatch(notify(message, "success"));
         dispatch(notebookActions.saveNotebookSuccess(data));
       } else {

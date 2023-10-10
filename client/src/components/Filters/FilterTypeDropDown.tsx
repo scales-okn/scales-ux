@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { useHelpTexts } from "src/store/helpTexts";
 
 import { Box, Menu, MenuItem, ListItemText } from "@mui/material";
@@ -8,10 +8,10 @@ import FilterTooltip from "../HelpTextTooltip";
 
 import { filterTypeStyles } from "./styles";
 
-type FilterColumn = {
-  key: string;
-  nicename: string;
-};
+// type FilterColumn = {
+//   key: string;
+//   nicename: string;
+// };
 
 type FilterT = {
   id: string;
@@ -46,10 +46,10 @@ const FilterTypeDropDown = ({
   setFilter,
   disabled,
 }: FilterTypeDropDownT) => {
-  const { type } = filter;
+  // const { type } = filter;
   const { helpTexts } = useHelpTexts();
 
-  const filterOptions = getFilterOptionsByKey(type);
+  // const filterOptions = getFilterOptionsByKey(type);
 
   // const [filterInput, setFilterInput] = useState<FilterColumn>({
   //   key: type,

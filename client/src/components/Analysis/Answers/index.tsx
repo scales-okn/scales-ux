@@ -87,7 +87,7 @@ const Answers = ({
           return acc;
         }, {})
       : {};
-    console.log(formattedFilters);
+
     setAnswer(satyrn.responseManager.generate(formattedFilters, plan, data));
   }, [data, plan, satyrn, statement, filters]); // eslint-disable-line react-hooks/exhaustive-deps
 
