@@ -227,65 +227,62 @@ const Panel = ({ panelId, defaultCollapsed }: PanelT) => {
           <div className="p-0 bg-light border-top">
             <Loader
               contentHeight={resultsCollapsed ? "60px" : "400px"}
-              isVisible={loadingPanelResults}
+              isVisible={
+                loadingPanelResults || (!results && !loadingPanelResults)
+              }
             >
-              <>
-                <Loader isVisible={!results}>
-                  {results && (
-                    <Accordion expanded={resultsCollapsed === true}>
-                      <AccordionDetails sx={{ padding: "0px" }}>
-                        <>
-                          <div
-                            style={{
-                              width: "100%",
-                              overflowX: "hidden",
+              {results && (
+                <Accordion expanded={resultsCollapsed === true}>
+                  <AccordionDetails sx={{ padding: "0px" }}>
+                    <>
+                      <div
+                        style={{
+                          width: "100%",
+                          overflowX: "hidden",
+                        }}
+                      >
+                        {!resultsCollapsed && (
+                          <DataGrid
+                            rows={rows}
+                            onPaginationModelChange={(model) => {
+                              getPanelResults([], model.page);
                             }}
-                          >
-                            {!resultsCollapsed && (
-                              <DataGrid
-                                rows={rows}
-                                onPaginationModelChange={(model) => {
-                                  getPanelResults([], model.page);
-                                }}
-                                paginationModel={{
-                                  page: results?.page,
-                                  pageSize: results?.batchSize,
-                                }}
-                                disableColumnMenu
-                                disableColumnFilter
-                                pageSizeOptions={[10]}
-                                columns={columns}
-                                rowCount={results?.totalCount}
-                                checkboxSelection={false}
-                                className="bg-white border-0 rounded-0"
-                                paginationMode="server"
-                                sx={{
-                                  "& .MuiDataGrid-virtualScroller": {
-                                    minHeight: "400px",
-                                  },
-                                }}
-                              />
-                            )}
-                          </div>
-                          <div className="p-3">
-                            {results?.totalCount?.toLocaleString()} Dockets
-                            Found
-                            <Button
-                              size="small"
-                              onClick={() =>
-                                setPanelResultsCollapsed(!resultsCollapsed)
-                              }
-                              sx={{ textTransform: "none" }}
-                            >
-                              ({resultsCollapsed ? "Expand" : "Collapse"})
-                            </Button>
-                          </div>
-                        </>
-                      </AccordionDetails>
-                    </Accordion>
-                  )}
-                </Loader>
-              </>
+                            paginationModel={{
+                              page: results?.page,
+                              pageSize: results?.batchSize,
+                            }}
+                            disableColumnMenu
+                            disableColumnFilter
+                            pageSizeOptions={[10]}
+                            columns={columns}
+                            rowCount={results?.totalCount}
+                            checkboxSelection={false}
+                            className="bg-white border-0 rounded-0"
+                            paginationMode="server"
+                            sx={{
+                              "& .MuiDataGrid-virtualScroller": {
+                                minHeight: "400px",
+                              },
+                            }}
+                          />
+                        )}
+                      </div>
+                      <div className="p-3">
+                        {results?.totalCount?.toLocaleString()} Dockets Found
+                        <Button
+                          size="small"
+                          onClick={() =>
+                            setPanelResultsCollapsed(!resultsCollapsed)
+                          }
+                          sx={{ textTransform: "none" }}
+                        >
+                          ({resultsCollapsed ? "Expand" : "Collapse"})
+                        </Button>
+                      </div>
+                    </>
+                  </AccordionDetails>
+                </Accordion>
+              )}
             </Loader>
           </div>
 

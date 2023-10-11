@@ -6,9 +6,10 @@ import DeleteButton from "src/components/Buttons/DeleteButton";
 
 type DeleteNotebookT = {
   notebookId: string;
+  disabled?: boolean;
 };
 
-const DeleteNotebook = ({ notebookId }: DeleteNotebookT) => {
+const DeleteNotebook = ({ notebookId, disabled = false }: DeleteNotebookT) => {
   const dispatch = useDispatch();
   const [confirmVisible, setConfirmVisible] = useState(false);
 
@@ -21,17 +22,20 @@ const DeleteNotebook = ({ notebookId }: DeleteNotebookT) => {
     <>
       <DeleteButton
         variant="text"
+        disabled={disabled}
         onClick={() => {
           setConfirmVisible(true);
         }}
         titleAddon="Notebook"
       />
-      <ConfirmModal
-        itemName="notebook"
-        open={confirmVisible}
-        setOpen={setConfirmVisible}
-        onConfirm={handleDelete}
-      />
+      {!disabled && (
+        <ConfirmModal
+          itemName="notebook"
+          open={confirmVisible}
+          setOpen={setConfirmVisible}
+          onConfirm={handleDelete}
+        />
+      )}
     </>
   );
 };

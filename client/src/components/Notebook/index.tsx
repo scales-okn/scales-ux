@@ -3,7 +3,6 @@ import { useNavigate, useParams } from "react-router-dom";
 
 import { useRings } from "src/store/rings";
 import { useNotebook } from "src/store/notebook";
-import { useUser } from "src/store/user";
 import { usePanels } from "src/store/panels";
 import { useSessionUser } from "src/store/auth";
 
@@ -28,7 +27,6 @@ import DuplicateNotebookModal from "./DuplicateNotebookModal";
 
 const Notebook = () => {
   const { getRings } = useRings();
-  const { fetchUsers } = useUser();
   const {
     notebook,
     fetchNotebook,
@@ -58,7 +56,6 @@ const Notebook = () => {
 
   useEffect(() => {
     getRings();
-    fetchUsers();
 
     return () => {
       clearNotebook();

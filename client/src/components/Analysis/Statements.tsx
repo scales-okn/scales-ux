@@ -10,7 +10,7 @@ const Statements = ({ statements, setPanelStatement, selectedStatement }) => {
   };
 
   return (
-    <Box sx={{ maxWidth: "655px", marginTop: "12px" }}>
+    <Box sx={{ marginTop: "12px" }}>
       <Autocomplete
         loading={!statements ? true : false}
         options={statements.filter(

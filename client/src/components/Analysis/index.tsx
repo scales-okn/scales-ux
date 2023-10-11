@@ -5,7 +5,7 @@ import { usePanel } from "src/store/panels";
 import { useRing } from "src/store/rings";
 import { useSessionUser } from "src/store/auth";
 
-import { Grid, Paper, Button, Box } from "@mui/material";
+import { Grid, Paper, Button, Box, Typography } from "@mui/material";
 import AddIcon from "@mui/icons-material/Add";
 import uniqid from "uniqid";
 import _ from "lodash";
@@ -61,19 +61,19 @@ const Analysis: FunctionComponent<Props> = ({ panelId }) => {
     setStatements(satyrnRes.planManager.generate());
   }, [info]); // eslint-disable-line react-hooks/exhaustive-deps
 
-  useEffect(() => {
-    if (_.isEmpty(statements) || !info) return;
+  // useEffect(() => {
+  //   if (_.isEmpty(statements) || !info) return;
 
-    Object.keys(analysis).map((statementId) => {
-      const noExistingResults = _.isEmpty(analysis[statementId].results);
-      const hasStatement = analysis[statementId].statement;
+  //   Object.keys(analysis).map((statementId) => {
+  //     const noExistingResults = _.isEmpty(analysis[statementId].results);
+  //     const hasStatement = analysis[statementId].statement;
 
-      if (hasStatement) {
-        getAnswers(analysis[statementId], statementId, !noExistingResults);
-      }
-      return null;
-    });
-  }, [info, statements]); // eslint-disable-line react-hooks/exhaustive-deps
+  //     if (hasStatement) {
+  //       getAnswers(analysis[statementId], statementId, !noExistingResults);
+  //     }
+  //     return null;
+  //   });
+  // }, [info, statements]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const getAnswers = async (statement, analysisId, skipFetch = false) => {
     try {
@@ -242,6 +242,7 @@ const Analysis: FunctionComponent<Props> = ({ panelId }) => {
   return (
     <div className="analysis">
       {Object.keys(analysis).map((id) => {
+        console.log(analysis[id]);
         return (
           <Grid key={id} container className="analysis-item">
             <Grid
@@ -254,7 +255,7 @@ const Analysis: FunctionComponent<Props> = ({ panelId }) => {
                 padding: 0,
               }}
             >
-              <Grid item>
+              <Grid item sm={8}>
                 <Statements
                   statements={statements}
                   setPanelStatement={(statement) => {
@@ -300,9 +301,11 @@ const Analysis: FunctionComponent<Props> = ({ panelId }) => {
               >
                 <Button
                   variant="contained"
-                  disabled={Object.values(answersLoading).some(
-                    (value) => value === true,
-                  )}
+                  disabled={
+                    Object.values(answersLoading).some(
+                      (value) => value === true,
+                    ) || !analysis[id].statement
+                  }
                   onClick={() => getAnswers(analysis[id], id)}
                 >
                   Run Analysis
@@ -338,6 +341,8 @@ const Analysis: FunctionComponent<Props> = ({ panelId }) => {
           boxShadow: "none",
           alignItems: "center",
           marginTop: "12px",
+          display: "flex",
+          alignItems: "center",
         }}
       >
         <Button
@@ -362,7 +367,13 @@ const Analysis: FunctionComponent<Props> = ({ panelId }) => {
         >
           <AddIcon fontSize="medium" />
         </Button>
-        Add Analysis
+        <Typography
+          sx={{
+            color: sessionUserCanEdit ? "black" : "GrayText",
+          }}
+        >
+          Add Analysis
+        </Typography>
       </Paper>
     </div>
   );
