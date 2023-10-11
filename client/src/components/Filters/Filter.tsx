@@ -334,6 +334,8 @@ const Filter = ({ panelId, filter }: Props) => {
       <DateTimeRangePicker
         format={DATE_FORMAT}
         disabled={!sessionUserCanEdit}
+        maxDate={new Date()}
+        minDate={new Date("01/01/1900")}
         onChange={(value) => {
           const first = dayjs(value[0]).format("YYYY-MM-DD");
           const second = dayjs(value[1]).format("YYYY-MM-DD");
