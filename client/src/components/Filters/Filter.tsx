@@ -65,6 +65,7 @@ const Filter = ({ panelId, filter }: Props) => {
   const [autocompleteValues, setAutocompleteValues] = useState([]);
 
   const [dateValue, setDateValue] = useState<DateRangeT>([null, null]);
+  console.log("🚀 ~ file: Filter.tsx:68 ~ Filter ~ dateValue:", dateValue);
   const { notify } = useNotify();
 
   useEffect(() => {
@@ -101,6 +102,7 @@ const Filter = ({ panelId, filter }: Props) => {
       console.warn(error); // eslint-disable-line no-console
     }
   };
+  console.log(panel.filters);
 
   const getFilterOptionsByKey = (key) => {
     if (!key) return null;
@@ -337,11 +339,17 @@ const Filter = ({ panelId, filter }: Props) => {
         maxDate={new Date()}
         minDate={new Date("01/01/1900")}
         onChange={(value) => {
-          const first = dayjs(value[0]).format("YYYY-MM-DD");
-          const second = dayjs(value[1]).format("YYYY-MM-DD");
+          let out;
+          if (value) {
+            const first = dayjs(value[0]).format("YYYY-MM-DD");
+            const second = dayjs(value[1]).format("YYYY-MM-DD");
+            out = `${first},${second}`;
+          } else {
+            out = "";
+          }
 
           setDateValue(value);
-          setFilter({ ...filter, value: `${first},${second}` });
+          setFilter({ ...filter, value: out });
         }}
         value={dateValue}
         disableCalendar={false}
