@@ -11,12 +11,6 @@ import dayjs from "dayjs";
 import { useSelector, useDispatch } from "react-redux";
 import { makeRequest } from "../helpers/makeRequest";
 
-const initialStateAnalysisItem: IPanelAnalysisItem = {
-  id: "",
-  statements: [],
-  results: [],
-};
-
 const PanelInitialState = {
   loadingPanelResults: false,
   collapsed: true,
@@ -217,71 +211,6 @@ const panelsSlice = createSlice({
           : panel,
       ),
     }),
-    addPanelAnalysis: (state, { payload }) => ({
-      ...state,
-      panels: state.panels.map((panel) =>
-        panel.id === payload.panelId
-          ? {
-              ...panel,
-              analysis: [
-                ...panel.analysis,
-                { ...initialStateAnalysisItem, ...payload.analysis },
-              ],
-            }
-          : panel,
-      ),
-    }),
-    removePanelAnalysis: (state, { payload }) => ({
-      ...state,
-      panels: state.panels.map((panel) =>
-        panel.id === payload.panelId
-          ? {
-              ...panel,
-              analysis: panel.analysis.filter(
-                (analysis) => analysis.id !== payload.analysisId,
-              ),
-            }
-          : panel,
-      ),
-    }),
-    addPanelAnalysisStatement: (state, { payload }) => ({
-      ...state,
-      panels: state.panels.map((panel) =>
-        panel.id === payload.panelId
-          ? {
-              ...panel,
-              analysis: panel.analysis.map((analysis) =>
-                analysis.id === payload.analysisId
-                  ? {
-                      ...analysis,
-                      statements: [...analysis.statements, payload.statement],
-                    }
-                  : analysis,
-              ),
-            }
-          : panel,
-      ),
-    }),
-    removePanelAnalysisStatement: (state, { payload }) => ({
-      ...state,
-      panels: state.panels.map((panel) =>
-        panel.id === payload.panelId
-          ? {
-              ...panel,
-              analysis: panel.analysis.map((analysis) =>
-                analysis.id === payload.analysisId
-                  ? {
-                      ...analysis,
-                      statements: analysis.statements.filter(
-                        (statement) => statement.id !== payload.statementId,
-                      ),
-                    }
-                  : analysis,
-              ),
-            }
-          : panel,
-      ),
-    }),
     getCsv: (state, { payload }) => ({
       ...state,
       panels: state.panels.map((panel) =>
@@ -439,14 +368,11 @@ export const getPanelResults =
       const filterParams = filters
         ?.map((filter) => {
           if (!filter.value) return null;
-
           if (
             filter.type === "filing_date" ||
             filter.type === "terminating_date"
           ) {
-            const start = dayjs(filter.value[0]).format("YYYY-M-DD");
-            const end = dayjs(filter.value[1]).format("YYYY-M-DD");
-            return `${filter.type}=${start},${end}`;
+            return `${filter.type}=${filter.value}`;
           }
 
           return `${filter.type}=${encodeURIComponent(filter.value)}`;
@@ -586,14 +512,6 @@ export const usePanel = (panelId: string) => {
     hasErrors,
     analysis,
     downloadingCsv,
-    addPanelAnalysis: (analysis) =>
-      dispatch(panelsActions.addPanelAnalysis({ panelId, analysis })),
-    removePanelAnalysis: (id) =>
-      dispatch(panelsActions.removePanelAnalysis({ panelId, analysisId: id })),
-    addPanelAnalysisStatement: (payload) =>
-      dispatch(panelsActions.addPanelAnalysisStatement(payload)),
-    removePanelAnalysisStatement: (payload) =>
-      dispatch(panelsActions.removePanelAnalysisStatement(payload)),
     setPanelDescription: (description) =>
       dispatch(panelsActions.setPanelDescription({ panelId, description })),
     setPanelCollapsed: (collapsed: boolean) =>

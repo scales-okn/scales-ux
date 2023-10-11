@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
-import React, { FunctionComponent } from "react";
+import React from "react";
 import {
   Autocomplete,
   FormControl,
@@ -13,26 +13,26 @@ import {
   TextField,
 } from "@mui/material";
 
-type Props = {
+type ParametersT = {
   parameters: any[];
   fetchAutocompleteSuggestions: (
     value: string,
     query: string,
   ) => Promise<string[]>;
   autoCompleteSuggestions: string[];
-  setSelectedParameter: (parameter: any) => void;
+  setPanelStatement: (parameter: any) => void;
   selectedParameter: string;
   loadingAutosuggestions: boolean;
 };
 
-const Parameters: FunctionComponent<Props> = ({
+const Parameters = ({
   parameters,
   fetchAutocompleteSuggestions,
   autoCompleteSuggestions,
-  setSelectedParameter,
+  setPanelStatement,
   selectedParameter,
   loadingAutosuggestions,
-}) => {
+}: ParametersT) => {
   return (
     <>
       {parameters?.map((parameter, index) => (
@@ -72,7 +72,7 @@ const Parameters: FunctionComponent<Props> = ({
               <Select
                 value={selectedParameter || "year"}
                 multiple={parameter.allowMultiple}
-                onChange={(e) => setSelectedParameter(e.target.value)}
+                onChange={(e) => setPanelStatement(e.target.value)}
                 MenuProps={{
                   disableScrollLock: true,
                 }}

@@ -1,25 +1,16 @@
 import React from "react";
-import { FormControl, InputAdornment, TextField } from "@mui/material";
+import { Box, InputAdornment, TextField } from "@mui/material";
 import { Autocomplete } from "@mui/material";
 
-const Statements = ({
-  statements,
-  setSelectedStatement,
-  selectedStatement,
-}) => {
+const Statements = ({ statements, setPanelStatement, selectedStatement }) => {
   const onStatementChange = (event, selected) => {
-    const selectedStatement = selected?.statement;
-    if (!selectedStatement) return;
-    setSelectedStatement(selected);
+    if (selected) {
+      setPanelStatement(selected);
+    }
   };
 
   return (
-    <FormControl
-      fullWidth
-      variant="outlined"
-      margin="normal"
-      sx={{ maxWidth: "655px" }}
-    >
+    <Box sx={{ marginTop: "12px" }}>
       <Autocomplete
         loading={!statements ? true : false}
         options={statements.filter(
@@ -39,13 +30,13 @@ const Statements = ({
           />
         )}
         onChange={onStatementChange}
-        value={selectedStatement} // Use selectedStatement directly
-        isOptionEqualToValue={(option, value) =>
-          value === null || option.statement === value.statement
-        }
+        value={selectedStatement || null}
+        isOptionEqualToValue={(option, value) => {
+          return value === null || option.statement === value.statement;
+        }}
         sx={{ minWidth: "300px" }}
       />
-    </FormControl>
+    </Box>
   );
 };
 

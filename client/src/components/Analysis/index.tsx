@@ -3,8 +3,9 @@ import React, { useEffect, FunctionComponent, useState } from "react";
 
 import { usePanel } from "src/store/panels";
 import { useRing } from "src/store/rings";
+import { useSessionUser } from "src/store/auth";
 
-import { Grid, Paper, Button } from "@mui/material";
+import { Grid, Paper, Button, Box, Typography } from "@mui/material";
 import AddIcon from "@mui/icons-material/Add";
 import uniqid from "uniqid";
 import _ from "lodash";
@@ -25,23 +26,23 @@ type Props = {
 };
 
 const Analysis: FunctionComponent<Props> = ({ panelId }) => {
-  const { panel, analysis, addPanelAnalysis, removePanelAnalysis, filters } =
-    usePanel(panelId);
+  const { panel, analysis, updatePanel, filters } = usePanel(panelId);
 
   const { ring, info } = useRing(panel?.ringId);
 
-  const [selectedStatements, setSelectedStatements] = useState([]);
+  const sessionUser = useSessionUser();
+  const sessionUserCanEdit = sessionUser?.id === panel?.userId;
 
   const [statements, setStatements] = useState([]);
 
-  const [answersLoading, setAnswersLoading] = useState(false);
+  const [answersLoading, setAnswersLoading] = useState({});
+
   const [loadingAutosuggestions, setLoadingAutosuggestions] =
     useState<boolean>(false);
   const [autoCompleteSuggestions, setAutoCompleteSuggestions] = useState<
     string[]
   >([]);
 
-  const [data, setData] = useState(null);
   const [satyrn, setSatyrn] = useState(null);
   const [plans, setPlans] = useState([]);
 
@@ -60,30 +61,33 @@ const Analysis: FunctionComponent<Props> = ({ panelId }) => {
     setStatements(satyrnRes.planManager.generate());
   }, [info]); // eslint-disable-line react-hooks/exhaustive-deps
 
-  useEffect(() => {
-    const allTrue = Object.fromEntries(
-      Object.entries(answersLoading).map(([key, value]) => [key, true]),
-    );
+  // useEffect(() => {
+  //   if (_.isEmpty(statements) || !info) return;
 
-    setAnswersLoading(allTrue);
+  //   Object.keys(analysis).map((statementId) => {
+  //     const noExistingResults = _.isEmpty(analysis[statementId].results);
+  //     const hasStatement = analysis[statementId].statement;
 
-    Object.keys(selectedStatements).map((statementId) => {
-      getAnswers(selectedStatements[statementId], statementId, true);
-      return null;
-    });
-  }, [panel?.results?.results]); // eslint-disable-line react-hooks/exhaustive-deps
+  //     if (hasStatement) {
+  //       getAnswers(analysis[statementId], statementId, !noExistingResults);
+  //     }
+  //     return null;
+  //   });
+  // }, [info, statements]); // eslint-disable-line react-hooks/exhaustive-deps
 
-  const getStatement = (statement) => {
-    return statements.find((s) => s.statement === statement);
-  };
-
-  const getAnswers = async (statement, id, withoutLoading = false) => {
+  const getAnswers = async (statement, analysisId, skipFetch = false) => {
     try {
-      setData(null);
-      if (!withoutLoading) setAnswersLoading({ ...answersLoading, [id]: true });
-      const statementSrc = getStatement(statement.statement); // probably unnecessary
+      const statementSrc = statements.find((s) => {
+        // TODO: hacky, why does this vary?
+        return (
+          s.statement === statement.statement.statement ||
+          s.statement === statement.statement
+        );
+      });
+
       const resPlan = statementSrc?.plan;
       resPlan.rings = [ring.rid];
+
       // inject value on param slot path
       statement.parameters?.forEach((param) => {
         if (
@@ -164,23 +168,42 @@ const Analysis: FunctionComponent<Props> = ({ panelId }) => {
         resPlan.query = {};
       }
 
-      setPlans({ ...plans, [id]: resPlan });
-      const fetchStem =
-        import.meta.env.VITE_REACT_APP_SATYRN_ENV === "development"
-          ? "http://127.0.0.1:5000/api"
-          : "/proxy";
+      if (!skipFetch) {
+        setAnswersLoading(() => {
+          return { ...answersLoading, [analysisId]: true };
+        });
 
-      const response = await makeRequest.post(
-        `${fetchStem}/analysis/${ring.rid}/${ring.version}/${info?.defaultEntity}/`,
-        resPlan,
-      );
+        const fetchStem =
+          import.meta.env.VITE_REACT_APP_SATYRN_ENV === "development"
+            ? "http://127.0.0.1:5000/api"
+            : "/proxy";
 
-      setData({ ...data, [id]: response });
-      setAnswersLoading({ ...answersLoading, [id]: false });
+        const response = await makeRequest.post(
+          `${fetchStem}/analysis/${ring.rid}/${ring.version}/${info?.defaultEntity}/`,
+          resPlan,
+        );
+
+        updatePanel({
+          analysis: {
+            ...analysis,
+            [analysisId]: { ...statement, results: response },
+          },
+        });
+        setTimeout(() => {
+          setAnswersLoading(() => {
+            return { ...answersLoading, [analysisId]: false };
+          });
+        }, 500);
+      }
+
+      setPlans((prev) => {
+        return { ...prev, [analysisId]: resPlan };
+      });
     } catch (error) {
-      console.warn(error); // eslint-disable-line no-console
-      setData(null);
-      setAnswersLoading({ ...answersLoading, [id]: false });
+      console.log("🚀 ~ file: index.tsx:203 ~ error:", error); // eslint-disable-line no-console
+      setAnswersLoading(() => {
+        return { ...answersLoading, [analysisId]: false };
+      });
       notify("Could not fetch results", "error");
     }
   };
@@ -193,13 +216,12 @@ const Analysis: FunctionComponent<Props> = ({ panelId }) => {
         `/proxy/autocomplete/${ring.rid}/${ring.version}/${info?.defaultEntity}/${type}?query=${query}`,
       );
 
-      // TODO: confirm this still works
+      // TODO: Do we need this?
       if (response.status === "OK") {
-        const resData = await response.json();
-        resData instanceof Array && setAutoCompleteSuggestions(resData);
-        resData?.success === false &&
+        response instanceof Array && setAutoCompleteSuggestions(response);
+        response?.success === false &&
           notify(
-            resData?.message || "Could not fetch autocomplete suggestions",
+            response?.message || "Could not fetch autocomplete suggestions",
             "error",
           );
         setLoadingAutosuggestions(false);
@@ -213,77 +235,103 @@ const Analysis: FunctionComponent<Props> = ({ panelId }) => {
       setLoadingAutosuggestions(false);
     }
   };
-
   const handleRemoveAnalysis = (id) => {
-    removePanelAnalysis(id);
+    updatePanel({ analysis: _.omit(analysis, id) });
   };
 
   return (
     <div className="analysis">
-      {analysis.map(({ id }) => (
-        <Grid key={id} container className="analysis-item">
-          <Grid
-            item
-            sx={{
-              display: "flex",
-              alignItems: "flex-start",
-              justifyContent: "space-between",
-              width: "100%",
-              padding: 0,
-            }}
-          >
-            <Grid item>
-              <Statements
-                statements={statements}
-                setSelectedStatement={(statement) => {
-                  setSelectedStatements({
-                    ...selectedStatements,
-                    [id]: statement,
-                  });
-                  getAnswers(statement, id);
-                }}
-                selectedStatement={selectedStatements[id]?.statement}
-              />
-              <Parameters
-                autoCompleteSuggestions={autoCompleteSuggestions}
-                parameters={selectedStatements[id]?.parameters}
-                selectedParameter={selectedStatements[id]?.selectedParameter}
-                setSelectedParameter={(params) => {
-                  const newStatement = {
-                    ...selectedStatements[id],
-                    selectedParameter: params,
-                  };
-                  setSelectedStatements({
-                    ...selectedStatements,
-                    [id]: newStatement,
-                  });
-                  getAnswers(newStatement, id);
-                }}
-                fetchAutocompleteSuggestions={fetchAutocompleteSuggestions}
-                loadingAutosuggestions={loadingAutosuggestions}
-              />
-            </Grid>
-            <DeleteButton
-              onClick={() => handleRemoveAnalysis(id)}
+      {Object.keys(analysis).map((id) => {
+        return (
+          <Grid key={id} container className="analysis-item">
+            <Grid
+              item
               sx={{
-                marginTop: "16px",
-                marginRight: "0px",
+                display: "flex",
+                alignItems: "flex-start",
+                justifyContent: "space-between",
+                width: "100%",
+                padding: 0,
               }}
-              variant="outlined"
-              titleAddon="Analysis"
+            >
+              <Grid item sm={8}>
+                <Statements
+                  statements={statements}
+                  setPanelStatement={(statement) => {
+                    updatePanel({
+                      analysis: {
+                        ...analysis,
+                        [id]: { ...analysis[id], statement, results: {} },
+                      },
+                    });
+                  }}
+                  selectedStatement={analysis[id].statement}
+                />
+                <Parameters
+                  autoCompleteSuggestions={autoCompleteSuggestions}
+                  parameters={analysis[id]?.parameters}
+                  selectedParameter={analysis[id]?.selectedParameter}
+                  setPanelStatement={(params) => {
+                    const newStatement = {
+                      ...analysis[id].statement,
+                      parameters: params,
+                    };
+                    updatePanel({
+                      analysis: {
+                        ...analysis,
+                        [id]: {
+                          ...analysis[id],
+                          statement: newStatement,
+                          results: {},
+                        },
+                      },
+                    });
+                  }}
+                  fetchAutocompleteSuggestions={fetchAutocompleteSuggestions}
+                  loadingAutosuggestions={loadingAutosuggestions}
+                />
+              </Grid>
+              <Box
+                sx={{
+                  display: "flex",
+                  alignItems: "center",
+                  marginTop: "16px",
+                }}
+              >
+                <Button
+                  variant="contained"
+                  disabled={
+                    Object.values(answersLoading).some(
+                      (value) => value === true,
+                    ) || !analysis[id].statement
+                  }
+                  onClick={() => getAnswers(analysis[id], id)}
+                >
+                  Run Analysis
+                </Button>
+                <DeleteButton
+                  onClick={() => handleRemoveAnalysis(id)}
+                  disabled={!sessionUserCanEdit}
+                  sx={{
+                    marginLeft: "12px",
+                  }}
+                  variant="outlined"
+                  titleAddon="Analysis"
+                />
+              </Box>
+            </Grid>
+
+            <Answers
+              panelId={panelId}
+              plan={plans[id]}
+              statement={analysis[id]}
+              data={analysis[id].results}
+              satyrn={satyrn}
+              loadingAnswers={answersLoading[id]}
             />
           </Grid>
-
-          <Answers
-            panelId={panelId}
-            plan={plans[id]}
-            statement={selectedStatements[id]}
-            data={data?.[id]}
-            satyrn={satyrn}
-            loadingAnswers={answersLoading[id]}
-          />
-        </Grid>
-      ))}
+        );
+      })}
 
       <Paper
         elevation={3}
@@ -292,20 +340,25 @@ const Analysis: FunctionComponent<Props> = ({ panelId }) => {
           boxShadow: "none",
           alignItems: "center",
           marginTop: "12px",
+          display: "flex",
+          alignItems: "center",
         }}
       >
         <Button
           variant="outlined"
           onClick={() => {
-            addPanelAnalysis({
-              id: uniqid(),
+            updatePanel({
+              analysis: {
+                ...analysis,
+                [uniqid()]: {},
+              },
             });
           }}
+          disabled={!sessionUserCanEdit}
           sx={{
             border: "1px solid black",
             color: "black",
             marginRight: "12px",
-
             width: "36px",
             height: "36px",
             minWidth: 0,
@@ -313,7 +366,13 @@ const Analysis: FunctionComponent<Props> = ({ panelId }) => {
         >
           <AddIcon fontSize="medium" />
         </Button>
-        Add Analysis
+        <Typography
+          sx={{
+            color: sessionUserCanEdit ? "black" : "GrayText",
+          }}
+        >
+          Add Analysis
+        </Typography>
       </Paper>
     </div>
   );

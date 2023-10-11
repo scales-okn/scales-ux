@@ -1,5 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import React, { memo, useMemo } from "react";
+
 import {
   Label,
   XAxis,
@@ -11,6 +12,8 @@ import {
   Line,
 } from "recharts";
 import dayjs from "dayjs";
+import _ from "lodash";
+
 import getRandomColor from "src/helpers/getRandomColor";
 import { formatXUnits, stringIsNumber } from "src/helpers/stringHelpers";
 import { addMissingYears } from "./helpers";
@@ -173,7 +176,8 @@ const Answers = ({
           />
           {/* hack */}
           <CartesianGrid stroke="#eee" strokeDasharray="5 5" />
-          {data.results?.map((line_data) => {
+          {data.results?.map((ld) => {
+            const line_data = _.cloneDeep(ld);
             if (line_data.label === -1) {
               line_data.label = "criminal";
             }

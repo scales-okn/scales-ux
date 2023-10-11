@@ -4,6 +4,7 @@ import AddIcon from "@mui/icons-material/Add";
 import uniqid from "uniqid";
 
 import { usePanel } from "src/store/panels";
+import { useSessionUser } from "src/store/auth";
 
 import Button from "@mui/material/Button";
 import Filter from "./Filter";
@@ -19,8 +20,12 @@ const Filters = ({ panelId }: FiltersProps) => {
     filters = [],
     setPanelFilters,
     getPanelResults,
-    // updatePanel,
+    updatePanel,
+    panel,
   } = usePanel(panelId);
+
+  const sessionUser = useSessionUser();
+  const sessionUserCanEdit = sessionUser?.id === panel?.userId;
 
   const filterElements = useMemo(() => {
     return (
@@ -31,8 +36,24 @@ const Filters = ({ panelId }: FiltersProps) => {
   }, [filters]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const handleUpdateResults = () => {
-    getPanelResults();
-    // updatePanel({ filters: [] });
+    if (sessionUserCanEdit) {
+      getPanelResults();
+      const activeFilters = filters.filter((f) => f.value !== "");
+
+      const freshAnalyses = {};
+      Object.keys(panel.analysis).map((key) => {
+        freshAnalyses[key] = {
+          ...panel.analysis[key],
+          results: {},
+        };
+        return null;
+      });
+
+      updatePanel({
+        filters: activeFilters,
+        analysis: freshAnalyses,
+      });
+    }
   };
 
   return (
@@ -43,6 +64,7 @@ const Filters = ({ panelId }: FiltersProps) => {
           <Button
             variant="outlined"
             color="success"
+            disabled={!sessionUserCanEdit}
             onClick={() => {
               setPanelFilters([
                 ...(filters || []),
@@ -63,6 +85,7 @@ const Filters = ({ panelId }: FiltersProps) => {
           {filters?.length > 0 ? null : <>Add a filter</>}
           <Button
             variant="contained"
+            disabled={!sessionUserCanEdit}
             onClick={handleUpdateResults}
             style={{
               position: "absolute",

@@ -1,7 +1,6 @@
 import React, { memo, useEffect, useState, useRef, useMemo } from "react";
 import { usePanel } from "src/store/panels";
 
-import { css } from "@emotion/css";
 import dayjs from "dayjs";
 import { isEmpty } from "lodash";
 import { Button, Tooltip, Typography, Box } from "@mui/material";
@@ -89,9 +88,7 @@ const Answers = ({
         }, {})
       : {};
 
-    setAnswer(
-      satyrn.responseManager.generate(formattedFilters, statement?.plan, data),
-    );
+    setAnswer(satyrn.responseManager.generate(formattedFilters, plan, data));
   }, [data, plan, satyrn, statement, filters]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const chartMargins = {
@@ -135,11 +132,6 @@ const Answers = ({
     expanded,
   ]);
 
-  const styles = css`
-    width: 100%;
-    margin-bottom: 20px;
-  `;
-
   const onCapture = () => {
     htmlToImage
       .toPng(document.getElementById(`data-chart-${panelId}`))
@@ -166,10 +158,17 @@ const Answers = ({
 
   return (
     <>
-      <div ref={containerRef} className={`$answers ${styles}`}>
+      <Box
+        ref={containerRef}
+        sx={{
+          width: "100%",
+          marginBottom: isEmpty(data) ? "0px" : "20px",
+          transition: ".2s all",
+        }}
+      >
         <Loader isVisible={loadingAnswers}>
           <>
-            {data && (
+            {!isEmpty(data) && (
               <div
                 style={{
                   overflowX: "auto",
@@ -214,7 +213,7 @@ const Answers = ({
             )}
           </>
         </Loader>
-      </div>
+      </Box>
       {isBarChart || isLineChart || isMultilineChart ? (
         <Tooltip title="Save Snapshot">
           <Button onClick={onCapture} variant="outlined">

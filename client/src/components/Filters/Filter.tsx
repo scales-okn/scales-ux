@@ -2,9 +2,10 @@ import React, { useState, useEffect, useRef } from "react";
 
 import { usePanel } from "src/store/panels";
 import { useRing } from "src/store/rings";
+import { useSessionUser } from "src/store/auth";
 
-import { debounce } from "lodash";
-
+// import { debounce } from "lodash";
+import dayjs from "dayjs";
 import {
   CircularProgress,
   TextField,
@@ -13,9 +14,12 @@ import {
   Autocomplete,
 } from "@mui/material";
 import HighlightOffIcon from "@mui/icons-material/HighlightOff";
-
 import DateTimeRangePicker from "@wojtekmaj/react-datetimerange-picker";
+import "@wojtekmaj/react-datetimerange-picker/dist/DateTimeRangePicker.css";
+import "react-calendar/dist/Calendar.css";
+import "react-clock/dist/Clock.css";
 
+import { usStates } from "./usStates";
 import useDebounce from "src/hooks/useDebounce";
 import { DATE_FORMAT } from "src/helpers/constants";
 import { makeRequest } from "src/helpers/makeRequest";
@@ -41,8 +45,14 @@ type Props = {
   panelId: string;
 };
 
+type RangeItemT = Date | null;
+type DateRangeT = RangeItemT | [RangeItemT, RangeItemT];
+
 const Filter = ({ panelId, filter }: Props) => {
-  const { panel, filters, setPanelFilters } = usePanel(panelId);
+  const { panel, filters, setPanelFilters, updatePanel } = usePanel(panelId);
+
+  const sessionUser = useSessionUser();
+  const sessionUserCanEdit = sessionUser?.id === panel?.userId;
 
   const { ring, info } = useRing(panel.ringId);
   const { type, id, value } = filter;
@@ -53,7 +63,9 @@ const Filter = ({ panelId, filter }: Props) => {
     FilterOptionT[]
   >([]);
   const [autocompleteValues, setAutocompleteValues] = useState([]);
-  const [dateValue, setDateValue] = useState<Date | null>(null);
+
+  const [dateValue, setDateValue] = useState<DateRangeT>([null, null]);
+
   const { notify } = useNotify();
 
   useEffect(() => {
@@ -61,13 +73,19 @@ const Filter = ({ panelId, filter }: Props) => {
   }, [type]);
 
   useEffect(() => {
-    const activeFilter = filters.find((filter) => filter.type === type);
-    const values = activeFilter.value.split("|").map((value) => {
-      return { label: value, value: value };
-    });
-    const out = activeFilter.value === "" ? [] : values;
+    const values = filter.value
+      ?.toString()
+      .split("|")
+      .map((value) => {
+        if (type === "state_abbrev") {
+          return usStates.find((state) => state.value === value);
+        }
+        return { label: value, value };
+      });
+
+    const out = filter.value === "" ? [] : values;
     setAutocompleteValues(out);
-  }, []); // eslint-disable-line react-hooks/exhaustive-deps
+  }, [filter.value]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const setFilter = (filter: FilterT) => {
     try {
@@ -79,10 +97,12 @@ const Filter = ({ panelId, filter }: Props) => {
       });
 
       setPanelFilters(newFilters);
+      updatePanel({ filters: newFilters });
     } catch (error) {
       console.warn(error); // eslint-disable-line no-console
     }
   };
+  console.log(panel.filters);
 
   const getFilterOptionsByKey = (key) => {
     if (!key) return null;
@@ -105,6 +125,18 @@ const Filter = ({ panelId, filter }: Props) => {
   };
 
   const filterOptions = getFilterOptionsByKey(type);
+
+  useEffect(() => {
+    if (filterOptions?.type === "date") {
+      let out;
+      if (filter.value) {
+        out = filter.value.toString().split(",");
+      } else {
+        out = [null, null];
+      }
+      setDateValue(out);
+    }
+  }, [filter, filterOptions]);
 
   const fetchAutocompleteSuggestions = async (query) => {
     setIsLoading(true);
@@ -153,10 +185,12 @@ const Filter = ({ panelId, filter }: Props) => {
   }, [filter.type]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const handleClear = async () => {
-    const newFilters = [
-      ...filters.filter((filter: FilterT) => filter.id !== id),
-    ];
-    setPanelFilters(newFilters);
+    if (sessionUserCanEdit) {
+      const newFilters = [
+        ...filters.filter((filter: FilterT) => filter.id !== id),
+      ];
+      setPanelFilters(newFilters);
+    }
   };
 
   const rangeInputElement = (
@@ -183,6 +217,7 @@ const Filter = ({ panelId, filter }: Props) => {
       open={autocompleteOpen}
       noOptionsText={isLoading ? <CircularProgress /> : <>No Results Found</>}
       multiple
+      disabled={!sessionUserCanEdit}
       value={autocompleteValues}
       options={autoCompleteSuggestions || []}
       getOptionLabel={(option: FilterOptionT) => option.label}
@@ -198,7 +233,7 @@ const Filter = ({ panelId, filter }: Props) => {
       disableClearable
       onInputChange={(_, value) => {
         // We get all options on load, don't server autocomplete for:
-        const localFilterTypes = [
+        const noFetchFilterTypes = [
           "case_status",
           "ontology_labels",
           "case_type",
@@ -206,7 +241,7 @@ const Filter = ({ panelId, filter }: Props) => {
         ];
 
         const minChar = 3;
-        if (value.length >= minChar && !localFilterTypes.includes(type)) {
+        if (value.length >= minChar && !noFetchFilterTypes.includes(type)) {
           setRawSearch(value);
           setIsLoading(true);
         }
@@ -226,17 +261,19 @@ const Filter = ({ panelId, filter }: Props) => {
         if (!filter) {
           return false;
         }
+        const arr = fieldValue.map((value) => value.value.toString());
+        const uniqValues = Array.from(new Set(arr));
+
         setFilter({
           ...filter,
-          value: fieldValue.map((x) => x.value).join("|"),
+          value: uniqValues.join("|"),
         });
-        setAutocompleteValues(fieldValue);
         autocompleteRef.current?.blur();
       }}
       sx={{
         minWidth: "250px",
-
         "& .MuiInputBase-root": {
+          cursor: sessionUserCanEdit ? "pointer" : "not-allowed",
           borderRadius: "0 4px 4px 0",
         },
         "& .MuiAutocomplete-endAdornment": {
@@ -257,7 +294,7 @@ const Filter = ({ panelId, filter }: Props) => {
 
   const textFieldElement = (
     <TextField
-      disabled={!filterOptions?.type}
+      disabled={!filterOptions?.type || !sessionUserCanEdit}
       onChange={(event) => {
         if (!filter) {
           return false;
@@ -274,6 +311,7 @@ const Filter = ({ panelId, filter }: Props) => {
   const switchElement = (
     <div className="switchElement">
       <FormControlLabel
+        disabled={!sessionUserCanEdit}
         control={
           <Switch
             checked={filter?.value === "true"}
@@ -297,11 +335,25 @@ const Filter = ({ panelId, filter }: Props) => {
       <div className="rangeLabel">{filterOptions?.nicename}</div>
       <DateTimeRangePicker
         format={DATE_FORMAT}
+        disabled={!sessionUserCanEdit}
+        maxDate={new Date()}
+        minDate={new Date("01/01/1900")}
         onChange={(value) => {
+          let out;
+          if (value) {
+            const first = dayjs(value[0]).format("YYYY-MM-DD");
+            const second = dayjs(value[1]).format("YYYY-MM-DD");
+            out = `${first},${second}`;
+          } else {
+            out = "";
+          }
+
           setDateValue(value);
-          setFilter({ ...filter, value: value });
+          setFilter({ ...filter, value: out });
         }}
         value={dateValue}
+        disableCalendar={false}
+        disableClock
       />
     </div>
   );
@@ -310,6 +362,7 @@ const Filter = ({ panelId, filter }: Props) => {
     <div className={`filter ${filterStyles}`}>
       <div className="filterItem">
         <FilterTypeDropDown
+          disabled={!sessionUserCanEdit}
           filter={filter}
           getFilterOptionsByKey={getFilterOptionsByKey}
           filters={filters}
@@ -327,9 +380,14 @@ const Filter = ({ panelId, filter }: Props) => {
             if (filterOptions?.type === "date") {
               return datePickerElement;
             }
-            if (filterOptions?.nicename === "Court State") {
+            if (type === "state_abbrev") {
               return (
-                <StateAutocomplete setFilter={setFilter} filter={filter} />
+                <StateAutocomplete
+                  setFilter={setFilter}
+                  filter={filter}
+                  disabled={!sessionUserCanEdit}
+                  autocompleteValues={autocompleteValues}
+                />
               );
             }
             if (filterOptions?.autocomplete) {
@@ -339,7 +397,9 @@ const Filter = ({ panelId, filter }: Props) => {
           })()}
         </div>
         <div className="closeIcon" onClick={handleClear}>
-          <HighlightOffIcon />
+          <HighlightOffIcon
+            sx={{ cursor: sessionUserCanEdit ? "pointer" : "not-allowed" }}
+          />
         </div>
       </div>
     </div>

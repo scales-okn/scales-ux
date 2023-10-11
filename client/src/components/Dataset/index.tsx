@@ -1,10 +1,19 @@
 import React, { useEffect, useState } from "react";
-import { Container, Grid, Tooltip, MenuItem, Select } from "@mui/material";
-import Loader from "../Loader";
+
+import {
+  Container,
+  Grid,
+  Tooltip,
+  MenuItem,
+  Select,
+  Button,
+} from "@mui/material";
+
 import { usePanel } from "src/store/panels";
 import { useRing, useRings } from "src/store/rings";
+import { useSessionUser } from "src/store/auth";
 
-import Button from "@mui/material/Button";
+import Loader from "../Loader";
 
 import "./Dataset.scss";
 
@@ -13,10 +22,14 @@ type DatasetProps = {
 };
 
 const Dataset = ({ panelId }: DatasetProps) => {
-  const { updatePanel, setPanelCollapsed } = usePanel(panelId);
+  const { updatePanel, panel, setPanelCollapsed } = usePanel(panelId);
   const { rings, loadingRings } = useRings();
 
   const [selectedRing, setSelectedRing] = useState(null);
+
+  const sessionUser = useSessionUser();
+  const sessionUserCanEdit = sessionUser?.id === panel?.userId;
+  const updatesDisabled = !sessionUserCanEdit;
 
   const { ring, loadingRingInfo, info, getRingInfo } = useRing(
     selectedRing?.id,
@@ -59,6 +72,7 @@ const Dataset = ({ panelId }: DatasetProps) => {
                   rings.find((ring) => ring.name === event.target.value),
                 );
               }}
+              disabled={updatesDisabled}
               sx={{
                 background: "white",
                 div: { padding: "12px 10px 10px 12px" },
@@ -92,7 +106,7 @@ const Dataset = ({ panelId }: DatasetProps) => {
               ) : (
                 <Button
                   variant="contained"
-                  disabled={!info}
+                  disabled={!info || updatesDisabled}
                   onClick={() => {
                     updatePanel({ ringId: selectedRing.id });
                     setPanelCollapsed(false);

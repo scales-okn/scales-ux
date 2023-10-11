@@ -34,7 +34,7 @@ const ModalContainer: FunctionComponent<ModalContainerT> = ({
         ...modalStyles,
       }}
     >
-      <Paper>{children}</Paper>
+      <Paper sx={{ outline: "none" }}>{children}</Paper>
     </Modal>
   );
 };

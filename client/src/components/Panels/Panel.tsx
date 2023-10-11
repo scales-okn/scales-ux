@@ -2,6 +2,7 @@ import React, { useState, useEffect, useMemo } from "react";
 import { Link } from "react-router-dom";
 import { usePanel } from "src/store/panels";
 import { useRing } from "src/store/rings";
+import { useSessionUser } from "src/store/auth";
 
 import {
   Accordion,
@@ -57,6 +58,9 @@ const Panel = ({ panelId, defaultCollapsed }: PanelT) => {
       setPanelCollapsed(false);
     }
   });
+
+  const sessionUser = useSessionUser();
+  const sessionUserCanEdit = sessionUser?.id === panel?.userId;
 
   const { ring, info, getRingInfo } = useRing(panel?.ringId);
 
@@ -154,6 +158,7 @@ const Panel = ({ panelId, defaultCollapsed }: PanelT) => {
             sx={{ height: "30.75px", width: "30.75px" }}
             variant="outlined"
             titleAddon="Panel"
+            disabled={!sessionUserCanEdit}
           />
           <DownloadButton
             onClick={() => downloadCsv()}
@@ -222,62 +227,62 @@ const Panel = ({ panelId, defaultCollapsed }: PanelT) => {
           <div className="p-0 bg-light border-top">
             <Loader
               contentHeight={resultsCollapsed ? "60px" : "400px"}
-              isVisible={loadingPanelResults}
+              isVisible={
+                loadingPanelResults || (!results && !loadingPanelResults)
+              }
             >
-              <>
-                {results && (
-                  <Accordion expanded={resultsCollapsed === true}>
-                    <AccordionDetails sx={{ padding: "0px" }}>
-                      <>
-                        <div
-                          style={{
-                            width: "100%",
-                            overflowX: "hidden",
-                          }}
+              {results && (
+                <Accordion expanded={resultsCollapsed === true}>
+                  <AccordionDetails sx={{ padding: "0px" }}>
+                    <>
+                      <div
+                        style={{
+                          width: "100%",
+                          overflowX: "hidden",
+                        }}
+                      >
+                        {!resultsCollapsed && (
+                          <DataGrid
+                            rows={rows}
+                            onPaginationModelChange={(model) => {
+                              getPanelResults([], model.page);
+                            }}
+                            paginationModel={{
+                              page: results?.page,
+                              pageSize: results?.batchSize,
+                            }}
+                            disableColumnMenu
+                            disableColumnFilter
+                            pageSizeOptions={[10]}
+                            columns={columns}
+                            rowCount={results?.totalCount}
+                            checkboxSelection={false}
+                            className="bg-white border-0 rounded-0"
+                            paginationMode="server"
+                            sx={{
+                              "& .MuiDataGrid-virtualScroller": {
+                                minHeight: "400px",
+                              },
+                            }}
+                          />
+                        )}
+                      </div>
+                      <div className="p-3">
+                        {results?.totalCount?.toLocaleString()} Dockets Found
+                        <Button
+                          size="small"
+                          onClick={() =>
+                            setPanelResultsCollapsed(!resultsCollapsed)
+                          }
+                          sx={{ textTransform: "none" }}
                         >
-                          {!resultsCollapsed && (
-                            <DataGrid
-                              rows={rows}
-                              onPaginationModelChange={(model) => {
-                                getPanelResults([], model.page);
-                              }}
-                              paginationModel={{
-                                page: results?.page,
-                                pageSize: results?.batchSize,
-                              }}
-                              disableColumnMenu
-                              disableColumnFilter
-                              pageSizeOptions={[10]}
-                              columns={columns}
-                              rowCount={results?.totalCount}
-                              checkboxSelection={false}
-                              className="bg-white border-0 rounded-0"
-                              paginationMode="server"
-                              sx={{
-                                "& .MuiDataGrid-virtualScroller": {
-                                  minHeight: "400px",
-                                },
-                              }}
-                            />
-                          )}
-                        </div>
-                        <div className="p-3">
-                          {results?.totalCount?.toLocaleString()} Dockets Found
-                          <Button
-                            size="small"
-                            onClick={() =>
-                              setPanelResultsCollapsed(!resultsCollapsed)
-                            }
-                            sx={{ textTransform: "none" }}
-                          >
-                            ({resultsCollapsed ? "Expand" : "Collapse"})
-                          </Button>
-                        </div>
-                      </>
-                    </AccordionDetails>
-                  </Accordion>
-                )}
-              </>
+                          ({resultsCollapsed ? "Expand" : "Collapse"})
+                        </Button>
+                      </div>
+                    </>
+                  </AccordionDetails>
+                </Accordion>
+              )}
             </Loader>
           </div>
 

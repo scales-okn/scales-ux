@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { useHelpTexts } from "src/store/helpTexts";
 
 import { Box, Menu, MenuItem, ListItemText } from "@mui/material";
@@ -8,10 +8,10 @@ import FilterTooltip from "../HelpTextTooltip";
 
 import { filterTypeStyles } from "./styles";
 
-type FilterColumn = {
-  key: string;
-  nicename: string;
-};
+// type FilterColumn = {
+//   key: string;
+//   nicename: string;
+// };
 
 type FilterT = {
   id: string;
@@ -29,49 +29,51 @@ type NormFilterT = {
   type: string;
 };
 
-type FilterTypeProps = {
+type FilterTypeDropDownT = {
   filter: FilterT;
   filters: FilterT[];
   setFilter: (arg: Record<string, unknown>) => void;
   getFiltersNormalized: () => NormFilterT[];
   getFilterOptionsByKey: (type: string) => NormFilterT;
+  disabled?: boolean;
 };
 
-const FilterTypeDropDown = (props: FilterTypeProps) => {
-  const {
-    filter,
-    filters,
-    getFiltersNormalized,
-    getFilterOptionsByKey,
-    setFilter,
-  } = props;
-
-  const { type } = filter;
+const FilterTypeDropDown = ({
+  filter,
+  filters,
+  getFiltersNormalized,
+  getFilterOptionsByKey,
+  setFilter,
+  disabled,
+}: FilterTypeDropDownT) => {
+  // const { type } = filter;
   const { helpTexts } = useHelpTexts();
 
-  const filterOptions = getFilterOptionsByKey(type);
+  // const filterOptions = getFilterOptionsByKey(type);
 
-  const [filterInput, setFilterInput] = useState<FilterColumn>({
-    key: type,
-    nicename: filterOptions?.nicename,
-  });
+  // const [filterInput, setFilterInput] = useState<FilterColumn>({
+  //   key: type,
+  //   nicename: filterOptions?.nicename,
+  // });
 
-  useEffect(() => {
+  const resetFilterState = (input) => {
     try {
-      if (filterInput) {
+      if (input) {
         // when changing filter type, reset the value
-        const { type: dataType } = getFilterOptionsByKey(filterInput.key) || {};
+        const { type: dataType } = getFilterOptionsByKey(input.key) || {};
 
         setFilter({
           ...filter,
-          type: filterInput.key,
+          type: input.key,
           value: dataType === "boolean" ? "false" : "",
         });
       }
     } catch (error) {
       console.warn(error); // eslint-disable-line no-console
     }
-  }, [filterInput]); // eslint-disable-line react-hooks/exhaustive-deps
+  };
+
+  // useEffect(() => {}, [filterInput]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const filtersToRender = getFiltersNormalized()
     ?.filter(
@@ -97,7 +99,9 @@ const FilterTypeDropDown = (props: FilterTypeProps) => {
   const [anchorEl, setAnchorEl] = useState(null);
 
   const handleMenuOpen = (event) => {
-    setAnchorEl(event.currentTarget);
+    if (!disabled) {
+      setAnchorEl(event.currentTarget);
+    }
   };
 
   const handleMenuClose = () => {
@@ -108,7 +112,7 @@ const FilterTypeDropDown = (props: FilterTypeProps) => {
     <div className={`filter-type ${filterTypeStyles}`}>
       <Box
         sx={{
-          cursor: "pointer",
+          cursor: disabled ? "not-allowed" : "pointer",
           height: "100%",
           width: "100%",
           display: "flex",
@@ -143,7 +147,8 @@ const FilterTypeDropDown = (props: FilterTypeProps) => {
             <div key={key}>
               <MenuItem
                 onClick={() => {
-                  setFilterInput({ key, nicename });
+                  // setFilterInput({ key, nicename });
+                  resetFilterState({ key, nicename });
                   handleMenuClose();
                 }}
                 disabled={disabled}

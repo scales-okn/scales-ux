@@ -1,24 +1,23 @@
 import React, { useEffect, useState } from "react";
-import { useSelector } from "react-redux";
 import { useNavigate, useParams } from "react-router-dom";
-// import { useEffectOnce } from "react-use";
 
 import { useRings } from "src/store/rings";
 import { useNotebook } from "src/store/notebook";
-import { useUser } from "src/store/user";
 import { usePanels } from "src/store/panels";
-import { sessionUserSelector } from "src/store/auth";
+import { useSessionUser } from "src/store/auth";
 
-// import ContentCopyIcon from "@mui/icons-material/ContentCopy";
+import ContentCopyIcon from "@mui/icons-material/ContentCopy";
 import {
   Grid,
   TextField,
   Button,
   Switch,
-  // Box, Tooltip
+  Box,
+  Tooltip,
+  Typography,
 } from "@mui/material";
 import DeleteButton from "src/components/Buttons/DeleteButton";
-// import { useTheme } from "@mui/material/styles";
+import { useTheme } from "@mui/material/styles";
 
 import AddPanel from "src/components/Panels/AddPanel";
 import ConfirmModal from "src/components/Modals/ConfirmModal";
@@ -28,11 +27,6 @@ import DuplicateNotebookModal from "./DuplicateNotebookModal";
 
 const Notebook = () => {
   const { getRings } = useRings();
-  const { fetchUsers } = useUser();
-  const sessionUser = useSelector(sessionUserSelector);
-
-  // const theme = useTheme();
-
   const {
     notebook,
     fetchNotebook,
@@ -44,23 +38,25 @@ const Notebook = () => {
     savingNotebook,
     clearNotebook,
   } = useNotebook();
+  const { getPanels, clearPanels } = usePanels(notebook?.id);
 
   const { notebookId: notebookIdParam } = useParams();
-
   const isNewNotebook = notebookIdParam === "new";
 
-  const updateDisabled = notebook?.userId !== sessionUser.id;
+  const sessionUser = useSessionUser();
+  const sessionUserCanEdit = sessionUser?.id === notebook?.userId;
+  const updatesDisabled = !sessionUserCanEdit && !isNewNotebook;
 
-  const { getPanels, clearPanels } = usePanels(notebook?.id);
+  const theme = useTheme(); // mui theme
 
   const [copyModalOpen, setCopyModalOpen] = useState(false);
   const [confirmVisible, setConfirmVisible] = useState(false);
   const [notebookTitle, setNotebookTitle] = useState(notebook?.title || "");
+
   const navigate = useNavigate();
 
   useEffect(() => {
     getRings();
-    fetchUsers();
 
     return () => {
       clearNotebook();
@@ -88,7 +84,7 @@ const Notebook = () => {
 
   useEffect(() => {
     // If we have a notebook id, fetch the notebook
-    if (notebookIdParam && notebookIdParam !== "new") {
+    if (notebookIdParam && !isNewNotebook) {
       fetchNotebook(notebookIdParam);
     }
   }, [notebookIdParam]); // eslint-disable-line react-hooks/exhaustive-deps
@@ -123,13 +119,14 @@ const Notebook = () => {
         }}
       >
         <Grid container alignItems="center" justifyContent="space-between">
-          <Grid item lg={4}>
+          <Grid item xs={8}>
             <TextField
               fullWidth
               size="medium"
+              disabled={updatesDisabled}
               placeholder="Notebook Title"
               variant="standard"
-              error={!notebookTitle && notebook?.id}
+              error={!(notebookTitle && notebook?.id)}
               onChange={(event) => {
                 setNotebookTitle(event.target.value);
               }}
@@ -153,12 +150,24 @@ const Notebook = () => {
                 },
               }}
             />
+            {updatesDisabled && (
+              <Typography
+                sx={{
+                  fontStyle: "italic",
+                  fontSize: "14px",
+                  color: "GrayText",
+                }}
+              >
+                This is a read-only, public notebook. Use the copy button to
+                clone your own version.
+              </Typography>
+            )}
           </Grid>
 
           {notebook?.id ? (
             <>
               <Grid item sx={{ display: "flex", alignItems: "center" }}>
-                {/* <Tooltip title="Make a Copy">
+                <Tooltip title="Make a Copy">
                   <Box
                     sx={{
                       border: `1px solid ${theme.palette.success.main}`,
@@ -179,10 +188,10 @@ const Notebook = () => {
                       sx={{ fontSize: "22px" }}
                     />
                   </Box>
-                </Tooltip> */}
+                </Tooltip>
                 <DeleteButton
                   onClick={() => setConfirmVisible(true)}
-                  disabled={deletingNotebook || updateDisabled}
+                  disabled={deletingNotebook || updatesDisabled}
                   variant="outlined"
                   titleAddon="Notebook"
                 />
@@ -214,7 +223,7 @@ const Notebook = () => {
                 <div>
                   <span className="title">Public:</span>
                   <Switch
-                    disabled={updateDisabled}
+                    disabled={!sessionUserCanEdit}
                     checked={notebook?.visibility === "public"}
                     onChange={() =>
                       updateNotebookVisibility(

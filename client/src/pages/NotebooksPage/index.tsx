@@ -13,6 +13,7 @@ import {
   IconButton,
   Grid,
   Switch,
+  Typography,
   Button,
 } from "@mui/material";
 
@@ -42,7 +43,9 @@ const NotebooksPage = () => {
   const { fetchUsers, users } = useUser();
 
   useEffectOnce(() => {
-    fetchUsers();
+    if (isAdmin) {
+      fetchUsers();
+    }
   });
 
   useEffect(() => {
@@ -149,7 +152,7 @@ const NotebooksPage = () => {
       renderCell: (params: GridCellParams) => {
         if (params.row.userId === user.id) {
           return <>You</>;
-        } else {
+        } else if (isAdmin) {
           // hacky workaround to accommodate existing db schema, should fix. Users should be populated in notebooks call
           const user = users.find((u) => u.id === params.row.userId);
           return isAdmin ? (
@@ -160,6 +163,14 @@ const NotebooksPage = () => {
             <span>
               {user.firstName} {user.lastName}
             </span>
+          );
+        } else {
+          return (
+            <Typography
+              sx={{ color: "GrayText", fontSize: "14px", fontStyle: "italic" }}
+            >
+              Public
+            </Typography>
           );
         }
       },
@@ -172,7 +183,7 @@ const NotebooksPage = () => {
         const canDelete = params.row.userId === user.id;
         return (
           <div style={{ paddingLeft: "5px" }}>
-            {canDelete ? <DeleteNotebook notebookId={params.row.id} /> : null}
+            <DeleteNotebook notebookId={params.row.id} disabled={!canDelete} />
           </div>
         );
       },

@@ -42,6 +42,7 @@ export const filterStyles = css`
   .dateRangePickerElement {
     height: 56px;
     position: relative;
+    z-index: 100;
 
     .rangeLabel {
       position: absolute;
