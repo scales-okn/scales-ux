@@ -65,8 +65,6 @@ const Filter = ({ panelId, filter }: Props) => {
   const [autocompleteValues, setAutocompleteValues] = useState([]);
 
   const [dateValue, setDateValue] = useState<DateRangeT>([null, null]);
-  console.log("🚀 ~ file: Filter.tsx:68 ~ Filter ~ dateValue:", dateValue);
-  console.log(filter);
 
   const { notify } = useNotify();
 
