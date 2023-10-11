@@ -47,7 +47,7 @@ const Notebook = () => {
   const sessionUserCanEdit = sessionUser?.id === notebook?.userId;
   const updatesDisabled = !sessionUserCanEdit && !isNewNotebook;
 
-  const theme = useTheme(); // mui theme
+  const theme = useTheme();
 
   const [copyModalOpen, setCopyModalOpen] = useState(false);
   const [confirmVisible, setConfirmVisible] = useState(false);

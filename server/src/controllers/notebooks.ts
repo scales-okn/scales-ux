@@ -3,6 +3,7 @@ import { sequelize } from "../database";
 import accessControl from "../services/accesscontrol";
 import { Op } from "sequelize";
 import { permissionsFieldsFilter } from "../services/accesscontrol";
+import { findAllAndPaginate } from "./util/findAllAndPaginate";
 
 // Resources validations are made with validateResources middleware and validations schemas
 // server/middlewares/validateResources.ts
@@ -89,23 +90,27 @@ export const findAll = async (req: Request, res: Response) => {
       return res.send_forbidden("Not allowed!");
     }
 
-    let where = {};
+    const where = {};
 
     if (req.query.type === "public") {
-      where[Op.or] = [{ visibility: "public" }];
+      where[Op.and] = [
+        { visibility: "public" },
+        { userId: { [Op.ne]: userId } },
+      ];
     } else {
       where[Op.or] = [
-        { collaborators: { [Op.contains]: [userId] } },
         { userId },
+        // { collaborators: { [Op.contains]: [userId] } },
       ];
     }
 
-    const notebooks = await sequelize.models.Notebook.findAll({
-      where,
-      order: [["id", "DESC"]],
+    const result = await findAllAndPaginate({
+      model: sequelize.models.Notebook,
+      query: req.query,
+      dataName: "notebooks",
     });
 
-    return res.send_ok("", { notebooks });
+    return res.send_ok("", result);
   } catch (error) {
     console.warn(error); // eslint-disable-line no-console
 

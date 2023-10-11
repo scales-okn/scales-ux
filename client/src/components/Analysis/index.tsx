@@ -242,7 +242,6 @@ const Analysis: FunctionComponent<Props> = ({ panelId }) => {
   return (
     <div className="analysis">
       {Object.keys(analysis).map((id) => {
-        console.log(analysis[id]);
         return (
           <Grid key={id} container className="analysis-item">
             <Grid

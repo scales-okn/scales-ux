@@ -6,6 +6,7 @@ import { sendEmail } from "../services/sesMailer";
 import accessControl, {
   permissionsFieldsFilter,
 } from "../services/accesscontrol";
+import { findAllAndPaginate } from "./util/findAllAndPaginate";
 
 // Resources validations are made with validateResources middleware and validations schemas
 // server/middlewares/validateResources.ts
@@ -112,22 +113,16 @@ export const login = async (req: Request, res: Response) => {
   }
 };
 
-// Find all Users
 export const findAllUsers = async (req: Request, res: Response) => {
   try {
-    // @ts-ignore
-    // Removing for collaborator assignment
-    // const permission = await accessControl.can(req.user.role, "users:read");
-    // if (!permission.granted) {
-    //   return res.send_forbidden("Not allowed!");
-    // }
-
-    const users = await sequelize.models.User.findAll({
+    const result = await findAllAndPaginate({
+      model: sequelize.models.User,
+      query: req.query,
       attributes: { exclude: ["password"] },
-      order: [["id", "DESC"]],
+      dataName: "users",
     });
 
-    return res.send_ok("", { users });
+    return res.send_ok("", result);
   } catch (error) {
     console.warn(error); // eslint-disable-line no-console
 

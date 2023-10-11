@@ -20,7 +20,7 @@ export const styles = css`
     bottom: 16px;
     left: 16px;
     height: 32px;
-    width: 72px;
+    width: 98px;
     background: var(--main-purple-light);
     color: white;
     border-radius: 6px;

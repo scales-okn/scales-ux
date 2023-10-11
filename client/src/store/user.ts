@@ -25,14 +25,26 @@ type UserT = {
   usage: string;
 };
 
+type PagingT = {
+  totalUsers: number;
+  totalPages: number;
+  currentPage: number;
+};
+
 type InitialStateT = {
   users: UserT[];
+  paging: PagingT;
   loadingUsers: boolean;
   hasErrors: boolean;
 };
 
 export const initialState: InitialStateT = {
   users: [],
+  paging: {
+    totalUsers: 0,
+    totalPages: 0,
+    currentPage: 0,
+  },
   loadingUsers: false,
   hasErrors: false,
 };
@@ -51,7 +63,8 @@ const userSlice = createSlice({
         ...state,
         loadingUsers: false,
         hasErrors: false,
-        users: payload,
+        users: payload.users,
+        paging: payload.paging,
       };
     },
     fetchUsersFailure: (state) => ({
@@ -80,20 +93,23 @@ export const userActions = userSlice.actions;
 
 // Selectors
 export const usersSelector = (state: RootState) => state.user?.users;
+export const usersPagingSelector = (state: RootState) => state.user?.paging;
 
 // The reducer
 export default userSlice.reducer;
 
 // Asynchronous thunk actions
-export const fetchUsers = () => {
+export const fetchUsers = (params) => {
   return async (dispatch: AppDispatch) => {
     try {
       dispatch(userActions.fetchUsers());
 
-      const { data, message, code } = await makeRequest.get(`/api/users`);
+      const { data, message, code } = await makeRequest.get(`/api/users`, {
+        params,
+      });
 
       if (code === 200) {
-        dispatch(userActions.fetchUsersSuccess(data.users));
+        dispatch(userActions.fetchUsersSuccess(data));
       } else {
         dispatch(notify(message, "error"));
         dispatch(userActions.fetchUsersFailure());
@@ -126,11 +142,13 @@ export const updateUser = (userId, payload: any = {}) => {
 // Hooks
 export const useUser = () => {
   const users = useSelector(usersSelector);
+  const usersPaging = useSelector(usersPagingSelector);
   const dispatch = useDispatch();
 
   return {
     users,
-    fetchUsers: () => dispatch(fetchUsers()),
+    usersPaging,
+    fetchUsers: (payload: any = {}) => dispatch(fetchUsers(payload)),
     updateUser: (userId, payload: any = {}) =>
       dispatch(updateUser(userId, payload)),
   };
