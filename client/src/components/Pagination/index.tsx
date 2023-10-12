@@ -31,7 +31,7 @@ const Pagination = ({
         width: "100%",
         background: "white",
         marginBottom: "12px",
-        minHeight: "50px",
+        minHeight: "56px",
         display: "flex",
         alignItems: "center",
         justifyContent: "space-between",

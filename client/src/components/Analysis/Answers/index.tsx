@@ -40,7 +40,7 @@ const Answers = ({
 
   useEffect(() => {
     setExpanded(true);
-  }, [answer]);
+  }, [answer]); // eslint-disable-line react-hooks/exhaustive-deps
 
   useEffect(() => {
     if (!data || !statement || !plan || !satyrn) return;
@@ -168,7 +168,7 @@ const Answers = ({
       >
         <Loader isVisible={loadingAnswers}>
           <>
-            {!isEmpty(data) && (
+            {!isEmpty(data) && answer && (
               <div
                 style={{
                   overflowX: "auto",
@@ -214,14 +214,14 @@ const Answers = ({
           </>
         </Loader>
       </Box>
-      {isBarChart || isLineChart || isMultilineChart ? (
+      {answer && (isBarChart || isLineChart || isMultilineChart) ? (
         <Tooltip title="Save Snapshot">
           <Button onClick={onCapture} variant="outlined">
             <CameraAlt />
           </Button>
         </Tooltip>
       ) : null}
-      {collapseIsVisible && (
+      {answer && collapseIsVisible && (
         <div>
           <Tooltip title={expanded ? "Collapse" : "Expand"}>
             <Button

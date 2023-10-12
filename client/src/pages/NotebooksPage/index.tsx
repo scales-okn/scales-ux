@@ -13,7 +13,6 @@ import {
   IconButton,
   Grid,
   Switch,
-  Typography,
   Button,
 } from "@mui/material";
 
@@ -39,8 +38,14 @@ const NotebooksPage = () => {
 
   const [notebooksType, setNotebooksType] = useState("my-notebooks");
   const [filterNotebooks, setFilterNotebooks] = useState("");
-  const { fetchNotebooks, loadingNotebooks, updateNotebook, notebooks } =
-    useNotebook();
+  const {
+    fetchNotebooks,
+    loadingNotebooks,
+    updateNotebook,
+    notebooks,
+    paging,
+  } = useNotebook();
+
   const { fetchUsers, users } = useUser();
 
   useEffectOnce(() => {
@@ -51,7 +56,7 @@ const NotebooksPage = () => {
   });
 
   useEffect(() => {
-    fetchNotebooks({ type: notebooksType });
+    fetchNotebooks({ type: notebooksType, page: 1 });
   }, [notebooksType]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const updateNotebookVisibility = (id, visibility) => {
@@ -276,12 +281,10 @@ const NotebooksPage = () => {
                 />
               </Grid>
             }
-            paging={{
-              totalUsers: 1,
-              totalPages: 1,
-              currentPage: 1,
-            }}
-            fetchData={() => null}
+            paging={paging}
+            fetchData={(args) =>
+              fetchNotebooks({ type: notebooksType, ...args })
+            }
           />
           <DataGrid
             rows={notebooksData}
@@ -289,7 +292,6 @@ const NotebooksPage = () => {
             disableColumnMenu
             disableColumnFilter
             hideFooterPagination
-            hideFooter={notebooks?.length <= 10 ? true : false}
             rowCount={notebooks?.length}
             checkboxSelection={false}
             className="bg-white"

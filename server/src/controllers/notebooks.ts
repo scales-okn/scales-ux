@@ -108,6 +108,7 @@ export const findAll = async (req: Request, res: Response) => {
       model: sequelize.models.Notebook,
       query: req.query,
       dataName: "notebooks",
+      where,
     });
 
     return res.send_ok("", result);

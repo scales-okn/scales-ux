@@ -6,6 +6,7 @@ import { useSelector, useDispatch } from "react-redux";
 // import { Store, Dispatch, Action } from "redux";
 // import { sessionUserSelector } from "src/store/auth";
 import { notify } from "reapop";
+import { PagingT } from "src/types/paging";
 
 import { makeRequest } from "src/helpers/makeRequest";
 
@@ -23,12 +24,6 @@ type UserT = {
   role: string;
   updatedAt: string;
   usage: string;
-};
-
-type PagingT = {
-  totalUsers: number;
-  totalPages: number;
-  currentPage: number;
 };
 
 type InitialStateT = {
