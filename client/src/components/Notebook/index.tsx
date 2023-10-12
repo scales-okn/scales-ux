@@ -52,6 +52,7 @@ const Notebook = () => {
   const [copyModalOpen, setCopyModalOpen] = useState(false);
   const [confirmVisible, setConfirmVisible] = useState(false);
   const [notebookTitle, setNotebookTitle] = useState(notebook?.title || "");
+
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -125,7 +126,7 @@ const Notebook = () => {
               disabled={updatesDisabled}
               placeholder="Notebook Title"
               variant="standard"
-              error={!notebookTitle && notebook?.id}
+              error={!(notebookTitle && notebook?.id)}
               onChange={(event) => {
                 setNotebookTitle(event.target.value);
               }}

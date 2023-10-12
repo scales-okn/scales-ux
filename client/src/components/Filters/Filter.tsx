@@ -65,6 +65,7 @@ const Filter = ({ panelId, filter }: Props) => {
   const [autocompleteValues, setAutocompleteValues] = useState([]);
 
   const [dateValue, setDateValue] = useState<DateRangeT>([null, null]);
+
   const { notify } = useNotify();
 
   useEffect(() => {
@@ -126,6 +127,12 @@ const Filter = ({ panelId, filter }: Props) => {
 
   useEffect(() => {
     if (filterOptions?.type === "date") {
+      const badDate = filter.value.toString().includes("Invalid Date");
+      if (badDate) {
+        setFilter({ ...filter, value: "" });
+        return;
+      }
+
       let out;
       if (filter.value) {
         out = filter.value.toString().split(",");
@@ -337,11 +344,14 @@ const Filter = ({ panelId, filter }: Props) => {
         maxDate={new Date()}
         minDate={new Date("01/01/1900")}
         onChange={(value) => {
-          const first = dayjs(value[0]).format("YYYY-MM-DD");
-          const second = dayjs(value[1]).format("YYYY-MM-DD");
+          const fromVal = value[0] ? dayjs(value[0]).format("YYYY-MM-DD") : "";
+          const toVal = value[1] ? dayjs(value[1]).format("YYYY-MM-DD") : "";
+          const out = `${fromVal},${toVal}`;
 
+          if (fromVal && toVal) {
+            setFilter({ ...filter, value: out });
+          }
           setDateValue(value);
-          setFilter({ ...filter, value: `${first},${second}` });
         }}
         value={dateValue}
         disableCalendar={false}

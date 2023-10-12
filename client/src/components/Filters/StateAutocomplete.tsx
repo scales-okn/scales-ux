@@ -3,6 +3,13 @@ import Autocomplete from "@mui/material/Autocomplete";
 import TextField from "@mui/material/TextField";
 import { usStates } from "./usStates";
 
+type StateAutocompleteT = {
+  setFilter: (arg: Record<string, unknown>) => void;
+  filter: Record<string, unknown>;
+  autocompleteValues: Record<string, unknown>;
+  disabled?: boolean;
+};
+
 const StateAutocomplete = ({
   setFilter,
   filter,

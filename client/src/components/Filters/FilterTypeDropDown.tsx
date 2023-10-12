@@ -8,11 +8,6 @@ import FilterTooltip from "../HelpTextTooltip";
 
 import { filterTypeStyles } from "./styles";
 
-// type FilterColumn = {
-//   key: string;
-//   nicename: string;
-// };
-
 type FilterT = {
   id: string;
   type: string;
@@ -51,6 +46,7 @@ const FilterTypeDropDown = ({
 
   // const filterOptions = getFilterOptionsByKey(type);
 
+  // TODO: Can we remove this?
   // const [filterInput, setFilterInput] = useState<FilterColumn>({
   //   key: type,
   //   nicename: filterOptions?.nicename,
@@ -72,8 +68,6 @@ const FilterTypeDropDown = ({
       console.warn(error); // eslint-disable-line no-console
     }
   };
-
-  // useEffect(() => {}, [filterInput]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const filtersToRender = getFiltersNormalized()
     ?.filter(
