@@ -5,7 +5,6 @@ import { Link } from "react-router-dom";
 
 import { DataGrid, GridCellParams } from "@mui/x-data-grid";
 import {
-  FormControl,
   Select,
   MenuItem,
   TextField,
@@ -24,6 +23,8 @@ import { sessionUserSelector } from "src/store/auth";
 import { useNotebook } from "src/store/notebook";
 import { useUser } from "src/store/user";
 
+import useDebounce from "src/hooks/useDebounce";
+
 import Pagination from "src/components/Pagination";
 import Loader from "src/components/Loader";
 import ColumnHeader from "src/components/ColumnHeader";
@@ -37,7 +38,7 @@ const NotebooksPage = () => {
   const isAdmin = role === "admin";
 
   const [notebooksType, setNotebooksType] = useState("my-notebooks");
-  const [filterNotebooks, setFilterNotebooks] = useState("");
+
   const {
     fetchNotebooks,
     loadingNotebooks,
@@ -47,6 +48,16 @@ const NotebooksPage = () => {
   } = useNotebook();
 
   const { fetchUsers, users } = useUser();
+
+  const [rawSearch, setRawSearch] = useState(null);
+  const debouncedSearch = useDebounce(rawSearch, 1000);
+
+  useEffect(() => {
+    fetchNotebooks({
+      type: notebooksType,
+      search: debouncedSearch,
+    });
+  }, [debouncedSearch]);
 
   useEffectOnce(() => {
     if (isAdmin) {
@@ -78,12 +89,7 @@ const NotebooksPage = () => {
 
       return true;
     })
-    .filter(
-      (notebook) =>
-        notebook.title
-          .toLowerCase()
-          .search(filterNotebooks.toLocaleLowerCase()) > -1,
-    );
+    .filter((notebook) => notebook.title.toLowerCase());
 
   const renderHeader = (params) => {
     return (
@@ -227,7 +233,7 @@ const NotebooksPage = () => {
           </Link>
         </Grid>
 
-        <div style={{ height: "60vh", width: "100%" }} className="mt-4">
+        <div style={{ width: "100%", paddingBottom: "80px" }} className="mt-4">
           <Pagination
             leftContent={
               <Grid container>
@@ -251,12 +257,10 @@ const NotebooksPage = () => {
                 </Select>
 
                 <TextField
-                  fullWidth
-                  id="filter-notebooks"
                   placeholder="Filter Notebooks"
-                  value={filterNotebooks}
+                  value={rawSearch}
                   onChange={(event: React.ChangeEvent<HTMLInputElement>) =>
-                    setFilterNotebooks(event.target.value)
+                    setRawSearch(event.target.value)
                   }
                   InputProps={{
                     startAdornment: (
@@ -291,10 +295,12 @@ const NotebooksPage = () => {
             columns={columns}
             disableColumnMenu
             disableColumnFilter
+            hideFooter
             hideFooterPagination
             rowCount={notebooks?.length}
             checkboxSelection={false}
             className="bg-white"
+            autoHeight
           />
         </div>
       </>

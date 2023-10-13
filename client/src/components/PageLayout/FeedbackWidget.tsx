@@ -6,6 +6,7 @@ import {
   Box,
   Button,
 } from "@mui/material";
+import ErrorOutlineIcon from "@mui/icons-material/ErrorOutline";
 import { useFormik } from "formik";
 import * as yup from "yup";
 
@@ -18,6 +19,8 @@ import "./PageLayout.scss";
 
 const FeedbackWidget = () => {
   const [feedbackModalOpen, setFeedbackModalOpen] = useState(false);
+  const [isHovered, setIsHovered] = useState(false);
+
   const commentValidationSchema = yup.object({
     body: yup.string().required("Comment is required for submission"),
   });
@@ -47,12 +50,40 @@ const FeedbackWidget = () => {
 
   return (
     <div className={styles}>
-      <div
-        className="feedback-widget"
+      <Box
         onClick={() => setFeedbackModalOpen(true)}
+        onMouseEnter={() => setIsHovered(true)}
+        onMouseLeave={() => setIsHovered(false)}
+        sx={{
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+          position: "fixed",
+          bottom: "8px",
+          left: "8px",
+          height: "32px",
+          width: isHovered ? "120px" : "32px",
+          background: "var(--main-purple-light)",
+          color: "white",
+          borderRadius: "6px",
+          cursor: "pointer",
+          fontSize: "12px",
+          transition: "0.2s ease-in-out",
+          opacity: 0.8,
+          zIndex: 2000,
+        }}
       >
-        Report Issue
-      </div>
+        {isHovered ? (
+          <Typography
+            sx={{ overflow: "hidden", whiteSpace: "nowrap" }}
+            variant="body2"
+          >
+            Report Issue
+          </Typography>
+        ) : (
+          <ErrorOutlineIcon />
+        )}
+      </Box>
       <Modal
         open={feedbackModalOpen}
         onClose={() => setFeedbackModalOpen(false)}
@@ -63,10 +94,13 @@ const FeedbackWidget = () => {
           marginTop: "160px",
         }}
       >
-        <div style={{ background: "white" }}>
+        <div style={{ background: "white", outline: "none" }}>
           <form onSubmit={formik.handleSubmit}>
             <Box
-              sx={{ background: "var(--main-purple-light)", padding: "18px" }}
+              sx={{
+                background: "var(--main-purple-light)",
+                padding: "18px",
+              }}
               color="white"
             >
               <Typography variant="h6">
@@ -76,7 +110,7 @@ const FeedbackWidget = () => {
             <Box sx={{ padding: "36px 18px" }}>
               <TextareaAutosize
                 name="body"
-                placeholder="Note: Specifics are very helpful: Who, What, Where, When, Why"
+                placeholder="Specifics are very helpful: Who, What, Where, When, Why"
                 onChange={formik.handleChange}
                 value={formik.values.body}
                 style={{

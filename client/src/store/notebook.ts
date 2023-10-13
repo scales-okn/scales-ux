@@ -29,7 +29,7 @@ export const initialState: InitialState = {
   loadingNotebooks: true,
   notebooks: [],
   paging: {
-    totalUsers: 0,
+    totalCount: 0,
     totalPages: 0,
     currentPage: 0,
   },

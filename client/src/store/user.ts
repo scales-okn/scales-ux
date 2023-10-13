@@ -36,7 +36,7 @@ type InitialStateT = {
 export const initialState: InitialStateT = {
   users: [],
   paging: {
-    totalUsers: 0,
+    totalCount: 0,
     totalPages: 0,
     currentPage: 0,
   },

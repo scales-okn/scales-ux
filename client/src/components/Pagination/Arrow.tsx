@@ -23,7 +23,7 @@ const Arrow = ({ direction, handleNavigate, disabled }: ArrowT) => {
         display: "flex",
         justifyContent: "center",
         alignItems: "center",
-        background: theme.palette.info.light,
+        background: theme.palette.primary.light,
         color: "white",
         cursor: disabled ? "not-allowed" : "pointer",
         marginRight: direction === "left" ? "12px" : "0",

@@ -1,6 +1,6 @@
 import React from "react";
 
-import { Box } from "@mui/material";
+import { Box, Typography } from "@mui/material";
 import Arrow from "./Arrow";
 
 import type { PagingT } from "src/types/paging";
@@ -9,21 +9,47 @@ type PaginationT = {
   paging: PagingT;
   fetchData: (arg: Record<string, unknown>) => void;
   leftContent?: JSX.Element;
+  zeroIndex?: boolean;
 };
 
 const Pagination = ({
   paging,
   fetchData,
   leftContent = <></>,
+  zeroIndex = false,
 }: PaginationT) => {
+  const renderDigit = (num) => {
+    if (typeof num !== "number") {
+      return num;
+    }
+    const out = zeroIndex ? num + 1 : num;
+    return out.toLocaleString();
+  };
+
+  const disabledLeft = zeroIndex
+    ? paging.currentPage === 0
+    : paging.currentPage === 1;
+
+  const disabledRight = zeroIndex
+    ? paging.currentPage === paging.totalPages - 1
+    : paging.currentPage === paging.totalPages;
+
   const handleNavigate = (direction) => {
     const newPage =
       direction === "right" ? paging.currentPage + 1 : paging.currentPage - 1;
 
-    if (newPage > paging.totalPages || newPage < 1) return;
+    if (
+      (disabledLeft && direction === "left") ||
+      (disabledRight && direction === "right")
+    ) {
+      return;
+    }
 
     fetchData({ page: newPage });
   };
+
+  const current = renderDigit(paging.currentPage);
+  const total = renderDigit(paging.totalPages);
 
   return (
     <Box
@@ -45,13 +71,15 @@ const Pagination = ({
         <Arrow
           direction="left"
           handleNavigate={handleNavigate}
-          disabled={paging.currentPage === 1}
+          disabled={disabledLeft}
         />
-        {paging.currentPage} of {paging.totalPages}
+        <Typography>
+          Page {current} of {total}
+        </Typography>
         <Arrow
           direction="right"
           handleNavigate={handleNavigate}
-          disabled={paging.currentPage === paging.totalPages}
+          disabled={disabledRight}
         />
       </Box>
     </Box>

@@ -1,5 +1,5 @@
 export type PagingT = {
-  totalUsers: number;
+  totalCount: number;
   totalPages: number;
   currentPage: number;
 };

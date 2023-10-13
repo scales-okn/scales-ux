@@ -89,7 +89,7 @@ const Filters = ({ panelId }: FiltersProps) => {
             onClick={handleUpdateResults}
             style={{
               position: "absolute",
-              right: "24px",
+              right: "16px",
               top: filters?.length > 0 ? "32px" : "24px",
             }}
           >

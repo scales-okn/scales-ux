@@ -90,7 +90,11 @@ export const findAll = async (req: Request, res: Response) => {
       return res.send_forbidden("Not allowed!");
     }
 
-    const where = {};
+    const where = {
+      ...(req.query.search
+        ? { title: { [Op.iLike]: `%${req.query.search}%` } }
+        : {}),
+    };
 
     if (req.query.type === "public") {
       where[Op.and] = [

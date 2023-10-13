@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useMemo } from "react";
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import { usePanel } from "src/store/panels";
 import { useRing } from "src/store/rings";
 import { useSessionUser } from "src/store/auth";
@@ -19,6 +19,7 @@ import { DataGrid } from "@mui/x-data-grid";
 import { UnfoldLess, UnfoldMore } from "@mui/icons-material";
 import uniqid from "uniqid";
 
+import Pagination from "src/components/Pagination";
 import Filters from "../Filters";
 import Loader from "../Loader";
 import Dataset from "../Dataset";
@@ -51,6 +52,20 @@ const Panel = ({ panelId, defaultCollapsed }: PanelT) => {
     downloadingCsv,
     updatePanel,
   } = usePanel(panelId);
+
+  const paging = {
+    totalCount: results?.totalCount || 0,
+    totalPages: results ? Math.ceil(results.totalCount / results.batchSize) : 0,
+    currentPage: results?.page,
+  };
+
+  // const location = useLocation();
+  // useEffect(() => {
+  //   if (!location.search.p) {
+
+  //   }
+  // }, [location]])
+  // console.log("🚀 ~ file: Panel.tsx:57 ~ Panel ~ location:", location);
 
   // Pop first panel on page load
   useEffectOnce(() => {
@@ -242,29 +257,40 @@ const Panel = ({ panelId, defaultCollapsed }: PanelT) => {
                         }}
                       >
                         {!resultsCollapsed && (
-                          <DataGrid
-                            rows={rows}
-                            onPaginationModelChange={(model) => {
-                              getPanelResults([], model.page);
-                            }}
-                            paginationModel={{
-                              page: results?.page,
-                              pageSize: results?.batchSize,
-                            }}
-                            disableColumnMenu
-                            disableColumnFilter
-                            pageSizeOptions={[10]}
-                            columns={columns}
-                            rowCount={results?.totalCount}
-                            checkboxSelection={false}
-                            className="bg-white border-0 rounded-0"
-                            paginationMode="server"
-                            sx={{
-                              "& .MuiDataGrid-virtualScroller": {
-                                minHeight: "400px",
-                              },
-                            }}
-                          />
+                          <>
+                            <DataGrid
+                              rows={rows}
+                              onPaginationModelChange={(model) => {
+                                getPanelResults([], model.page);
+                              }}
+                              paginationModel={{
+                                page: results?.page,
+                                pageSize: results?.batchSize,
+                              }}
+                              disableColumnMenu
+                              disableColumnFilter
+                              hideFooterPagination
+                              hideFooter
+                              pageSizeOptions={[10]}
+                              columns={columns}
+                              rowCount={results?.totalCount}
+                              checkboxSelection={false}
+                              className="bg-white border-0 rounded-0"
+                              paginationMode="server"
+                              sx={{
+                                "& .MuiDataGrid-virtualScroller": {
+                                  minHeight: "400px",
+                                },
+                              }}
+                            />
+                            <Pagination
+                              paging={paging}
+                              zeroIndex
+                              fetchData={({ page }) =>
+                                getPanelResults([], page as number)
+                              }
+                            />
+                          </>
                         )}
                       </div>
                       <div className="p-3">
