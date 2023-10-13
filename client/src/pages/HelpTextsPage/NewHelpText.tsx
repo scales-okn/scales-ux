@@ -58,7 +58,7 @@ const NewHelpText = () => {
         }}
       >
         <Button
-          color="success"
+          color="primary"
           variant="contained"
           onClick={() => setNewHelpTextVisible(true)}
           style={{ marginBottom: "24px" }}

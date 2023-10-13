@@ -92,7 +92,7 @@ const RingsPage: React.FC = () => {
             className="text-white text-decoration-none"
           >
             <Button
-              color="success"
+              color="primary"
               variant="contained"
               sx={{
                 minWidth: "200px",

@@ -3,18 +3,40 @@ import React from "react";
 import { Box } from "@mui/material";
 import { useTheme } from "@mui/material/styles";
 import KeyboardArrowLeftIcon from "@mui/icons-material/KeyboardArrowLeft";
+import KeyboardDoubleArrowLeftIcon from "@mui/icons-material/KeyboardDoubleArrowLeft";
 import KeyboardArrowRightIcon from "@mui/icons-material/KeyboardArrowRight";
+import KeyboardDoubleArrowRightIcon from "@mui/icons-material/KeyboardDoubleArrowRight";
 
 type DirectionT = "left" | "right";
 
 type ArrowT = {
   direction: DirectionT;
-  handleNavigate: (arg: DirectionT) => void;
+  handleNavigate: (direction: DirectionT, pageOverride: number) => void;
   disabled: boolean;
+  pageOverride?: number;
 };
 
-const Arrow = ({ direction, handleNavigate, disabled }: ArrowT) => {
+const Arrow = ({
+  direction,
+  handleNavigate,
+  disabled,
+  pageOverride = null,
+}: ArrowT) => {
   const theme = useTheme();
+
+  const leftElement =
+    pageOverride === null ? (
+      <KeyboardArrowLeftIcon />
+    ) : (
+      <KeyboardDoubleArrowLeftIcon />
+    );
+
+  const rightElement =
+    pageOverride === null ? (
+      <KeyboardArrowRightIcon />
+    ) : (
+      <KeyboardDoubleArrowRightIcon />
+    );
 
   return (
     <Box
@@ -23,19 +45,15 @@ const Arrow = ({ direction, handleNavigate, disabled }: ArrowT) => {
         display: "flex",
         justifyContent: "center",
         alignItems: "center",
-        background: theme.palette.primary.light,
+        background: theme.palette.primary.main,
         color: "white",
         cursor: disabled ? "not-allowed" : "pointer",
-        marginRight: direction === "left" ? "12px" : "0",
-        marginLeft: direction === "right" ? "12px" : "0",
+        marginRight: direction === "left" ? "6px" : "0",
+        marginLeft: direction === "right" ? "6px" : "0",
       }}
-      onClick={() => handleNavigate(direction)}
+      onClick={() => handleNavigate(direction, pageOverride)}
     >
-      {direction === "left" ? (
-        <KeyboardArrowLeftIcon />
-      ) : (
-        <KeyboardArrowRightIcon />
-      )}
+      {direction === "left" ? leftElement : rightElement}
     </Box>
   );
 };

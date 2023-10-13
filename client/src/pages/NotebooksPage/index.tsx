@@ -227,7 +227,7 @@ const NotebooksPage = () => {
           }}
         >
           <Link to="/notebooks/new" className="text-white text-decoration-none">
-            <Button color="success" variant="contained">
+            <Button color="primary" variant="contained">
               Create Notebook
             </Button>
           </Link>
@@ -301,6 +301,7 @@ const NotebooksPage = () => {
             checkboxSelection={false}
             className="bg-white"
             autoHeight
+            paginationMode="server"
           />
         </div>
       </>

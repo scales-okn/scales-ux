@@ -47,7 +47,7 @@ const HelpTextsPage = () => {
     {
       field: "description",
       headerName: "Description",
-      minWidth: 300,
+      minWidth: 180,
       sortable: false,
       flex: 1,
       renderHeader,
@@ -55,7 +55,7 @@ const HelpTextsPage = () => {
     {
       field: "examples",
       headerName: "Examples",
-      minWidth: 200,
+      minWidth: 180,
       sortable: false,
       flex: 1,
       renderHeader,
@@ -63,7 +63,7 @@ const HelpTextsPage = () => {
     {
       field: "options",
       headerName: "Options",
-      minWidth: 200,
+      minWidth: 180,
       sortable: false,
       flex: 1,
       renderHeader,
@@ -71,7 +71,7 @@ const HelpTextsPage = () => {
     {
       field: "links",
       headerName: "Links",
-      minWidth: 200,
+      minWidth: 180,
       sortable: false,
       flex: 1,
       renderHeader,
@@ -90,16 +90,18 @@ const HelpTextsPage = () => {
       {!isAdmin ? (
         <NotAuthorized />
       ) : (
-        <div style={{ height: "60vh", width: "100%", margin: "0 auto" }}>
+        <div style={{ paddingBottom: "80px", margin: "0 auto" }}>
           <DataGrid
             rows={rows}
             columns={columns}
             disableColumnMenu
             disableColumnFilter
+            hideFooter
+            hideFooterPagination
             onRowClick={({ row }) => navigate(`/admin/help-texts/${row.slug}`)}
             checkboxSelection={false}
             className="bg-white p-0"
-            hideFooterPagination
+            autoHeight
           />
         </div>
       )}

@@ -7,7 +7,7 @@ export const findAllAndPaginate = async ({
   attributes = {},
 }) => {
   const page = parseInt(String(query.page || "1"));
-  const pageSize = parseInt(String(query.pageSize || "20"));
+  const pageSize = parseInt(String(query.pageSize || "2"));
   const offset = (page - 1) * pageSize;
 
   const data = await model.findAndCountAll({
