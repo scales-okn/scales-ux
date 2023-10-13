@@ -258,6 +258,13 @@ const Panel = ({ panelId, defaultCollapsed }: PanelT) => {
                       >
                         {!resultsCollapsed && (
                           <>
+                            <Pagination
+                              paging={paging}
+                              zeroIndex
+                              fetchData={({ page }) =>
+                                getPanelResults([], page as number)
+                              }
+                            />
                             <DataGrid
                               rows={rows}
                               onPaginationModelChange={(model) => {
@@ -282,13 +289,6 @@ const Panel = ({ panelId, defaultCollapsed }: PanelT) => {
                                   minHeight: "400px",
                                 },
                               }}
-                            />
-                            <Pagination
-                              paging={paging}
-                              zeroIndex
-                              fetchData={({ page }) =>
-                                getPanelResults([], page as number)
-                              }
                             />
                           </>
                         )}
