@@ -9,6 +9,7 @@ import { Grid, Paper, Button, Box, Typography } from "@mui/material";
 import AddIcon from "@mui/icons-material/Add";
 import uniqid from "uniqid";
 import _ from "lodash";
+import { useEffectOnce } from "react-use";
 
 import { Satyrn } from "src/models/Satyrn";
 import { makeRequest } from "src/helpers/makeRequest";
@@ -159,6 +160,27 @@ const Analysis: FunctionComponent<Props> = ({ panelId }) => {
   const handleRemoveAnalysis = (id) => {
     updatePanel({ analysis: _.omit(analysis, id) });
   };
+
+  useEffectOnce(() => {
+    // TEMP to solve data issue
+    // Remove after 11/15/23
+    console.log(analysis);
+    const malformedAnalyses = Object.keys(analysis).map((a) => {
+      if (analysis[a].statement?.statement) {
+        return true;
+      } else {
+        return false;
+      }
+    });
+
+    const shouldResetAnalyses = malformedAnalyses.some((a) => a === true);
+
+    if (shouldResetAnalyses) {
+      updatePanel({
+        analysis: {},
+      });
+    }
+  });
 
   return (
     <div className="analysis">
