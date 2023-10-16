@@ -137,7 +137,6 @@ const Analysis: FunctionComponent<Props> = ({ panelId }) => {
         `/proxy/autocomplete/${ring.rid}/${ring.version}/${info?.defaultEntity}/${type}?query=${query}`,
       );
 
-      // TODO: Do we need this?
       if (response.status === "OK") {
         response instanceof Array && setAutoCompleteSuggestions(response);
         response?.success === false &&

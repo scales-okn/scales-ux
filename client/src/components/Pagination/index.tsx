@@ -21,6 +21,8 @@ const Pagination = ({
 }: PaginationT) => {
   const theme = useTheme();
 
+  const noResults = paging.totalCount === 0;
+
   const renderDigit = (num) => {
     if (typeof num !== "number") {
       return num;
@@ -32,8 +34,8 @@ const Pagination = ({
   const firstPage = zeroIndex ? 0 : 1;
   const lastPage = zeroIndex ? paging.totalPages - 1 : paging.totalPages;
 
-  const disabledLeft = paging.currentPage === firstPage;
-  const disabledRight = paging.currentPage === lastPage;
+  const disabledLeft = paging.currentPage === firstPage || noResults;
+  const disabledRight = paging.currentPage === lastPage || noResults;
 
   const handleNavigate = (direction, pageOverride = null) => {
     const newPage =
@@ -82,7 +84,28 @@ const Pagination = ({
           disabled={disabledLeft}
         />
         <Typography color="#021949d2" sx={{ padding: "0 8px" }}>
-          Page <strong>{current}</strong> of <strong>{total}</strong>
+          Page
+          <Typography
+            sx={{
+              display: "inline",
+              fontSize: "16px",
+              fontWeight: 600,
+              padding: "0 4px",
+            }}
+          >
+            {noResults ? 0 : current}
+          </Typography>
+          of
+          <Typography
+            sx={{
+              display: "inline",
+              fontSize: "16px",
+              fontWeight: 600,
+              padding: "0 4px",
+            }}
+          >
+            {total}
+          </Typography>
         </Typography>
         <Arrow
           direction="right"

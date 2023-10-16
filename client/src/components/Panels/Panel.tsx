@@ -298,7 +298,9 @@ const Panel = ({ panelId, defaultCollapsed }: PanelT) => {
                           alignItems: "center",
                         }}
                       >
-                        <strong>{results?.totalCount?.toLocaleString()}</strong>
+                        <Typography sx={{ fontSize: "16px", fontWeight: 600 }}>
+                          {results?.totalCount?.toLocaleString()}
+                        </Typography>
                         <Typography sx={{ margin: "0 6px" }}>
                           Dockets Found
                         </Typography>
