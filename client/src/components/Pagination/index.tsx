@@ -23,7 +23,7 @@ const Pagination = ({
   const { width } = useWindowSize();
   const isTablet = width < 768;
 
-  const noResults = paging.totalCount === 0;
+  const noResults = paging.totalPages === 0;
 
   const renderDigit = (num) => {
     if (typeof num !== "number") {

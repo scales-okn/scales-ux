@@ -1,5 +1,6 @@
 export type PagingT = {
-  totalCount: number;
+  totalItems?: number;
+  totalCount?: number;
   totalPages: number;
   currentPage: number;
 };
