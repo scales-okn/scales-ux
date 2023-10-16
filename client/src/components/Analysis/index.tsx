@@ -18,6 +18,7 @@ import { useNotify } from "../Notifications";
 import Answers from "./Answers";
 import Parameters from "./Parameters";
 import Statements from "./Statements";
+import { queryBuilder } from "./queryBuilder";
 
 import "./style.scss";
 
@@ -33,7 +34,7 @@ const Analysis: FunctionComponent<Props> = ({ panelId }) => {
   const sessionUser = useSessionUser();
   const sessionUserCanEdit = sessionUser?.id === panel?.userId;
 
-  const [statements, setStatements] = useState([]);
+  const [statementOptions, setStatementOptions] = useState([]);
 
   const [answersLoading, setAnswersLoading] = useState({});
 
@@ -58,149 +59,69 @@ const Analysis: FunctionComponent<Props> = ({ panelId }) => {
       ring,
     );
     setSatyrn(satyrnRes);
-    setStatements(satyrnRes.planManager.generate());
+    setStatementOptions(satyrnRes.planManager.generate());
   }, [info]); // eslint-disable-line react-hooks/exhaustive-deps
 
-  // useEffect(() => {
-  //   if (_.isEmpty(statements) || !info) return;
-
-  //   Object.keys(analysis).map((statementId) => {
-  //     const noExistingResults = _.isEmpty(analysis[statementId].results);
-  //     const hasStatement = analysis[statementId].statement;
-
-  //     if (hasStatement) {
-  //       getAnswers(analysis[statementId], statementId, !noExistingResults);
-  //     }
-  //     return null;
-  //   });
-  // }, [info, statements]); // eslint-disable-line react-hooks/exhaustive-deps
-
-  const getAnswers = async (statement, analysisId, skipFetch = false) => {
+  const getAnswers = async (analysisId) => {
     try {
-      const statementSrc = statements.find((s) => {
-        // TODO: hacky, why does this vary?
-        return (
-          s.statement === statement.statement.statement ||
-          s.statement === statement.statement
-        );
+      const statementSrc = statementOptions.find((s) => {
+        return s.statement === analysis[analysisId].statement;
       });
 
       const resPlan = statementSrc?.plan;
       resPlan.rings = [ring.rid];
 
       // inject value on param slot path
-      statement.parameters?.forEach((param) => {
+      analysis[analysisId]?.parameters?.forEach((param) => {
         if (
           param.slot instanceof Array &&
           param.slot.length > 0 &&
-          statement.selectedParameter
+          analysis[analysisId].selectedParameter
         ) {
           _.set(
             resPlan,
             `${param.slot.join(".")}`,
-            statement.selectedParameter,
+            analysis[analysisId].selectedParameter,
           );
         }
       });
 
-      const queryFilters = filters
-        ? filters?.map((filter) => {
-            if (filter.type === "dateFiled") {
-              /* this will need to change once we implement multiple dateFiled filters */
-              filter.value = `[${filter.value?.map((date) =>
-                dayjs(date).format("YYYY-M-DD"),
-              )}]`;
-            }
-            return filter;
-          })
-        : {};
+      resPlan.query = queryBuilder({
+        filters,
+        info,
+      });
 
-      const filterFunc = (filterType, filterValue) => {
-        const ontologyType = filterType === "ontology_labels";
-        const notEmptyString = filterValue !== "";
+      setAnswersLoading(() => {
+        return { ...answersLoading, [analysisId]: true };
+      });
 
-        return ontologyType && notEmptyString
-          ? "|" + filterValue + "|"
-          : filterType === "case_type"
-          ? { civil: "cv", criminal: "cr", "": "" }[filterValue]
-          : filterValue;
-      };
+      const fetchStem =
+        import.meta.env.VITE_REACT_APP_SATYRN_ENV === "development"
+          ? "http://127.0.0.1:5000/api"
+          : "/proxy";
 
-      if (queryFilters.length > 0) {
-        const entity = info.defaultEntity;
-        resPlan.query = {
-          /* beware of changing this, as it needs to match convertFilters in viewHelpers.py on the backend :/ */
-          AND: [
-            ...queryFilters
-              .map((filter) => {
-                if (!filter.value) return null;
-                return filter.value.includes("|")
-                  ? {
-                      OR: [
-                        ...filter.value
-                          .split("|")
-                          .filter((i) => i)
-                          .map((or_filter_value) => {
-                            return [
-                              {
-                                entity,
-                                field: filter.type,
-                              },
-                              filterFunc(filter.type, or_filter_value),
-                              "contains",
-                            ];
-                          }),
-                      ],
-                    }
-                  : [
-                      {
-                        entity,
-                        field: filter.type,
-                      },
-                      filterFunc(filter.type, filter.value),
-                      "contains",
-                    ];
-              })
-              .filter((n) => n),
-          ],
-        };
-      } else {
-        resPlan.query = {};
-      }
+      const response = await makeRequest.post(
+        `${fetchStem}/analysis/${ring.rid}/${ring.version}/${info?.defaultEntity}/`,
+        resPlan,
+      );
 
-      if (!skipFetch) {
+      updatePanel({
+        analysis: {
+          ...analysis,
+          [analysisId]: { ...analysis[analysisId], results: response },
+        },
+      });
+      setTimeout(() => {
         setAnswersLoading(() => {
-          return { ...answersLoading, [analysisId]: true };
+          return { ...answersLoading, [analysisId]: false };
         });
-
-        const fetchStem =
-          import.meta.env.VITE_REACT_APP_SATYRN_ENV === "development"
-            ? "http://127.0.0.1:5000/api"
-            : "/proxy";
-
-        const response = await makeRequest.post(
-          `${fetchStem}/analysis/${ring.rid}/${ring.version}/${info?.defaultEntity}/`,
-          resPlan,
-        );
-
-        updatePanel({
-          analysis: {
-            ...analysis,
-            [analysisId]: { ...statement, results: response },
-          },
-        });
-        setTimeout(() => {
-          setAnswersLoading(() => {
-            return { ...answersLoading, [analysisId]: false };
-          });
-        }, 500);
-      }
+      }, 500);
 
       setPlans((prev) => {
         return { ...prev, [analysisId]: resPlan };
       });
     } catch (error) {
-      console.log("🚀 ~ file: index.tsx:203 ~ error:", error); // eslint-disable-line no-console
+      console.error("🚀 ~ file: index.tsx:203 ~ error:", error); // eslint-disable-line no-console
       setAnswersLoading(() => {
         return { ...answersLoading, [analysisId]: false };
       });
@@ -235,6 +156,7 @@ const Analysis: FunctionComponent<Props> = ({ panelId }) => {
       setLoadingAutosuggestions(false);
     }
   };
+
   const handleRemoveAnalysis = (id) => {
     updatePanel({ analysis: _.omit(analysis, id) });
   };
@@ -256,16 +178,20 @@ const Analysis: FunctionComponent<Props> = ({ panelId }) => {
             >
               <Grid item sm={8}>
                 <Statements
-                  statements={statements}
-                  setPanelStatement={(statement) => {
+                  statements={statementOptions}
+                  setPanelStatement={(selectedStatement) => {
                     updatePanel({
                       analysis: {
                         ...analysis,
-                        [id]: { ...analysis[id], statement, results: {} },
+                        [id]: {
+                          ...analysis[id],
+                          ...selectedStatement,
+                          results: {},
+                        },
                       },
                     });
                   }}
-                  selectedStatement={analysis[id].statement}
+                  selectedStatement={analysis[id]}
                 />
                 <Parameters
                   autoCompleteSuggestions={autoCompleteSuggestions}
@@ -273,15 +199,15 @@ const Analysis: FunctionComponent<Props> = ({ panelId }) => {
                   selectedParameter={analysis[id]?.selectedParameter}
                   setPanelStatement={(params) => {
                     const newStatement = {
-                      ...analysis[id].statement,
-                      parameters: params,
+                      ...analysis[id],
+                      selectedParameter: params,
                     };
                     updatePanel({
                       analysis: {
                         ...analysis,
                         [id]: {
                           ...analysis[id],
-                          statement: newStatement,
+                          ...newStatement,
                           results: {},
                         },
                       },
@@ -303,9 +229,9 @@ const Analysis: FunctionComponent<Props> = ({ panelId }) => {
                   disabled={
                     Object.values(answersLoading).some(
                       (value) => value === true,
-                    ) || !analysis[id].statement
+                    ) || !analysis[id]?.statement
                   }
-                  onClick={() => getAnswers(analysis[id], id)}
+                  onClick={() => getAnswers(id)}
                 >
                   Run Analysis
                 </Button>
@@ -320,7 +246,6 @@ const Analysis: FunctionComponent<Props> = ({ panelId }) => {
                 />
               </Box>
             </Grid>
-
             <Answers
               panelId={panelId}
               plan={plans[id]}
@@ -332,7 +257,6 @@ const Analysis: FunctionComponent<Props> = ({ panelId }) => {
           </Grid>
         );
       })}
-
       <Paper
         elevation={3}
         sx={{

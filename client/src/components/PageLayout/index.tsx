@@ -75,7 +75,7 @@ const PageLayout = ({ id = "", children, pageTitle }: PageLayoutT) => {
               alignItems: "center",
               padding: "0 24px",
               height: "64px !important",
-              zIndex: "1001",
+              zIndex: "9001",
             }}
           >
             <IconButton
