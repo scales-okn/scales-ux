@@ -46,7 +46,7 @@ const Answers = ({
     if (!data || !statement || !plan || !satyrn) return;
     setAnswerType(getAnswersDisplayType(plan, data.results));
 
-    const currentFilters = statement?.plan?.query?.["AND"];
+    const currentFilters = plan?.query?.["AND"];
 
     const formatString = (str) => {
       return str.replace(/\|/g, "");
@@ -143,7 +143,7 @@ const Answers = ({
   const answerText = answer && (
     <Box
       sx={{
-        padding: plainTextAnswer ? "0 16px 16px 0px" : "16px",
+        padding: plainTextAnswer ? "0 16px 16px 22px" : "16px",
         boxShadow: "none",
         display: "flex",
         alignItems: "center",

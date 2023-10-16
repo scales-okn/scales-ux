@@ -293,6 +293,10 @@ const Analysis: FunctionComponent<Props> = ({ panelId }) => {
         <Typography
           sx={{
             color: sessionUserCanEdit ? "black" : "GrayText",
+            fontWeight: "600",
+            display: "inline",
+            textTransform: "uppercase",
+            fontSize: "14px",
           }}
         >
           Add Analysis

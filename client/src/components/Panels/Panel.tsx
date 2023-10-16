@@ -60,14 +60,6 @@ const Panel = ({ panelId, defaultCollapsed }: PanelT) => {
     currentPage: results?.page,
   };
 
-  // const location = useLocation();
-  // useEffect(() => {
-  //   if (!location.search.p) {
-
-  //   }
-  // }, [location]])
-  // console.log("🚀 ~ file: Panel.tsx:57 ~ Panel ~ location:", location);
-
   // Pop first panel on page load
   useEffectOnce(() => {
     if (!defaultCollapsed) {
@@ -159,13 +151,17 @@ const Panel = ({ panelId, defaultCollapsed }: PanelT) => {
   return (
     <Accordion expanded={!collapsed} className="mb-4">
       <div className={`panelHeaderStyles ${panelHeaderStyles}`}>
-        <Typography
-          sx={{
-            fontSize: "1.1rem",
-          }}
-        >
-          {ring?.name}
-        </Typography>
+        <Tooltip title="Dataset Name">
+          <Typography
+            sx={{
+              fontSize: "1.1rem",
+              fontStyle: "italic",
+              cursor: "default",
+            }}
+          >
+            {ring?.name}
+          </Typography>
+        </Tooltip>
         <div className="buttonRow">
           <DeleteButton
             onClick={() => {
