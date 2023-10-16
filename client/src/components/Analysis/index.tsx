@@ -164,7 +164,6 @@ const Analysis: FunctionComponent<Props> = ({ panelId }) => {
   useEffectOnce(() => {
     // TEMP to solve data issue
     // Remove after 11/15/23
-    console.log(analysis);
     const malformedAnalyses = Object.keys(analysis).map((a) => {
       if (analysis[a].statement?.statement) {
         return true;

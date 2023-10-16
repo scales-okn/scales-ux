@@ -23,6 +23,7 @@ import { sessionUserSelector } from "src/store/auth";
 import { useNotebook } from "src/store/notebook";
 import { useUser } from "src/store/user";
 
+import useWindowSize from "src/hooks/useWindowSize";
 import useDebounce from "src/hooks/useDebounce";
 
 import Pagination from "src/components/Pagination";
@@ -36,6 +37,9 @@ const NotebooksPage = () => {
   const user = useSelector(sessionUserSelector);
   const { role } = useSelector(sessionUserSelector);
   const isAdmin = role === "admin";
+
+  const { width } = useWindowSize();
+  const isMobile = width < 500;
 
   const [notebooksType, setNotebooksType] = useState("my-notebooks");
 
@@ -233,10 +237,19 @@ const NotebooksPage = () => {
           </Link>
         </Grid>
 
-        <div style={{ width: "100%", paddingBottom: "80px" }} className="mt-4">
+        <div
+          style={{
+            width: "100%",
+            paddingBottom: "80px",
+            marginTop: "24px",
+          }}
+        >
           <Pagination
             leftContent={
-              <Grid container>
+              <Grid
+                container
+                sx={{ flexDirection: isMobile ? "column" : "row" }}
+              >
                 <Select
                   MenuProps={{
                     disableScrollLock: true,
@@ -249,7 +262,7 @@ const NotebooksPage = () => {
                     background: "white",
                     borderRadius: "4px",
                     height: "42px",
-                    width: "180px",
+                    width: isMobile ? "100%" : "180px",
                   }}
                 >
                   <MenuItem value="my-notebooks">My Notebooks</MenuItem>
@@ -279,8 +292,9 @@ const NotebooksPage = () => {
                     },
 
                     borderRadius: "4px",
-                    marginLeft: "12px",
-                    width: "240px",
+                    marginLeft: isMobile ? "0" : "12px",
+                    marginTop: isMobile ? "12px" : "0",
+                    width: isMobile ? "100%" : "240px",
                   }}
                 />
               </Grid>

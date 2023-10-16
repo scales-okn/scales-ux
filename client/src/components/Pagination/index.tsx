@@ -1,8 +1,9 @@
 import React from "react";
 
-import { useTheme } from "@mui/material/styles";
 import { Box, Typography } from "@mui/material";
 import Arrow from "./Arrow";
+
+import useWindowSize from "src/hooks/useWindowSize";
 
 import type { PagingT } from "src/types/paging";
 
@@ -19,7 +20,8 @@ const Pagination = ({
   leftContent = <></>,
   zeroIndex = false,
 }: PaginationT) => {
-  const theme = useTheme();
+  const { width } = useWindowSize();
+  const isTablet = width < 768;
 
   const noResults = paging.totalCount === 0;
 
@@ -63,6 +65,7 @@ const Pagination = ({
         marginBottom: "12px",
         minHeight: "56px",
         display: "flex",
+        flexDirection: isTablet ? "column" : "row",
         alignItems: "center",
         justifyContent: "space-between",
         padding: "12px 18px",
@@ -71,7 +74,13 @@ const Pagination = ({
       }}
     >
       <Box>{leftContent}</Box>
-      <Box sx={{ display: "flex", alignItems: "center" }}>
+      <Box
+        sx={{
+          display: "flex",
+          alignItems: "center",
+          marginTop: isTablet ? "12px" : "0",
+        }}
+      >
         <Arrow
           direction="left"
           handleNavigate={handleNavigate}
