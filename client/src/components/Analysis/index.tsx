@@ -243,7 +243,7 @@ const Analysis: FunctionComponent<Props> = ({ panelId }) => {
     <div className="analysis">
       {Object.keys(analysis).map((id) => {
         return (
-          <Grid key={id} container className="analysis-item">
+          <Grid key={id} container sx={{ padding: "24px 2px" }}>
             <Grid
               item
               sx={{
@@ -339,7 +339,7 @@ const Analysis: FunctionComponent<Props> = ({ panelId }) => {
           paddingLeft: "8px",
           boxShadow: "none",
           alignItems: "center",
-          marginTop: "12px",
+          marginTop: "32px",
           display: "flex",
           alignItems: "center",
         }}

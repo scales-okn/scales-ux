@@ -57,7 +57,7 @@ const NotebooksPage = () => {
       type: notebooksType,
       search: debouncedSearch,
     });
-  }, [debouncedSearch]);
+  }, [debouncedSearch]); // eslint-disable-line react-hooks/exhaustive-deps
 
   useEffectOnce(() => {
     if (isAdmin) {

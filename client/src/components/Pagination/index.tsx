@@ -82,7 +82,7 @@ const Pagination = ({
           disabled={disabledLeft}
         />
         <Typography color="#021949d2" sx={{ padding: "0 8px" }}>
-          Page {current} of {total}
+          Page <strong>{current}</strong> of <strong>{total}</strong>
         </Typography>
         <Arrow
           direction="right"
