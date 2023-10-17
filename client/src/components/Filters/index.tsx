@@ -63,7 +63,7 @@ const Filters = ({ panelId }: FiltersProps) => {
         <div className="d-inline-block">
           <Button
             variant="outlined"
-            color="success"
+            color="primary"
             disabled={!sessionUserCanEdit}
             onClick={() => {
               setPanelFilters([

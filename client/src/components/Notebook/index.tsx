@@ -243,7 +243,7 @@ const Notebook = () => {
           ) : (
             <Button
               size="large"
-              color="success"
+              color="primary"
               variant="contained"
               onClick={() => {
                 if (notebookTitle) {
