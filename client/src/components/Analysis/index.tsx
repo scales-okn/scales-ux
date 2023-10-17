@@ -41,6 +41,8 @@ const Analysis: FunctionComponent<Props> = ({ panelId }) => {
 
   const [loadingAutosuggestions, setLoadingAutosuggestions] =
     useState<boolean>(false);
+
+  // autocomplete suggestions related to parameters which don't seem to exist. We may want to remove this in the future.
   const [autoCompleteSuggestions, setAutoCompleteSuggestions] = useState<
     string[]
   >([]);

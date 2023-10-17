@@ -141,7 +141,7 @@ const Filter = ({ panelId, filter }: Props) => {
       }
       setDateValue(out);
     }
-  }, [filter, filterOptions]);
+  }, [filter, filterOptions]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const fetchAutocompleteSuggestions = async (query) => {
     setIsLoading(true);
