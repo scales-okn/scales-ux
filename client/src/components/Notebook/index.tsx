@@ -46,6 +46,7 @@ const Notebook = () => {
   const sessionUser = useSessionUser();
   const sessionUserCanEdit = sessionUser?.id === notebook?.userId;
   const updatesDisabled = !sessionUserCanEdit && !isNewNotebook;
+  const isAdmin = sessionUser.role === "admin";
 
   const theme = useTheme();
 
@@ -214,12 +215,14 @@ const Notebook = () => {
                   },
                 }}
               >
-                <div>
-                  <span className="title">Owner:</span>
-                  <span className="name">
-                    {notebook?.user?.firstName} {notebook?.user?.lastName}
-                  </span>
-                </div>
+                {isAdmin && (
+                  <div>
+                    <span className="title">Owner:</span>
+                    <span className="name">
+                      {notebook?.user?.firstName} {notebook?.user?.lastName}
+                    </span>
+                  </div>
+                )}
                 <div>
                   <span className="title">Public:</span>
                   <Switch
