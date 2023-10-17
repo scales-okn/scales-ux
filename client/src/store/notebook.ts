@@ -6,7 +6,7 @@ import { notify } from "reapop";
 import { useUnknownErrorNotificationMessage } from "src/components/Notifications";
 import { useSelector, useDispatch } from "react-redux";
 import { makeRequest } from "src/helpers/makeRequest";
-
+import { PagingT } from "src/types/paging";
 interface InitialState {
   loadingNotebook: boolean;
   creatingNotebook: boolean;
@@ -16,6 +16,7 @@ interface InitialState {
   loadingNotebooks: boolean;
   hasErrors: boolean;
   notebooks: any;
+  paging: PagingT;
 }
 
 export const initialState: InitialState = {
@@ -27,6 +28,11 @@ export const initialState: InitialState = {
   notebook: null,
   loadingNotebooks: true,
   notebooks: [],
+  paging: {
+    totalCount: 0,
+    totalPages: 0,
+    currentPage: 0,
+  },
 };
 
 const notebookSlice = createSlice({
@@ -115,9 +121,10 @@ const notebookSlice = createSlice({
     }),
     fetchNotebooksSuccess: (state, { payload }) => ({
       ...state,
-      notebooks: payload,
+      notebooks: payload.notebooks,
       loadingNotebooks: false,
       hasErrors: false,
+      paging: payload.paging,
     }),
     fetchNotebooksFailure: (state) => ({
       ...state,
@@ -136,16 +143,16 @@ export const notebookSelector = (state: RootState) => state.notebook;
 // The reducer
 export default notebookSlice.reducer;
 
-export function fetchNotebooks(type: string) {
+export function fetchNotebooks(params) {
   return async (dispatch: AppDispatch) => {
     dispatch(notebookActions.fetchNotebooks());
 
     try {
       const { data } = await makeRequest.get(`/api/notebooks`, {
-        params: { type },
+        params,
       });
 
-      dispatch(notebookActions.fetchNotebooksSuccess(data.notebooks));
+      dispatch(notebookActions.fetchNotebooksSuccess(data));
     } catch (error) {
       console.warn(error); // eslint-disable-line no-console
       dispatch(notebookActions.fetchNotebooksFailure());
@@ -240,11 +247,13 @@ export function useNotebook() {
     hasErrors,
     loadingNotebooks,
     notebooks,
+    paging,
   } = useSelector(notebookSelector);
 
   const dispatch = useDispatch();
   return {
     notebooks,
+    paging,
     loadingNotebooks,
     notebook,
     loadingNotebook,
@@ -252,8 +261,7 @@ export function useNotebook() {
     deletingNotebook,
     hasErrors,
     clearNotebook: () => dispatch(notebookActions.clearNotebook()),
-    fetchNotebooks: ({ type }: { type: string }) =>
-      dispatch(fetchNotebooks(type)),
+    fetchNotebooks: (payload: any) => dispatch(fetchNotebooks(payload)),
     fetchNotebook: (id: string) => dispatch(fetchNotebook(id)),
     updateNotebook: (id: string, payload: any) =>
       dispatch(updateNotebook(id, payload)),

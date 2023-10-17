@@ -85,18 +85,22 @@ const AdminFeedbackPage: FunctionComponent = () => {
       {!isAdmin ? (
         <NotAuthorized />
       ) : (
-        <div style={{ height: "60vh", width: "100%", margin: "0 auto" }}>
+        <div style={{ paddingBottom: "80px" }}>
           <DataGrid
             rows={rows}
             columns={columns}
+            disableColumnMenu
+            disableColumnFilter
+            hideFooter
+            hideFooterPagination
             onCellClick={(cell) => {
               if (cell.field !== "delete") {
                 setFeedbackDetail(cell);
               }
             }}
-            hideFooterPagination
             checkboxSelection={false}
             className="bg-white p-0"
+            autoHeight
           />
         </div>
       )}

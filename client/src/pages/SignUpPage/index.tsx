@@ -251,7 +251,7 @@ const SignUpPage = () => {
                   <Button
                     type="submit"
                     size="large"
-                    color="success"
+                    color="primary"
                     variant="contained"
                     sx={{ marginTop: "22px" }}
                   >

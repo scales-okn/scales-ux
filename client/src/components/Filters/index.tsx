@@ -6,7 +6,7 @@ import uniqid from "uniqid";
 import { usePanel } from "src/store/panels";
 import { useSessionUser } from "src/store/auth";
 
-import Button from "@mui/material/Button";
+import { Button, Typography } from "@mui/material";
 import Filter from "./Filter";
 
 import { filterContainerStyles } from "./styles";
@@ -63,7 +63,7 @@ const Filters = ({ panelId }: FiltersProps) => {
         <div className="d-inline-block">
           <Button
             variant="outlined"
-            color="success"
+            color="primary"
             disabled={!sessionUserCanEdit}
             onClick={() => {
               setPanelFilters([
@@ -82,14 +82,25 @@ const Filters = ({ panelId }: FiltersProps) => {
           >
             <AddIcon fontSize="medium" />
           </Button>
-          {filters?.length > 0 ? null : <>Add a filter</>}
+          {filters?.length > 0 ? null : (
+            <Typography
+              sx={{
+                fontWeight: "600",
+                display: "inline",
+                textTransform: "uppercase",
+                fontSize: "14px",
+              }}
+            >
+              Add a filter
+            </Typography>
+          )}
           <Button
             variant="contained"
             disabled={!sessionUserCanEdit}
             onClick={handleUpdateResults}
             style={{
               position: "absolute",
-              right: "24px",
+              right: "16px",
               top: filters?.length > 0 ? "32px" : "24px",
             }}
           >

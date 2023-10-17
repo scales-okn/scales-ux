@@ -40,13 +40,13 @@ const Answers = ({
 
   useEffect(() => {
     setExpanded(true);
-  }, [answer]);
+  }, [answer]); // eslint-disable-line react-hooks/exhaustive-deps
 
   useEffect(() => {
     if (!data || !statement || !plan || !satyrn) return;
     setAnswerType(getAnswersDisplayType(plan, data.results));
 
-    const currentFilters = statement?.plan?.query?.["AND"];
+    const currentFilters = plan?.query?.["AND"];
 
     const formatString = (str) => {
       return str.replace(/\|/g, "");
@@ -143,7 +143,7 @@ const Answers = ({
   const answerText = answer && (
     <Box
       sx={{
-        padding: plainTextAnswer ? "0 16px 16px 0px" : "16px",
+        padding: plainTextAnswer ? "0 16px 16px 22px" : "16px",
         boxShadow: "none",
         display: "flex",
         alignItems: "center",
@@ -168,7 +168,7 @@ const Answers = ({
       >
         <Loader isVisible={loadingAnswers}>
           <>
-            {!isEmpty(data) && (
+            {!isEmpty(data) && answer && (
               <div
                 style={{
                   overflowX: "auto",
@@ -214,14 +214,14 @@ const Answers = ({
           </>
         </Loader>
       </Box>
-      {isBarChart || isLineChart || isMultilineChart ? (
+      {answer && (isBarChart || isLineChart || isMultilineChart) ? (
         <Tooltip title="Save Snapshot">
           <Button onClick={onCapture} variant="outlined">
             <CameraAlt />
           </Button>
         </Tooltip>
       ) : null}
-      {collapseIsVisible && (
+      {answer && collapseIsVisible && (
         <div>
           <Tooltip title={expanded ? "Collapse" : "Expand"}>
             <Button

@@ -16,7 +16,7 @@ import Notifications from "src/components/Notifications";
 const theme = createTheme({
   palette: {
     primary: {
-      main: hexToRgb("#0e54ebd3"),
+      main: hexToRgb("#4c79db"),
       dark: hexToRgb("#0b44bfd2"),
     },
     success: {

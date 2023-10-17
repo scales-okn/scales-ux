@@ -119,7 +119,7 @@ const SignInPage: FunctionComponent = () => {
                 className="text-start"
               />
               <Button
-                color="success"
+                color="primary"
                 variant="contained"
                 size="medium"
                 type="submit"

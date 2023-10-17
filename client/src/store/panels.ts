@@ -355,6 +355,7 @@ export const deletePanel =
     }
   };
 
+// refactor out filters if we're not using them, refactor to object arg
 export const getPanelResults =
   (panelId, filters = [], page = 0, batchSize = 10) =>
   async (dispatch: AppDispatch, getState) => {

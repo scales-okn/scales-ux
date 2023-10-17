@@ -46,8 +46,9 @@ const Notebook = () => {
   const sessionUser = useSessionUser();
   const sessionUserCanEdit = sessionUser?.id === notebook?.userId;
   const updatesDisabled = !sessionUserCanEdit && !isNewNotebook;
+  const isAdmin = sessionUser.role === "admin";
 
-  const theme = useTheme(); // mui theme
+  const theme = useTheme();
 
   const [copyModalOpen, setCopyModalOpen] = useState(false);
   const [confirmVisible, setConfirmVisible] = useState(false);
@@ -214,12 +215,14 @@ const Notebook = () => {
                   },
                 }}
               >
-                <div>
-                  <span className="title">Owner:</span>
-                  <span className="name">
-                    {notebook?.user?.firstName} {notebook?.user?.lastName}
-                  </span>
-                </div>
+                {isAdmin && (
+                  <div>
+                    <span className="title">Owner:</span>
+                    <span className="name">
+                      {notebook?.user?.firstName} {notebook?.user?.lastName}
+                    </span>
+                  </div>
+                )}
                 <div>
                   <span className="title">Public:</span>
                   <Switch
@@ -240,7 +243,7 @@ const Notebook = () => {
           ) : (
             <Button
               size="large"
-              color="success"
+              color="primary"
               variant="contained"
               onClick={() => {
                 if (notebookTitle) {

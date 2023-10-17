@@ -141,7 +141,7 @@ const Filter = ({ panelId, filter }: Props) => {
       }
       setDateValue(out);
     }
-  }, [filter, filterOptions]);
+  }, [filter, filterOptions]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const fetchAutocompleteSuggestions = async (query) => {
     setIsLoading(true);
@@ -344,6 +344,10 @@ const Filter = ({ panelId, filter }: Props) => {
         maxDate={new Date()}
         minDate={new Date("01/01/1900")}
         onChange={(value) => {
+          if (value === null) {
+            setFilter({ ...filter, value: "" });
+            return;
+          }
           const fromVal = value[0] ? dayjs(value[0]).format("YYYY-MM-DD") : "";
           const toVal = value[1] ? dayjs(value[1]).format("YYYY-MM-DD") : "";
           const out = `${fromVal},${toVal}`;
@@ -351,7 +355,7 @@ const Filter = ({ panelId, filter }: Props) => {
           if (fromVal && toVal) {
             setFilter({ ...filter, value: out });
           }
-          setDateValue(value);
+          setDateValue(value || [null, null]);
         }}
         value={dateValue}
         disableCalendar={false}

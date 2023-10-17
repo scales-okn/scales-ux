@@ -14,11 +14,13 @@ import {
   Grid,
   AccordionDetails,
   Tooltip,
+  Box,
 } from "@mui/material";
 import { DataGrid } from "@mui/x-data-grid";
 import { UnfoldLess, UnfoldMore } from "@mui/icons-material";
 import uniqid from "uniqid";
 
+import Pagination from "src/components/Pagination";
 import Filters from "../Filters";
 import Loader from "../Loader";
 import Dataset from "../Dataset";
@@ -51,6 +53,12 @@ const Panel = ({ panelId, defaultCollapsed }: PanelT) => {
     downloadingCsv,
     updatePanel,
   } = usePanel(panelId);
+
+  const paging = {
+    totalCount: results?.totalCount || 0,
+    totalPages: results ? Math.ceil(results.totalCount / results.batchSize) : 0,
+    currentPage: results?.page,
+  };
 
   // Pop first panel on page load
   useEffectOnce(() => {
@@ -143,13 +151,17 @@ const Panel = ({ panelId, defaultCollapsed }: PanelT) => {
   return (
     <Accordion expanded={!collapsed} className="mb-4">
       <div className={`panelHeaderStyles ${panelHeaderStyles}`}>
-        <Typography
-          sx={{
-            fontSize: "1.1rem",
-          }}
-        >
-          {ring?.name}
-        </Typography>
+        <Tooltip title="Dataset Name">
+          <Typography
+            sx={{
+              fontSize: "1.1rem",
+              fontStyle: "italic",
+              cursor: "default",
+            }}
+          >
+            {ring?.name}
+          </Typography>
+        </Tooltip>
         <div className="buttonRow">
           <DeleteButton
             onClick={() => {
@@ -166,7 +178,7 @@ const Panel = ({ panelId, defaultCollapsed }: PanelT) => {
             variant="outlined"
             sx={{ marginLeft: "8px", height: "30.75px", width: "30.75px" }}
           />
-          <Tooltip title={collapsed ? "Expand" : "Collapse"}>
+          <Tooltip title={collapsed ? "Expand Panel" : "Collapse Panel"}>
             <Button
               variant="outlined"
               onClick={() => setPanelCollapsed(!collapsed)}
@@ -242,43 +254,81 @@ const Panel = ({ panelId, defaultCollapsed }: PanelT) => {
                         }}
                       >
                         {!resultsCollapsed && (
-                          <DataGrid
-                            rows={rows}
-                            onPaginationModelChange={(model) => {
-                              getPanelResults([], model.page);
-                            }}
-                            paginationModel={{
-                              page: results?.page,
-                              pageSize: results?.batchSize,
-                            }}
-                            disableColumnMenu
-                            disableColumnFilter
-                            pageSizeOptions={[10]}
-                            columns={columns}
-                            rowCount={results?.totalCount}
-                            checkboxSelection={false}
-                            className="bg-white border-0 rounded-0"
-                            paginationMode="server"
-                            sx={{
-                              "& .MuiDataGrid-virtualScroller": {
-                                minHeight: "400px",
-                              },
-                            }}
-                          />
+                          <>
+                            <Pagination
+                              paging={paging}
+                              zeroIndex
+                              fetchData={({ page }) =>
+                                getPanelResults([], page as number)
+                              }
+                            />
+                            <DataGrid
+                              rows={rows}
+                              onPaginationModelChange={(model) => {
+                                getPanelResults([], model.page);
+                              }}
+                              paginationModel={{
+                                page: results?.page,
+                                pageSize: results?.batchSize,
+                              }}
+                              disableColumnMenu
+                              disableColumnFilter
+                              hideFooterPagination
+                              hideFooter
+                              pageSizeOptions={[10]}
+                              columns={columns}
+                              rowCount={results?.totalCount}
+                              checkboxSelection={false}
+                              className="bg-white border-0 rounded-0"
+                              paginationMode="server"
+                              sx={{
+                                "& .MuiDataGrid-virtualScroller": {
+                                  minHeight: "400px",
+                                },
+                              }}
+                            />
+                          </>
                         )}
                       </div>
-                      <div className="p-3">
-                        {results?.totalCount?.toLocaleString()} Dockets Found
-                        <Button
-                          size="small"
-                          onClick={() =>
-                            setPanelResultsCollapsed(!resultsCollapsed)
+                      <Box
+                        sx={{
+                          padding: "18px",
+                          display: "flex",
+                          justifyContent: "flex-end",
+                          alignItems: "center",
+                        }}
+                      >
+                        <Typography sx={{ fontSize: "16px", fontWeight: 600 }}>
+                          {results?.totalCount?.toLocaleString()}
+                        </Typography>
+                        <Typography sx={{ margin: "0 6px" }}>
+                          Dockets Found
+                        </Typography>
+                        <Tooltip
+                          title={
+                            collapsed ? "Expand Results" : "Collapse Results"
                           }
-                          sx={{ textTransform: "none" }}
                         >
-                          ({resultsCollapsed ? "Expand" : "Collapse"})
-                        </Button>
-                      </div>
+                          <Button
+                            variant="outlined"
+                            onClick={() =>
+                              setPanelResultsCollapsed(!resultsCollapsed)
+                            }
+                            sx={{
+                              marginLeft: "8px",
+                              width: "32px",
+                              height: "24px",
+                              minWidth: "0",
+                            }}
+                          >
+                            {resultsCollapsed ? (
+                              <UnfoldMore sx={{ height: "20px" }} />
+                            ) : (
+                              <UnfoldLess sx={{ height: "20px" }} />
+                            )}
+                          </Button>
+                        </Tooltip>
+                      </Box>
                     </>
                   </AccordionDetails>
                 </Accordion>

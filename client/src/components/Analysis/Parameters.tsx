@@ -36,12 +36,7 @@ const Parameters = ({
   return (
     <>
       {parameters?.map((parameter, index) => (
-        <FormControl
-          key={index}
-          fullWidth
-          margin="normal"
-          sx={{ maxWidth: "655px" }}
-        >
+        <FormControl key={index} fullWidth margin="normal">
           {parameter.type === "string" && (
             <>
               <InputLabel>{parameter.prompt}</InputLabel>
@@ -56,6 +51,7 @@ const Parameters = ({
                     newValue,
                   );
                 }}
+                sx={{ minWidth: "300px" }}
               />
             </>
           )}

@@ -13,12 +13,17 @@ import UserFieldToggle from "./UserFieldToggle";
 import NotAuthorized from "src/components/NotAuthorized";
 import ColumnHeader from "src/components/ColumnHeader";
 import DeleteUser from "./DeleteUser";
+import Pagination from "src/components/Pagination";
 
 const AdminUsersPages = () => {
   const { role, id } = useSelector(sessionUserSelector);
-  const { fetchUsers, users } = useUser();
+  const { fetchUsers, users, usersPaging } = useUser();
 
   const isAdmin = role === "admin";
+
+  useEffectOnce(() => {
+    fetchUsers({ page: 1 });
+  });
 
   const renderHeader = (params) => {
     return (
@@ -38,7 +43,6 @@ const AdminUsersPages = () => {
       sortable: false,
       width: 200,
       renderHeader,
-
       renderCell: (params: GridCellParams) => {
         return (
           <div>
@@ -74,20 +78,6 @@ const AdminUsersPages = () => {
         </Tooltip>
       ),
     },
-    // {
-    //   field: "approved",
-    //   headerName: "Approved",
-    //   width: 140,
-    //   renderHeader,
-    //   renderCell: (params: GridCellParams) => (
-    //     <UserFieldToggle
-    //       userId={params.row.id}
-    //       fieldName="approved"
-    //       value={params.row.approved}
-    //       disabled={params.row.id === id}
-    //     />
-    //   ),
-    // },
     {
       field: "userIsVerified",
       headerName: "Verified",
@@ -146,10 +136,6 @@ const AdminUsersPages = () => {
     });
   }
 
-  useEffectOnce(() => {
-    fetchUsers();
-  });
-
   return (
     <>
       {!isAdmin ? (
@@ -163,6 +149,7 @@ const AdminUsersPages = () => {
             margin: "0 auto",
           }}
         >
+          <Pagination paging={usersPaging} fetchData={fetchUsers} />
           <DataGrid
             rows={users}
             columns={columns}
