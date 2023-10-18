@@ -183,11 +183,11 @@ const NotebooksPage = () => {
                 const user = users.find((u) => u.id === params.row.userId);
                 return isAdmin ? (
                   <Link to="/admin/users">
-                    {user.firstName} {user.lastName}
+                    {user?.firstName} {user?.lastName}
                   </Link>
                 ) : (
                   <span>
-                    {user.firstName} {user.lastName}
+                    {user.firstName} {user?.lastName}
                   </span>
                 );
               }
