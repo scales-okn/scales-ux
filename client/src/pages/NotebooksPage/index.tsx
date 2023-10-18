@@ -59,7 +59,7 @@ const NotebooksPage = () => {
   useEffect(() => {
     fetchNotebooks({
       type: notebooksType,
-      search: debouncedSearch,
+      ...(debouncedSearch ? { search: debouncedSearch } : {}),
     });
   }, [debouncedSearch]); // eslint-disable-line react-hooks/exhaustive-deps
 
