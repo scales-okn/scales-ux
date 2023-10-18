@@ -45,6 +45,7 @@ const PageLayout = ({ id = "", children, pageTitle }: PageLayoutT) => {
   };
 
   const location = useLocation();
+  const isSignInView = location.pathname.includes("sign-in");
   const isAdminView = location.pathname.includes("admin");
   const user = useSelector(sessionUserSelector);
   const isAdmin = user?.role === "admin";
@@ -120,8 +121,8 @@ const PageLayout = ({ id = "", children, pageTitle }: PageLayoutT) => {
                   </>
                 ) : (
                   <NavItem
-                    linkName="Sign In"
-                    route={"/sign-in"}
+                    linkName={`Sign ${isSignInView ? "Up" : "In"}`}
+                    route={`/sign-${isSignInView ? "up" : "in"}`}
                     disableUnderline
                   />
                 )}

@@ -33,6 +33,7 @@ interface UserSignUpFields extends UserSignInFields {
 const SignUpPage = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [message, setMessage] = useState("");
+
   const navigate = useNavigate();
 
   useEscapeKeyListener(() => {
@@ -81,10 +82,8 @@ const SignUpPage = () => {
         className="gridRow"
       >
         <Grid item md={7}>
-          <Typography variant="h4" className="mb-3 fw-normal">
-            {message
-              ? "Registered Successfully"
-              : "Please register for beta access"}
+          <Typography variant="h4" sx={{ marginBottom: "32px" }}>
+            {message ? "Registered Successfully" : "Please Register for Access"}
           </Typography>
           {message ? (
             <img
@@ -94,16 +93,7 @@ const SignUpPage = () => {
               alt="scales-logo"
               style={{ marginBottom: "24px" }}
             />
-          ) : (
-            <Typography
-              variant="h6"
-              className="mb-5"
-              style={{ color: "crimson", fontStyle: "italic" }}
-            >
-              This Application is currently in beta development. Official launch
-              scheduled for Fall 2023.
-            </Typography>
-          )}
+          ) : null}
 
           <Loader isVisible={isLoading}>
             {message ? (
