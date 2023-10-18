@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import Autocomplete from "@mui/material/Autocomplete";
 import TextField from "@mui/material/TextField";
-import { usStates } from "./usStates";
+import { usStates, caseStatuses, caseTypes } from "./autocompleteOptions";
 
 // TODO: fix
 // type StateAutocompleteT = {
@@ -16,8 +16,23 @@ const StateAutocomplete = ({
   filter,
   autocompleteValues,
   disabled,
+  type,
 }) => {
   const [inputValue, setInputValue] = useState("");
+  const options = {
+    case_status: {
+      placeholderText: "Case Status",
+      items: caseStatuses,
+    },
+    case_type: {
+      placeholderText: "Case Type",
+      items: caseTypes,
+    },
+    state_abbrev: {
+      placeholderText: "US State",
+      items: usStates,
+    },
+  };
 
   const handleInputChange = (event, newInputValue) => {
     setInputValue(newInputValue);
@@ -46,14 +61,18 @@ const StateAutocomplete = ({
           value: fieldValue.map((x) => x.value).join("|"),
         });
       }}
-      options={usStates}
+      options={options[type]?.items || []}
       getOptionLabel={(option) => option.label}
       isOptionEqualToValue={(option, value) => option.label === value.label}
       value={autocompleteValues}
       inputValue={inputValue}
       onInputChange={handleInputChange}
       renderInput={(params) => (
-        <TextField {...params} label="Select a U.S. State" variant="outlined" />
+        <TextField
+          {...params}
+          label={options[type]?.placeholderText}
+          variant="outlined"
+        />
       )}
       sx={{
         minWidth: "250px",

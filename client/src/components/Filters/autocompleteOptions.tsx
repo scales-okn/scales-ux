@@ -50,3 +50,12 @@ export const usStates = [
   { label: "Wisconsin", value: "WI" },
   { label: "Wyoming", value: "WY" },
 ];
+
+export const caseStatuses = [
+  { label: "Open", value: "open" },
+  { label: "Closed", value: "closed" },
+];
+export const caseTypes = [
+  { label: "Criminal", value: "criminal" },
+  { label: "Civil", value: "civil" },
+];

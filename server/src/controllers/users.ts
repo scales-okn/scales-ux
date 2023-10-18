@@ -35,7 +35,7 @@ export const create = async (req: Request, res: Response) => {
     });
 
     return res.send_ok(
-      "Thanks for signing up for beta access! Please confirm your email address via the link we just sent you.",
+      "Thanks for signing up for access! Please confirm your email address via the link we just sent you.",
       { user }
     );
   } catch (error) {

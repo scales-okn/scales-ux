@@ -1,6 +1,8 @@
 import { css } from "@emotion/css";
 
 export const signUpPageStyles = css`
+  padding-top: 30px;
+
   .gridRow {
     display: flex;
     flex-direction: column;
