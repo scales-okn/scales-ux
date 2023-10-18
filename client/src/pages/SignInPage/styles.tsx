@@ -3,6 +3,7 @@ import { css } from "@emotion/css";
 export const signInPageStyles = css`
   width: 90%;
   max-width: 700px;
+  padding-top: 80px;
 
   .gridRow {
     display: flex;

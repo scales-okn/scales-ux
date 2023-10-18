@@ -19,13 +19,13 @@ import "@wojtekmaj/react-datetimerange-picker/dist/DateTimeRangePicker.css";
 import "react-calendar/dist/Calendar.css";
 import "react-clock/dist/Clock.css";
 
-import { usStates } from "./usStates";
+import { usStates } from "./autocompleteOptions";
 import useDebounce from "src/hooks/useDebounce";
 import { DATE_FORMAT } from "src/helpers/constants";
 import { makeRequest } from "src/helpers/makeRequest";
 import { useNotify } from "src/components/Notifications";
 import FilterTypeDropDown from "./FilterTypeDropDown";
-import StateAutocomplete from "./StateAutocomplete";
+import LocalAutocomplete from "./LocalAutocomplete";
 
 import { filterStyles } from "./styles";
 
@@ -141,7 +141,7 @@ const Filter = ({ panelId, filter }: Props) => {
       }
       setDateValue(out);
     }
-  }, [filter, filterOptions]);
+  }, [filter, filterOptions]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const fetchAutocompleteSuggestions = async (query) => {
     setIsLoading(true);
@@ -164,6 +164,7 @@ const Filter = ({ panelId, filter }: Props) => {
     }
   };
 
+  const localTypes = ["state_abbrev", "case_status", "case_type"];
   const barredFilterTypes = ["range", "boolean", "date"];
   const isAutocomplete = !barredFilterTypes.includes(filterOptions?.type);
 
@@ -172,7 +173,7 @@ const Filter = ({ panelId, filter }: Props) => {
     if (
       filter.type &&
       isAutocomplete &&
-      type !== "state_abbrev" &&
+      !localTypes.includes(type) &&
       info?.defaultEntity
     ) {
       fetchAutocompleteSuggestions(searchParams);
@@ -240,8 +241,8 @@ const Filter = ({ panelId, filter }: Props) => {
         // We get all options on load, don't server autocomplete for:
         const noFetchFilterTypes = [
           "case_status",
-          "ontology_labels",
           "case_type",
+          "ontology_labels",
           "circuit_abbrev",
         ];
 
@@ -386,13 +387,14 @@ const Filter = ({ panelId, filter }: Props) => {
             if (filterOptions?.type === "date") {
               return datePickerElement;
             }
-            if (type === "state_abbrev") {
+            if (localTypes.includes(type)) {
               return (
-                <StateAutocomplete
+                <LocalAutocomplete
                   setFilter={setFilter}
                   filter={filter}
                   disabled={!sessionUserCanEdit}
                   autocompleteValues={autocompleteValues}
+                  type={type}
                 />
               );
             }
