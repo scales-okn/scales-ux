@@ -35,7 +35,7 @@ const LogoutMenu = () => {
     .avatarContainer {
       position: relative;
       height: 50px;
-      width: 50px;
+      width: 42px;
       display: flex;
       justify-content: center;
       align-items: center;
