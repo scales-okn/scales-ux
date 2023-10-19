@@ -181,6 +181,12 @@ const Notebook = () => {
                       alignItems: "center",
                       justifyContent: "center",
                       cursor: "pointer",
+                      transition: ".2s all",
+
+                      "&:hover": {
+                        border: `1px solid ${theme.palette.success.dark}`,
+                        background: "#118e151a",
+                      },
                     }}
                     onClick={() => setCopyModalOpen(true)}
                   >

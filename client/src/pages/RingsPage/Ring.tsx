@@ -13,6 +13,8 @@ import {
 import { useFormik } from "formik";
 import * as yup from "yup";
 
+import useWindowSize from "src/hooks/useWindowSize";
+
 import Loader from "src/components/Loader";
 import { useNotify } from "src/components/Notifications";
 import { useRing } from "src/store/rings";
@@ -33,6 +35,8 @@ const Ring: React.FC = () => {
   const sessionUser = useSessionUser();
   const { notify } = useNotify();
   const navigate = useNavigate();
+  const { width } = useWindowSize();
+  const isTablet = width < 768;
 
   const [confirmVisible, setConfirmVisible] = useState(false);
 
@@ -106,8 +110,7 @@ const Ring: React.FC = () => {
   return (
     <>
       <BackButton onClick={() => navigate("/admin/rings")} />
-
-      <Container sx={{ padding: "86px 0" }}>
+      <Container sx={{ padding: isTablet ? "86px 12px" : "86px 0" }}>
         <Loader isVisible={loading}>
           <form onSubmit={formik.handleSubmit}>
             <Grid container spacing={3} mb={3}>

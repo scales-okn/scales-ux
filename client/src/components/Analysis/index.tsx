@@ -7,12 +7,14 @@ import { useSessionUser } from "src/store/auth";
 
 import { Grid, Paper, Button, Box, Typography } from "@mui/material";
 import AddIcon from "@mui/icons-material/Add";
+import PlayCircleFilledIcon from "@mui/icons-material/PlayCircleFilled";
 import uniqid from "uniqid";
 import _ from "lodash";
 import { useEffectOnce } from "react-use";
 
 import { Satyrn } from "src/models/Satyrn";
 import { makeRequest } from "src/helpers/makeRequest";
+import useWindowSize from "src/hooks/useWindowSize";
 
 import DeleteButton from "src/components/Buttons/DeleteButton";
 import { useNotify } from "../Notifications";
@@ -31,6 +33,9 @@ const Analysis: FunctionComponent<Props> = ({ panelId }) => {
   const { panel, analysis, updatePanel, filters } = usePanel(panelId);
 
   const { ring, info } = useRing(panel?.ringId);
+
+  const { width } = useWindowSize();
+  const isTablet = width < 660;
 
   const sessionUser = useSessionUser();
   const sessionUserCanEdit = sessionUser?.id === panel?.userId;
@@ -243,6 +248,7 @@ const Analysis: FunctionComponent<Props> = ({ panelId }) => {
                 sx={{
                   display: "flex",
                   alignItems: "center",
+                  ...(isTablet ? { flexDirection: "column" } : {}),
                   marginTop: "16px",
                 }}
               >
@@ -254,8 +260,20 @@ const Analysis: FunctionComponent<Props> = ({ panelId }) => {
                     ) || !analysis[id]?.statement
                   }
                   onClick={() => getAnswers(id)}
+                  sx={
+                    isTablet
+                      ? {
+                          height: "36px",
+                          width: "36px",
+                          minWidth: "36px",
+                          padding: 0,
+                          marginBottom: "12px",
+                          marginLeft: "12px",
+                        }
+                      : {}
+                  }
                 >
-                  Run Analysis
+                  {isTablet ? <PlayCircleFilledIcon /> : "Run Analysis"}
                 </Button>
                 <DeleteButton
                   onClick={() => handleRemoveAnalysis(id)}

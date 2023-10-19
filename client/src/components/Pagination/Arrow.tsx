@@ -50,6 +50,12 @@ const Arrow = ({
         cursor: disabled ? "not-allowed" : "pointer",
         marginRight: direction === "left" ? "6px" : "0",
         marginLeft: direction === "right" ? "6px" : "0",
+
+        "&:hover": {
+          background: disabled
+            ? theme.palette.primary.main
+            : theme.palette.primary.dark,
+        },
       }}
       onClick={() => handleNavigate(direction, pageOverride)}
     >

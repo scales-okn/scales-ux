@@ -7,6 +7,7 @@ import {
   MenuItem,
   Select,
   Button,
+  Typography,
 } from "@mui/material";
 
 import { usePanel } from "src/store/panels";
@@ -59,43 +60,54 @@ const Dataset = ({ panelId }: DatasetProps) => {
           },
         }}
       >
-        <Grid container justifyContent="center" className="mb-4">
-          <Grid>
-            <span style={{ fontSize: "18px", marginRight: "18px" }}>
-              Select a dataset:
-            </span>
-            <Select
-              variant="outlined"
-              value={selectedRing ? selectedRing.name : "None"}
-              onChange={(event) => {
-                setSelectedRing(
-                  rings.find((ring) => ring.name === event.target.value),
-                );
-              }}
-              disabled={updatesDisabled}
-              sx={{
-                background: "white",
-                div: { padding: "12px 10px 10px 12px" },
-              }}
-              MenuProps={{
-                disableScrollLock: true,
-              }}
-            >
-              {rings?.map((ring, index) => (
-                <MenuItem key={index} value={ring.name}>
-                  <Tooltip
-                    title={
-                      <span style={{ fontSize: "16px" }}>
-                        {ring.description}
-                      </span>
-                    }
-                  >
-                    <span>{ring.name}</span>
-                  </Tooltip>
-                </MenuItem>
-              ))}
-            </Select>
-          </Grid>
+        <Grid
+          container
+          sx={{
+            flexDirection: "column",
+            alignItems: "center",
+          }}
+        >
+          <Typography
+            style={{
+              fontSize: "18px",
+              marginRight: "18px",
+              textAlign: "center",
+              marginBottom: "12px",
+            }}
+          >
+            Select a dataset:
+          </Typography>
+          <Select
+            variant="outlined"
+            value={selectedRing ? selectedRing.name : "None"}
+            onChange={(event) => {
+              setSelectedRing(
+                rings.find((ring) => ring.name === event.target.value),
+              );
+            }}
+            disabled={updatesDisabled}
+            sx={{
+              background: "white",
+              div: { padding: "12px 10px 10px 12px" },
+              minWidth: "300px",
+              marginBottom: "24px",
+            }}
+            MenuProps={{
+              disableScrollLock: true,
+            }}
+          >
+            {rings?.map((ring, index) => (
+              <MenuItem key={index} value={ring.name}>
+                <Tooltip
+                  title={
+                    <span style={{ fontSize: "16px" }}>{ring.description}</span>
+                  }
+                >
+                  <span>{ring.name}</span>
+                </Tooltip>
+              </MenuItem>
+            ))}
+          </Select>
         </Grid>
 
         <Loader isVisible={ring && loadingRingInfo}>

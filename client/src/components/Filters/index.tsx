@@ -6,6 +6,8 @@ import uniqid from "uniqid";
 import { usePanel } from "src/store/panels";
 import { useSessionUser } from "src/store/auth";
 
+import useWindowSize from "src/hooks/useWindowSize";
+
 import { Button, Typography } from "@mui/material";
 import Filter from "./Filter";
 
@@ -23,6 +25,9 @@ const Filters = ({ panelId }: FiltersProps) => {
     updatePanel,
     panel,
   } = usePanel(panelId);
+
+  const { width } = useWindowSize();
+  const isTablet = width < 768;
 
   const sessionUser = useSessionUser();
   const sessionUserCanEdit = sessionUser?.id === panel?.userId;
@@ -59,6 +64,18 @@ const Filters = ({ panelId }: FiltersProps) => {
   return (
     <div className={`filter-container ${filterContainerStyles}`}>
       <div className="filters">
+        <Button
+          variant="contained"
+          disabled={!sessionUserCanEdit}
+          onClick={handleUpdateResults}
+          style={{
+            position: isTablet ? "relative" : "absolute",
+            ...(isTablet ? {} : { right: "16px" }),
+            ...(isTablet ? {} : { top: filters?.length > 0 ? "32px" : "24px" }),
+          }}
+        >
+          Update Results
+        </Button>
         {filterElements}
         <div className="d-inline-block">
           <Button
@@ -94,18 +111,6 @@ const Filters = ({ panelId }: FiltersProps) => {
               Add a filter
             </Typography>
           )}
-          <Button
-            variant="contained"
-            disabled={!sessionUserCanEdit}
-            onClick={handleUpdateResults}
-            style={{
-              position: "absolute",
-              right: "16px",
-              top: filters?.length > 0 ? "32px" : "24px",
-            }}
-          >
-            Update Results
-          </Button>
         </div>
       </div>
     </div>
