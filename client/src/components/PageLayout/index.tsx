@@ -18,8 +18,6 @@ import NavItem from "./NavItem";
 import Logout from "./LogoutMenu";
 import { styles } from "./styles";
 
-import "./PageLayout.scss";
-
 type PageLayoutT = {
   pageTitle?: string;
   id?: string;

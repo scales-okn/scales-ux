@@ -15,7 +15,6 @@ import { makeRequest } from "src/helpers/makeRequest";
 import { useNotify } from "src/components/Notifications";
 
 import { styles } from "./styles";
-import "./PageLayout.scss";
 
 const FeedbackWidget = () => {
   const [feedbackModalOpen, setFeedbackModalOpen] = useState(false);
