@@ -103,6 +103,9 @@ const Notebook = () => {
     });
   };
 
+  const missingTitle =
+    notebookTitle === "" && !isNewNotebook && !loadingNotebook;
+
   return (
     <Loader isVisible={loadingNotebook && !isNewNotebook}>
       <Grid
@@ -127,7 +130,12 @@ const Notebook = () => {
               disabled={updatesDisabled}
               placeholder="Notebook Title"
               variant="standard"
-              error={!(notebookTitle && notebook?.id)}
+              error={missingTitle}
+              helperText={
+                missingTitle
+                  ? "Title is required. Changes will not be saved."
+                  : null
+              }
               onChange={(event) => {
                 setNotebookTitle(event.target.value);
               }}
@@ -151,7 +159,7 @@ const Notebook = () => {
                 },
               }}
             />
-            {updatesDisabled && (
+            {updatesDisabled && !loadingNotebook && (
               <Typography
                 sx={{
                   fontStyle: "italic",
