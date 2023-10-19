@@ -32,17 +32,43 @@ const LogoutMenu = () => {
       cursor: pointer;
     }
 
-    .avatar {
+    .avatarContainer {
+      position: relative;
+      height: 50px;
+      width: 42px;
       display: flex;
-      align-items: center;
       justify-content: center;
-      height: 36px;
-      width: 36px;
-      border-radius: 50%;
-      background-color: var(--success-green);
-      text-decoration: none;
-      cursor: pointer;
-      color: white;
+      align-items: center;
+
+      .hoverBg {
+        position: absolute;
+        height: 42px;
+        width: 42px;
+        border-radius: 50%;
+        background: transparent;
+        border: 3px solid white;
+        opacity: 0;
+        transition: 0.2s all;
+        z-index: 101;
+        &:hover {
+          opacity: 0.5;
+        }
+      }
+
+      .avatar {
+        position: absolute;
+        display: flex;
+        z-index: 100;
+        align-items: center;
+        justify-content: center;
+        height: 36px;
+        width: 36px;
+        border-radius: 50%;
+        border: 2px solid white;
+        text-decoration: none;
+        cursor: pointer;
+        color: white;
+      }
     }
 
     .item {
@@ -62,10 +88,13 @@ const LogoutMenu = () => {
     user && (
       <div className={containerStyles}>
         <div className="icon" onClick={handleClick}>
-          <ArrowDropDownIcon />
-          <div className="avatar">
-            {user?.firstName?.charAt(0)}
-            {user?.lastName?.charAt(0)}
+          {/* <ArrowDropDownIcon /> */}
+          <div className="avatarContainer">
+            <div className="hoverBg" />
+            <div className="avatar">
+              {user?.firstName?.charAt(0)}
+              {user?.lastName?.charAt(0)}
+            </div>
           </div>
         </div>
         {open && (

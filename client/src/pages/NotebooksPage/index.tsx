@@ -202,7 +202,7 @@ const NotebooksPage = () => {
             headerName: "Delete",
             width: 75,
             renderCell: (params: GridCellParams) => {
-              const canDelete = params.row.userId === user.id;
+              const canDelete = params.row.userId === user.id || isAdmin;
               return (
                 <div style={{ paddingLeft: "5px" }}>
                   <DeleteNotebook
