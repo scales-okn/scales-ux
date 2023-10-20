@@ -1,7 +1,7 @@
 module.exports = {
   title: "UserSchema",
   type: "object",
-  required: ["firstName", "lastName", "email", "password"],
+  required: ["firstName", "lastName", "email"],
   properties: {
     id: {
       type: "number",
@@ -32,9 +32,6 @@ module.exports = {
       type: "string",
     },
     password: {
-      type: "string",
-    },
-    passwordResetToken: {
       type: "string",
     },
     role: {
