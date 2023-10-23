@@ -2,7 +2,7 @@ const chai = require("chai");
 const app = require("../../build/index.js");
 const feedbackSchema = require("../fixtures/feedbackSchema.js");
 const chaiJsonSchema = require("chai-json-schema");
-const { makeRequest } = require("../util/makeRequest.ts");
+const { makeRequest } = require("../util/makeRequest.js");
 chai.use(chaiJsonSchema);
 
 const baseRoute = "/api/feedback";

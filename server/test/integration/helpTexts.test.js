@@ -1,7 +1,7 @@
 const chai = require("chai");
 const helpTextSchema = require("../fixtures/helpTextSchema.js");
 const chaiJsonSchema = require("chai-json-schema");
-const { makeRequest } = require("../util/makeRequest.ts");
+const { makeRequest } = require("../util/makeRequest.js");
 chai.use(chaiJsonSchema);
 
 const baseRoute = "/api/helpTexts";

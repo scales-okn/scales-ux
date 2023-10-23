@@ -1,10 +1,7 @@
 const chai = require("chai");
-const app = require("../../build/index.js");
-const request = require("supertest")(app.default);
 const userSchema = require("../fixtures/userSchema.js");
 const chaiJsonSchema = require("chai-json-schema");
-const token = require("../fixtures/token.js");
-const { makeRequest } = require("../util/makeRequest.ts");
+const { makeRequest } = require("../util/makeRequest.js");
 chai.use(chaiJsonSchema);
 
 const baseRoute = "/api/users";

@@ -139,9 +139,9 @@ export const update = async (req: Request, res: Response) => {
 // Delete a Ring
 export const deleteRing = async (req: Request, res: Response) => {
   try {
-    const { ringId } = req.params;
+    const { id } = req.params;
     const result = await sequelize.models.Ring.destroy({
-      where: { rid: ringId },
+      where: { id },
     });
 
     if (result) {

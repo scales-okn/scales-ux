@@ -79,9 +79,9 @@ const Ring: React.FC = () => {
     },
   });
 
-  const deleteRing = async (rid) => {
+  const deleteRing = async (id) => {
     setLoading(true);
-    const response = await makeRequest.delete(`/api/rings/${rid}`);
+    const response = await makeRequest.delete(`/api/rings/${id}`);
 
     if (response?.code === 200) {
       notify(response.message, "success");
@@ -323,7 +323,7 @@ const Ring: React.FC = () => {
         itemName="ring"
         open={confirmVisible}
         setOpen={setConfirmVisible}
-        onConfirm={() => deleteRing(ring.rid)}
+        onConfirm={() => deleteRing(ring.id)}
       />
     </>
   );

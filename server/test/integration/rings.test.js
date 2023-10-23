@@ -1,7 +1,7 @@
 const chai = require("chai");
 const ringSchema = require("../fixtures/ringSchema.js");
 const chaiJsonSchema = require("chai-json-schema");
-const { makeRequest } = require("../util/makeRequest.ts");
+const { makeRequest } = require("../util/makeRequest.js");
 chai.use(chaiJsonSchema);
 
 const baseRoute = "/api/rings";
@@ -32,7 +32,7 @@ describe("Rings API", () => {
       done,
       body: {
         userId: 1,
-        rid: 5555,
+        rid: 24,
         name: "Test Ring",
         description: "This is a test ring",
         schemaVersion: "1.0",
@@ -101,7 +101,7 @@ describe("Rings API", () => {
   it("should delete a ring", (done) => {
     makeRequest({
       method: "delete",
-      endpoint: `${baseRoute}/${createdRing.rid}`,
+      endpoint: `${baseRoute}/${createdRing.id}`,
       done,
       endCallback: (res) => {
         chai

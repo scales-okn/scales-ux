@@ -3,7 +3,7 @@ const app = require("../../build/index.js");
 const notebookSchema = require("../fixtures/notebookSchema.js");
 const panelSchema = require("../fixtures/panelSchema.js");
 const chaiJsonSchema = require("chai-json-schema");
-const { makeRequest } = require("../util/makeRequest.ts");
+const { makeRequest } = require("../util/makeRequest.js");
 chai.use(chaiJsonSchema);
 
 const baseRoute = "/api/notebooks";

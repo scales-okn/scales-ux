@@ -1,6 +1,6 @@
 const app = require("../../build/index.js");
 const request = require("supertest")(app.default);
-const token = require("../fixtures/token.js");
+const token = require("./token.js");
 
 // type makeRequestT = {
 //   endpoint: string;
