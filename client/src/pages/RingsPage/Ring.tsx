@@ -80,7 +80,7 @@ const Ring: React.FC = () => {
         notify(response.message, "success");
         navigate("/admin/rings");
       }
-      setLoading(true);
+      setLoading(false);
     },
   });
 
