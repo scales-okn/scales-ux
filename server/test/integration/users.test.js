@@ -4,20 +4,20 @@ const request = require("supertest")(app.default);
 const userSchema = require("../fixtures/userSchema.js");
 const chaiJsonSchema = require("chai-json-schema");
 const token = require("../fixtures/token.js");
+const { makeRequest } = require("../util/makeRequest.ts");
 chai.use(chaiJsonSchema);
+
+const baseRoute = "/api/users";
 
 describe("Users API", () => {
   let createdUserId;
 
   it("should return all users", (done) => {
-    request
-      .get("/api/users")
-      .set("Accept", "application/json")
-      .set("Authorization", token)
-      .expect("Content-Type", /json/)
-      .expect(200)
-      .end((err, res) => {
-        if (err) return done(err);
+    makeRequest({
+      method: "get",
+      endpoint: baseRoute,
+      done,
+      endCallback: (res) => {
         chai.expect(res.body.data).to.have.keys("users", "paging");
         chai.expect(res.body.data.users).to.be.an("array");
         chai.expect(res.body.data.paging).to.be.an("object");
@@ -29,83 +29,79 @@ describe("Users API", () => {
           chai.expect(user).to.be.jsonSchema(userSchema)
         );
         done();
-      });
+      },
+    });
   });
 
   it("should create a user", (done) => {
-    request
-      .post("/api/users/create")
-      .set("Accept", "application/json")
-      .set("Authorization", token)
-      .send({
+    makeRequest({
+      method: "post",
+      endpoint: `${baseRoute}/create`,
+      done,
+      body: {
         username: "Barry White",
-        email: "barryf@example.com",
-        password: "TESTtest!@#123",
+        email: "barryfr@example.com",
+        password: "ASFtest!@#123",
         firstName: "Barry",
         lastName: "White",
         usage: "test",
-      })
-      .expect("Content-Type", /json/)
-      .expect(200)
-      .end((err, res) => {
-        if (err) return done(err);
+      },
+      endCallback: (res) => {
         createdUserId = res.body.data.user.id;
 
         chai.expect(res.body.data).to.be.have.key("user");
         chai.expect(res.body.data.user).to.be.an("object");
         chai.expect(res.body.data.user).to.be.jsonSchema(userSchema);
         done();
-      });
+      },
+    });
   });
 
   it("should return a user", (done) => {
-    request
-      .get(`/api/users/${createdUserId}/`)
-      .set("Accept", "application/json")
-      .set("Authorization", token)
-      .expect("Content-Type", /json/)
-      .expect(200)
-      .end((err, res) => {
-        if (err) return done(err);
+    makeRequest({
+      method: "get",
+      endpoint: `${baseRoute}/${createdUserId}/`,
+      done,
+      endCallback: (res) => {
         chai.expect(res.body.data).to.be.have.key("user");
         chai.expect(res.body.data.user).to.be.an("object");
         chai.expect(res.body.data.user).to.be.jsonSchema(userSchema);
         done();
-      });
+      },
+    });
   });
 
   it("should update a user", (done) => {
-    request
-      .put(`/api/users/${createdUserId}/`)
-      .set("Accept", "application/json")
-      .set("Authorization", token)
-      .send({
+    makeRequest({
+      method: "put",
+      endpoint: `${baseRoute}/${createdUserId}/`,
+      done,
+      body: {
         firstName: "Donna",
-      })
-      .expect("Content-Type", /json/)
-      .expect(200)
-      .end((err, res) => {
-        if (err) return done(err);
+      },
+      endCallback: (res) => {
         chai.expect(res.body.data).to.be.have.key("user");
         chai.expect(res.body.data.user).to.be.an("object");
         chai.expect(res.body.data.user).to.be.jsonSchema(userSchema);
         done();
-      });
+      },
+    });
   });
 
   it("should delete a user", (done) => {
-    request
-      .delete(`/api/users/${createdUserId}/`)
-      .set("Accept", "application/json")
-      .set("Authorization", token)
-      .expect("Content-Type", /json/)
-      .expect(200)
-      .end((err, res) => {
-        if (err) return done(err);
+    makeRequest({
+      method: "delete",
+      endpoint: `${baseRoute}/${createdUserId}/`,
+      done,
+      body: {
+        firstName: "Donna",
+      },
+      endCallback: (res) => {
         chai
           .expect(res.body.message)
           .to.equal("User has been deleted successfully!");
         done();
-      });
+      },
+    });
   });
 });

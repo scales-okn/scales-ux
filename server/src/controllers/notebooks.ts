@@ -164,6 +164,7 @@ export const findById = async (req: Request, res: Response) => {
   }
 };
 
+// Are we using this?
 export const history = async (req: Request, res: Response) => {
   try {
     const { notebookId } = req.params;
