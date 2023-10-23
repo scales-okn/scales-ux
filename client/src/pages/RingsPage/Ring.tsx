@@ -67,15 +67,20 @@ const Ring: React.FC = () => {
       setLoading(true);
       let response;
       if (ringId) {
-        response = await makeRequest.put(`/api/rings/${ringId}`, values);
+        response = await makeRequest.put(`/api/rings/${ringId}`, values, {
+          notify,
+        });
       } else {
-        response = await makeRequest.post(`/api/rings/create`, values);
+        response = await makeRequest.post(`/api/rings/create`, values, {
+          notify,
+        });
       }
 
       if (response?.code === 200) {
         notify(response.message, "success");
         navigate("/admin/rings");
       }
+      setLoading(true);
     },
   });
 

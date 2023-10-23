@@ -21,6 +21,14 @@ export const create = async (req: Request, res: Response) => {
       version,
     } = req.body;
 
+    const ringExists = await sequelize.models.Ring.findOne({
+      where: { rid },
+    });
+
+    if (ringExists) {
+      return res.send_badRequest("RID must be unique!");
+    }
+
     const ring = await sequelize.models.Ring.create({
       userId,
       rid,
