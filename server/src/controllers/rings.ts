@@ -33,7 +33,7 @@ export const create = async (req: Request, res: Response) => {
       version,
     });
 
-    return res.send_ok("Ring created succesfully!", { ring });
+    return res.send_ok("Ring created successfully!", { ring });
   } catch (error) {
     console.warn(error); // eslint-disable-line no-console
 
