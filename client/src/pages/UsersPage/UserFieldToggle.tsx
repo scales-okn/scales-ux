@@ -14,7 +14,6 @@ type Props = {
 const UserFieldToggle: FunctionComponent<Props> = ({
   userId,
   fieldName,
-  label,
   value,
   disabled,
 }) => {
@@ -48,20 +47,14 @@ const UserFieldToggle: FunctionComponent<Props> = ({
   };
 
   return (
-    <FormGroup row>
-      <FormControlLabel
-        control={
-          <Switch
-            disabled={disabled}
-            checked={checked}
-            onChange={handleChange}
-            color="primary"
-            name={fieldName}
-          />
-        }
-        label={label}
-      />
-    </FormGroup>
+    <Switch
+      disabled={disabled}
+      checked={checked}
+      onChange={handleChange}
+      color="primary"
+      name={fieldName}
+      sx={{ cursor: disabled ? "not-allowed" : "pointer" }}
+    />
   );
 };
 

@@ -38,6 +38,7 @@ const Notebook = () => {
     savingNotebook,
     clearNotebook,
   } = useNotebook();
+
   const { getPanels, clearPanels } = usePanels(notebook?.id);
 
   const { notebookId: notebookIdParam } = useParams();
@@ -91,6 +92,7 @@ const Notebook = () => {
   }, [notebookIdParam]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const handleDeleteNotebook = () => {
+    console.log("note", notebook);
     deleteNotebook(notebook?.id);
     navigate("/notebooks");
   };
@@ -277,12 +279,14 @@ const Notebook = () => {
       {notebook && <Panels notebookId={notebook?.id} />}
       <AddPanel notebookId={notebook?.id} />
 
-      <ConfirmModal
-        itemName="notebook"
-        open={confirmVisible}
-        setOpen={setConfirmVisible}
-        onConfirm={handleDeleteNotebook}
-      />
+      {confirmVisible && (
+        <ConfirmModal
+          itemName="notebook"
+          open={confirmVisible}
+          setOpen={setConfirmVisible}
+          onConfirm={handleDeleteNotebook}
+        />
+      )}
       {copyModalOpen && <DuplicateNotebookModal setOpen={setCopyModalOpen} />}
     </Loader>
   );

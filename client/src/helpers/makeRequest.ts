@@ -80,7 +80,7 @@ const sendRequest = async ({
 
     if (data.code !== 200) {
       console.error(data.message);
-      if (options.notify) {
+      if (options?.notify) {
         options.notify(data.message, "error");
       }
     }
