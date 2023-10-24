@@ -1,9 +1,10 @@
 import { css } from "@emotion/css";
 
 export const signInPageStyles = css`
-  width: 90%;
-  max-width: 700px;
+  width: 80%;
+  max-width: 500px;
   padding-top: 80px;
+  margin: 0 auto;
 
   .gridRow {
     display: flex;
@@ -21,5 +22,6 @@ export const signInPageStyles = css`
     justify-content: space-between;
     align-items: center;
     margin-bottom: 32px;
+    margin-top: 24px;
   }
 `;
