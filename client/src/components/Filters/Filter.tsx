@@ -4,7 +4,6 @@ import { usePanel } from "src/store/panels";
 import { useRing } from "src/store/rings";
 import { useSessionUser } from "src/store/auth";
 
-// import { debounce } from "lodash";
 import dayjs from "dayjs";
 import {
   CircularProgress,
@@ -180,6 +179,19 @@ const Filter = ({ panelId, filter }: Props) => {
     }
   };
 
+  const [textSearch, setTextSearch] = useState<string | number>("");
+  const debouncedTextSearch = useDebounce(textSearch, 100);
+
+  useEffect(() => {
+    if (debouncedTextSearch) {
+      setFilter({ ...filter, value: debouncedTextSearch });
+    }
+  }, [debouncedTextSearch]); // eslint-disable-line react-hooks/exhaustive-deps
+
+  useEffect(() => {
+    setTextSearch(value);
+  }, []);
+
   const [rawSearch, setRawSearch] = useState("");
   const debouncedSearch = useDebounce(rawSearch, 1000);
   useEffect(() => {
@@ -305,9 +317,10 @@ const Filter = ({ panelId, filter }: Props) => {
         if (!filter) {
           return false;
         }
-        setFilter({ ...filter, value: event.target.value });
+        setTextSearch(event.target.value);
       }}
-      value={value}
+      label={filterOptions?.nicename}
+      value={textSearch}
       variant="outlined"
       placeholder={filterOptions?.type ? null : "Choose a filter type"}
       sx={{
