@@ -10,13 +10,8 @@
     "strictNullChecks": false,
     "allowSyntheticDefaultImports": true,
     "moduleResolution": "node",
-    "esModuleInterop": true,
+    "esModuleInterop": true
   },
-  "include": [
-    "**/*.ts"
-  ],
-  "exclude": [
-    "build",
-    "node_modules"
-  ],
+  "include": ["**/*.ts"],
+  "exclude": ["build", "node_modules"]
 }

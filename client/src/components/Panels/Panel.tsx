@@ -123,13 +123,15 @@ const Panel = ({ panelId, defaultCollapsed }: PanelT) => {
       width: 180,
       renderCell: (item) => {
         return (
-          <Link
-            to={`/document/${ring.rid}/${ring.version}/Case/${item.row.__uniqueId.ucid}`}
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            {item.row.case_id}
-          </Link>
+          <Tooltip title="Open Docket in New Tab">
+            <Link
+              to={`/document/${ring.rid}/${ring.version}/Case/${item.row.__uniqueId.ucid}`}
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              {item.row.case_id}
+            </Link>
+          </Tooltip>
         );
       },
       renderHeader: (params) => {

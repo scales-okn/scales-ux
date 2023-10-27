@@ -2,12 +2,12 @@
 /* eslint-disable */
 import { authorizationHeader } from "src/helpers/authorizationHeader";
 import store from "src/store";
-import streamSaver from 'streamsaver';
+import streamSaver from "streamsaver";
 
 const baseURL = "http://localhost:8080";
 
 // host stream saver service worker locally
-streamSaver.mitm = '/streamsaver/mitm.html';
+streamSaver.mitm = "/streamsaver/mitm.html";
 
 const sendRequest = async ({
   method,
@@ -50,43 +50,47 @@ const sendRequest = async ({
     if (options?.responseType === "text") {
       data = await response.text();
     } else if (options?.responseType === "stream") {
-      const fileStream = streamSaver.createWriteStream('scales-okn-data.csv');
+      const fileStream = streamSaver.createWriteStream("scales-okn-data.csv");
       const readableStream = response.body;
 
       // use pipeTo if it's available; easier and faster
-      if(window.WritableStream && readableStream.pipeTo) {
-        await readableStream.pipeTo(fileStream)
-        return { message: 'Successfully downloaded file'}
+      if (window.WritableStream && readableStream.pipeTo) {
+        await readableStream.pipeTo(fileStream);
+        return { message: "Successfully downloaded file" };
       }
 
       // if pipeTo isn't available, we fallback to the polyfill
       window.writer = fileStream.getWriter();
       const reader = response.body.getReader();
-      const pump = () => reader.read()
-        .then(({ done, value }) => done
-          ? window.writer.close()
-          : window.writer.write(value).then(pump));
+      const pump = () =>
+        reader
+          .read()
+          .then(({ done, value }) =>
+            done
+              ? window.writer.close()
+              : window.writer.write(value).then(pump),
+          );
 
       pump();
 
-      data = { message: 'Successfully downloaded file'}
+      data = { message: "Successfully downloaded file" };
     } else {
       data = await response.json();
     }
 
-    if (data.error) {
-      console.error(data.error);
-    }
-    if (!response.ok) {
-      console.error(`HTTP error! Status: ${response.status}`);
+    if (data.code !== 200) {
+      console.error(data.message);
+      if (options?.notify) {
+        options.notify(data.message, "error");
+      }
     }
 
     return data;
   } catch (error) {
     // Handle network or fetch errors
-    if(options?.responseType === "stream" && error === undefined) {
+    if (options?.responseType === "stream" && error === undefined) {
       // file download cancelled
-      return { message: 'File download cancelled' }
+      return { message: "File download cancelled" };
     }
     console.error("Request failed:", error);
     throw error;
@@ -97,12 +101,22 @@ const sendRequest = async ({
 export const makeRequest = {
   get: (path: string, options?: Record<string, unknown>) =>
     sendRequest({ method: "GET", path, options }),
-  post: (path: string, body: Record<string, any>) =>
-    sendRequest({ method: "POST", path, body }),
-  put: (path: string, body: Record<string, any>) =>
-    sendRequest({ method: "PUT", path, body }),
-  patch: (path: string, body: Record<string, any>) =>
-    sendRequest({ method: "PATCH", path, body }),
-  delete: (path: string) => sendRequest({ method: "DELETE", path }),
+  post: (
+    path: string,
+    body: Record<string, any>,
+    options?: Record<string, unknown>,
+  ) => sendRequest({ method: "POST", path, body, options }),
+  put: (
+    path: string,
+    body: Record<string, any>,
+    options?: Record<string, unknown>,
+  ) => sendRequest({ method: "PUT", path, body, options }),
+  patch: (
+    path: string,
+    body: Record<string, any>,
+    options?: Record<string, unknown>,
+  ) => sendRequest({ method: "PATCH", path, body, options }),
+  delete: (path: string, options?: Record<string, unknown>) =>
+    sendRequest({ method: "DELETE", path, options }),
 };
 /* eslint-enable */
