@@ -13,6 +13,7 @@ import {
   Grid,
   Switch,
   Button,
+  Tooltip,
 } from "@mui/material";
 
 import { useEffectOnce } from "react-use";
@@ -114,9 +115,11 @@ const NotebooksPage = () => {
       sortable: false,
       renderHeader,
       renderCell: (params: GridCellParams) => (
-        <Link to={`/notebooks/${params.row.id}`} className="ms-2">
-          {params.row.title}
-        </Link>
+        <Tooltip title="View Notebook">
+          <Link to={`/notebooks/${params.row.id}`} className="ms-2">
+            {params.row.title}
+          </Link>
+        </Tooltip>
       ),
     },
     {

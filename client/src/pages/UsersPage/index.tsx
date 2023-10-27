@@ -1,15 +1,26 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { useSelector } from "react-redux";
 
 import { DataGrid, GridColDef, GridCellParams } from "@mui/x-data-grid";
-import { Tooltip, Typography, Box } from "@mui/material";
+import {
+  Tooltip,
+  Typography,
+  Box,
+  TextField,
+  InputAdornment,
+  IconButton,
+} from "@mui/material";
+import SearchIcon from "@mui/icons-material/Search";
 import { useTheme } from "@mui/material/styles";
 import { useEffectOnce } from "react-use";
 import dayjs from "dayjs";
 
+import useDebounce from "src/hooks/useDebounce";
+
 import { sessionUserSelector } from "src/store/auth";
 import { useUser } from "src/store/user";
 
+import NewUserModal from "./NewUserModal";
 import UserFieldToggle from "./UserFieldToggle";
 import NotAuthorized from "src/components/NotAuthorized";
 import ColumnHeader from "src/components/ColumnHeader";
@@ -20,6 +31,13 @@ const AdminUsersPages = () => {
   const { role, id } = useSelector(sessionUserSelector);
   const { fetchUsers, users, usersPaging } = useUser();
   const theme = useTheme();
+
+  const [rawSearch, setRawSearch] = useState(null);
+  const debouncedSearch = useDebounce(rawSearch, 1000);
+
+  useEffect(() => {
+    fetchUsers({ search: debouncedSearch });
+  }, [debouncedSearch]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const isAdmin = role === "admin";
 
@@ -141,6 +159,7 @@ const AdminUsersPages = () => {
       headerAlign: "center",
       align: "center",
       width: 110,
+      renderHeader,
       renderCell: (params: GridCellParams) => {
         return (
           <UserFieldToggle
@@ -158,6 +177,7 @@ const AdminUsersPages = () => {
       headerAlign: "center",
       align: "center",
       width: 110,
+      renderHeader,
       renderCell: (params: GridCellParams) => {
         return (
           <DeleteUser userId={params.row.id} disabled={params.row.id === id} />
@@ -168,6 +188,7 @@ const AdminUsersPages = () => {
 
   return (
     <Box sx={{ paddingBottom: "80px" }}>
+      <NewUserModal />
       {!isAdmin ? (
         <NotAuthorized />
       ) : (
@@ -178,7 +199,37 @@ const AdminUsersPages = () => {
             margin: "0 auto",
           }}
         >
-          <Pagination paging={usersPaging} fetchData={fetchUsers} />
+          <Pagination
+            paging={usersPaging}
+            fetchData={fetchUsers}
+            leftContent={
+              <TextField
+                placeholder="Filter Users"
+                value={rawSearch}
+                onChange={(event: React.ChangeEvent<HTMLInputElement>) =>
+                  setRawSearch(event.target.value)
+                }
+                InputProps={{
+                  startAdornment: (
+                    <InputAdornment position="start">
+                      <IconButton>
+                        <SearchIcon />
+                      </IconButton>
+                    </InputAdornment>
+                  ),
+                }}
+                sx={{
+                  "& .MuiInputBase-root": {
+                    border: "none",
+                    height: "42px",
+                    background: "white",
+                  },
+
+                  borderRadius: "4px",
+                }}
+              />
+            }
+          />
           <DataGrid
             rows={users}
             columns={columns}

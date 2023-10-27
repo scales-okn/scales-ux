@@ -80,6 +80,15 @@ const userSlice = createSlice({
       ...state,
       hasErrors: true,
     }),
+    createUserAsAdminSuccess: (state, { payload }) => ({
+      ...state,
+      users: [payload, ...state.users],
+      hasErrors: false,
+    }),
+    createUserAsAdminFailure: (state) => ({
+      ...state,
+      hasErrors: true,
+    }),
   },
 });
 
@@ -134,6 +143,26 @@ export const updateUser = (userId, payload: any = {}) => {
   };
 };
 
+export const createUserAsAdmin = (payload: any = {}) => {
+  return async (dispatch: AppDispatch) => {
+    try {
+      const { data, message, code } = await makeRequest.post(
+        `/api/users/create`,
+        { ...payload, isAdmin: true },
+      );
+
+      if (code === 200) {
+        dispatch(userActions.createUserAsAdminSuccess(data.user));
+      } else {
+        dispatch(notify(message, "error"));
+        dispatch(userActions.createUserAsAdminFailure());
+      }
+    } catch (error) {
+      dispatch(userActions.createUserAsAdminFailure());
+    }
+  };
+};
+
 // Hooks
 export const useUser = () => {
   const users = useSelector(usersSelector);
@@ -144,6 +173,8 @@ export const useUser = () => {
     users,
     usersPaging,
     fetchUsers: (payload: any = {}) => dispatch(fetchUsers(payload)),
+    createUserAsAdmin: (payload: any = {}) =>
+      dispatch(createUserAsAdmin(payload)),
     updateUser: (userId, payload: any = {}) =>
       dispatch(updateUser(userId, payload)),
   };

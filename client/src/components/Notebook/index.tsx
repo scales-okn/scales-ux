@@ -92,8 +92,7 @@ const Notebook = () => {
   }, [notebookIdParam]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const handleDeleteNotebook = () => {
-    console.log("note", notebook);
-    deleteNotebook(notebook?.id);
+    deleteNotebook(notebook.id);
     navigate("/notebooks");
   };
 
@@ -240,7 +239,9 @@ const Notebook = () => {
                   </div>
                 )}
                 <div>
-                  <span className="title">Public:</span>
+                  <Tooltip title="Public tooltips can be seen and copied (but not modified) by any user">
+                    <span className="title">Public:</span>
+                  </Tooltip>
                   <Switch
                     disabled={!sessionUserCanEdit}
                     checked={notebook?.visibility === "public"}

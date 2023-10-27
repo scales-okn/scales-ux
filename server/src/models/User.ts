@@ -1,6 +1,8 @@
 import { DataTypes } from "sequelize";
+import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 import { sendEmail } from "../services/sesMailer";
+import { sequelize } from "../database";
 // import mailer from "../services/mail";
 
 export interface User {
@@ -72,33 +74,95 @@ export default (sequelize, options) => {
     });
   };
 
-  User.addHook("afterCreate", "verifyEmail", async (user) => {
-    try {
-      const { firstName, lastName, email } = user;
-      const emailVerificationToken = jwt.sign(
-        { email },
-        process.env.JWT_SECRET,
-        { expiresIn: process.env.JWT_EXP }
-      );
-      user.emailVerificationToken = emailVerificationToken;
-      await user.save();
+  return User;
+};
 
-      const recipientName = `${firstName} ${lastName}`;
+const verifyEmail = async (user, isAdmin, password = null) => {
+  try {
+    const { firstName, lastName, email } = user;
+    const emailVerificationToken = jwt.sign({ email }, process.env.JWT_SECRET, {
+      expiresIn: process.env.JWT_EXP,
+    });
+    user.emailVerificationToken = emailVerificationToken;
+    await user.save();
+
+    const recipientName = `${firstName} ${lastName}`;
+    const sharedEmailArgs = {
+      emailSubject: `Welcome to SCALES, ${recipientName}!`,
+      recipientEmail: email,
+      recipientName,
+    };
+
+    // TODO: refactor to use RBAC once session concept more fleshed out
+    if (isAdmin) {
+      user.update({
+        emailIsVerified: true,
+      });
+
       sendEmail({
-        emailSubject: `Welcome to SCALES, ${recipientName}!`,
-        recipientEmail: email,
+        ...sharedEmailArgs,
+        templateName: "confirmAccountAdminCreated",
+        templateArgs: {
+          url: `${process.env.UX_CLIENT_MAILER_URL}/sign-in`,
+          email: user.email,
+          password,
+        },
+      });
+    } else {
+      sendEmail({
+        ...sharedEmailArgs,
         templateName: "confirmAccount",
-        recipientName,
         templateArgs: {
           url: `${process.env.UX_CLIENT_MAILER_URL}/verify-email/${emailVerificationToken}`,
         },
       });
-
-      await user.save();
-    } catch (error) {
-      console.warn({ error });
     }
-  });
 
-  return User;
+    await user.save();
+  } catch (error) {
+    console.warn({ error });
+  }
+};
+
+export const createUser = async (req, res) => {
+  try {
+    const {
+      firstName,
+      lastName,
+      email,
+      password,
+      usage,
+      isAdmin,
+      emailIsVerified = false,
+    } = req.body;
+
+    const users = await sequelize.models.User.findAll({ where: { email } });
+    if (users?.length) {
+      return res.send_badRequest("User was not created!", {
+        email: "Email already exists!",
+      });
+    }
+
+    const salt = await bcrypt.genSalt(10);
+    const hash = await bcrypt.hash(password, salt);
+    const user = await sequelize.models.User.create({
+      firstName,
+      lastName,
+      email,
+      usage,
+      password: hash,
+      emailIsVerified: isAdmin,
+    });
+
+    verifyEmail(user, isAdmin, password);
+
+    return res.send_ok(
+      "Thanks for signing up for access! Please confirm your email address via the link we just sent you.",
+      { user }
+    );
+  } catch (error) {
+    console.warn(error); // eslint-disable-line no-console
+
+    return res.send_internalServerError("An error occurred, please try again!");
+  }
 };

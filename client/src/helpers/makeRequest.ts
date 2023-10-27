@@ -116,6 +116,7 @@ export const makeRequest = {
     body: Record<string, any>,
     options?: Record<string, unknown>,
   ) => sendRequest({ method: "PATCH", path, body, options }),
-  delete: (path: string) => sendRequest({ method: "DELETE", path, options }),
+  delete: (path: string, options?: Record<string, unknown>) =>
+    sendRequest({ method: "DELETE", path, options }),
 };
 /* eslint-enable */
