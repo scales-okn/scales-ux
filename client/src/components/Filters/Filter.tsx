@@ -165,7 +165,9 @@ const Filter = ({ panelId, filter }: Props) => {
 
   const localTypes = ["state_abbrev", "case_status", "case_type"];
   const barredFilterTypes = ["range", "boolean", "date"];
-  const isAutocomplete = !barredFilterTypes.includes(filterOptions?.type);
+  const isAutocomplete =
+    !barredFilterTypes.includes(filterOptions?.type) &&
+    filterOptions?.autocomplete;
 
   const resetAndSearch = (searchParams) => {
     setAutoCompleteSuggestions([]);
