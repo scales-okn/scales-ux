@@ -1,11 +1,4 @@
-export const findAllAndPaginate = async ({
-  model,
-  query,
-  dataName = "data",
-  where = {},
-  order = [["id", "DESC"]],
-  attributes = {},
-}) => {
+export const findAllAndPaginate = async ({ model, query, dataName = "data", where = {}, order = [["id", "DESC"]], attributes = {}, include = [] }) => {
   const page = parseInt(String(query.page || "1"));
   const pageSize = parseInt(String(query.pageSize || "20"));
   const offset = (page - 1) * pageSize;
@@ -14,6 +7,7 @@ export const findAllAndPaginate = async ({
     attributes,
     order,
     where,
+    include,
     offset,
     limit: pageSize,
   });

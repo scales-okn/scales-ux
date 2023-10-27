@@ -45,15 +45,7 @@ export const create = async (req: Request, res: Response) => {
       if (!originalNotebook || !originalPanels.length) return;
 
       originalPanels.map((panel) => {
-        const {
-          description,
-          ringId,
-          ringVersion,
-          filters,
-          results,
-          contents,
-          analysis,
-        } = panel;
+        const { description, ringId, ringVersion, filters, results, contents, analysis } = panel;
 
         sequelize.models.Panel.create({
           description,
@@ -91,16 +83,11 @@ export const findAll = async (req: Request, res: Response) => {
     }
 
     const where = {
-      ...(req.query.search
-        ? { title: { [Op.iLike]: `%${req.query.search}%` } }
-        : {}),
+      ...(req.query.search ? { title: { [Op.iLike]: `%${req.query.search}%` } } : {}),
     };
 
     if (req.query.type === "public") {
-      where[Op.and] = [
-        { visibility: "public" },
-        { userId: { [Op.ne]: userId } },
-      ];
+      where[Op.and] = [{ visibility: "public" }, { userId: { [Op.ne]: userId } }];
     } else {
       where[Op.or] = [
         { userId },
@@ -113,6 +100,13 @@ export const findAll = async (req: Request, res: Response) => {
       query: req.query,
       dataName: "notebooks",
       where,
+      include: [
+        {
+          model: sequelize.models.User,
+          as: "user",
+          attributes: ["id", "firstName", "lastName", "email"],
+        },
+      ],
     });
 
     return res.send_ok("", result);
@@ -141,12 +135,7 @@ export const findById = async (req: Request, res: Response) => {
     }
 
     const { visibility, collaborators, userId } = notebook;
-    if (
-      role !== "admin" &&
-      visibility !== "public" &&
-      !collaborators.includes(reqUserId) &&
-      userId !== reqUserId
-    ) {
+    if (role !== "admin" && visibility !== "public" && !collaborators.includes(reqUserId) && userId !== reqUserId) {
       return res.send_forbidden("Not allowed!");
     }
 
@@ -225,21 +214,13 @@ export const update = async (req: Request, res: Response) => {
 
     const { collaborators, userId } = notebook;
     // General Case
-    if (
-      role !== "admin" &&
-      !collaborators.includes(reqUserId) &&
-      userId !== reqUserId
-    ) {
+    if (role !== "admin" && !collaborators.includes(reqUserId) && userId !== reqUserId) {
       return res.send_forbidden("Not allowed!");
     }
 
     //  Owner Operations Case
     if (userId !== reqUserId) {
-      if (
-        payload.includes("userId") ||
-        payload.includes("collaborators") ||
-        payload.includes("visibility")
-      ) {
+      if (payload.includes("userId") || payload.includes("collaborators") || payload.includes("visibility")) {
         return res.send_forbidden("Not allowed!");
       }
     }
@@ -310,12 +291,7 @@ export const panels = async (req: Request, res: Response) => {
 
     const { visibility, collaborators, userId } = notebook;
     // what does userId !== userId mean??
-    if (
-      role !== "admin" &&
-      visibility !== "public" &&
-      !collaborators.includes(userId) &&
-      userId !== userId
-    ) {
+    if (role !== "admin" && visibility !== "public" && !collaborators.includes(userId) && userId !== userId) {
       return res.send_forbidden("Not allowed!");
     }
 

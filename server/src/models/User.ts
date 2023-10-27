@@ -126,15 +126,7 @@ const verifyEmail = async (user, isAdmin, password = null) => {
 
 export const createUser = async (req, res) => {
   try {
-    const {
-      firstName,
-      lastName,
-      email,
-      password,
-      usage,
-      isAdmin,
-      emailIsVerified = false,
-    } = req.body;
+    const { firstName, lastName, email, password, usage, isAdmin, emailIsVerified = false } = req.body;
 
     const users = await sequelize.models.User.findAll({ where: { email } });
     if (users?.length) {
@@ -156,10 +148,7 @@ export const createUser = async (req, res) => {
 
     verifyEmail(user, isAdmin, password);
 
-    return res.send_ok(
-      "Thanks for signing up for access! Please confirm your email address via the link we just sent you.",
-      { user }
-    );
+    return res.send_ok("Thanks for signing up for access! Please confirm your email address via the link we just sent you.", { user });
   } catch (error) {
     console.warn(error); // eslint-disable-line no-console
 
