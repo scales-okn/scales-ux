@@ -71,7 +71,7 @@ const FilterTypeDropDown = ({
 
   const filtersToRender = getFiltersNormalized()
     ?.filter(
-      (x) => x.nicename !== "Case Name" && x.nicename !== "ucid",
+      (x) => x.nicename !== "Case Name"
     ) /* hack due to complaints from the docket-preview pane when i tried to change these fields' ring settings */
     .map((filterInput) => {
       const { allowMultiple, key } = filterInput;
