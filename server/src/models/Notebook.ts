@@ -14,6 +14,7 @@ export default (sequelize, options) => {
         type: DataTypes.STRING,
         allowNull: true,
       },
+      // Collaborators currently unused
       collaborators: {
         defaultValue: [],
         type: DataTypes.ARRAY(DataTypes.INTEGER),
@@ -45,6 +46,10 @@ export default (sequelize, options) => {
       through: "PanelsToNotebooks",
       as: "notebooks",
       foreignKey: "panelId",
+    });
+    models.Notebook.belongsTo(models.User, {
+      foreignKey: "userId",
+      as: "user",
     });
   };
 

@@ -1,8 +1,10 @@
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 import { Request, Response } from "express";
+import { Op } from "sequelize";
 import { sequelize } from "../database";
 import { sendEmail } from "../services/sesMailer";
+import { createUser } from "../models/User";
 import accessControl, {
   permissionsFieldsFilter,
 } from "../services/accesscontrol";
@@ -14,35 +16,7 @@ import { findAllAndPaginate } from "./util/findAllAndPaginate";
 
 // Create User
 export const create = async (req: Request, res: Response) => {
-  try {
-    const { firstName, lastName, email, password, usage } = req.body;
-
-    const users = await sequelize.models.User.findAll({ where: { email } });
-    if (users?.length) {
-      return res.send_badRequest("User was not created!", {
-        email: "Email already exists!",
-      });
-    }
-
-    const salt = await bcrypt.genSalt(10);
-    const hash = await bcrypt.hash(password, salt);
-    const user = await sequelize.models.User.create({
-      firstName,
-      lastName,
-      email,
-      usage,
-      password: hash,
-    });
-
-    return res.send_ok(
-      "Thanks for signing up for access! Please confirm your email address via the link we just sent you.",
-      { user }
-    );
-  } catch (error) {
-    console.warn(error); // eslint-disable-line no-console
-
-    return res.send_internalServerError("An error occurred, please try again!");
-  }
+  createUser(req, res);
 };
 
 // User Login
@@ -115,11 +89,35 @@ export const login = async (req: Request, res: Response) => {
 
 export const findAllUsers = async (req: Request, res: Response) => {
   try {
+    let where = null;
+    if (req.query.search) {
+      where = {
+        [Op.or]: [
+          {
+            firstName: {
+              [Op.iLike]: `%${req.query.search}%`,
+            },
+          },
+          {
+            lastName: {
+              [Op.iLike]: `%${req.query.search}%`,
+            },
+          },
+          {
+            email: {
+              [Op.iLike]: `%${req.query.search}%`,
+            },
+          },
+        ],
+      };
+    }
+
     const result = await findAllAndPaginate({
       model: sequelize.models.User,
       query: req.query,
       attributes: { exclude: ["password"] },
       dataName: "users",
+      where,
     });
 
     return res.send_ok("", result);

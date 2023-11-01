@@ -21,6 +21,14 @@ export const create = async (req: Request, res: Response) => {
       version,
     } = req.body;
 
+    const ringExists = await sequelize.models.Ring.findOne({
+      where: { rid },
+    });
+
+    if (ringExists) {
+      return res.send_badRequest("RID must be unique!");
+    }
+
     const ring = await sequelize.models.Ring.create({
       userId,
       rid,
@@ -33,7 +41,7 @@ export const create = async (req: Request, res: Response) => {
       version,
     });
 
-    return res.send_ok("Ring created succesfully!", { ring });
+    return res.send_ok("Ring created successfully!", { ring });
   } catch (error) {
     console.warn(error); // eslint-disable-line no-console
 
@@ -139,9 +147,9 @@ export const update = async (req: Request, res: Response) => {
 // Delete a Ring
 export const deleteRing = async (req: Request, res: Response) => {
   try {
-    const { ringId } = req.params;
+    const { id } = req.params;
     const result = await sequelize.models.Ring.destroy({
-      where: { rid: ringId },
+      where: { id },
     });
 
     if (result) {

@@ -38,6 +38,7 @@ const Notebook = () => {
     savingNotebook,
     clearNotebook,
   } = useNotebook();
+
   const { getPanels, clearPanels } = usePanels(notebook?.id);
 
   const { notebookId: notebookIdParam } = useParams();
@@ -91,7 +92,7 @@ const Notebook = () => {
   }, [notebookIdParam]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const handleDeleteNotebook = () => {
-    deleteNotebook(notebook?.id);
+    deleteNotebook(notebook.id);
     navigate("/notebooks");
   };
 
@@ -238,7 +239,9 @@ const Notebook = () => {
                   </div>
                 )}
                 <div>
-                  <span className="title">Public:</span>
+                  <Tooltip title="Public tooltips can be seen and copied (but not modified) by any user">
+                    <span className="title">Public:</span>
+                  </Tooltip>
                   <Switch
                     disabled={!sessionUserCanEdit}
                     checked={notebook?.visibility === "public"}
@@ -277,12 +280,14 @@ const Notebook = () => {
       {notebook && <Panels notebookId={notebook?.id} />}
       <AddPanel notebookId={notebook?.id} />
 
-      <ConfirmModal
-        itemName="notebook"
-        open={confirmVisible}
-        setOpen={setConfirmVisible}
-        onConfirm={handleDeleteNotebook}
-      />
+      {confirmVisible && (
+        <ConfirmModal
+          itemName="notebook"
+          open={confirmVisible}
+          setOpen={setConfirmVisible}
+          onConfirm={handleDeleteNotebook}
+        />
+      )}
       {copyModalOpen && <DuplicateNotebookModal setOpen={setCopyModalOpen} />}
     </Loader>
   );

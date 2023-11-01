@@ -34,6 +34,6 @@ router.get("/:ringId/:version", checkAuth, version);
 router.put("/:ringId", checkAuth, update);
 
 // Delete a Ring
-router.delete("/:ringId", checkAuth, deleteRing);
+router.delete("/:id", checkAuth, deleteRing);
 
 export default router;

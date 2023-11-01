@@ -1,14 +1,26 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { useSelector } from "react-redux";
 
 import { DataGrid, GridColDef, GridCellParams } from "@mui/x-data-grid";
-import { Tooltip, Typography } from "@mui/material";
+import {
+  Tooltip,
+  Typography,
+  Box,
+  TextField,
+  InputAdornment,
+  IconButton,
+} from "@mui/material";
+import SearchIcon from "@mui/icons-material/Search";
+import { useTheme } from "@mui/material/styles";
 import { useEffectOnce } from "react-use";
 import dayjs from "dayjs";
+
+import useDebounce from "src/hooks/useDebounce";
 
 import { sessionUserSelector } from "src/store/auth";
 import { useUser } from "src/store/user";
 
+import NewUserModal from "./NewUserModal";
 import UserFieldToggle from "./UserFieldToggle";
 import NotAuthorized from "src/components/NotAuthorized";
 import ColumnHeader from "src/components/ColumnHeader";
@@ -18,6 +30,14 @@ import Pagination from "src/components/Pagination";
 const AdminUsersPages = () => {
   const { role, id } = useSelector(sessionUserSelector);
   const { fetchUsers, users, usersPaging } = useUser();
+  const theme = useTheme();
+
+  const [rawSearch, setRawSearch] = useState(null);
+  const debouncedSearch = useDebounce(rawSearch, 1000);
+
+  useEffect(() => {
+    fetchUsers({ search: debouncedSearch });
+  }, [debouncedSearch]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const isAdmin = role === "admin";
 
@@ -35,40 +55,47 @@ const AdminUsersPages = () => {
   };
 
   const columns: GridColDef[] = [
-    { field: "id", headerName: "ID", width: 50, renderHeader },
+    {
+      field: "id",
+      headerName: "ID",
+      headerAlign: "center",
+      align: "center",
+      width: 50,
+      renderHeader,
+    },
     {
       field: "fullName",
-      headerName: "Full name",
+      headerName: "User",
       description: "This column has a value getter and is not sortable.",
       sortable: false,
-      width: 200,
+      minWidth: 200,
+      flex: 2,
       renderHeader,
       renderCell: (params: GridCellParams) => {
         return (
           <div>
-            {params.row.firstName} {params.row.lastName}
+            <Typography
+              noWrap
+              sx={{
+                color: theme.palette.primary.dark,
+                fontWeight: "bold",
+                overflow: "ellipses",
+              }}
+            >
+              {params.row.firstName} {params.row.lastName}
+            </Typography>
+            <Typography sx={{ fontStyle: "italic" }}>
+              {params.row.email}
+            </Typography>
           </div>
         );
       },
     },
-    { field: "email", headerName: "Email", width: 240, renderHeader },
-    {
-      field: "createdAt",
-      headerName: "Created At",
-      width: 120,
-      renderHeader,
-      renderCell: (params: GridCellParams) => (
-        <Tooltip title={params.row.createdAt}>
-          <Typography noWrap variant="body2">
-            <div>{dayjs(params.row.createdAt).format("MM/DD/YYYY")}</div>
-          </Typography>
-        </Tooltip>
-      ),
-    },
     {
       field: "usage",
       headerName: "Usage",
-      width: 120,
+      minWidth: 120,
+      flex: 1,
       renderHeader,
       renderCell: (params: GridCellParams) => (
         <Tooltip title={params.row.usage}>
@@ -79,9 +106,24 @@ const AdminUsersPages = () => {
       ),
     },
     {
+      field: "createdAt",
+      headerName: "Created At",
+      width: 110,
+      renderHeader,
+      renderCell: (params: GridCellParams) => (
+        <Tooltip title={params.row.createdAt}>
+          <Typography noWrap variant="body2">
+            <div>{dayjs(params.row.createdAt).format("MM/DD/YYYY")}</div>
+          </Typography>
+        </Tooltip>
+      ),
+    },
+    {
       field: "userIsVerified",
       headerName: "Verified",
-      width: 140,
+      headerAlign: "center",
+      align: "center",
+      width: 110,
       renderHeader,
       renderCell: (params: GridCellParams) => (
         <UserFieldToggle
@@ -95,7 +137,9 @@ const AdminUsersPages = () => {
     {
       field: "blocked",
       headerName: "Blocked",
-      width: 140,
+      headerAlign: "center",
+      align: "center",
+      width: 110,
       renderHeader,
       renderCell: (params: GridCellParams) => (
         <UserFieldToggle
@@ -112,7 +156,10 @@ const AdminUsersPages = () => {
     columns.push({
       field: "admin",
       headerName: "Admin",
-      width: 140,
+      headerAlign: "center",
+      align: "center",
+      width: 110,
+      renderHeader,
       renderCell: (params: GridCellParams) => {
         return (
           <UserFieldToggle
@@ -127,7 +174,10 @@ const AdminUsersPages = () => {
     columns.push({
       field: "delete",
       headerName: "Delete",
-      width: 150,
+      headerAlign: "center",
+      align: "center",
+      width: 110,
+      renderHeader,
       renderCell: (params: GridCellParams) => {
         return (
           <DeleteUser userId={params.row.id} disabled={params.row.id === id} />
@@ -137,31 +187,64 @@ const AdminUsersPages = () => {
   }
 
   return (
-    <>
+    <Box sx={{ paddingBottom: "80px" }}>
+      <NewUserModal />
       {!isAdmin ? (
         <NotAuthorized />
       ) : (
         <div
           style={{
-            height: "60vh",
             minHeight: "300px",
             width: "100%",
             margin: "0 auto",
           }}
         >
-          <Pagination paging={usersPaging} fetchData={fetchUsers} />
+          <Pagination
+            paging={usersPaging}
+            fetchData={fetchUsers}
+            leftContent={
+              <TextField
+                placeholder="Filter Users"
+                value={rawSearch}
+                onChange={(event: React.ChangeEvent<HTMLInputElement>) =>
+                  setRawSearch(event.target.value)
+                }
+                InputProps={{
+                  startAdornment: (
+                    <InputAdornment position="start">
+                      <IconButton>
+                        <SearchIcon />
+                      </IconButton>
+                    </InputAdornment>
+                  ),
+                }}
+                sx={{
+                  "& .MuiInputBase-root": {
+                    border: "none",
+                    height: "42px",
+                    background: "white",
+                  },
+
+                  borderRadius: "4px",
+                }}
+              />
+            }
+          />
           <DataGrid
             rows={users}
             columns={columns}
+            rowHeight={80}
             disableColumnMenu
             disableColumnFilter
+            hideFooter
             hideFooterPagination
             checkboxSelection={false}
             className="bg-white p-0"
+            autoHeight
           />
         </div>
       )}
-    </>
+    </Box>
   );
 };
 

@@ -13,6 +13,7 @@ import {
   Grid,
   Switch,
   Button,
+  Tooltip,
 } from "@mui/material";
 
 import { useEffectOnce } from "react-use";
@@ -21,7 +22,6 @@ import dayjs from "dayjs";
 
 import { sessionUserSelector } from "src/store/auth";
 import { useNotebook } from "src/store/notebook";
-import { useUser } from "src/store/user";
 
 import useWindowSize from "src/hooks/useWindowSize";
 import useDebounce from "src/hooks/useDebounce";
@@ -51,8 +51,6 @@ const NotebooksPage = () => {
     paging,
   } = useNotebook();
 
-  const { fetchUsers, users } = useUser();
-
   const [rawSearch, setRawSearch] = useState(null);
   const debouncedSearch = useDebounce(rawSearch, 1000);
 
@@ -62,13 +60,6 @@ const NotebooksPage = () => {
       ...(debouncedSearch ? { search: debouncedSearch } : {}),
     });
   }, [debouncedSearch]); // eslint-disable-line react-hooks/exhaustive-deps
-
-  useEffectOnce(() => {
-    if (isAdmin) {
-      // TODO: Refactor this out
-      fetchUsers({ page: 1, limit: 1000 });
-    }
-  });
 
   useEffect(() => {
     fetchNotebooks({ type: notebooksType, page: 1 });
@@ -114,9 +105,11 @@ const NotebooksPage = () => {
       sortable: false,
       renderHeader,
       renderCell: (params: GridCellParams) => (
-        <Link to={`/notebooks/${params.row.id}`} className="ms-2">
-          {params.row.title}
-        </Link>
+        <Tooltip title="View Notebook">
+          <Link to={`/notebooks/${params.row.id}`} className="ms-2">
+            {params.row.title}
+          </Link>
+        </Tooltip>
       ),
     },
     {
@@ -179,16 +172,10 @@ const NotebooksPage = () => {
               if (params.row.userId === user.id) {
                 return <>You</>;
               } else {
-                // hacky workaround to accommodate existing db schema, should fix. Users should be populated in notebooks call
-                const user = users.find((u) => u.id === params.row.userId);
-                return isAdmin ? (
+                return (
                   <Link to="/admin/users">
-                    {user?.firstName} {user?.lastName}
+                    {params.row.user?.firstName} {params.row.user?.lastName}
                   </Link>
-                ) : (
-                  <span>
-                    {user.firstName} {user?.lastName}
-                  </span>
                 );
               }
             },

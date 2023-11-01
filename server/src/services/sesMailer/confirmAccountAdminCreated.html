@@ -33,6 +33,13 @@
         font-size: 22px;
         padding: 12px;
       }
+      .your-creds {
+        text-align: center;
+      }
+      .inner {
+        text-align: left;
+        margin-left: 175px;
+      }
       .text-blue {
         color: #4e2a84;
         text-align: center;
@@ -46,13 +53,17 @@
   </head>
   <body>
     <div class="container">
-      <h1 class="text-blue">Please verify your email address</h1>
-      <p>
-        Thank you for signing up for access to SCALES. Please click the link
-        below to confirm your registration.
-        <br /><br /><br /><br />
-        <a href="{{url}}" class="link-button">Verify Email Address</a>
-      </p>
+      <h1 class="text-blue">Thank you for joining SCALES</h1>
+      <br />
+      <div class="your-creds">
+        <h2>Your Credentials:</h2>
+        <div class="inner">
+          <h4>UserName: <strong>{{email}}</strong></h4>
+          <h4>Password: <strong>{{password}}</strong></h4>
+        </div>
+      </div>
+      <br /><br />
+      <a href="{{url}}" class="link-button">Login Here</a>
       <br /><br />
       <p>
         <img

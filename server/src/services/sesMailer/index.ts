@@ -6,6 +6,10 @@ const handlebars = require("handlebars");
 const templatePaths = {
   confirmAccount: path.join(__dirname, "./confirmAccount.html"),
   resetPassword: path.join(__dirname, "./resetPassword.html"),
+  confirmAccountAdminCreated: path.join(
+    __dirname,
+    "./confirmAccountAdminCreated.html"
+  ),
 };
 
 const SES_CONFIG = {
@@ -18,7 +22,10 @@ const AWS_SES = new AWS.SES(SES_CONFIG);
 
 type sendMailT = {
   recipientEmail: string;
-  templateName: "confirmAccount" | "resetPassword";
+  templateName:
+    | "confirmAccount"
+    | "resetPassword"
+    | "confirmAccountAdminCreated";
   recipientName: string;
   emailSubject: string;
   templateArgs: {
@@ -26,6 +33,8 @@ type sendMailT = {
     resetPasswordUrl?: string;
     saturnUrl?: string;
     sesSender?: string;
+    email?: string;
+    password?: string;
   };
 };
 

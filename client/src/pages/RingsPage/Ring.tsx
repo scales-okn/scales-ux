@@ -67,21 +67,26 @@ const Ring: React.FC = () => {
       setLoading(true);
       let response;
       if (ringId) {
-        response = await makeRequest.put(`/api/rings/${ringId}`, values);
+        response = await makeRequest.put(`/api/rings/${ringId}`, values, {
+          notify,
+        });
       } else {
-        response = await makeRequest.post(`/api/rings/create`, values);
+        response = await makeRequest.post(`/api/rings/create`, values, {
+          notify,
+        });
       }
 
       if (response?.code === 200) {
         notify(response.message, "success");
         navigate("/admin/rings");
       }
+      setLoading(false);
     },
   });
 
-  const deleteRing = async (rid) => {
+  const deleteRing = async (id) => {
     setLoading(true);
-    const response = await makeRequest.delete(`/api/rings/${rid}`);
+    const response = await makeRequest.delete(`/api/rings/${id}`);
 
     if (response?.code === 200) {
       notify(response.message, "success");
@@ -323,7 +328,7 @@ const Ring: React.FC = () => {
         itemName="ring"
         open={confirmVisible}
         setOpen={setConfirmVisible}
-        onConfirm={() => deleteRing(ring.rid)}
+        onConfirm={() => deleteRing(ring.id)}
       />
     </>
   );

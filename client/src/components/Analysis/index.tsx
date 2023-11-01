@@ -302,7 +302,6 @@ const Analysis: FunctionComponent<Props> = ({ panelId }) => {
         sx={{
           paddingLeft: "8px",
           boxShadow: "none",
-          alignItems: "center",
           marginTop: "32px",
           display: "flex",
           alignItems: "center",

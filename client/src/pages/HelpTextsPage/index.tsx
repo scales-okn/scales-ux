@@ -3,6 +3,8 @@ import { useSelector } from "react-redux";
 import { useHelpTexts } from "src/store/helpTexts";
 import { sessionUserSelector } from "src/store/auth";
 
+import { Box, TextField, InputAdornment, IconButton } from "@mui/material";
+import SearchIcon from "@mui/icons-material/Search";
 import { DataGrid, GridColDef } from "@mui/x-data-grid";
 import { useParams, useNavigate } from "react-router-dom";
 
@@ -16,6 +18,8 @@ const HelpTextsPage = () => {
   const { helpTexts } = useHelpTexts();
   const { helpTextSlug } = useParams();
 
+  const [search, setSearch] = useState("");
+
   const [rows, setRows] = useState([]);
 
   const feedbackDetail = rows.find((row) => row.slug === helpTextSlug);
@@ -26,6 +30,18 @@ const HelpTextsPage = () => {
   useEffect(() => {
     setRows(helpTexts);
   }, [helpTexts]);
+
+  useEffect(() => {
+    if (search === "") {
+      setRows(helpTexts);
+    } else {
+      const filteredRows = helpTexts.filter((row) => {
+        const slug = (row.slug as string) || "";
+        return slug.toLowerCase().includes(search.toLowerCase());
+      });
+      setRows(filteredRows);
+    }
+  }, [search]);
 
   const renderHeader = (params) => {
     return (
@@ -87,6 +103,46 @@ const HelpTextsPage = () => {
           closeModal={() => navigate("/admin/help-texts")}
         />
       )}
+      <Box
+        sx={{
+          width: "100%",
+          background: "white",
+          marginBottom: "12px",
+          minHeight: "56px",
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "space-between",
+          padding: "12px 18px",
+          borderRadius: "4px",
+          boxShadow: "2px 2px 4px rgba(0, 0, 0, 0.05)",
+        }}
+      >
+        <TextField
+          placeholder="Filter Help Texts"
+          value={search}
+          onChange={(event: React.ChangeEvent<HTMLInputElement>) =>
+            setSearch(event.target.value)
+          }
+          InputProps={{
+            startAdornment: (
+              <InputAdornment position="start">
+                <IconButton>
+                  <SearchIcon />
+                </IconButton>
+              </InputAdornment>
+            ),
+          }}
+          sx={{
+            "& .MuiInputBase-root": {
+              border: "none",
+              height: "42px",
+              background: "white",
+            },
+
+            borderRadius: "4px",
+          }}
+        />
+      </Box>
       {!isAdmin ? (
         <NotAuthorized />
       ) : (
