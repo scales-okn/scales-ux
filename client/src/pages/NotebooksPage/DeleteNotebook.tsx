@@ -1,6 +1,5 @@
 import React, { useState } from "react";
-import { useDispatch } from "react-redux";
-import { deleteNotebook } from "src/store/notebook";
+import { useNotebook } from "src/store/notebook";
 import ConfirmModal from "src/components/Modals/ConfirmModal";
 import DeleteButton from "src/components/Buttons/DeleteButton";
 
@@ -10,11 +9,12 @@ type DeleteNotebookT = {
 };
 
 const DeleteNotebook = ({ notebookId, disabled = false }: DeleteNotebookT) => {
-  const dispatch = useDispatch();
   const [confirmVisible, setConfirmVisible] = useState(false);
 
+  const { deleteNotebook } = useNotebook();
+
   const handleDelete = () => {
-    dispatch(deleteNotebook(notebookId));
+    deleteNotebook(notebookId);
     setConfirmVisible(false);
   };
 
@@ -28,7 +28,7 @@ const DeleteNotebook = ({ notebookId, disabled = false }: DeleteNotebookT) => {
         }}
         titleAddon="Notebook"
       />
-      {!disabled && (
+      {!disabled && confirmVisible && (
         <ConfirmModal
           itemName="notebook"
           open={confirmVisible}

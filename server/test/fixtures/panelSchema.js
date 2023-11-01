@@ -1,14 +1,7 @@
 module.exports = {
   title: "PanelSchema",
   type: "object",
-  required: [
-    "notebookId",
-    "ringId",
-    "ringVersion",
-    "filters",
-    "results",
-    "contents",
-  ],
+  required: ["notebookId", "ringId", "filters", "results", "contents"],
   properties: {
     id: {
       type: "number",
@@ -17,25 +10,25 @@ module.exports = {
       type: ["string", "null"],
     },
     notebookId: {
-      type: "number",
+      type: ["number", "null"],
     },
     ringId: {
-      type: "number",
+      type: ["number", "null"],
     },
     ringVersion: {
-      type: "string",
+      type: ["string", "null"],
     },
     filters: {
-      type: "object",
+      type: ["array", "null"],
     },
     results: {
-      type: "object",
+      type: ["object", "null"],
     },
     contents: {
-      type: "object",
+      type: ["object", "null"],
     },
     analysis: {
-      type: "array",
+      type: "object",
     },
   },
 };

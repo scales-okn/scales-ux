@@ -56,7 +56,7 @@ const SignInPage: FunctionComponent = () => {
   });
 
   return (
-    <Container className={`signInPageStyles ${signInPageStyles}`}>
+    <div className={`signInPageStyles ${signInPageStyles}`}>
       <form
         noValidate
         onSubmit={formik.handleSubmit}
@@ -142,7 +142,7 @@ const SignInPage: FunctionComponent = () => {
           </Grid>
         </Grid>
       </form>
-    </Container>
+    </div>
   );
 };
 
