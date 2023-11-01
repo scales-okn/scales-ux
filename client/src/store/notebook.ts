@@ -131,6 +131,17 @@ const notebookSlice = createSlice({
       loadingNotebooks: false,
       hasErrors: true,
     }),
+    shareNotebookLink: (state) => ({
+      ...state,
+    }),
+    shareNotebookLinkSuccess: (state) => ({
+      ...state,
+      hasErrors: false,
+    }),
+    shareNotebookLinkFailure: (state) => ({
+      ...state,
+      hasErrors: true,
+    }),
   },
 });
 
@@ -237,6 +248,28 @@ export function deleteNotebook(id: string) {
   };
 }
 
+export function shareNotebookLink(
+  payload: any = { id: "", email: "", message: "" },
+) {
+  return async (dispatch: AppDispatch, getState) => {
+    dispatch(notebookActions.shareNotebookLink());
+    try {
+      const response = await makeRequest.post(
+        `/api/notebooks/shareLink`,
+        payload,
+      );
+      const { message } = response;
+      if (response.status === "OK") {
+        dispatch(notify(message, "success"));
+      } else {
+        dispatch(notify(message, "error"));
+      }
+    } catch (error) {
+      dispatch(notify("Something went wrong", "error"));
+    }
+  };
+}
+
 // Hooks
 export function useNotebook() {
   const {
@@ -267,6 +300,7 @@ export function useNotebook() {
       dispatch(updateNotebook(id, payload)),
     createNotebook: (payload: any) => dispatch(createNotebook(payload)),
     deleteNotebook: (id: string) => dispatch(deleteNotebook(id)),
+    shareNotebookLink: (payload: any) => dispatch(shareNotebookLink(payload)),
   };
 }
 
