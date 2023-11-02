@@ -36,7 +36,7 @@ const AdminUsersPages = () => {
   const debouncedSearch = useDebounce(rawSearch, 1000);
 
   useEffect(() => {
-    fetchUsers({ search: debouncedSearch });
+    fetchUsers({ ...(debouncedSearch ? { search: debouncedSearch } : {}) });
   }, [debouncedSearch]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const isAdmin = role === "admin";
