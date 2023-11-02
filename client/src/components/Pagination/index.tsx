@@ -1,4 +1,5 @@
 import React from "react";
+import { useNavigate } from "react-router-dom";
 
 import { Box, Typography } from "@mui/material";
 import Arrow from "./Arrow";
@@ -22,6 +23,7 @@ const Pagination = ({
 }: PaginationT) => {
   const { width } = useWindowSize();
   const isTablet = width < 768;
+  const navigate = useNavigate();
 
   const noResults = paging.totalPages === 0;
 
@@ -52,6 +54,7 @@ const Pagination = ({
 
     const page = pageOverride === null ? newPage : pageOverride;
     fetchData({ page });
+    navigate(`?page=${page}`);
   };
 
   const current = renderDigit(paging.currentPage);
