@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useMemo } from "react";
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
+import queryString from "query-string";
 import { usePanel } from "src/store/panels";
 import { useRing } from "src/store/rings";
 import { useSessionUser } from "src/store/auth";
@@ -54,6 +55,10 @@ const Panel = ({ panelId, defaultCollapsed }: PanelT) => {
     updatePanel,
   } = usePanel(panelId);
 
+  const location = useLocation();
+  const { page } = queryString.parse(location.search);
+  const pageNumber = parseInt(page as string, 10);
+
   const paging = {
     totalCount: results?.totalCount || 0,
     totalPages: results ? Math.ceil(results.totalCount / results.batchSize) : 0,
@@ -86,7 +91,11 @@ const Panel = ({ panelId, defaultCollapsed }: PanelT) => {
   const panelIdRef = React.useRef(null);
   useEffect(() => {
     if (info && !collapsed && panel.id !== panelIdRef.current) {
-      getPanelResults();
+      if (pageNumber) {
+        getPanelResults([], pageNumber);
+      } else {
+        getPanelResults();
+      }
       panelIdRef.current = panel.id;
     }
   }, [collapsed, info, panel.id, getPanelResults]);

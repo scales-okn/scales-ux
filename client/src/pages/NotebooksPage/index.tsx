@@ -1,7 +1,8 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import React, { useState, useEffect } from "react";
 import { useSelector } from "react-redux";
-import { Link } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
+import queryString from "query-string";
 
 import { DataGrid, GridCellParams } from "@mui/x-data-grid";
 import {
@@ -16,7 +17,6 @@ import {
   Tooltip,
 } from "@mui/material";
 
-import { useEffectOnce } from "react-use";
 import SearchIcon from "@mui/icons-material/Search";
 import dayjs from "dayjs";
 
@@ -38,6 +38,10 @@ const NotebooksPage = () => {
   const { role } = useSelector(sessionUserSelector);
   const isAdmin = role === "admin";
 
+  const location = useLocation();
+  const { page } = queryString.parse(location.search);
+  const navigate = useNavigate();
+
   const { width } = useWindowSize();
   const isMobile = width < 500;
 
@@ -58,11 +62,13 @@ const NotebooksPage = () => {
     fetchNotebooks({
       type: notebooksType,
       ...(debouncedSearch ? { search: debouncedSearch } : {}),
+      ...(page ? { page } : {}),
     });
   }, [debouncedSearch]); // eslint-disable-line react-hooks/exhaustive-deps
 
   useEffect(() => {
     fetchNotebooks({ type: notebooksType, page: 1 });
+    navigate(location.pathname);
   }, [notebooksType]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const updateNotebookVisibility = (id, visibility) => {
