@@ -16,6 +16,7 @@ export default (sequelize, options) => {
       filters: DataTypes.JSON,
       results: DataTypes.JSON,
       contents: DataTypes.JSON,
+      sort: DataTypes.JSON,
       analysis: {
         type: DataTypes.JSON,
         defaultValue: {},

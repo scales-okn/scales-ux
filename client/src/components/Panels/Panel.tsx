@@ -64,7 +64,7 @@ const Panel = ({ panelId, defaultCollapsed }: PanelT) => {
     totalPages: results ? Math.ceil(results.totalCount / results.batchSize) : 0,
     currentPage: results?.page,
   };
-
+  console.log(panel.sort);
   // Pop first panel on page load
   useEffectOnce(() => {
     if (!defaultCollapsed) {
@@ -92,13 +92,13 @@ const Panel = ({ panelId, defaultCollapsed }: PanelT) => {
   useEffect(() => {
     if (info && !collapsed && panel.id !== panelIdRef.current) {
       if (pageNumber) {
-        getPanelResults([], pageNumber);
+        getPanelResults({ page: pageNumber });
       } else {
-        getPanelResults();
+        getPanelResults({});
       }
       panelIdRef.current = panel.id;
     }
-  }, [collapsed, info, panel.id, getPanelResults]);
+  }, [collapsed, info, panel.id, getPanelResults, pageNumber]);
 
   const rows = results?.results?.map((result) => ({
     ...result,
@@ -113,7 +113,6 @@ const Panel = ({ panelId, defaultCollapsed }: PanelT) => {
           field: column.key,
           headerName: column.nicename,
           width: 200,
-          sortable: false,
           renderHeader: (params) => {
             return (
               <ColumnHeader
@@ -128,7 +127,6 @@ const Panel = ({ panelId, defaultCollapsed }: PanelT) => {
     out.unshift({
       field: "button",
       headerName: "Docket ID",
-      sortable: false,
       width: 180,
       renderCell: (item) => {
         return (
@@ -156,6 +154,24 @@ const Panel = ({ panelId, defaultCollapsed }: PanelT) => {
 
     return out;
   }, [info, ring]);
+
+  const getSortArg = (arg) => {
+    if (arg.field === panel.sort.field) {
+      if (panel.sort.sort === "desc") {
+        return { field: arg.field, sort: "asc" };
+      } else {
+        return { field: "filing_date", sort: "desc" };
+      }
+    }
+    return { field: arg.field, sort: "desc" };
+  };
+
+  const handleColumnHeaderClick = (arg) => {
+    const sort = getSortArg(arg);
+
+    updatePanel({ sort });
+    getPanelResults({ sortOverride: sort });
+  };
 
   if (!panel?.ringId) return <Dataset panelId={panel.id} />;
 
@@ -245,7 +261,6 @@ const Panel = ({ panelId, defaultCollapsed }: PanelT) => {
               }}
             />
           </FormControl>
-
           <Filters panelId={panel.id} />
           <div className="p-0 bg-light border-top">
             <Loader
@@ -270,27 +285,34 @@ const Panel = ({ panelId, defaultCollapsed }: PanelT) => {
                               paging={paging}
                               zeroIndex
                               fetchData={({ page }) =>
-                                getPanelResults([], page as number)
+                                getPanelResults({ page })
                               }
                             />
                             <DataGrid
                               rows={rows}
                               onPaginationModelChange={(model) => {
-                                getPanelResults([], model.page);
+                                getPanelResults({ page: model.page });
                               }}
                               paginationModel={{
                                 page: results?.page,
                                 pageSize: results?.batchSize,
                               }}
+                              initialState={{
+                                sorting: {
+                                  sortModel: [panel.sort],
+                                },
+                              }}
+                              sortingOrder={["desc", "asc", null]}
                               disableColumnMenu
-                              disableColumnFilter
                               hideFooterPagination
                               hideFooter
+                              onColumnHeaderClick={handleColumnHeaderClick}
                               pageSizeOptions={[10]}
                               columns={columns}
                               rowCount={results?.totalCount}
                               checkboxSelection={false}
                               className="bg-white border-0 rounded-0"
+                              sortingMode="server"
                               paginationMode="server"
                               sx={{
                                 "& .MuiDataGrid-virtualScroller": {

@@ -100,29 +100,27 @@ const Pagination = ({
           handleNavigate={handleNavigate}
           disabled={disabledLeft}
         />
-        <Typography color="#021949d2" sx={{ padding: "0 8px" }}>
-          Page
-          <Typography
-            sx={{
-              display: "inline",
-              fontSize: "16px",
-              fontWeight: 600,
-              padding: "0 4px",
-            }}
-          >
-            {noResults ? 0 : current}
-          </Typography>
-          of
-          <Typography
-            sx={{
-              display: "inline",
-              fontSize: "16px",
-              fontWeight: 600,
-              padding: "0 4px",
-            }}
-          >
-            {total}
-          </Typography>
+        <Typography color="#021949d2">Page</Typography>
+        <Typography
+          sx={{
+            display: "inline",
+            fontSize: "16px",
+            fontWeight: 600,
+            padding: "0 4px",
+          }}
+        >
+          {noResults ? 0 : current}
+        </Typography>
+        of
+        <Typography
+          sx={{
+            display: "inline",
+            fontSize: "16px",
+            fontWeight: 600,
+            padding: "0 4px",
+          }}
+        >
+          {total}
         </Typography>
         <Arrow
           direction="right"
