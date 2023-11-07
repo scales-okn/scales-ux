@@ -32,7 +32,9 @@ type sendMailT = {
     password?: string;
     dataSource?: string;
     ontology?: string;
-    ringName?: string;
+    ringLabel?: string;
+    ontologyDifferences?: string;
+    dataSourceDifferences?: string;
   };
 };
 

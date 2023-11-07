@@ -1,6 +1,6 @@
 import { Request, Response } from "express";
-import { sendEmail } from "../services/sesMailer";
 import { sequelize } from "../database";
+import { notifyAdminsOfRingChange } from "../models/Ring";
 
 // Resources validations are made with validateResources middleware and validations schemas
 // server/middlewares/validateResources.ts
@@ -103,13 +103,15 @@ export const update = async (req: Request, res: Response) => {
     const ring = await sequelize.models.Ring.findOne({
       where: { id: ringId },
     });
+    const oldDataSource = JSON.stringify(ring.dataSource);
+    const oldOntology = JSON.stringify(ring.ontology);
 
     // Inject req for saveLog
     sequelize.models.Ring.beforeUpdate((model) => {
       model.req = req;
     });
 
-    const updated = await ring.update(
+    const updatedRing = await ring.update(
       { ...req.body, version: ring.dataValues.version + 1 },
       {
         individualHooks: true,
@@ -117,33 +119,12 @@ export const update = async (req: Request, res: Response) => {
       }
     );
 
-    if (!updated) {
+    if (!updatedRing) {
       return res.send_notModified("Ring has not been updated!");
     }
 
-    const admins = await sequelize.models.User.findAll({
-      where: { role: "admin" },
-    });
-
-    const isProduction = process.env.NODE_ENV === "production";
-    if (isProduction) {
-      const ringName = `${ring.name} (RID: ${ring.id})`;
-
-      admins.forEach((a) => {
-        sendEmail({
-          emailSubject: `Ring Updated (${ringName})`,
-          recipientEmail: a.email,
-          templateName: "ringUpdated",
-          recipientName: `${a.firstName} ${a.lastName}`,
-          templateArgs: {
-            saturnUrl: process.env.UX_CLIENT_MAILER_URL,
-            sesSender: process.env.SES_SENDER,
-            dataSource: JSON.stringify(ring.dataSource),
-            ontology: JSON.stringify(ring.ontology),
-            ringName,
-          },
-        });
-      });
+    if (process.env.NODE_ENV === "production") {
+      notifyAdminsOfRingChange({ ring, updatedRing, oldDataSource, oldOntology });
     }
 
     return res.send_ok("Ring has been updated!", { ring });

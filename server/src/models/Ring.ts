@@ -1,4 +1,8 @@
 import { DataTypes } from "sequelize";
+import jsonDiff from "json-diff";
+import Convert from "ansi-to-html";
+import { sendEmail } from "../services/sesMailer";
+import { sequelize } from "../database";
 
 export const ringVisibilityValues = ["public", "private"];
 
@@ -49,4 +53,36 @@ export default (sequelize, options) => {
   );
 
   return Ring;
+};
+
+export const notifyAdminsOfRingChange = async ({ ring, updatedRing, oldDataSource, oldOntology }) => {
+  const admins = await sequelize.models.User.findAll({
+    where: { role: "admin" },
+  });
+
+  const ringLabel = `${ring.name} (RID: ${ring.id})`;
+
+  const newDataSource = JSON.stringify(updatedRing.dataSource);
+  const newOntology = JSON.stringify(updatedRing.ontology);
+  const dataSourceDifferences = jsonDiff.diffString(JSON.parse(oldDataSource), JSON.parse(newDataSource));
+  const ontologyDifferences = jsonDiff.diffString(JSON.parse(oldOntology), JSON.parse(newOntology));
+
+  const convert = new Convert();
+  admins.forEach((a) => {
+    sendEmail({
+      emailSubject: `Ring Updated (${ringLabel})`,
+      recipientEmail: a.email,
+      templateName: "ringUpdated",
+      recipientName: `${a.firstName} ${a.lastName}`,
+      templateArgs: {
+        saturnUrl: process.env.UX_CLIENT_MAILER_URL,
+        sesSender: process.env.SES_SENDER,
+        dataSource: JSON.stringify(updatedRing.dataSource),
+        ontology: JSON.stringify(updatedRing.ontology),
+        ringLabel,
+        dataSourceDifferences: convert.toHtml(dataSourceDifferences),
+        ontologyDifferences: convert.toHtml(ontologyDifferences),
+      },
+    });
+  });
 };

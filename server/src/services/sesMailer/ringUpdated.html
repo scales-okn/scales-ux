@@ -43,15 +43,39 @@
       p {
         font-size: 14px;
         color: black;
+        white-space: pre-wrap;
       }
       .footer {
         text-align: center;
+      }
+      details {
+        user-select: none;
+      }
+
+      details > summary span.icon {
+        width: 24px;
+        height: 24px;
+        transition: all 0.3s;
+        margin-left: auto;
+      }
+
+      details[open] summary span.icon {
+        transform: rotate(180deg);
+      }
+
+      summary {
+        display: flex;
+        cursor: pointer;
+      }
+
+      summary::-webkit-details-marker {
+        display: none;
       }
     </style>
   </head>
   <body>
     <div class="container">
-      <h1 class="text-blue">{{ringName}} Has Been updated</h1>
+      <h1 class="text-blue">{{ringLabel}} Has Been updated</h1>
       <br />
       <div>
         <h2>New Data Source:</h2>
@@ -61,6 +85,15 @@
       <div>
         <h2>New Ontology:</h2>
         <p>{{dataSource}}</p>
+      </div>
+      <div>
+        <h2>Data Source Diff:</h2>
+        <p>{{{dataSourceDifferences}}}</p>
+      </div>
+      <br /><br />
+      <div>
+        <h2>Ontology Diff:</h2>
+        <p>{{{ontologyDifferences}}}</p>
       </div>
       <br /><br />
       <p class="footer">
