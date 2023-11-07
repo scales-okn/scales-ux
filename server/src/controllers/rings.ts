@@ -1,5 +1,5 @@
 import { Request, Response } from "express";
-
+import { sendEmail } from "../services/sesMailer";
 import { sequelize } from "../database";
 
 // Resources validations are made with validateResources middleware and validations schemas
@@ -9,17 +9,7 @@ import { sequelize } from "../database";
 // Create Ring
 export const create = async (req: Request, res: Response) => {
   try {
-    const {
-      userId,
-      rid,
-      name,
-      description,
-      schemaVersion,
-      dataSource,
-      ontology,
-      visibility,
-      version,
-    } = req.body;
+    const { userId, rid, name, description, schemaVersion, dataSource, ontology, visibility, version } = req.body;
 
     const ringExists = await sequelize.models.Ring.findOne({
       where: { rid },
@@ -95,12 +85,7 @@ export const version = async (req: Request, res: Response) => {
     if (versions.length === 0) {
       return res.send_notFound("Ring version not found!");
     }
-    const ring = Object.fromEntries(
-      Object.entries(versions[0].dataValues).filter(
-        ([key]) =>
-          !["versionType", "versionTimestamp", "versionId"].includes(key)
-      )
-    );
+    const ring = Object.fromEntries(Object.entries(versions[0].dataValues).filter(([key]) => !["versionType", "versionTimestamp", "versionId"].includes(key)));
 
     return res.send_ok("", { ring });
   } catch (error) {
@@ -134,6 +119,31 @@ export const update = async (req: Request, res: Response) => {
 
     if (!updated) {
       return res.send_notModified("Ring has not been updated!");
+    }
+
+    const admins = await sequelize.models.User.findAll({
+      where: { role: "admin" },
+    });
+
+    const isProduction = process.env.NODE_ENV === "production";
+    if (isProduction) {
+      const ringName = `${ring.name} (RID: ${ring.id})`;
+
+      admins.forEach((a) => {
+        sendEmail({
+          emailSubject: `Ring Updated (${ringName})`,
+          recipientEmail: a.email,
+          templateName: "ringUpdated",
+          recipientName: `${a.firstName} ${a.lastName}`,
+          templateArgs: {
+            saturnUrl: process.env.UX_CLIENT_MAILER_URL,
+            sesSender: process.env.SES_SENDER,
+            dataSource: JSON.stringify(ring.dataSource),
+            ontology: JSON.stringify(ring.ontology),
+            ringName,
+          },
+        });
+      });
     }
 
     return res.send_ok("Ring has been updated!", { ring });

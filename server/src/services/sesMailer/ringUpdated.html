@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
   <head>
-    <title>Reset Password</title>
+    <title>Ring Updated</title>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
     <style>
       body {
@@ -33,36 +33,37 @@
         font-size: 22px;
         padding: 12px;
       }
+      .inner {
+        text-align: left;
+        margin-left: 175px;
+      }
       .text-blue {
         color: #4e2a84;
-        text-align: center;
       }
       p {
-        text-align: center;
         font-size: 14px;
         color: black;
+      }
+      .footer {
+        text-align: center;
       }
     </style>
   </head>
   <body>
     <div class="container">
-      <h1 class="text-blue">Reset Your Password</h1>
+      <h1 class="text-blue">{{ringName}} Has Been updated</h1>
       <br />
-      <p>
-        You are receiving this email because of a password reset request received at <a href="{{saturnUrl}}">Satyrn</a>.
-        <br />
-        <br />
-        <br />
-        If you did not request a password reset, then please ignore this email and contact us at {{sesSender}} to let us know.
-        <br />
-        <br />
-        <br />
-        <br />
-        <br />
-        <a href="{{url}}" class="link-button">Reset Password</a>
-      </p>
+      <div>
+        <h2>New Data Source:</h2>
+        <p>{{dataSource}}</p>
+      </div>
       <br /><br />
-      <p>
+      <div>
+        <h2>New Ontology:</h2>
+        <p>{{dataSource}}</p>
+      </div>
+      <br /><br />
+      <p class="footer">
         <img src="https://scales-okn.org/wp-content/uploads/2021/02/PreLoader.png" height="50px" width="50px" alt="scales-logo" />
         <br />
         SCALES OKN
