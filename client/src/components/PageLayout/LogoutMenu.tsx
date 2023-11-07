@@ -68,6 +68,7 @@ const LogoutMenu = () => {
         text-decoration: none;
         cursor: pointer;
         color: white;
+        text-transform: uppercase;
       }
     }
 
@@ -88,7 +89,6 @@ const LogoutMenu = () => {
     user && (
       <div className={containerStyles}>
         <div className="icon" onClick={handleClick}>
-          {/* <ArrowDropDownIcon /> */}
           <div className="avatarContainer">
             <div className="hoverBg" />
             <div className="avatar">

@@ -60,6 +60,7 @@ const AdminUsersPages = () => {
       headerName: "ID",
       headerAlign: "center",
       align: "center",
+      sortable: false,
       width: 50,
       renderHeader,
     },
@@ -95,6 +96,7 @@ const AdminUsersPages = () => {
       field: "usage",
       headerName: "Usage",
       minWidth: 120,
+      sortable: false,
       flex: 1,
       renderHeader,
       renderCell: (params: GridCellParams) => (
@@ -109,6 +111,7 @@ const AdminUsersPages = () => {
       field: "createdAt",
       headerName: "Created At",
       width: 110,
+      sortable: false,
       renderHeader,
       renderCell: (params: GridCellParams) => (
         <Tooltip title={params.row.createdAt}>
@@ -123,6 +126,7 @@ const AdminUsersPages = () => {
       headerName: "Verified",
       headerAlign: "center",
       align: "center",
+      sortable: false,
       width: 110,
       renderHeader,
       renderCell: (params: GridCellParams) => (
@@ -140,6 +144,7 @@ const AdminUsersPages = () => {
       headerAlign: "center",
       align: "center",
       width: 110,
+      sortable: false,
       renderHeader,
       renderCell: (params: GridCellParams) => (
         <UserFieldToggle
@@ -158,6 +163,7 @@ const AdminUsersPages = () => {
       headerName: "Admin",
       headerAlign: "center",
       align: "center",
+      sortable: false,
       width: 110,
       renderHeader,
       renderCell: (params: GridCellParams) => {
@@ -176,6 +182,7 @@ const AdminUsersPages = () => {
       headerName: "Delete",
       headerAlign: "center",
       align: "center",
+      sortable: false,
       width: 110,
       renderHeader,
       renderCell: (params: GridCellParams) => {
