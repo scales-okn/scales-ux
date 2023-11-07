@@ -38,8 +38,8 @@ const Notebook = () => {
     deletingNotebook,
     savingNotebook,
     clearNotebook,
+    hasErrors,
   } = useNotebook();
-
   const { getPanels, clearPanels } = usePanels(notebook?.id);
 
   const navigate = useNavigate();
@@ -87,6 +87,12 @@ const Notebook = () => {
       notebookRef.current = notebook?.id;
     }
   }, [notebook?.id]); // eslint-disable-line react-hooks/exhaustive-deps
+
+  useEffect(() => {
+    if (hasErrors) {
+      navigate("/notebooks");
+    }
+  }, [hasErrors]); // eslint-disable-line react-hooks/exhaustive-deps
 
   useEffect(() => {
     // If we have a notebook id, fetch the notebook
