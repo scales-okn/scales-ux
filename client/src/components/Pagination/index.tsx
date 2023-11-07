@@ -100,7 +100,9 @@ const Pagination = ({
           handleNavigate={handleNavigate}
           disabled={disabledLeft}
         />
-        <Typography color="#021949d2">Page</Typography>
+        <Typography color="#021949d2" sx={{ marginLeft: "4px" }}>
+          Page
+        </Typography>
         <Typography
           sx={{
             display: "inline",
