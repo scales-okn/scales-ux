@@ -8,6 +8,7 @@ import { usePanels } from "src/store/panels";
 import { useSessionUser } from "src/store/auth";
 
 import ContentCopyIcon from "@mui/icons-material/ContentCopy";
+import IosShareIcon from "@mui/icons-material/IosShare";
 import {
   Grid,
   TextField,
@@ -25,6 +26,7 @@ import ConfirmModal from "src/components/Modals/ConfirmModal";
 import Loader from "src/components/Loader";
 import Panels from "src/components/Panels";
 import DuplicateNotebookModal from "./DuplicateNotebookModal";
+import ShareLinkModal from "./ShareLinkModal";
 
 const Notebook = () => {
   const { getRings } = useRings();
@@ -57,6 +59,8 @@ const Notebook = () => {
   const theme = useTheme();
 
   const [copyModalOpen, setCopyModalOpen] = useState(false);
+
+  const [shareLinkModalOpen, setShareLinkModalOpen] = useState(false);
   const [confirmVisible, setConfirmVisible] = useState(false);
   const [notebookTitle, setNotebookTitle] = useState(notebook?.title || "");
 
@@ -187,6 +191,34 @@ const Notebook = () => {
           {notebook?.id ? (
             <>
               <Grid item sx={{ display: "flex", alignItems: "center" }}>
+                {/* TODO: Componentize */}
+                {notebook.visibility === "public" ? (
+                  <Tooltip title="Share Link to Notebook">
+                    <Box
+                      sx={{
+                        border: `1px solid ${theme.palette.info.main}`,
+                        borderRadius: "4px",
+                        padding: "4px",
+                        height: "36px",
+                        width: "36px",
+                        marginRight: "10px",
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "center",
+                        cursor: "pointer",
+                        transition: ".2s all",
+
+                        "&:hover": {
+                          border: `1px solid ${theme.palette.info.dark}`,
+                          background: "#60118e1a",
+                        },
+                      }}
+                      onClick={() => setShareLinkModalOpen(true)}
+                    >
+                      <IosShareIcon color="info" sx={{ fontSize: "22px" }} />
+                    </Box>
+                  </Tooltip>
+                ) : null}
                 <Tooltip title="Make a Copy">
                   <Box
                     sx={{
@@ -299,6 +331,7 @@ const Notebook = () => {
         />
       )}
       {copyModalOpen && <DuplicateNotebookModal setOpen={setCopyModalOpen} />}
+      {shareLinkModalOpen && <ShareLinkModal setOpen={setShareLinkModalOpen} />}
     </Loader>
   );
 };

@@ -8,6 +8,7 @@ const templatePaths = {
   resetPassword: path.join(__dirname, "./resetPassword.html"),
   confirmAccountAdminCreated: path.join(__dirname, "./confirmAccountAdminCreated.html"),
   ringUpdated: path.join(__dirname, "./ringUpdated.html"),
+  shareLink: path.join(__dirname, "./shareLink.html"),
 };
 
 const SES_CONFIG = {
@@ -18,9 +19,11 @@ const SES_CONFIG = {
 
 const AWS_SES = new AWS.SES(SES_CONFIG);
 
+type templateNameT = "confirmAccount" | "resetPassword" | "confirmAccountAdminCreated" | "shareLink" | "ringUpdated";
+
 type sendMailT = {
   recipientEmail: string;
-  templateName: "confirmAccount" | "resetPassword" | "confirmAccountAdminCreated" | "ringUpdated";
+  templateName: templateNameT;
   recipientName: string;
   emailSubject: string;
   templateArgs: {
@@ -35,6 +38,9 @@ type sendMailT = {
     ringLabel?: string;
     ontologyDifferences?: string;
     dataSourceDifferences?: string;
+    message?: string;
+    senderName?: string;
+    secondaryUrl?: string;
   };
 };
 

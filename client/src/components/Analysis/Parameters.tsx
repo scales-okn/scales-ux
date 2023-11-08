@@ -23,6 +23,7 @@ type ParametersT = {
   setPanelStatement: (parameter: any) => void;
   selectedParameter: string;
   loadingAutosuggestions: boolean;
+  disabled?: boolean;
 };
 
 const Parameters = ({
@@ -32,6 +33,7 @@ const Parameters = ({
   setPanelStatement,
   selectedParameter,
   loadingAutosuggestions,
+  disabled = false,
 }: ParametersT) => {
   return (
     <>
@@ -41,6 +43,7 @@ const Parameters = ({
             <>
               <InputLabel>{parameter.prompt}</InputLabel>
               <Autocomplete
+                disabled={disabled}
                 loading={loadingAutosuggestions}
                 options={autoCompleteSuggestions}
                 getOptionLabel={(option) => option}
@@ -66,6 +69,7 @@ const Parameters = ({
           {parameter.type === "enum" && (
             <FormGroup>
               <Select
+                disabled={disabled}
                 value={selectedParameter || "year"}
                 multiple={parameter.allowMultiple}
                 onChange={(e) => setPanelStatement(e.target.value)}
