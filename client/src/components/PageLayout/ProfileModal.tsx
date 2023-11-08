@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from "react";
-import { TextField, Grid, Button, Box, Typography } from "@mui/material";
+import React, { useEffect } from "react";
+import { TextField, Grid, Button, Typography } from "@mui/material";
 import { useTheme } from "@mui/material/styles";
 import { useFormik } from "formik";
 import * as yup from "yup";
@@ -14,47 +14,58 @@ type UserFields = {
   firstName: string;
   lastName: string;
   email: string;
-  password: string;
+  // password: string;
+  // usage: string;
 };
 
-const NewUser = () => {
-  const { createUserAsAdmin } = useUser();
+type UserT = {
+  approved: boolean;
+  blocked: boolean;
+  email: string;
+  firstName: string;
+  id: number;
+  lastName: string;
+  role: string;
+};
 
-  const [newUserModalVisible, setNewUserModalVisible] = useState(false);
+type ProfileModalT = {
+  visible: boolean;
+  setVisible: (arg: boolean) => void;
+  user: Omit<UserT, "password">;
+};
+
+const ProfileModal = ({ visible, setVisible, user }: ProfileModalT) => {
+  const { updateUser } = useUser();
 
   const theme = useTheme();
 
   const onClose = () => {
-    setNewUserModalVisible(false);
+    setVisible(false);
     formik.resetForm();
   };
 
   const validationSchema = yup.object({
-    firstName: yup.string().required("First Name is required"),
-    lastName: yup.string().required("Last Name is required"),
-    email: yup
-      .string()
-      .email("Enter a valid email")
-      .required("Email is required"),
-    password: yup
-      .string()
-      .required("Password is required")
-      .matches(
-        /^.*(?=.{8,})((?=.*[!@#$%^&*()\-_=+{};:,<.>]){1})(?=.*\d)((?=.*[a-z]){1})((?=.*[A-Z]){1}).*$/,
-        "Password must contain at least 8 characters, one uppercase, one number and one special case character",
-      ),
+    firstName: yup.string(),
+    lastName: yup.string(),
+    email: yup.string().email("Enter a valid email"),
+    // password: yup
+    //   .string()
+    //   .matches(
+    //     /^.*(?=.{8,})((?=.*[!@#$%^&*()\-_=+{};:,<.>]){1})(?=.*\d)((?=.*[a-z]){1})((?=.*[A-Z]){1}).*$/,
+    //     "Password must contain at least 8 characters, one uppercase, one number and one special case character",
+    //   ),
   });
 
   const formik = useFormik({
     initialValues: {
-      firstName: "",
-      lastName: "",
-      email: "",
-      password: "",
+      firstName: user.firstName,
+      lastName: user.lastName,
+      email: user.email,
+      // password: "",
     },
     validationSchema,
     onSubmit: (values: UserFields) => {
-      createUserAsAdmin({ ...values, usage: "Research" });
+      updateUser(user.id, values);
       onClose();
     },
   });
@@ -64,48 +75,23 @@ const NewUser = () => {
   };
 
   useEffect(() => {
-    if (newUserModalVisible) {
+    if (visible) {
       setRandomPassword();
     }
-  }, [newUserModalVisible]);
+  }, [visible]);
 
   return (
     <>
-      <Box
-        style={{
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "flex-end",
-        }}
-      >
-        <Grid
-          container
-          spacing={2}
-          sx={{
-            alignItems: "center",
-            justifyContent: "flex-end",
-            marginBottom: "24px",
-          }}
-        >
-          <Button
-            color="primary"
-            variant="contained"
-            onClick={() => setNewUserModalVisible(true)}
-          >
-            Add User
-          </Button>
-        </Grid>
-      </Box>
-      <ModalContainer open={newUserModalVisible} onClose={onClose}>
+      <ModalContainer open={visible} onClose={onClose}>
         <Typography
           sx={{
             fontSize: "32px",
             textAlign: "center",
-            marginBottom: "24px",
+            marginBottom: "48px",
             color: theme.palette.primary.main,
           }}
         >
-          Add New User
+          Update Information
         </Typography>
         <form onSubmit={formik.handleSubmit}>
           <Grid container spacing={2}>
@@ -145,7 +131,7 @@ const NewUser = () => {
                 helperText={formik.touched.email && formik.errors.email}
               />
             </Grid>
-            <Grid item xs={12}>
+            {/* <Grid item xs={12}>
               <TextField
                 name="password"
                 label="Password*"
@@ -158,8 +144,8 @@ const NewUser = () => {
                 helperText={formik.touched.password && formik.errors.password}
                 placeholder="Password"
               />
-            </Grid>
-            <Grid
+            </Grid> */}
+            {/* <Grid
               item
               xs={12}
               sx={{
@@ -169,14 +155,30 @@ const NewUser = () => {
               }}
             >
               <Button onClick={setRandomPassword} sx={{ fontSize: "12px" }}>
-                Regenerate Password
+                Generate Secure Password
               </Button>
-            </Grid>
+            </Grid> */}
+            {/* <Grid item xs={12}>
+              <TextField
+                type="text"
+                name="usage"
+                label="Account Usage"
+                variant="outlined"
+                fullWidth
+                multiline
+                rows={4}
+                value={formik.values.usage}
+                onChange={formik.handleChange}
+                onBlur={formik.handleBlur}
+                error={formik.touched.usage && Boolean(formik.errors?.usage)}
+                helperText={formik.touched.usage && formik.errors?.usage}
+              />
+            </Grid> */}
             <Grid
               item
               xs={12}
               sx={{
-                marginTop: "12px",
+                marginTop: "24px",
                 display: "flex",
                 justifyContent: "flex-end",
               }}
@@ -192,4 +194,4 @@ const NewUser = () => {
   );
 };
 
-export default NewUser;
+export default ProfileModal;

@@ -1,14 +1,17 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
-import { createSlice } from "@reduxjs/toolkit";
-import type { RootState, AppDispatch } from "src/store";
-import jwt_decode from "jwt-decode";
 import { useSelector, useDispatch } from "react-redux";
 import { Store, Dispatch, Action } from "redux";
+import { createSlice } from "@reduxjs/toolkit";
+import type { RootState, AppDispatch } from "src/store";
+
+import jwt_decode from "jwt-decode";
 import { notify } from "reapop";
-import { useUnknownErrorNotificationMessage } from "src/components/Notifications";
+
 import { authorizationHeader } from "src/helpers/authorizationHeader";
 import { makeRequest } from "src/helpers/makeRequest";
+
+import { useUnknownErrorNotificationMessage } from "src/components/Notifications";
 
 interface InitialState extends DecodedToken {
   hasErrors: boolean;

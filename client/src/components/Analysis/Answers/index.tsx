@@ -56,8 +56,8 @@ const Answers = ({
       ? currentFilters.reduce((acc, andFilter) => {
           const aggregateString = (type, value, connector = "AND") => {
             if (!type || !value) return;
-
-            if (type === "dateFiled") {
+            // TODO: remove one or the other
+            if (type === "dateFiled" || type === "filing_date") {
               value = `[${value?.map((date) =>
                 dayjs(date).format("YYYY-M-DD"),
               )}]`;
