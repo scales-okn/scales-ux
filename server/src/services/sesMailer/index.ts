@@ -6,10 +6,8 @@ const handlebars = require("handlebars");
 const templatePaths = {
   confirmAccount: path.join(__dirname, "./confirmAccount.html"),
   resetPassword: path.join(__dirname, "./resetPassword.html"),
-  confirmAccountAdminCreated: path.join(
-    __dirname,
-    "./confirmAccountAdminCreated.html"
-  ),
+  confirmAccountAdminCreated: path.join(__dirname, "./confirmAccountAdminCreated.html"),
+  shareLink: path.join(__dirname, "./shareLink.html"),
 };
 
 const SES_CONFIG = {
@@ -20,12 +18,11 @@ const SES_CONFIG = {
 
 const AWS_SES = new AWS.SES(SES_CONFIG);
 
+type templateNameT = "confirmAccount" | "resetPassword" | "confirmAccountAdminCreated" | "shareLink";
+
 type sendMailT = {
   recipientEmail: string;
-  templateName:
-    | "confirmAccount"
-    | "resetPassword"
-    | "confirmAccountAdminCreated";
+  templateName: templateNameT;
   recipientName: string;
   emailSubject: string;
   templateArgs: {
@@ -35,16 +32,13 @@ type sendMailT = {
     sesSender?: string;
     email?: string;
     password?: string;
+    message?: string;
+    senderName?: string;
+    secondaryUrl?: string;
   };
 };
 
-export const sendEmail = ({
-  recipientEmail,
-  templateName,
-  templateArgs,
-  recipientName,
-  emailSubject,
-}: sendMailT) => {
+export const sendEmail = ({ recipientEmail, templateName, templateArgs, recipientName, emailSubject }: sendMailT) => {
   const filename = templatePaths[templateName];
   const htmlSource = fs.readFileSync(filename, {
     encoding: "utf-8",

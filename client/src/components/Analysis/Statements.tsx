@@ -2,7 +2,12 @@ import React from "react";
 import { Box, InputAdornment, TextField } from "@mui/material";
 import { Autocomplete } from "@mui/material";
 
-const Statements = ({ statements, setPanelStatement, selectedStatement }) => {
+const Statements = ({
+  statements,
+  setPanelStatement,
+  selectedStatement,
+  disabled = false,
+}) => {
   const onStatementChange = (event, selected) => {
     if (selected) {
       setPanelStatement(selected);
@@ -12,6 +17,7 @@ const Statements = ({ statements, setPanelStatement, selectedStatement }) => {
   return (
     <Box sx={{ marginTop: "12px" }}>
       <Autocomplete
+        disabled={disabled}
         loading={!statements ? true : false}
         options={statements.filter(
           (stmt) => !stmt.statement.includes("filing year"),
