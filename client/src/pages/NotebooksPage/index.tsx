@@ -147,6 +147,7 @@ const NotebooksPage = () => {
             headerName: "Public",
             width: 130,
             editable: false,
+            sortable: false,
             renderHeader,
             renderCell: (params: GridCellParams) => {
               return (
@@ -172,6 +173,7 @@ const NotebooksPage = () => {
             field: "userId",
             headerName: "Owner",
             width: 150,
+            editable: false,
             sortable: false,
             renderHeader,
             renderCell: (params: GridCellParams) => {
@@ -194,6 +196,8 @@ const NotebooksPage = () => {
             field: "delete",
             headerName: "Delete",
             width: 75,
+            editable: false,
+            sortable: false,
             renderCell: (params: GridCellParams) => {
               const canDelete = params.row.userId === user.id || isAdmin;
               return (
