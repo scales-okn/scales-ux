@@ -252,9 +252,10 @@ const NotebooksPage = () => {
                     disableScrollLock: true,
                   }}
                   value={notebooksType}
-                  onChange={(event) =>
-                    setNotebooksType(event.target.value as string)
-                  }
+                  onChange={(event) => {
+                    setNotebooksType(event.target.value as string);
+                    setRawSearch("");
+                  }}
                   sx={{
                     background: "white",
                     borderRadius: "4px",
