@@ -5,6 +5,7 @@ import { sessionUserSelector, logout } from "../../store/auth";
 
 import Popover from "@mui/material/Popover";
 import ProfileModal from "./ProfileModal";
+import PasswordModal from "./PasswordModal";
 
 import { logoutMenuStyles } from "./styles";
 
@@ -14,6 +15,7 @@ const LogoutMenu = () => {
   );
 
   const [profileModalVisible, setProfileModalVisible] = useState(false);
+  const [passwordModalVisible, setPasswordModalVisible] = useState(false);
 
   const handleClick = (event) => {
     setAnchorEl(event.currentTarget);
@@ -51,8 +53,23 @@ const LogoutMenu = () => {
             horizontal: "left",
           }}
         >
-          <div className="item" onClick={() => setProfileModalVisible(true)}>
-            Profile
+          <div
+            className="item"
+            onClick={() => {
+              setPasswordModalVisible(true);
+              handleClose();
+            }}
+          >
+            Change Password
+          </div>
+          <div
+            className="item"
+            onClick={() => {
+              setProfileModalVisible(true);
+              handleClose();
+            }}
+          >
+            Update Info
           </div>
           <div className="item" onClick={() => dispatch(logout())}>
             Sign Out
@@ -64,6 +81,12 @@ const LogoutMenu = () => {
           visible={profileModalVisible}
           setVisible={setProfileModalVisible}
           user={user}
+        />
+      ) : null}
+      {passwordModalVisible ? (
+        <PasswordModal
+          visible={passwordModalVisible}
+          setVisible={setPasswordModalVisible}
         />
       ) : null}
     </div>

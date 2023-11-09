@@ -1,7 +1,5 @@
 import React, { useEffect } from "react";
-import { useSelector } from "react-redux";
 import { BrowserRouter } from "react-router-dom";
-import { authSelector } from "./store/auth";
 import { useHelpTexts } from "./store/helpTexts";
 
 import { ErrorBoundary } from "react-error-boundary";
@@ -9,6 +7,7 @@ import { ThemeProvider, createTheme } from "@mui/material/styles";
 import { Button, hexToRgb } from "@mui/material";
 import ReactGA from "react-ga4";
 
+import { useSessionUser } from "./store/auth";
 import AppRoutes from "./AppRoutes";
 import PageLayout from "./components/PageLayout";
 import Notifications from "src/components/Notifications";
@@ -60,11 +59,11 @@ const ErrorFallback = ({ error, resetErrorBoundary }) => {
 
 const App = () => {
   const { getHelpTexts } = useHelpTexts();
-  const { user } = useSelector(authSelector);
+  const sessionUser = useSessionUser();
 
   useEffect(() => {
-    if (user) getHelpTexts();
-  }, [user]); // eslint-disable-line react-hooks/exhaustive-deps
+    if (sessionUser) getHelpTexts();
+  }, [sessionUser]); // eslint-disable-line react-hooks/exhaustive-deps
 
   ReactGA.initialize([
     {

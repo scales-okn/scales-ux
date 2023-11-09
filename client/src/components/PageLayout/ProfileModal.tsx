@@ -1,12 +1,10 @@
-import React, { useEffect } from "react";
+import React from "react";
 import { TextField, Grid, Button, Typography } from "@mui/material";
 import { useTheme } from "@mui/material/styles";
 import { useFormik } from "formik";
 import * as yup from "yup";
 
-import { useUser } from "src/store/user";
-
-import { generateRandomPassword } from "src/helpers/generateRandomPassword";
+import { useAuth } from "src/store/auth";
 
 import ModalContainer from "src/components/Modals/ModalContainer";
 
@@ -14,8 +12,7 @@ type UserFields = {
   firstName: string;
   lastName: string;
   email: string;
-  // password: string;
-  // usage: string;
+  usage?: string;
 };
 
 type UserT = {
@@ -26,6 +23,7 @@ type UserT = {
   id: number;
   lastName: string;
   role: string;
+  usage?: string;
 };
 
 type ProfileModalT = {
@@ -35,8 +33,7 @@ type ProfileModalT = {
 };
 
 const ProfileModal = ({ visible, setVisible, user }: ProfileModalT) => {
-  const { updateUser } = useUser();
-
+  const { updateSessionUser } = useAuth();
   const theme = useTheme();
 
   const onClose = () => {
@@ -48,54 +45,46 @@ const ProfileModal = ({ visible, setVisible, user }: ProfileModalT) => {
     firstName: yup.string(),
     lastName: yup.string(),
     email: yup.string().email("Enter a valid email"),
-    // password: yup
-    //   .string()
-    //   .matches(
-    //     /^.*(?=.{8,})((?=.*[!@#$%^&*()\-_=+{};:,<.>]){1})(?=.*\d)((?=.*[a-z]){1})((?=.*[A-Z]){1}).*$/,
-    //     "Password must contain at least 8 characters, one uppercase, one number and one special case character",
-    //   ),
+    usage: yup.string(),
   });
+
+  const filterChangedValues = (currentValues, initialValues) => {
+    const changedValues = {};
+    for (const key in currentValues) {
+      if (currentValues[key] !== initialValues[key]) {
+        changedValues[key] = currentValues[key];
+      }
+    }
+    return changedValues;
+  };
 
   const formik = useFormik({
     initialValues: {
       firstName: user.firstName,
       lastName: user.lastName,
       email: user.email,
-      // password: "",
+      usage: user.usage,
     },
     validationSchema,
     onSubmit: (values: UserFields) => {
-      updateUser(user.id, values);
-      onClose();
+      const changedValues = filterChangedValues(values, formik.initialValues);
+
+      if (Object.keys(changedValues).length > 0) {
+        updateSessionUser(user.id, changedValues);
+      }
     },
   });
 
-  const setRandomPassword = () => {
-    formik.setFieldValue("password", generateRandomPassword());
-  };
-
-  useEffect(() => {
-    if (visible) {
-      setRandomPassword();
-    }
-  }, [visible]);
-
   return (
     <>
-      <ModalContainer open={visible} onClose={onClose}>
-        <Typography
-          sx={{
-            fontSize: "32px",
-            textAlign: "center",
-            marginBottom: "48px",
-            color: theme.palette.primary.main,
-          }}
-        >
-          Update Information
-        </Typography>
+      <ModalContainer
+        open={visible}
+        onClose={onClose}
+        title="Update Information"
+      >
         <form onSubmit={formik.handleSubmit}>
           <Grid container spacing={2}>
-            <Grid item xs={6}>
+            <Grid item xs={6} sx={{ marginBottom: "12px" }}>
               <TextField
                 name="firstName"
                 label="First Name*"
@@ -120,7 +109,7 @@ const ProfileModal = ({ visible, setVisible, user }: ProfileModalT) => {
                 helperText={formik.touched.lastName && formik.errors.lastName}
               />
             </Grid>
-            <Grid item xs={12}>
+            <Grid item xs={12} sx={{ marginBottom: "12px" }}>
               <TextField
                 name="email"
                 label="Email*"
@@ -131,34 +120,7 @@ const ProfileModal = ({ visible, setVisible, user }: ProfileModalT) => {
                 helperText={formik.touched.email && formik.errors.email}
               />
             </Grid>
-            {/* <Grid item xs={12}>
-              <TextField
-                name="password"
-                label="Password*"
-                multiline
-                fullWidth
-                {...formik.getFieldProps("password")}
-                error={
-                  formik.touched.password && Boolean(formik.errors.password)
-                }
-                helperText={formik.touched.password && formik.errors.password}
-                placeholder="Password"
-              />
-            </Grid> */}
-            {/* <Grid
-              item
-              xs={12}
-              sx={{
-                display: "flex",
-                justifyContent: "space-between",
-                paddingTop: "6px !important",
-              }}
-            >
-              <Button onClick={setRandomPassword} sx={{ fontSize: "12px" }}>
-                Generate Secure Password
-              </Button>
-            </Grid> */}
-            {/* <Grid item xs={12}>
+            <Grid item xs={12}>
               <TextField
                 type="text"
                 name="usage"
@@ -173,7 +135,7 @@ const ProfileModal = ({ visible, setVisible, user }: ProfileModalT) => {
                 error={formik.touched.usage && Boolean(formik.errors?.usage)}
                 helperText={formik.touched.usage && formik.errors?.usage}
               />
-            </Grid> */}
+            </Grid>
             <Grid
               item
               xs={12}
@@ -183,7 +145,12 @@ const ProfileModal = ({ visible, setVisible, user }: ProfileModalT) => {
                 justifyContent: "flex-end",
               }}
             >
-              <Button type="submit" variant="contained" sx={{ height: "36px" }}>
+              <Button
+                type="submit"
+                variant="contained"
+                sx={{ height: "36px" }}
+                // disabled={!formValuesChanged}
+              >
                 Submit
               </Button>
             </Grid>

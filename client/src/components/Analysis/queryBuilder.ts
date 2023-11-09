@@ -10,7 +10,7 @@ export const queryBuilder = ({ filters, info }: queryBuilderT) => {
   const queryFilters = filters
     ? filters?.map((filter) => {
         // TODO: remove one or the other
-        if (filter.type === "dateFiled" || type === "filing_date") {
+        if (filter.type === "dateFiled" || filter.type === "filing_date") {
           /* this will need to change once we implement multiple dateFiled filters */
           filter.value = `[${filter.value?.map((date) =>
             dayjs(date).format("YYYY-M-DD"),

@@ -8,6 +8,7 @@ const templatePaths = {
   resetPassword: path.join(__dirname, "./resetPassword.html"),
   confirmAccountAdminCreated: path.join(__dirname, "./confirmAccountAdminCreated.html"),
   shareLink: path.join(__dirname, "./shareLink.html"),
+  confirmPasswordChange: path.join(__dirname, "./confirmPasswordChange.html"),
 };
 
 const SES_CONFIG = {
@@ -18,7 +19,7 @@ const SES_CONFIG = {
 
 const AWS_SES = new AWS.SES(SES_CONFIG);
 
-type templateNameT = "confirmAccount" | "resetPassword" | "confirmAccountAdminCreated" | "shareLink";
+type templateNameT = "confirmAccount" | "resetPassword" | "confirmAccountAdminCreated" | "shareLink" | "confirmPasswordChange";
 
 type sendMailT = {
   recipientEmail: string;

@@ -4,10 +4,8 @@ import { Request, Response } from "express";
 import { Op } from "sequelize";
 import { sequelize } from "../database";
 import { sendEmail } from "../services/sesMailer";
-import { createUser } from "../models/User";
-import accessControl, {
-  permissionsFieldsFilter,
-} from "../services/accesscontrol";
+import { createUser, existingUserFound } from "../models/User";
+import accessControl, { permissionsFieldsFilter } from "../services/accesscontrol";
 import { findAllAndPaginate } from "./util/findAllAndPaginate";
 
 // Resources validations are made with validateResources middleware and validations schemas
@@ -33,45 +31,24 @@ export const login = async (req: Request, res: Response) => {
     // Check if user exists
     if (!user) {
       console.warn("User not found!", { email, password });
-      return res.send_badRequest(
-        "Login failed. Please check your username and password."
-      );
+      return res.send_badRequest("Login failed. Please check your username and password.");
     }
-    const {
-      id,
-      role,
-      firstName,
-      lastName,
-      blocked,
-      approved,
-      emailIsVerified,
-    } = user.dataValues;
+    const { id, role, firstName, lastName, blocked, approved, emailIsVerified, usage } = user.dataValues;
 
     if (blocked) {
       return res.send_forbidden("Access restricted!");
     }
 
     if (!emailIsVerified) {
-      return res.send_forbidden(
-        "Access restricted! Please verify your email before signing in."
-      );
+      return res.send_forbidden("Access restricted! Please verify your email before signing in.");
     }
 
-    const passwordsMatch = await bcrypt.compare(
-      password,
-      user.dataValues.password
-    );
+    const passwordsMatch = await bcrypt.compare(password, user.dataValues.password);
     if (passwordsMatch) {
       const defaultExpiry = "1d";
-      const expiry = rememberMe
-        ? process.env.JWT_EXP_LONG
-        : process.env.JWT_EXP;
+      const expiry = rememberMe ? process.env.JWT_EXP_LONG : process.env.JWT_EXP;
 
-      const token = jwt.sign(
-        { user: { id, email, role, firstName, lastName, blocked, approved } },
-        process.env.JWT_SECRET,
-        { expiresIn: expiry || defaultExpiry }
-      );
+      const token = jwt.sign({ user: { id, email, role, firstName, lastName, blocked, approved, usage } }, process.env.JWT_SECRET, { expiresIn: expiry || defaultExpiry });
 
       return res.send_ok("Login Successful!", {
         token,
@@ -191,6 +168,15 @@ export const update = async (req: Request, res: Response) => {
       model.req = req;
     });
 
+    if (payload.email) {
+      const existingUser = await existingUserFound(payload.email);
+      if (existingUser) {
+        return res.send_badRequest("User was not updated! Email already exists!", {
+          email: "Email already exists!",
+        });
+      }
+    }
+
     const result = await sequelize.models.User.update(payload, {
       where: { id: userId },
       individualHooks: true,
@@ -296,10 +282,19 @@ export const forgotPassword = async (req: Request, res: Response) => {
 
 export const resetPassword = async (req: Request, res: Response) => {
   try {
-    const { token, password } = req.body;
-    const user = await sequelize.models.User.findOne({
-      where: { passwordResetToken: token },
-    });
+    // check for userID and bearer auth token
+    const authHeader = req.headers["authorization"];
+    const { token, password, sessionUserId } = req.body;
+    const isSessionUserReset = authHeader && sessionUserId;
+
+    let user;
+    if (isSessionUserReset) {
+      user = await sequelize.models.User.findByPk(sessionUserId);
+    } else {
+      user = await sequelize.models.User.findOne({
+        where: { passwordResetToken: token },
+      });
+    }
 
     if (user) {
       //@ts-ignore
@@ -316,9 +311,22 @@ export const resetPassword = async (req: Request, res: Response) => {
         { where: { id: userId } }
       );
 
-      return res.send_ok(
-        "Password successfully reset. You will now be forwarded to the sign in page."
-      );
+      const message = `Password successfully reset. ${token ? "You will now be forwarded to the sign in page." : ""}`;
+
+      if (isSessionUserReset) {
+        sendEmail({
+          emailSubject: "Password Reset Request",
+          recipientEmail: user.email,
+          templateName: "confirmPasswordChange",
+          recipientName: `${user.firstName} ${user.lastName}`,
+          templateArgs: {
+            saturnUrl: process.env.UX_CLIENT_MAILER_URL,
+            sesSender: process.env.SES_SENDER,
+          },
+        });
+      }
+
+      return res.send_ok(message);
     } else {
       return res.send_internalServerError("Failed to reset your password!");
     }

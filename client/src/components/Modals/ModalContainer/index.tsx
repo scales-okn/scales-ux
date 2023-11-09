@@ -1,5 +1,6 @@
-import React, { FunctionComponent } from "react";
-import { Modal, Paper } from "@mui/material";
+import React from "react";
+import { Modal, Paper, Typography } from "@mui/material";
+import { useTheme } from "@mui/material/styles";
 
 type ModalContainerT = {
   children: React.ReactNode;
@@ -7,15 +8,19 @@ type ModalContainerT = {
   open: boolean;
   modalStyles?: Record<string, unknown>;
   paperStyles?: Record<string, unknown>;
+  title?: string;
 };
 
-const ModalContainer: FunctionComponent<ModalContainerT> = ({
+const ModalContainer = ({
   children,
   onClose,
   open,
   modalStyles = {},
   paperStyles = {},
-}) => {
+  title,
+}: ModalContainerT) => {
+  const theme = useTheme();
+
   return (
     <Modal
       open={open}
@@ -34,7 +39,21 @@ const ModalContainer: FunctionComponent<ModalContainerT> = ({
         ...modalStyles,
       }}
     >
-      <Paper sx={{ outline: "none" }}>{children}</Paper>
+      <Paper sx={{ outline: "none" }}>
+        {title && (
+          <Typography
+            sx={{
+              fontSize: "32px",
+              textAlign: "center",
+              marginBottom: "48px",
+              color: theme.palette.primary.main,
+            }}
+          >
+            {title}
+          </Typography>
+        )}
+        {children}
+      </Paper>
     </Modal>
   );
 };
