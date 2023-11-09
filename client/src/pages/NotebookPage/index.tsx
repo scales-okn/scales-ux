@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
-import { useNavigate, useParams } from "react-router-dom";
+import { useNavigate, useParams, useLocation } from "react-router-dom";
+import queryString from "query-string";
 
 import { useRings } from "src/store/rings";
 import { useNotebook } from "src/store/notebook";
@@ -39,9 +40,13 @@ const Notebook = () => {
     deletingNotebook,
     savingNotebook,
     clearNotebook,
+    hasErrors,
   } = useNotebook();
-
   const { getPanels, clearPanels } = usePanels(notebook?.id);
+
+  const navigate = useNavigate();
+  const location = useLocation();
+  const { page } = queryString.parse(location.search);
 
   const { notebookId: notebookIdParam } = useParams();
   const isNewNotebook = notebookIdParam === "new";
@@ -54,11 +59,10 @@ const Notebook = () => {
   const theme = useTheme();
 
   const [copyModalOpen, setCopyModalOpen] = useState(false);
+
   const [shareLinkModalOpen, setShareLinkModalOpen] = useState(false);
   const [confirmVisible, setConfirmVisible] = useState(false);
   const [notebookTitle, setNotebookTitle] = useState(notebook?.title || "");
-
-  const navigate = useNavigate();
 
   useEffect(() => {
     getRings();
@@ -74,7 +78,8 @@ const Notebook = () => {
   useEffect(() => {
     // If we have a notebook id, navigate to it
     if (notebook?.id) {
-      navigate(`/notebooks/${notebook?.id}`);
+      const pageParam = page ? `?page=${page}` : "";
+      navigate(`/notebooks/${notebook?.id}${pageParam}`);
     }
     // If the notebook title has changed, set the local state
     if (notebook?.title && notebook?.title !== notebookTitle) {
@@ -86,6 +91,12 @@ const Notebook = () => {
       notebookRef.current = notebook?.id;
     }
   }, [notebook?.id]); // eslint-disable-line react-hooks/exhaustive-deps
+
+  useEffect(() => {
+    if (hasErrors) {
+      navigate("/notebooks");
+    }
+  }, [hasErrors]); // eslint-disable-line react-hooks/exhaustive-deps
 
   useEffect(() => {
     // If we have a notebook id, fetch the notebook

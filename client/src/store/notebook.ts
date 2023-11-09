@@ -162,7 +162,6 @@ export function fetchNotebooks(params) {
       const { data } = await makeRequest.get(`/api/notebooks`, {
         params,
       });
-
       dispatch(notebookActions.fetchNotebooksSuccess(data));
     } catch (error) {
       console.warn(error); // eslint-disable-line no-console
