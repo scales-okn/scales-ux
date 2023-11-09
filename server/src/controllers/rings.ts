@@ -1,6 +1,6 @@
 import { Request, Response } from "express";
-
 import { sequelize } from "../database";
+import { notifyAdminsOfRingChange } from "../models/Ring";
 
 // Resources validations are made with validateResources middleware and validations schemas
 // server/middlewares/validateResources.ts
@@ -9,17 +9,7 @@ import { sequelize } from "../database";
 // Create Ring
 export const create = async (req: Request, res: Response) => {
   try {
-    const {
-      userId,
-      rid,
-      name,
-      description,
-      schemaVersion,
-      dataSource,
-      ontology,
-      visibility,
-      version,
-    } = req.body;
+    const { userId, rid, name, description, schemaVersion, dataSource, ontology, visibility, version } = req.body;
 
     const ringExists = await sequelize.models.Ring.findOne({
       where: { rid },
@@ -95,12 +85,7 @@ export const version = async (req: Request, res: Response) => {
     if (versions.length === 0) {
       return res.send_notFound("Ring version not found!");
     }
-    const ring = Object.fromEntries(
-      Object.entries(versions[0].dataValues).filter(
-        ([key]) =>
-          !["versionType", "versionTimestamp", "versionId"].includes(key)
-      )
-    );
+    const ring = Object.fromEntries(Object.entries(versions[0].dataValues).filter(([key]) => !["versionType", "versionTimestamp", "versionId"].includes(key)));
 
     return res.send_ok("", { ring });
   } catch (error) {
@@ -118,13 +103,15 @@ export const update = async (req: Request, res: Response) => {
     const ring = await sequelize.models.Ring.findOne({
       where: { id: ringId },
     });
+    const oldDataSource = JSON.stringify(ring.dataSource);
+    const oldOntology = JSON.stringify(ring.ontology);
 
     // Inject req for saveLog
     sequelize.models.Ring.beforeUpdate((model) => {
       model.req = req;
     });
 
-    const updated = await ring.update(
+    const updatedRing = await ring.update(
       { ...req.body, version: ring.dataValues.version + 1 },
       {
         individualHooks: true,
@@ -132,8 +119,12 @@ export const update = async (req: Request, res: Response) => {
       }
     );
 
-    if (!updated) {
+    if (!updatedRing) {
       return res.send_notModified("Ring has not been updated!");
+    }
+
+    if (process.env.NODE_ENV === "production") {
+      notifyAdminsOfRingChange({ ring, updatedRing, oldDataSource, oldOntology });
     }
 
     return res.send_ok("Ring has been updated!", { ring });

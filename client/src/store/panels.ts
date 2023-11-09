@@ -355,13 +355,14 @@ export const deletePanel =
     }
   };
 
-// refactor out filters if we're not using them, refactor to object arg
 export const getPanelResults =
-  (panelId, filters = [], page = 0, batchSize = 10) =>
+  (panelId, { page = 0, batchSize = 10, sortOverride = null }) =>
   async (dispatch: AppDispatch, getState) => {
+    // sort override is to account for async when updating panel and fetching results simultaneously. Somewhat hacky.
     try {
       const panel = panelSelector(getState(), panelId);
-      const { filters, ringId } = panel;
+      const { filters, ringId, sort } = panel;
+
       // @ts-ignore
       const { rid, info, version } = ringSelector(getState(), ringId);
       dispatch(panelsActions.getPanelResults({ panelId }));
@@ -380,9 +381,12 @@ export const getPanelResults =
         })
         .join("&");
 
+      const currentSort = sortOverride || sort;
+      const sortString = `sortBy=${currentSort.field}&sortDirection=${currentSort.sort}`;
+
       const response = await makeRequest.get(
         appendQuery(
-          `/proxy/results/${rid}/${version}/${info.defaultEntity}?page=${page}&batchSize=${batchSize}&sortBy=dateFiled&sortDirection=desc`,
+          `/proxy/results/${rid}/${version}/${info.defaultEntity}?page=${page}&batchSize=${batchSize}&${sortString}`,
           filterParams,
           { encodeComponents: false },
         ),
@@ -524,8 +528,8 @@ export const usePanel = (panelId: string) => {
     },
     updatePanel: (payload: any = {}) => dispatch(updatePanel(panelId, payload)),
     deletePanel: () => dispatch(deletePanel(panelId)),
-    getPanelResults: (filters = [], page = 0, batchSize = 10) =>
-      dispatch(getPanelResults(panelId, filters, page, batchSize)),
+    getPanelResults: (payload: any = {}) =>
+      dispatch(getPanelResults(panelId, payload)),
     downloadCsv: () => dispatch(downloadCsv(panelId)),
   };
 };

@@ -1,4 +1,5 @@
 import React from "react";
+import { useNavigate, useLocation } from "react-router-dom";
 
 import { Box, Typography } from "@mui/material";
 import Arrow from "./Arrow";
@@ -22,6 +23,8 @@ const Pagination = ({
 }: PaginationT) => {
   const { width } = useWindowSize();
   const isTablet = width < 768;
+  const navigate = useNavigate();
+  const location = useLocation();
 
   const noResults = paging.totalPages === 0;
 
@@ -52,6 +55,11 @@ const Pagination = ({
 
     const page = pageOverride === null ? newPage : pageOverride;
     fetchData({ page });
+    if (page === firstPage) {
+      navigate(location.pathname);
+    } else {
+      navigate(`?page=${page}`);
+    }
   };
 
   const current = renderDigit(paging.currentPage);
@@ -92,29 +100,29 @@ const Pagination = ({
           handleNavigate={handleNavigate}
           disabled={disabledLeft}
         />
-        <Typography color="#021949d2" sx={{ padding: "0 8px" }}>
+        <Typography color="#021949d2" sx={{ marginLeft: "4px" }}>
           Page
-          <Typography
-            sx={{
-              display: "inline",
-              fontSize: "16px",
-              fontWeight: 600,
-              padding: "0 4px",
-            }}
-          >
-            {noResults ? 0 : current}
-          </Typography>
-          of
-          <Typography
-            sx={{
-              display: "inline",
-              fontSize: "16px",
-              fontWeight: 600,
-              padding: "0 4px",
-            }}
-          >
-            {total}
-          </Typography>
+        </Typography>
+        <Typography
+          sx={{
+            display: "inline",
+            fontSize: "16px",
+            fontWeight: 600,
+            padding: "0 4px",
+          }}
+        >
+          {noResults ? 0 : current}
+        </Typography>
+        of
+        <Typography
+          sx={{
+            display: "inline",
+            fontSize: "16px",
+            fontWeight: 600,
+            padding: "0 4px",
+          }}
+        >
+          {total}
         </Typography>
         <Arrow
           direction="right"

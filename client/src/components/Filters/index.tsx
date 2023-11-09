@@ -42,7 +42,7 @@ const Filters = ({ panelId }: FiltersProps) => {
 
   const handleUpdateResults = () => {
     if (sessionUserCanEdit) {
-      getPanelResults();
+      getPanelResults({});
       const activeFilters = filters.filter((f) => f.value !== "");
 
       const freshAnalyses = {};
