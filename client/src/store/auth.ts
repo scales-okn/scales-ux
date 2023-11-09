@@ -122,6 +122,7 @@ export const updateSessionUser = (userId, payload: any = {}) => {
       );
       if (code === 200) {
         dispatch(authActions.updateSessionUserSuccess(data.user));
+        dispatch(notify(message, "success"));
       } else {
         dispatch(notify(message, "error"));
         dispatch(authActions.updateSessionUserFailure());
