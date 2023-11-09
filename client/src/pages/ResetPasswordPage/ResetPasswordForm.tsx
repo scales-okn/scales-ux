@@ -83,7 +83,7 @@ const ResetPasswordForm = ({ sessionUserId = null }: ResetPasswordFormT) => {
         onChange={formik.handleChange}
         error={formik.touched.password && Boolean(formik.errors?.password)}
         helperText={formik.touched.password && formik.errors?.password}
-        sx={{ marginBottom: "12px", background: "white" }}
+        sx={{ marginBottom: "24px", background: "white" }}
       />
       <TextField
         type="password"
@@ -95,7 +95,7 @@ const ResetPasswordForm = ({ sessionUserId = null }: ResetPasswordFormT) => {
         onChange={formik.handleChange}
         error={formik.touched.repassword && Boolean(formik.errors?.repassword)}
         helperText={formik.touched.repassword && formik.errors?.repassword}
-        sx={{ marginBottom: "24px", background: "white" }}
+        sx={{ marginBottom: "36px", background: "white" }}
       />
       <div style={{ display: "flex", justifyContent: "flex-end" }}>
         <Button color="primary" variant="contained" type="submit">
