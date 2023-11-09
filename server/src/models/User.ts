@@ -124,12 +124,16 @@ const verifyEmail = async (user, isAdmin, password = null) => {
   }
 };
 
+export const existingUserFound = async (email) => {
+  const users = await sequelize.models.User.findAll({ where: { email } });
+  return users?.length;
+};
+
 export const createUser = async (req, res) => {
   try {
-    const { firstName, lastName, email, password, usage, isAdmin, emailIsVerified = false } = req.body;
+    const { firstName, lastName, email, password, usage, isAdmin } = req.body;
 
-    const users = await sequelize.models.User.findAll({ where: { email } });
-    if (users?.length) {
+    if (existingUserFound(email)) {
       return res.send_badRequest("User was not created!", {
         email: "Email already exists!",
       });
