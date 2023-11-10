@@ -1,5 +1,4 @@
 import React from "react";
-import { useNavigate, useLocation } from "react-router-dom";
 
 import { Box, Typography } from "@mui/material";
 import Arrow from "./Arrow";
@@ -13,6 +12,7 @@ type PaginationT = {
   fetchData: (arg: Record<string, unknown>) => void;
   leftContent?: JSX.Element;
   zeroIndex?: boolean;
+  navOverride?: (location: string) => void;
 };
 
 const Pagination = ({
@@ -20,11 +20,10 @@ const Pagination = ({
   fetchData,
   leftContent = <></>,
   zeroIndex = false,
+  navOverride,
 }: PaginationT) => {
   const { width } = useWindowSize();
   const isTablet = width < 768;
-  const navigate = useNavigate();
-  const location = useLocation();
 
   const noResults = paging.totalPages === 0;
 
@@ -42,7 +41,7 @@ const Pagination = ({
   const disabledLeft = paging.currentPage === firstPage || noResults;
   const disabledRight = paging.currentPage === lastPage || noResults;
 
-  const handleNavigate = (direction, pageOverride = null) => {
+  const handleNavClick = (direction, pageOverride = null) => {
     const newPage =
       direction === "right" ? paging.currentPage + 1 : paging.currentPage - 1;
 
@@ -55,10 +54,9 @@ const Pagination = ({
 
     const page = pageOverride === null ? newPage : pageOverride;
     fetchData({ page });
-    if (page === firstPage) {
-      navigate(location.pathname);
-    } else {
-      navigate(`?page=${page}`);
+
+    if (navOverride) {
+      navOverride(page);
     }
   };
 
@@ -91,13 +89,13 @@ const Pagination = ({
       >
         <Arrow
           direction="left"
-          handleNavigate={handleNavigate}
+          handleNavigate={handleNavClick}
           disabled={disabledLeft}
           pageOverride={firstPage}
         />
         <Arrow
           direction="left"
-          handleNavigate={handleNavigate}
+          handleNavigate={handleNavClick}
           disabled={disabledLeft}
         />
         <Typography color="#021949d2" sx={{ marginLeft: "4px" }}>
@@ -126,12 +124,12 @@ const Pagination = ({
         </Typography>
         <Arrow
           direction="right"
-          handleNavigate={handleNavigate}
+          handleNavigate={handleNavClick}
           disabled={disabledRight}
         />
         <Arrow
           direction="right"
-          handleNavigate={handleNavigate}
+          handleNavigate={handleNavClick}
           disabled={disabledRight}
           pageOverride={lastPage}
         />

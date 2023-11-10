@@ -57,6 +57,7 @@ const Filters = ({ panelId }: FiltersProps) => {
       updatePanel({
         filters: activeFilters,
         analysis: freshAnalyses,
+        page: null,
       });
     }
   };

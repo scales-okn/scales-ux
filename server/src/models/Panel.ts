@@ -21,6 +21,7 @@ export default (sequelize, options) => {
         type: DataTypes.JSON,
         defaultValue: {},
       },
+      page: DataTypes.INTEGER,
     },
     options
   );

@@ -1,6 +1,5 @@
 import React, { useState, useEffect, useMemo } from "react";
 import { Link, useLocation } from "react-router-dom";
-import queryString from "query-string";
 import { usePanel } from "src/store/panels";
 import { useRing } from "src/store/rings";
 import { useSessionUser } from "src/store/auth";
@@ -56,15 +55,13 @@ const Panel = ({ panelId, defaultCollapsed }: PanelT) => {
   } = usePanel(panelId);
 
   const location = useLocation();
-  const { page } = queryString.parse(location.search);
-  const pageNumber = parseInt(page as string, 10);
 
   const paging = {
     totalCount: results?.totalCount || 0,
     totalPages: results ? Math.ceil(results.totalCount / results.batchSize) : 0,
     currentPage: results?.page,
   };
-  console.log(panel.sort);
+
   // Pop first panel on page load
   useEffectOnce(() => {
     if (!defaultCollapsed) {
@@ -91,14 +88,14 @@ const Panel = ({ panelId, defaultCollapsed }: PanelT) => {
   const panelIdRef = React.useRef(null);
   useEffect(() => {
     if (info && !collapsed && panel.id !== panelIdRef.current) {
-      if (pageNumber) {
-        getPanelResults({ page: pageNumber });
+      if (panel.page) {
+        getPanelResults({ page: panel.page });
       } else {
         getPanelResults({});
       }
       panelIdRef.current = panel.id;
     }
-  }, [collapsed, info, panel.id, getPanelResults, pageNumber]);
+  }, [collapsed, info, panel.id, getPanelResults, panel.page]);
 
   const rows = results?.results?.map((result) => ({
     ...result,
@@ -286,6 +283,9 @@ const Panel = ({ panelId, defaultCollapsed }: PanelT) => {
                               zeroIndex
                               fetchData={({ page }) =>
                                 getPanelResults({ page })
+                              }
+                              navOverride={(newPage) =>
+                                updatePanel({ page: newPage })
                               }
                             />
                             <DataGrid
