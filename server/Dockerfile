@@ -26,6 +26,8 @@ COPY --from=builder /app/scales-ux-server/config ./config
 
 COPY --from=builder /app/scales-ux-server/migrations ./migrations
 
+RUN npx --yes sequelize-cli db:migrate
+
 EXPOSE 8080
 
 CMD ["node", "index.js"]
