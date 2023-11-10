@@ -16,10 +16,16 @@ FROM node:20-alpine
 
 WORKDIR /app/scales-ux-server
 
-COPY --from=builder /app/scales-ux-server/build ./build
+COPY --from=builder /app/scales-ux-server/build ./
+
+COPY --from=builder /app/scales-ux-server/package.json ./
 
 COPY --from=builder /app/scales-ux-server/node_modules ./node_modules
 
+COPY --from=builder /app/scales-ux-server/config ./config
+
+COPY --from=builder /app/scales-ux-server/migrations ./migrations
+
 EXPOSE 8080
 
-CMD ["node", "build/index.js"]
+CMD ["node", "index.js"]
