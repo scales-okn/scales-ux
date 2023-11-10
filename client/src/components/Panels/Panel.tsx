@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useMemo } from "react";
-import { Link, useLocation } from "react-router-dom";
+import { Link } from "react-router-dom";
 import { usePanel } from "src/store/panels";
 import { useRing } from "src/store/rings";
 import { useSessionUser } from "src/store/auth";
@@ -53,8 +53,6 @@ const Panel = ({ panelId, defaultCollapsed }: PanelT) => {
     downloadingCsv,
     updatePanel,
   } = usePanel(panelId);
-
-  const location = useLocation();
 
   const paging = {
     totalCount: results?.totalCount || 0,

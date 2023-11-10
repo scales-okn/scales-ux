@@ -1,9 +1,9 @@
-import React, { FunctionComponent, useState, ChangeEvent } from "react";
-import { FormGroup, FormControlLabel, Switch } from "@mui/material";
+import React, { useState, ChangeEvent } from "react";
+import { Switch } from "@mui/material";
 import { useNotify } from "src/components/Notifications";
 import { makeRequest } from "src/helpers/makeRequest";
 
-type Props = {
+type UserFieldToggleT = {
   userId: number;
   fieldName: string;
   label?: string;
@@ -11,12 +11,12 @@ type Props = {
   disabled?: boolean;
 };
 
-const UserFieldToggle: FunctionComponent<Props> = ({
+const UserFieldToggle = ({
   userId,
   fieldName,
   value,
   disabled,
-}) => {
+}: UserFieldToggleT) => {
   const [checked, setChecked] = useState(value);
   const { notify } = useNotify();
 

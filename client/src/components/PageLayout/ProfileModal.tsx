@@ -1,6 +1,5 @@
 import React from "react";
-import { TextField, Grid, Button, Typography } from "@mui/material";
-import { useTheme } from "@mui/material/styles";
+import { TextField, Grid, Button } from "@mui/material";
 import { useFormik } from "formik";
 import * as yup from "yup";
 
@@ -34,7 +33,6 @@ type ProfileModalT = {
 
 const ProfileModal = ({ visible, setVisible, user }: ProfileModalT) => {
   const { updateSessionUser } = useAuth();
-  const theme = useTheme();
 
   const onClose = () => {
     setVisible(false);

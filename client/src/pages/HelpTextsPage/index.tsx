@@ -41,7 +41,7 @@ const HelpTextsPage = () => {
       });
       setRows(filteredRows);
     }
-  }, [search]);
+  }, [search]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const renderHeader = (params) => {
     return (

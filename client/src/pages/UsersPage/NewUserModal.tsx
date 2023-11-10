@@ -67,7 +67,7 @@ const NewUser = () => {
     if (newUserModalVisible) {
       setRandomPassword();
     }
-  }, [newUserModalVisible]);
+  }, [newUserModalVisible]); // eslint-disable-line react-hooks/exhaustive-deps
 
   return (
     <>
