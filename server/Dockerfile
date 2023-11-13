@@ -28,4 +28,4 @@ COPY --from=builder /app/scales-ux-server/migrations ./migrations
 
 EXPOSE 8080
 
-CMD ["node", "index.js"]
+CMD ["sh", "-c", "npx --yes sequelize-cli db:migrate && node index.js"]
