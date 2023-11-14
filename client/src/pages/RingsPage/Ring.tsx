@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { useSessionUser } from "src/store/auth";
 import {
@@ -6,96 +6,118 @@ import {
   Grid,
   Typography,
   TextField,
-  MenuItem,
   Button,
+  Select,
+  MenuItem,
+  Switch,
 } from "@mui/material";
 
 import { useFormik } from "formik";
 import * as yup from "yup";
+import { pick } from "lodash";
 
 import useWindowSize from "src/hooks/useWindowSize";
 
 import Loader from "src/components/Loader";
-import { useNotify } from "src/components/Notifications";
 import { useRing } from "src/store/rings";
 import ConfirmModal from "src/components/Modals/ConfirmModal";
 import Editor from "src/components/Editor";
 import BackButton from "src/components/Buttons/BackButton";
 import "./jsoneditor-react-dark-mode.css";
-import { makeRequest } from "src/helpers/makeRequest";
-
-type Params = {
-  ringId: string | null;
-};
 
 const Ring: React.FC = () => {
-  const { ringId = null } = useParams<Params>();
-  const { ring } = useRing(Number(ringId));
-  const [loading, setLoading] = useState(false);
-  const sessionUser = useSessionUser();
-  const { notify } = useNotify();
+  const { rid = null } = useParams<{ rid: string | null }>();
+  const {
+    ringVersions,
+    createRing,
+    getRingVersions,
+    deleteRing,
+    clearRingVersions,
+    loadingRing,
+  } = useRing(Number(rid));
+
   const navigate = useNavigate();
+  const sessionUser = useSessionUser();
+
   const { width } = useWindowSize();
   const isTablet = width < 768;
 
+  const [currentVersion, setCurrentVersion] = useState(1);
   const [confirmVisible, setConfirmVisible] = useState(false);
+  const currentRing = ringVersions?.find(
+    (version) => version.version === currentVersion,
+  );
+
+  useEffect(() => {
+    if (ringVersions.length) {
+      setCurrentVersion(ringVersions[0].version);
+    }
+  }, [ringVersions]);
+
+  useEffect(() => {
+    if (rid) {
+      getRingVersions(rid);
+    }
+
+    return () => {
+      clearRingVersions();
+    };
+  }, [rid]);
 
   const formik = useFormik({
     initialValues: {
       rid: "",
       name: "",
       description: "",
-      version: 1.0,
       schemaVersion: 1.0,
       dataSource: {},
       ontology: {},
       visibility: "public",
       userId: sessionUser.id,
-      ...ring,
     },
     validationSchema: yup.object({
-      rid: yup.string().required("RID is required"),
+      rid: yup.string(),
       name: yup.string().required("Name is required"),
       description: yup.string().required("Description is required"),
-      version: yup.number().required("Version is required"),
       schemaVersion: yup.number().required("Schema version is required"),
       dataSource: yup.object().required("Data source is required"),
       ontology: yup.object().required("Ontology is required"),
       visibility: yup.string().required("Visibility is required"),
     }),
     onSubmit: async (values) => {
-      setLoading(true);
-      let response;
-      if (ringId) {
-        response = await makeRequest.put(`/api/rings/${ringId}`, values, {
-          notify,
-        });
-      } else {
-        response = await makeRequest.post(`/api/rings/create`, values, {
-          notify,
-        });
-      }
-
-      if (response?.code === 200) {
-        notify(response.message, "success");
+      createRing(values);
+      if (!rid) {
         navigate("/admin/rings");
       }
-      setLoading(false);
     },
   });
 
-  const deleteRing = async (id) => {
-    setLoading(true);
-    const response = await makeRequest.delete(`/api/rings/${id}`);
+  // set values on ring load
+  useEffect(() => {
+    const targetVersion = ringVersions?.find(
+      (version) => version.version === currentVersion,
+    );
 
-    if (response?.code === 200) {
-      notify(response.message, "success");
-      navigate("/admin/rings");
-    } else {
-      notify(response.message, "error");
+    if (targetVersion) {
+      const existingValues = pick(targetVersion, [
+        "userId",
+        "rid",
+        "name",
+        "description",
+        "schemaVersion",
+        "dataSource",
+        "ontology",
+        "visibility",
+      ]);
+
+      formik.setValues(existingValues);
     }
+  }, [ringVersions, currentVersion]);
 
-    setLoading(false);
+  const onDeleteRingConfirm = () => {
+    deleteRing(ringVersions[0].rid);
+
+    navigate("/admin/rings");
   };
 
   const sanitizeData = (data) => {
@@ -116,43 +138,70 @@ const Ring: React.FC = () => {
     <>
       <BackButton onClick={() => navigate("/admin/rings")} />
       <Container sx={{ padding: isTablet ? "86px 12px" : "86px 0" }}>
-        <Loader isVisible={loading}>
+        <Loader isVisible={loadingRing}>
           <form onSubmit={formik.handleSubmit}>
             <Grid container spacing={3} mb={3}>
-              <Grid item xs={12}>
-                <Typography variant="h5" mb={3}>
-                  {ring ? "Edit Ring" : "Create Ring"}
-                </Typography>
-              </Grid>
               <Grid
                 item
                 xs={12}
-                sx={{ display: "flex", justifyContent: "flex-end" }}
+                sx={{ display: "flex", justifyContent: "space-between" }}
               >
-                {ring && (
-                  <Button
-                    variant="contained"
-                    color="error"
-                    type="button"
-                    onClick={() => setConfirmVisible(true)}
-                    sx={{ marginRight: "12px" }}
+                <Grid>
+                  {ringVersions.length ? (
+                    <Select
+                      value={currentVersion}
+                      onChange={(e) => {
+                        console.log(e.target.value);
+                        setCurrentVersion(e.target.value as number);
+                      }}
+                      MenuProps={{
+                        disableScrollLock: true,
+                      }}
+                      sx={{
+                        minWidth: "140px",
+                        marginBottom: "24px",
+                        height: "42px",
+                        background: "white",
+                      }}
+                    >
+                      {ringVersions.map((version) => (
+                        <MenuItem key={version.id} value={version.version}>
+                          Version {version.version}
+                        </MenuItem>
+                      ))}
+                    </Select>
+                  ) : null}{" "}
+                  <Typography
+                    sx={{
+                      color: "GrayText",
+                      fontStyle: "italic",
+                      display: "inline",
+                    }}
                   >
-                    Delete Ring
+                    {currentRing
+                      ? new Date(currentRing.createdAt).toLocaleString()
+                      : null}{" "}
+                    - {currentRing?.user?.firstName}{" "}
+                    {currentRing?.user?.lastName}
+                  </Typography>
+                </Grid>
+                <Grid>
+                  {ringVersions.length ? (
+                    <Button
+                      variant="contained"
+                      color="error"
+                      type="button"
+                      onClick={() => setConfirmVisible(true)}
+                      sx={{ marginRight: "12px" }}
+                    >
+                      Delete
+                    </Button>
+                  ) : null}
+
+                  <Button variant="contained" color="primary" type="submit">
+                    {ringVersions.length ? "Add Version" : "Create"}
                   </Button>
-                )}
-                <Button
-                  variant="contained"
-                  color="primary"
-                  type="submit"
-                  sx={{
-                    background: "var(--sea-green)",
-                    "&:hover": {
-                      backgroundColor: "var(--sea-green-highlight)",
-                    },
-                  }}
-                >
-                  Submit
-                </Button>
+                </Grid>
               </Grid>
             </Grid>
             <Grid container spacing={3}>
@@ -174,7 +223,39 @@ const Ring: React.FC = () => {
                   </Typography>
                 ) : null}
               </Grid>
-              <Grid item xs={12} sm={6}>
+              <Grid item xs={12} sm={3}>
+                <TextField
+                  sx={{ background: "white", marginBottom: "24px" }}
+                  fullWidth
+                  id="formSchemaVersion"
+                  label="Schema Version"
+                  name="schemaVersion"
+                  variant="outlined"
+                  type="number"
+                  value={formik.values.schemaVersion}
+                  onChange={formik.handleChange}
+                  onBlur={formik.handleBlur}
+                />
+                {formik.touched.schemaVersion && formik.errors.schemaVersion ? (
+                  <Typography variant="body2" color="error">
+                    {formik.errors.schemaVersion}
+                  </Typography>
+                ) : null}
+              </Grid>
+              <Grid item xs={12} sm={3}>
+                <Switch
+                  checked={formik.values.visibility === "public"}
+                  color="primary"
+                  onChange={(e) => {
+                    formik.setFieldValue(
+                      "visibility",
+                      e.target.checked ? "public" : "private",
+                    );
+                  }}
+                />
+                <Typography>Public</Typography>
+              </Grid>
+              {/* <Grid item xs={12} sm={3}>
                 <TextField
                   sx={{ background: "white", marginBottom: "24px" }}
                   fullWidth
@@ -191,7 +272,7 @@ const Ring: React.FC = () => {
                     {formik.errors.rid}
                   </Typography>
                 ) : null}
-              </Grid>
+              </Grid> */}
             </Grid>
             <TextField
               sx={{ background: "white", marginBottom: "24px" }}
@@ -211,8 +292,8 @@ const Ring: React.FC = () => {
                 {formik.errors.description}
               </Typography>
             ) : null}
-            <Grid container spacing={3}>
-              <Grid item xs={12} sm={4}>
+            <Grid container>
+              {/* <Grid item xs={12} sm={4}>
                 <TextField
                   sx={{ background: "white", marginBottom: "24px" }}
                   fullWidth
@@ -230,28 +311,19 @@ const Ring: React.FC = () => {
                     {formik.errors.version}
                   </Typography>
                 ) : null}
-              </Grid>
-              <Grid item xs={12} sm={4}>
-                <TextField
-                  sx={{ background: "white", marginBottom: "24px" }}
-                  fullWidth
-                  id="formSchemaVersion"
-                  label="Schema Version"
-                  name="schemaVersion"
-                  variant="outlined"
-                  type="number"
-                  value={formik.values.schemaVersion}
-                  onChange={formik.handleChange}
-                  onBlur={formik.handleBlur}
-                />
-                {formik.touched.schemaVersion && formik.errors.schemaVersion ? (
-                  <Typography variant="body2" color="error">
-                    {formik.errors.schemaVersion}
-                  </Typography>
-                ) : null}
-              </Grid>
-              <Grid item xs={12} sm={4}>
-                <TextField
+              </Grid> */}
+
+              <Grid
+                item
+                sm={12}
+                sx={{
+                  display: "flex",
+                  alignItems: "center",
+                  padding: 0,
+                  marginBottom: "24px",
+                }}
+              >
+                {/* <TextField
                   sx={{ background: "white", marginBottom: "24px" }}
                   fullWidth
                   id="formVisibility"
@@ -270,7 +342,7 @@ const Ring: React.FC = () => {
                   <Typography variant="body2" color="error">
                     {formik.errors.visibility}
                   </Typography>
-                ) : null}
+                ) : null} */}
               </Grid>
             </Grid>
             <Grid container spacing={3}>
@@ -328,7 +400,7 @@ const Ring: React.FC = () => {
         itemName="ring"
         open={confirmVisible}
         setOpen={setConfirmVisible}
-        onConfirm={() => deleteRing(ring.id)}
+        onConfirm={onDeleteRingConfirm}
       />
     </>
   );

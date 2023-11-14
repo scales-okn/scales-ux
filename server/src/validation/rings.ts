@@ -3,7 +3,7 @@ import { ringVisibilityValues } from "../models/Ring";
 
 export const createRingValidationSchema = yup.object({
   userId: yup.string().required(),
-  rid: yup.string().required(),
+  rid: yup.string(),
   name: yup.string().required(),
   description: yup.string().required(),
   schemaVersion: yup.number().required(),

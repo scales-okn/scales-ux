@@ -52,6 +52,13 @@ export default (sequelize, options) => {
     options
   );
 
+  Ring.associate = (models) => {
+    Ring.belongsTo(models.User, {
+      foreignKey: "userId",
+      as: "user",
+    });
+  };
+
   return Ring;
 };
 
