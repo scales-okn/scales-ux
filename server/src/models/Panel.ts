@@ -11,7 +11,7 @@ export default (sequelize, options) => {
         allowNull: true,
       },
       notebookId: DataTypes.INTEGER,
-      ringId: DataTypes.INTEGER,
+      ringRid: DataTypes.INTEGER,
       ringVersion: DataTypes.INTEGER,
       filters: DataTypes.JSON,
       results: DataTypes.JSON,

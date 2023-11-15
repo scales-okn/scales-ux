@@ -67,7 +67,7 @@ export const notifyAdminsOfRingChange = async ({ ring, updatedRing, oldDataSourc
     where: { role: "admin" },
   });
 
-  const ringLabel = `${ring.name} (RID: ${ring.id})`;
+  const ringLabel = `${ring.name} (RID: ${ring.rid})`;
 
   const newDataSource = JSON.stringify(updatedRing.dataSource);
   const newOntology = JSON.stringify(updatedRing.ontology);

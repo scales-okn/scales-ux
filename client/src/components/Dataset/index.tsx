@@ -33,7 +33,7 @@ const Dataset = ({ panelId }: DatasetProps) => {
   const updatesDisabled = !sessionUserCanEdit;
 
   const { ring, loadingRingInfo, info, getRingInfo } = useRing(
-    selectedRing?.id,
+    selectedRing?.rid,
   );
 
   useEffect(() => {
@@ -120,7 +120,7 @@ const Dataset = ({ panelId }: DatasetProps) => {
                   variant="contained"
                   disabled={!info || updatesDisabled}
                   onClick={() => {
-                    updatePanel({ ringId: selectedRing.id });
+                    updatePanel({ ringRid: selectedRing.rid });
                     setPanelCollapsed(false);
                   }}
                   sx={{ marginTop: "12px" }}

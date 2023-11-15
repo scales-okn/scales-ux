@@ -25,7 +25,7 @@ import Editor from "src/components/Editor";
 import BackButton from "src/components/Buttons/BackButton";
 import "./jsoneditor-react-dark-mode.css";
 
-const Ring: React.FC = () => {
+const Ring = () => {
   const { rid = null } = useParams<{ rid: string | null }>();
   const {
     ringVersions,
