@@ -150,9 +150,9 @@ const Answers = ({
         background: "white",
       }}
     >
-      <Typography sx={{ fontSize: "20px", textTransform: "capitalize" }}>
+      <Box sx={{ fontSize: "20px", textTransform: "capitalize" }}>
         {renderHTML(answer)}
-      </Typography>
+      </Box>
     </Box>
   );
 
