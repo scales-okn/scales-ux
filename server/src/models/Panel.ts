@@ -13,10 +13,16 @@ export default (sequelize, options) => {
       notebookId: DataTypes.INTEGER,
       ringRid: DataTypes.INTEGER,
       ringVersion: DataTypes.INTEGER,
-      filters: DataTypes.JSON,
+      filters: {
+        type: DataTypes.JSON,
+        defaultValue: {},
+      },
       results: DataTypes.JSON,
       contents: DataTypes.JSON,
-      sort: DataTypes.JSON,
+      sort: {
+        type: DataTypes.JSON,
+        defaultValue: {},
+      },
       analysis: {
         type: DataTypes.JSON,
         defaultValue: {},

@@ -17,6 +17,7 @@ const PasswordModal = ({ visible, setVisible }: PasswordModalT) => {
       open={visible}
       onClose={() => setVisible(false)}
       title="Change Password"
+      paperStyles={{ maxWidth: "500px" }}
     >
       <ResetPasswordForm sessionUserId={sessionUser.id} />
     </ModalContainer>

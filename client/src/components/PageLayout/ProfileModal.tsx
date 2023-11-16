@@ -78,6 +78,7 @@ const ProfileModal = ({ visible, setVisible, user }: ProfileModalT) => {
       <ModalContainer
         open={visible}
         onClose={onClose}
+        paperStyles={{ maxWidth: "500px" }}
         title="Update Information"
       >
         <form onSubmit={formik.handleSubmit}>
