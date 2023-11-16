@@ -12,6 +12,7 @@ type PaginationT = {
   fetchData: (arg: Record<string, unknown>) => void;
   leftContent?: JSX.Element;
   zeroIndex?: boolean;
+  navOverride?: (location: string) => void;
 };
 
 const Pagination = ({
@@ -19,6 +20,7 @@ const Pagination = ({
   fetchData,
   leftContent = <></>,
   zeroIndex = false,
+  navOverride,
 }: PaginationT) => {
   const { width } = useWindowSize();
   const isTablet = width < 768;
@@ -39,7 +41,7 @@ const Pagination = ({
   const disabledLeft = paging.currentPage === firstPage || noResults;
   const disabledRight = paging.currentPage === lastPage || noResults;
 
-  const handleNavigate = (direction, pageOverride = null) => {
+  const handleNavClick = (direction, pageOverride = null) => {
     const newPage =
       direction === "right" ? paging.currentPage + 1 : paging.currentPage - 1;
 
@@ -52,6 +54,10 @@ const Pagination = ({
 
     const page = pageOverride === null ? newPage : pageOverride;
     fetchData({ page });
+
+    if (navOverride) {
+      navOverride(page);
+    }
   };
 
   const current = renderDigit(paging.currentPage);
@@ -83,47 +89,47 @@ const Pagination = ({
       >
         <Arrow
           direction="left"
-          handleNavigate={handleNavigate}
+          handleNavigate={handleNavClick}
           disabled={disabledLeft}
           pageOverride={firstPage}
         />
         <Arrow
           direction="left"
-          handleNavigate={handleNavigate}
+          handleNavigate={handleNavClick}
           disabled={disabledLeft}
         />
-        <Typography color="#021949d2" sx={{ padding: "0 8px" }}>
+        <Typography color="#021949d2" sx={{ marginLeft: "4px" }}>
           Page
-          <Typography
-            sx={{
-              display: "inline",
-              fontSize: "16px",
-              fontWeight: 600,
-              padding: "0 4px",
-            }}
-          >
-            {noResults ? 0 : current}
-          </Typography>
-          of
-          <Typography
-            sx={{
-              display: "inline",
-              fontSize: "16px",
-              fontWeight: 600,
-              padding: "0 4px",
-            }}
-          >
-            {total}
-          </Typography>
+        </Typography>
+        <Typography
+          sx={{
+            display: "inline",
+            fontSize: "16px",
+            fontWeight: 600,
+            padding: "0 4px",
+          }}
+        >
+          {noResults ? 0 : current}
+        </Typography>
+        of
+        <Typography
+          sx={{
+            display: "inline",
+            fontSize: "16px",
+            fontWeight: 600,
+            padding: "0 4px",
+          }}
+        >
+          {total}
         </Typography>
         <Arrow
           direction="right"
-          handleNavigate={handleNavigate}
+          handleNavigate={handleNavClick}
           disabled={disabledRight}
         />
         <Arrow
           direction="right"
-          handleNavigate={handleNavigate}
+          handleNavigate={handleNavClick}
           disabled={disabledRight}
           pageOverride={lastPage}
         />

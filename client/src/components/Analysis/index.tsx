@@ -205,6 +205,7 @@ const Analysis: FunctionComponent<Props> = ({ panelId }) => {
             >
               <Grid item sm={8}>
                 <Statements
+                  disabled={!sessionUserCanEdit}
                   statements={statementOptions}
                   setPanelStatement={(selectedStatement) => {
                     updatePanel({
@@ -223,6 +224,7 @@ const Analysis: FunctionComponent<Props> = ({ panelId }) => {
                 <Parameters
                   autoCompleteSuggestions={autoCompleteSuggestions}
                   parameters={analysis[id]?.parameters}
+                  disabled={!sessionUserCanEdit}
                   selectedParameter={analysis[id]?.selectedParameter}
                   setPanelStatement={(params) => {
                     const newStatement = {

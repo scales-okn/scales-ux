@@ -4,6 +4,7 @@ import accessControl from "../services/accesscontrol";
 import { Op } from "sequelize";
 import { permissionsFieldsFilter } from "../services/accesscontrol";
 import { findAllAndPaginate } from "./util/findAllAndPaginate";
+import { sendEmail } from "../services/sesMailer";
 
 // Resources validations are made with validateResources middleware and validations schemas
 // server/middlewares/validateResources.ts
@@ -304,6 +305,41 @@ export const panels = async (req: Request, res: Response) => {
   } catch (error) {
     console.warn(error); // eslint-disable-line no-console
 
+    return res.send_internalServerError("An error occurred, please try again!");
+  }
+};
+
+export const shareLink = async (req: Request, res: Response) => {
+  try {
+    const { id, recipientName, recipientEmail, message, senderId } = req.body;
+
+    const notebook = await sequelize.models.Notebook.findOne({ id });
+    const sender = await sequelize.models.User.findOne({ id: senderId });
+
+    if (!notebook) {
+      return res.status(404).json({ error: "Notebook not found" });
+    }
+    if (!sender) {
+      return res.status(404).json({ error: "Sender not found" });
+    }
+
+    sendEmail({
+      emailSubject: "SCALES Notebook Link",
+      recipientEmail,
+      templateName: "shareLink",
+      recipientName,
+      templateArgs: {
+        saturnUrl: process.env.UX_CLIENT_MAILER_URL,
+        sesSender: process.env.SES_SENDER,
+        url: `${process.env.UX_CLIENT_MAILER_URL}/notebooks/${id}`,
+        message,
+        secondaryUrl: `${process.env.UX_CLIENT_MAILER_URL}/sign-up`,
+        senderName: `${sender.firstName} ${sender.lastName}`,
+      },
+    });
+
+    return res.send_ok("Notebook Link Shared Successfully", {});
+  } catch (error) {
     return res.send_internalServerError("An error occurred, please try again!");
   }
 };

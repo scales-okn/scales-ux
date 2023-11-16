@@ -1,4 +1,4 @@
-//@ts-ignore
+// @ts-nocheck
 import dayjs from "dayjs";
 
 type queryBuilderT = {
@@ -9,7 +9,8 @@ type queryBuilderT = {
 export const queryBuilder = ({ filters, info }: queryBuilderT) => {
   const queryFilters = filters
     ? filters?.map((filter) => {
-        if (filter.type === "dateFiled") {
+        // TODO: remove one or the other
+        if (filter.type === "dateFiled" || filter.type === "filing_date") {
           /* this will need to change once we implement multiple dateFiled filters */
           filter.value = `[${filter.value?.map((date) =>
             dayjs(date).format("YYYY-M-DD"),

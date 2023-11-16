@@ -1,14 +1,17 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
-import { createSlice } from "@reduxjs/toolkit";
-import type { RootState, AppDispatch } from "src/store";
-import jwt_decode from "jwt-decode";
 import { useSelector, useDispatch } from "react-redux";
 import { Store, Dispatch, Action } from "redux";
+import { createSlice } from "@reduxjs/toolkit";
+import type { RootState, AppDispatch } from "src/store";
+
+import jwt_decode from "jwt-decode";
 import { notify } from "reapop";
-import { useUnknownErrorNotificationMessage } from "src/components/Notifications";
+
 import { authorizationHeader } from "src/helpers/authorizationHeader";
 import { makeRequest } from "src/helpers/makeRequest";
+
+import { useUnknownErrorNotificationMessage } from "src/components/Notifications";
 
 interface InitialState extends DecodedToken {
   hasErrors: boolean;
@@ -48,6 +51,14 @@ const authSlice = createSlice({
       loading: false,
       hasErrors: true,
       errors: payload,
+    }),
+    updateSessionUserSuccess: (state, { payload }) => ({
+      ...state,
+      user: { ...state.user, ...payload },
+    }),
+    updateSessionUserFailure: (state) => ({
+      ...state,
+      hasErrors: true,
     }),
     signOut: () => initialState,
   },
@@ -102,6 +113,26 @@ export const login = (email: string, password: string, rememberMe = false) => {
   };
 };
 
+export const updateSessionUser = (userId, payload: any = {}) => {
+  return async (dispatch: AppDispatch) => {
+    try {
+      const { data, message, code } = await makeRequest.put(
+        `/api/users/${userId}`,
+        payload,
+      );
+      if (code === 200) {
+        dispatch(authActions.updateSessionUserSuccess(data.user));
+        dispatch(notify(message, "success"));
+      } else {
+        dispatch(notify(message, "error"));
+        dispatch(authActions.updateSessionUserFailure());
+      }
+    } catch (error) {
+      dispatch(authActions.updateSessionUserFailure());
+    }
+  };
+};
+
 // Synchronous actions
 export const logout = () => {
   return (dispatch: AppDispatch) => {
@@ -124,6 +155,9 @@ export const useAuth = () => {
     token,
     login: (email: string, password: string) => {
       dispatch(login(email, password));
+    },
+    updateSessionUser: (userId, payload: any = {}) => {
+      dispatch(updateSessionUser(userId, payload));
     },
     logout: () => {
       dispatch(logout());

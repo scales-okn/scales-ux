@@ -192,7 +192,7 @@ const Filter = ({ panelId, filter }: Props) => {
 
   useEffect(() => {
     setTextSearch(value);
-  }, []);
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   const [rawSearch, setRawSearch] = useState("");
   const debouncedSearch = useDebounce(rawSearch, 1000);

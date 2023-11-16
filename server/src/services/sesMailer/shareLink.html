@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
   <head>
-    <title>Reset Password</title>
+    <title>SCALES Notebook Link</title>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
     <style>
       body {
@@ -12,7 +12,6 @@
         margin: 0 auto;
         width: 600px;
         padding: 30px;
-        /* background-color: #f3f4f6; */
         border: 2px solid #4e2a84;
         border-radius: 5px;
       }
@@ -33,8 +32,26 @@
         font-size: 22px;
         padding: 12px;
       }
+      .link-button-small {
+        border: solid 1px #8655cf;
+        color: #8655cf !important;
+        text-decoration: none;
+        font-weight: bold;
+        display: block;
+        width: 200px;
+        text-align: center;
+        padding: 10px 0;
+        margin-top: 50px;
+        border-radius: 5px;
+        text-align: center;
+        margin: 0 auto;
+        font-size: 16px;
+        padding: 6px;
+      }
       .text-blue {
         color: #4e2a84;
+      }
+      .alignCenter {
         text-align: center;
       }
       p {
@@ -46,21 +63,16 @@
   </head>
   <body>
     <div class="container">
-      <h1 class="text-blue">Reset Your Password</h1>
+      <h1 class="text-blue alignCenter">{{senderName}} has sent you a link to a public notebook.</h1>
+      <h3 class="alignCenter">After following this link, you may make your own copy using the green copy button in the upper right corner of the notebook.</h3>
+      <br /><br />
+      <a href="{{url}}" class="link-button">Go to Notebook</a>
       <br />
-      <p>
-        You are receiving this email because of a password reset request received at <a href="{{saturnUrl}}">Satyrn</a>.
-        <br />
-        <br />
-        <br />
-        If you did not request a password reset please ignore this email and contact us at {{sesSender}} to let us know.
-        <br />
-        <br />
-        <br />
-        <br />
-        <br />
-        <a href="{{url}}" class="link-button">Reset Password</a>
-      </p>
+      <br />
+      <p class="alignCenter">{{message}}</p>
+      <br />
+      <p>If you do not have a SCALES account set up, please click this link to create one:</p>
+      <a href="{{secondaryUrl}}" class="link-button-small">Create Account</a>
       <br /><br />
       <p>
         <img src="https://scales-okn.org/wp-content/uploads/2021/02/PreLoader.png" height="50px" width="50px" alt="scales-logo" />

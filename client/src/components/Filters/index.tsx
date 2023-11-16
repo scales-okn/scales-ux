@@ -42,7 +42,7 @@ const Filters = ({ panelId }: FiltersProps) => {
 
   const handleUpdateResults = () => {
     if (sessionUserCanEdit) {
-      getPanelResults();
+      getPanelResults({});
       const activeFilters = filters.filter((f) => f.value !== "");
 
       const freshAnalyses = {};
@@ -57,6 +57,7 @@ const Filters = ({ panelId }: FiltersProps) => {
       updatePanel({
         filters: activeFilters,
         analysis: freshAnalyses,
+        page: null,
       });
     }
   };
