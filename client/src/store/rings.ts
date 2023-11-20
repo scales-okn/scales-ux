@@ -141,7 +141,10 @@ export const createRing = (params) => {
 
       if (response.status === "OK") {
         dispatch(ringsActions.createRingSuccess(data.versions));
-        dispatch(notify("Ring Version Saved!", "success"));
+        const message =
+          data.versions.length === 1 ? "Ring Created!" : "Ring Version Saved!";
+
+        dispatch(notify(message, "success"));
       } else {
         dispatch(ringsActions.createRingFailure());
       }
