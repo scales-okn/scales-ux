@@ -1,7 +1,6 @@
 import { Request, Response } from "express";
 import { sequelize } from "../database";
 // import { notifyAdminsOfRingChange } from "../models/Ring";
-import { v4 as uuidv4 } from "uuid";
 
 // Resources validations are made with validateResources middleware and validations schemas
 // server/middlewares/validateResources.ts
@@ -22,16 +21,18 @@ export const create = async (req: Request, res: Response) => {
 
     const allRings = await sequelize.models.Ring.findAll({
       attributes: [
-        [sequelize.fn("max", sequelize.col("rid")), "max_rid"], // Calculate the maximum 'rid' and alias it as 'max_rid'
+        [sequelize.fn("max", sequelize.cast(sequelize.col("rid"), "integer")), "max_rid"], // Calculate the maximum 'rid' and alias it as 'max_rid'
       ],
       raw: true, // To get raw data (an array of objects) instead of instances
     });
 
-    const newRid = rid || allRings[0].max_rid + 1;
+    const maxRid = allRings[0]?.max_rid || 0;
+    const maxNum = parseInt(maxRid, 10);
+    const ridToSave = rid || maxNum + 1;
 
     await sequelize.models.Ring.create({
       userId,
-      rid: newRid,
+      rid: ridToSave,
       name,
       description,
       schemaVersion,
@@ -47,7 +48,7 @@ export const create = async (req: Request, res: Response) => {
     // }
 
     const versions = await sequelize.models.Ring.findAll({
-      where: { rid: newRid },
+      where: { rid: ridToSave },
       order: [["version", "DESC"]],
       include: [{ model: sequelize.models.User, as: "user" }],
     });

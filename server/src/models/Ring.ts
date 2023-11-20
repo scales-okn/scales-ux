@@ -15,7 +15,7 @@ export default (sequelize, options) => {
         allowNull: false,
       },
       rid: {
-        type: DataTypes.STRING,
+        type: DataTypes.INTEGER,
         allowNull: false,
       },
       name: {
