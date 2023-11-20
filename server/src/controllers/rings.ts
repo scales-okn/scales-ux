@@ -105,32 +105,43 @@ export const getRingVersions = async (req: Request, res: Response) => {
   }
 };
 
+// Find Ring by ringId and optionally version number
+export const findById = async (req: Request, res: Response) => {
+  try {
+    const { ringId, version } = req.params;
+
+    const whereClause = {
+      rid: ringId,
+      ...(version ? { version } : {}),
+    };
+
+    // either get latest or specific version
+    const ring = await sequelize.models.Ring.findOne({
+      where: whereClause,
+      order: [["createdAt", "DESC"]],
+    });
+
+    if (ring) {
+      // Convert rid to a string for api's consumption
+      ring.rid = String(ring.rid);
+    } else {
+      return res.send_notFound("Ring not found!");
+    }
+
+    return res.send_ok("", { ring });
+  } catch (error) {
+    console.warn(error);
+    return res.send_internalServerError("An error occurred, please try again!");
+  }
+};
+
 // TODO remove all references to the below
 
-// // Find Ring by ringId
-// export const findById = async (req: Request, res: Response) => {
-//   try {
-//     const { ringId } = req.params;
-//     const ring = await Ring.findOne({
-//       where: { rid: ringId },
-//     });
-//     if (!ring) {
-//       return res.send_notFound("Ring not found!");
-//     }
-
-//     return res.send_ok("", { ring });
-//   } catch (error) {
-//     console.warn(error); // eslint-disable-line no-console
-
-//     return res.send_internalServerError("An error occurred, please try again!");
-//   }
-// };
-
-// // Find Ring by ringId
-// export const version = async (req: Request, res: Response) => {
+// Find Ring by ringId
+// export const findRingByVersion = async (req: Request, res: Response) => {
 //   try {
 //     const { ringId, version } = req.params;
-//     const versions = await Ring.getVersions({
+//     const versions = await sequelize.models.Ring.getVersions({
 //       where: { rid: ringId, version },
 //       order: [["versionTimestamp", "DESC"]],
 //     });

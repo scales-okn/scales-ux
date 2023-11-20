@@ -15,7 +15,7 @@ export default (sequelize, options) => {
       ringVersion: DataTypes.INTEGER,
       filters: {
         type: DataTypes.JSON,
-        defaultValue: {},
+        defaultValue: [],
       },
       results: DataTypes.JSON,
       contents: DataTypes.JSON,

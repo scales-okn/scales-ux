@@ -2,11 +2,10 @@ import express from "express";
 import {
   create,
   findAll,
-  // findById,
+  findById,
   // update,
   getRingVersions,
   deleteRing,
-  // version,
 } from "../controllers/rings";
 import validateResource from "../middlewares/validateResources";
 import { createRingValidationSchema } from "../validation/rings";
@@ -24,10 +23,10 @@ router.get("/", checkAuth, findAll);
 router.get("/:rid", checkAuth, getRingVersions);
 
 // Retrieve Ring by Id
-// router.get("/:ringId", checkAuth, findById);
+router.get("/:ringId/:version?", checkAuth, findById);
 
 // Retrieve Ring Version
-// router.get("/:ringId/:version", checkAuth, version);
+// router.get("/:ringId/:version?", checkAuth, version);
 
 // Update a Ring
 // router.put("/:ringId", checkAuth, update);
