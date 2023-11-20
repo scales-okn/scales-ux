@@ -1,6 +1,6 @@
 import { Request, Response } from "express";
 import { sequelize } from "../database";
-import { notifyAdminsOfRingChange } from "../models/Ring";
+// import { notifyAdminsOfRingChange } from "../models/Ring";
 import { v4 as uuidv4 } from "uuid";
 
 // Resources validations are made with validateResources middleware and validations schemas
@@ -20,9 +20,18 @@ export const create = async (req: Request, res: Response) => {
       newVersionNum = existingRingVersions?.length + 1;
     }
 
+    const allRings = await sequelize.models.Ring.findAll({
+      attributes: [
+        [sequelize.fn("max", sequelize.col("rid")), "max_rid"], // Calculate the maximum 'rid' and alias it as 'max_rid'
+      ],
+      raw: true, // To get raw data (an array of objects) instead of instances
+    });
+
+    const newRid = rid || allRings[0].max_rid + 1;
+
     await sequelize.models.Ring.create({
       userId,
-      rid: rid || uuidv4(),
+      rid: newRid,
       name,
       description,
       schemaVersion,
@@ -32,13 +41,13 @@ export const create = async (req: Request, res: Response) => {
       version: newVersionNum,
     });
 
-    // TODO: readd notifications
+    // TODO: readd notifications?
     // if (process.env.NODE_ENV === "production") {
     //   notifyAdminsOfRingChange({ ring, updatedRing, oldDataSource, oldOntology });
     // }
 
     const versions = await sequelize.models.Ring.findAll({
-      where: { rid },
+      where: { rid: newRid },
       order: [["version", "DESC"]],
       include: [{ model: sequelize.models.User, as: "user" }],
     });
@@ -101,7 +110,7 @@ export const getRingVersions = async (req: Request, res: Response) => {
 // export const findById = async (req: Request, res: Response) => {
 //   try {
 //     const { ringId } = req.params;
-//     const ring = await sequelize.models.Ring.findOne({
+//     const ring = await Ring.findOne({
 //       where: { rid: ringId },
 //     });
 //     if (!ring) {
@@ -120,7 +129,7 @@ export const getRingVersions = async (req: Request, res: Response) => {
 // export const version = async (req: Request, res: Response) => {
 //   try {
 //     const { ringId, version } = req.params;
-//     const versions = await sequelize.models.Ring.getVersions({
+//     const versions = await Ring.getVersions({
 //       where: { rid: ringId, version },
 //       order: [["versionTimestamp", "DESC"]],
 //     });
@@ -143,14 +152,14 @@ export const getRingVersions = async (req: Request, res: Response) => {
 //   try {
 //     const { ringId } = req.params;
 
-//     const ring = await sequelize.models.Ring.findOne({
+//     const ring = await Ring.findOne({
 //       where: { id: ringId },
 //     });
 //     const oldDataSource = JSON.stringify(ring.dataSource);
 //     const oldOntology = JSON.stringify(ring.ontology);
 
 //     // Inject req for saveLog
-//     sequelize.models.Ring.beforeUpdate((model) => {
+//     Ring.beforeUpdate((model) => {
 //       model.req = req;
 //     });
 

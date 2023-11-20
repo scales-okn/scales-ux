@@ -65,6 +65,7 @@ const ringsSlice = createSlice({
       ...state,
       ringVersions: payload,
       loadingRing: false,
+      loadingRings: false,
       hasErrors: false,
     }),
     createRingFailure: (state) => ({
@@ -174,7 +175,7 @@ export const getRings = () => {
 export const getRingVersions = (rid) => {
   return async (dispatch: AppDispatch) => {
     try {
-      dispatch(ringsActions.getRings());
+      dispatch(ringsActions.getRingVersions());
 
       const response = await makeRequest.get(`/api/rings/${rid}`);
       const { data } = response;

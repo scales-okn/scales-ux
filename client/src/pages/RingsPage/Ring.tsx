@@ -27,6 +27,7 @@ import "./jsoneditor-react-dark-mode.css";
 
 const Ring = () => {
   const { rid = null } = useParams<{ rid: string | null }>();
+
   const {
     ringVersions,
     createRing,
@@ -42,11 +43,17 @@ const Ring = () => {
   const { width } = useWindowSize();
   const isTablet = width < 768;
 
-  const [currentVersion, setCurrentVersion] = useState(1);
+  const [currentVersion, setCurrentVersion] = useState(0);
   const [confirmVisible, setConfirmVisible] = useState(false);
   const currentRing = ringVersions?.find(
     (version) => version.version === currentVersion,
   );
+
+  useEffect(() => {
+    if (ringVersions.length && !rid) {
+      navigate(`/admin/rings/${ringVersions[0].rid}`);
+    }
+  }, [ringVersions]);
 
   useEffect(() => {
     if (ringVersions.length) {
@@ -86,9 +93,6 @@ const Ring = () => {
     }),
     onSubmit: async (values) => {
       createRing(values);
-      if (!rid) {
-        navigate("/admin/rings");
-      }
     },
   });
 
@@ -133,7 +137,7 @@ const Ring = () => {
 
     return output;
   };
-
+  console.log(formik.values);
   return (
     <>
       <BackButton onClick={() => navigate("/admin/rings")} />
@@ -151,7 +155,6 @@ const Ring = () => {
                     <Select
                       value={currentVersion}
                       onChange={(e) => {
-                        console.log(e.target.value);
                         setCurrentVersion(e.target.value as number);
                       }}
                       MenuProps={{
@@ -350,18 +353,21 @@ const Ring = () => {
                 <Typography variant="h6" mb={2}>
                   Data Source
                 </Typography>
-                <Editor
-                  mode="tree"
-                  allowedModes={["code", "tree"]}
-                  value={sanitizeData(formik.values.dataSource)}
-                  onChange={(jsObject) => {
-                    try {
-                      formik.setFieldValue("dataSource", jsObject);
-                    } catch (error) {
-                      console.warn(error); // eslint-disable-line no-console
-                    }
-                  }}
-                />
+                {/* Workaround for JSON editor's quirks. Only load the editor if we're creating a ring (no RID) or after we get ring data if we're editing a ring */}
+                {(!rid || formik.values.rid) && (
+                  <Editor
+                    mode="tree"
+                    allowedModes={["code", "tree"]}
+                    value={sanitizeData(formik.values.dataSource)}
+                    onChange={(jsObject) => {
+                      try {
+                        formik.setFieldValue("dataSource", jsObject);
+                      } catch (error) {
+                        console.warn(error); // eslint-disable-line no-console
+                      }
+                    }}
+                  />
+                )}
                 {formik.touched.dataSource && formik.errors.dataSource ? (
                   <Typography variant="body2" color="error">
                     {formik.errors.dataSource as string}
@@ -371,21 +377,23 @@ const Ring = () => {
             </Grid>
             <Grid container spacing={3}>
               <Grid item xs={12}>
-                <Typography variant="h6" mb={2}>
+                <Typography variant="h6" mb={2} mt={4}>
                   Ontology
                 </Typography>
-                <Editor
-                  mode="tree"
-                  allowedModes={["code", "tree"]}
-                  value={sanitizeData(formik.values.ontology)}
-                  onChange={(jsObject) => {
-                    try {
-                      formik.setFieldValue("ontology", jsObject);
-                    } catch (error) {
-                      console.warn(error); // eslint-disable-line no-console
-                    }
-                  }}
-                />
+                {(!rid || formik.values.rid) && (
+                  <Editor
+                    mode="tree"
+                    allowedModes={["code", "tree"]}
+                    value={sanitizeData(formik.values.ontology)}
+                    onChange={(jsObject) => {
+                      try {
+                        formik.setFieldValue("ontology", jsObject);
+                      } catch (error) {
+                        console.warn(error); // eslint-disable-line no-console
+                      }
+                    }}
+                  />
+                )}
                 {formik.touched.ontology && formik.errors.ontology ? (
                   <Typography variant="body2" color="error">
                     {formik.errors.ontology as string}

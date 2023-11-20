@@ -11,6 +11,10 @@ body {
   height: 92vh; // hacky
 }
 
+.jsoneditor-tree-inner {
+  min-height: 300px;
+}
+
 :root {
   --main-purple: #4e2a84;
   --main-purple-light: #915edd;
