@@ -1,15 +1,11 @@
-import React, { useState } from "react";
+import React from "react";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
-import { Box, Typography } from "@mui/material";
+import { Box } from "@mui/material";
 
 const BackButton = ({ onClick }) => {
-  const [isHovered, setIsHovered] = useState(false);
-
   return (
     <Box
       onClick={onClick}
-      onMouseEnter={() => setIsHovered(true)}
-      onMouseLeave={() => setIsHovered(false)}
       sx={{
         display: "flex",
         alignItems: "center",
