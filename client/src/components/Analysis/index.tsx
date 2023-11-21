@@ -1,5 +1,5 @@
 // @ts-nocheck
-import React, { useEffect, FunctionComponent, useState } from "react";
+import React, { useEffect, useState } from "react";
 
 import { usePanel } from "src/store/panels";
 import { useRing } from "src/store/rings";

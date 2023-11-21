@@ -10,6 +10,7 @@ import {
   Select,
   MenuItem,
   Switch,
+  Box,
 } from "@mui/material";
 
 import { useFormik } from "formik";
@@ -53,7 +54,7 @@ const Ring = () => {
     if (ringVersions.length && !rid) {
       navigate(`/admin/rings/${ringVersions[0].rid}`);
     }
-  }, [ringVersions]);
+  }, [ringVersions]); // eslint-disable-line react-hooks/exhaustive-deps
 
   useEffect(() => {
     if (ringVersions.length) {
@@ -69,7 +70,7 @@ const Ring = () => {
     return () => {
       clearRingVersions();
     };
-  }, [rid]);
+  }, [rid]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const formik = useFormik({
     initialValues: {
@@ -137,7 +138,18 @@ const Ring = () => {
 
     return output;
   };
-  console.log(formik.values);
+
+  const setEditorField = (value, fields) => {
+    fields.forEach((field) => {
+      formik.setFieldValue(
+        field,
+        sanitizeData(
+          ringVersions.find((version) => version.version === value)[field],
+        ),
+      );
+    });
+  };
+
   return (
     <>
       <BackButton onClick={() => navigate("/admin/rings")} />
@@ -155,7 +167,14 @@ const Ring = () => {
                     <Select
                       value={currentVersion}
                       onChange={(e) => {
-                        setCurrentVersion(e.target.value as number);
+                        setCurrentVersion(0);
+                        setEditorField(e.target.value, [
+                          "dataSource",
+                          "ontology",
+                        ]);
+                        setTimeout(() => {
+                          setCurrentVersion(e.target.value as number);
+                        }, 100);
                       }}
                       MenuProps={{
                         disableScrollLock: true,
@@ -245,7 +264,17 @@ const Ring = () => {
                   </Typography>
                 ) : null}
               </Grid>
-              <Grid item xs={12} sm={3}>
+              <Grid
+                item
+                xs={12}
+                sm={3}
+                sx={{
+                  display: "flex",
+                  alignItems: "center",
+                  paddingBottom: "24px",
+                }}
+              >
+                <Typography>Public</Typography>
                 <Switch
                   checked={formik.values.visibility === "public"}
                   color="primary"
@@ -256,26 +285,7 @@ const Ring = () => {
                     );
                   }}
                 />
-                <Typography>Public</Typography>
               </Grid>
-              {/* <Grid item xs={12} sm={3}>
-                <TextField
-                  sx={{ background: "white", marginBottom: "24px" }}
-                  fullWidth
-                  id="formRID"
-                  label="RID"
-                  name="rid"
-                  variant="outlined"
-                  value={formik.values.rid}
-                  onChange={formik.handleChange}
-                  onBlur={formik.handleBlur}
-                />
-                {formik.touched.rid && formik.errors.rid ? (
-                  <Typography variant="body2" color="error">
-                    {formik.errors.rid}
-                  </Typography>
-                ) : null}
-              </Grid> */}
             </Grid>
             <TextField
               sx={{ background: "white", marginBottom: "24px" }}
@@ -295,66 +305,13 @@ const Ring = () => {
                 {formik.errors.description}
               </Typography>
             ) : null}
-            <Grid container>
-              {/* <Grid item xs={12} sm={4}>
-                <TextField
-                  sx={{ background: "white", marginBottom: "24px" }}
-                  fullWidth
-                  id="formVersion"
-                  label="Version"
-                  name="version"
-                  variant="outlined"
-                  type="number"
-                  value={formik.values.version}
-                  onChange={formik.handleChange}
-                  onBlur={formik.handleBlur}
-                />
-                {formik.touched.version && formik.errors.version ? (
-                  <Typography variant="body2" color="error">
-                    {formik.errors.version}
-                  </Typography>
-                ) : null}
-              </Grid> */}
-
-              <Grid
-                item
-                sm={12}
-                sx={{
-                  display: "flex",
-                  alignItems: "center",
-                  padding: 0,
-                  marginBottom: "24px",
-                }}
-              >
-                {/* <TextField
-                  sx={{ background: "white", marginBottom: "24px" }}
-                  fullWidth
-                  id="formVisibility"
-                  label="Visibility"
-                  name="visibility"
-                  variant="outlined"
-                  select
-                  value={formik.values.visibility}
-                  onChange={formik.handleChange}
-                  onBlur={formik.handleBlur}
-                >
-                  <MenuItem value="public">Public</MenuItem>
-                  <MenuItem value="private">Private</MenuItem>
-                </TextField>
-                {formik.touched.visibility && formik.errors.visibility ? (
-                  <Typography variant="body2" color="error">
-                    {formik.errors.visibility}
-                  </Typography>
-                ) : null} */}
-              </Grid>
-            </Grid>
             <Grid container spacing={3}>
               <Grid item xs={12}>
                 <Typography variant="h6" mb={2}>
                   Data Source
                 </Typography>
-                {/* Workaround for JSON editor's quirks. Only load the editor if we're creating a ring (no RID) or after we get ring data if we're editing a ring */}
-                {(!rid || formik.values.rid) && (
+                {/* Workaround for JSON editor's quirks. Only load the editor if we're creating a ring (no RID) or after we get ring data if we're editing a ring. Same below for ontology. */}
+                {(!rid || formik.values.rid) && currentVersion > 0 ? (
                   <Editor
                     mode="tree"
                     allowedModes={["code", "tree"]}
@@ -367,6 +324,16 @@ const Ring = () => {
                       }
                     }}
                   />
+                ) : (
+                  <Box
+                    sx={{
+                      height: "361px",
+                      width: "100%",
+                      background: "rgb(102, 102, 102)",
+                    }}
+                  >
+                    <Loader isVisible={true} />
+                  </Box>
                 )}
                 {formik.touched.dataSource && formik.errors.dataSource ? (
                   <Typography variant="body2" color="error">
@@ -380,7 +347,7 @@ const Ring = () => {
                 <Typography variant="h6" mb={2} mt={4}>
                   Ontology
                 </Typography>
-                {(!rid || formik.values.rid) && (
+                {(!rid || formik.values.rid) && currentVersion > 0 ? (
                   <Editor
                     mode="tree"
                     allowedModes={["code", "tree"]}
@@ -393,6 +360,16 @@ const Ring = () => {
                       }
                     }}
                   />
+                ) : (
+                  <Box
+                    sx={{
+                      height: "361px",
+                      width: "100%",
+                      background: "rgb(102, 102, 102)",
+                    }}
+                  >
+                    <Loader isVisible={true} />
+                  </Box>
                 )}
                 {formik.touched.ontology && formik.errors.ontology ? (
                   <Typography variant="body2" color="error">
