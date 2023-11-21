@@ -105,13 +105,13 @@ export const getRingVersions = async (req: Request, res: Response) => {
   }
 };
 
-// Find Ring by ringId and optionally version number
+// Find Ring by ringRid and optionally version number
 export const findById = async (req: Request, res: Response) => {
   try {
-    const { ringId, version } = req.params;
+    const { rid, version } = req.params;
 
     const whereClause = {
-      rid: ringId,
+      rid,
       ...(version ? { version } : {}),
     };
 

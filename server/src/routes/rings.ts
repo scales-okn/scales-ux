@@ -22,8 +22,8 @@ router.get("/", checkAuth, findAll);
 // Retrieve ring versions by RID
 router.get("/:rid", checkAuth, getRingVersions);
 
-// Retrieve Ring by Id
-router.get("/:ringId/:version?", checkAuth, findById);
+// Retrieve Ring by RID
+router.get("/:rid/:version?", checkAuth, findById);
 
 // Retrieve Ring Version
 // router.get("/:ringId/:version?", checkAuth, version);

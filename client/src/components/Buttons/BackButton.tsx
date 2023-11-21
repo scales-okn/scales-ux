@@ -23,21 +23,11 @@ const BackButton = ({ onClick }) => {
         left: "0",
         opacity: "0.8",
         transition: "background 0.2s ease-in-out",
-
-        // width: isHovered ? "90px" : "38px",
         width: "38px",
       }}
     >
       <ArrowBackIcon sx={{ fontSize: "22px" }} />
       <div style={{ marginLeft: "6px" }}></div>
-      {/* {isHovered ? (
-        <Typography
-          sx={{ overflow: "hidden", whiteSpace: "nowrap" }}
-          variant="body2"
-        >
-          Back
-        </Typography>
-      ) : null} */}
     </Box>
   );
 };
