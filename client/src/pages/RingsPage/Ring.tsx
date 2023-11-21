@@ -117,7 +117,7 @@ const Ring = () => {
 
       formik.setValues(existingValues);
     }
-  }, [ringVersions, currentVersion]);
+  }, [ringVersions, currentVersion]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const onDeleteRingConfirm = () => {
     deleteRing(ringVersions[0].rid);

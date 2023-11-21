@@ -135,7 +135,7 @@ export const findById = async (req: Request, res: Response) => {
   }
 };
 
-// TODO remove all references to the below
+// TODO remove all references to the below commented code
 
 // Find Ring by ringId
 // export const findRingByVersion = async (req: Request, res: Response) => {
@@ -195,7 +195,6 @@ export const findById = async (req: Request, res: Response) => {
 //   }
 // };
 
-// TODO refactor to find by rid
 // Delete a Ring
 export const deleteRing = async (req: Request, res: Response) => {
   try {
