@@ -3,7 +3,7 @@ import { usePanel } from "src/store/panels";
 
 import dayjs from "dayjs";
 import { isEmpty } from "lodash";
-import { Button, Tooltip, Typography, Box } from "@mui/material";
+import { Button, Tooltip, Box } from "@mui/material";
 import { CameraAlt, UnfoldLess, UnfoldMore } from "@mui/icons-material";
 import * as htmlToImage from "html-to-image";
 import download from "downloadjs";
