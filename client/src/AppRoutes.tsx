@@ -54,7 +54,7 @@ const AppRoutes = () => {
       />
       <Route path="/admin/rings" element={requireAuth(<Admin />)} />
       <Route path="/admin/rings/create" element={requireAuth(<Ring />)} />
-      <Route path="/admin/rings/:ringId" element={requireAuth(<Ring />)} />
+      <Route path="/admin/rings/:rid" element={requireAuth(<Ring />)} />
       <Route path="/admin/*" element={<Navigate to="/admin/rings" replace />} />
 
       {/* Default Redirect */}

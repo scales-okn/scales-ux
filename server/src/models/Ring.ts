@@ -15,7 +15,7 @@ export default (sequelize, options) => {
         allowNull: false,
       },
       rid: {
-        type: DataTypes.STRING,
+        type: DataTypes.INTEGER,
         allowNull: false,
       },
       name: {
@@ -52,6 +52,13 @@ export default (sequelize, options) => {
     options
   );
 
+  Ring.associate = (models) => {
+    Ring.belongsTo(models.User, {
+      foreignKey: "userId",
+      as: "user",
+    });
+  };
+
   return Ring;
 };
 
@@ -60,7 +67,7 @@ export const notifyAdminsOfRingChange = async ({ ring, updatedRing, oldDataSourc
     where: { role: "admin" },
   });
 
-  const ringLabel = `${ring.name} (RID: ${ring.id})`;
+  const ringLabel = `${ring.name} (RID: ${ring.rid})`;
 
   const newDataSource = JSON.stringify(updatedRing.dataSource);
   const newOntology = JSON.stringify(updatedRing.ontology);

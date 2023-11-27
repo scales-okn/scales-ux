@@ -46,12 +46,12 @@ export const create = async (req: Request, res: Response) => {
       if (!originalNotebook || !originalPanels.length) return;
 
       originalPanels.map((panel) => {
-        const { description, ringId, ringVersion, filters, results, contents, analysis } = panel;
+        const { description, ringRid, ringVersion, filters, results, contents, analysis } = panel;
 
         sequelize.models.Panel.create({
           description,
           notebookId: newNotebookId,
-          ringId,
+          ringRid,
           ringVersion,
           filters,
           results,

@@ -216,8 +216,8 @@ const Answers = ({
       </Box>
       {answer && (isBarChart || isLineChart || isMultilineChart) ? (
         <Tooltip title="Save Snapshot">
-          <Button onClick={onCapture} variant="outlined">
-            <CameraAlt />
+          <Button onClick={onCapture} variant="outlined" color="success">
+            <CameraAlt color="success" />
           </Button>
         </Tooltip>
       ) : null}

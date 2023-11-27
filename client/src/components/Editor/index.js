@@ -92,7 +92,6 @@ class Editor extends Component {
   componentDidMount() {
     const { allowedModes, innerRef, htmlElementProps, tag, onChange, ...rest } =
       this.props;
-
     this.createEditor({
       ...rest,
       modes: allowedModes,

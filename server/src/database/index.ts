@@ -1,5 +1,5 @@
 import Sequelize from "sequelize";
-import Version from "sequelize-version";
+// import Version from "sequelize-version";
 import UserModel from "../models/User";
 import PanelModel from "../models/Panel";
 import NotebookModel from "../models/Notebook";
@@ -63,26 +63,12 @@ const database = async () => {
       Ring,
       Notebook,
     });
+    Ring.associate({
+      User,
+    });
 
     // Logs
     LogModel(sequelize);
-
-    // Versioning
-    new Version(Notebook, {
-      sequelize,
-      underscored: false,
-      tableUnderscored: false,
-      prefix: "Version",
-      attributePrefix: "version",
-    });
-
-    new Version(Ring, {
-      sequelize,
-      underscored: false,
-      tableUnderscored: false,
-      prefix: "Version",
-      attributePrefix: "version",
-    });
   } catch (error) {
     console.error("src/models failed to initialize!", error);
   }

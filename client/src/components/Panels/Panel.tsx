@@ -70,7 +70,7 @@ const Panel = ({ panelId, defaultCollapsed }: PanelT) => {
   const sessionUser = useSessionUser();
   const sessionUserCanEdit = sessionUser?.id === panel?.userId;
 
-  const { ring, info, getRingInfo } = useRing(panel?.ringId);
+  const { ring, info, getRingInfo } = useRing(panel?.ringRid);
 
   const [confirmVisible, setConfirmVisible] = useState(false);
   const [description, setDescription] = useState(panel?.description);
@@ -168,7 +168,7 @@ const Panel = ({ panelId, defaultCollapsed }: PanelT) => {
     getPanelResults({ sortOverride: sort });
   };
 
-  if (!panel?.ringId) return <Dataset panelId={panel.id} />;
+  if (!panel?.ringRid) return <Dataset panelId={panel.id} />;
 
   return (
     <Accordion expanded={!collapsed} className="mb-4">
