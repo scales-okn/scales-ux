@@ -69,23 +69,6 @@ const database = async () => {
 
     // Logs
     LogModel(sequelize);
-
-    // // Versioning
-    // new Version(Notebook, {
-    //   sequelize,
-    //   underscored: false,
-    //   tableUnderscored: false,
-    //   prefix: "Version",
-    //   attributePrefix: "version",
-    // });
-
-    // new Version(Ring, {
-    //   sequelize,
-    //   underscored: false,
-    //   tableUnderscored: false,
-    //   prefix: "Version",
-    //   attributePrefix: "version",
-    // });
   } catch (error) {
     console.error("src/models failed to initialize!", error);
   }

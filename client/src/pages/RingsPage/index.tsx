@@ -39,12 +39,6 @@ const RingsPage = () => {
       ),
       renderHeader,
     },
-    // {
-    //   field: "rid",
-    //   headerName: "Ring ID",
-    //   width: 200,
-    //   renderHeader,
-    // },
     {
       field: "description",
       headerName: "Description",
