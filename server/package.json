@@ -25,7 +25,6 @@
     "pg-hstore": "^2.3.4",
     "pm2": "^5.2.0",
     "responser": "^2.5.2",
-    "sequelize": "^6.33.0",
     "sequelize-paper-trail": "^3.0.1",
     "sequelize-version": "^0.0.58",
     "yup": "^0.32.11"
