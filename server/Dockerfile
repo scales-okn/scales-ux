@@ -8,6 +8,8 @@ COPY . .
 
 RUN npm install --legacy-peer-deps
 
+RUN npm install -g typescript
+
 RUN npm run build
 
 RUN npm prune --omit=dev --legacy-peer-deps && npm cache clean --force
