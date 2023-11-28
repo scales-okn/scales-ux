@@ -17,6 +17,8 @@ jobs:
       - name: Build image
         working-directory: ./server
         run: docker build -t registry.digitalocean.com/scales-okn/scales-ux-server:latest .
+      - name: Run tests
+        run: docker run --rm registry.digitalocean.com/scales-okn/scales-ux-server:latest npm test
       - name: Install doctl
         uses: digitalocean/action-doctl@v2
         with:
