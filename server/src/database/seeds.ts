@@ -1,9 +1,9 @@
 import bcrypt from "bcryptjs";
 
-const seedAdminUser = async (sequelize) => {
+const seedUser = async ({ sequelize, email, firstName, lastName, role }) => {
   if (process.env.SEED_ADMIN_PASSWORD) {
     const existingUser = await sequelize.models.User.findOne({
-      where: { email: "satyrnplatform@gmail.com" },
+      where: { email },
     });
 
     if (existingUser) {
@@ -15,12 +15,12 @@ const seedAdminUser = async (sequelize) => {
     const hash = await bcrypt.hash(process.env.SEED_ADMIN_PASSWORD, salt);
 
     const adminUser = await sequelize.models.User.build({
-      firstName: "Admin",
-      lastName: "Testing",
-      email: "satyrnplatform@gmail.com",
+      firstName,
+      lastName,
+      email,
       usage: "Admin Testing Purpose",
       password: hash,
-      role: "admin",
+      role,
       approved: true,
       emailIsVerified: true,
     });
@@ -32,31 +32,34 @@ const seedAdminUser = async (sequelize) => {
   }
 };
 
-const seedHelpTexts = async (sequelize) => {
-  const searchableFields = [
-    "ontology_labels",
-    "case_status",
-    "case_type",
-    "cause",
-    "circuit_abbrev",
-    "city_name",
-    "court_name",
-    "state_abbrev",
-    "case_id",
-    "filing_date",
-    "year",
-    "judge",
-    "case_NOS",
-    "parties",
-    "pacer_pro_se",
-    "terminating_date",
-    "case_id-header",
-    "filing_date-header",
-    "terminating_date-header",
-    "case_NOS-header",
-    "court_name-header",
-    "case_name-header",
+const seedUsers = async (sequelize) => {
+  const testUsers = [
+    {
+      email: "satyrnplatform-standard@gmail.com",
+      firstName: "Standard",
+      lastName: "User",
+      role: "user",
+    },
+    {
+      email: "satyrnplatform-admin@gmail.com",
+      firstName: "Admin",
+      lastName: "User",
+      role: "admin",
+    },
   ];
+
+  if (process.env.NODE_ENV !== "production") {
+    testUsers.map(async (user) => {
+      const { email, firstName, lastName, role } = user;
+      await seedUser({ sequelize, email, firstName, lastName, role });
+    });
+  }
+
+  await seedUser({ sequelize, email: "satyrnplatform@gmail.com", firstName: "Admin", lastName: "Testing", role: "admin" });
+};
+
+const seedHelpTexts = async (sequelize) => {
+  const searchableFields = ["ontology_labels", "case_status", "case_type", "cause", "circuit_abbrev", "city_name", "court_name", "state_abbrev", "case_id", "filing_date", "year", "judge", "case_NOS", "parties", "pacer_pro_se", "terminating_date", "case_id-header", "filing_date-header", "terminating_date-header", "case_NOS-header", "court_name-header", "case_name-header"];
 
   for (const slug of searchableFields) {
     const description = "";
@@ -78,7 +81,7 @@ const seedHelpTexts = async (sequelize) => {
 
 const seeds = async (sequelize) => {
   try {
-    seedAdminUser(sequelize);
+    seedUsers(sequelize);
     seedHelpTexts(sequelize);
   } catch (error) {
     console.warn(error); // eslint-disable-line no-console

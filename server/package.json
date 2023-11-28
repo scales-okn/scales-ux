@@ -54,13 +54,12 @@
     "prettier": "^2.5.1",
     "sequelize-cli": "^6.6.1",
     "supertest": "^6.2.2",
-    "ts-node": "^10.4.0",
     "typescript": "^5.2.2"
   },
   "scripts": {
     "build": "tsc --build src && cp src/services/sesMailer/*.html build/services/sesMailer/",
     "start": "nodemon -r dotenv/config src/index.ts",
-    "test": "mocha -r dotenv/config --timeout 30000 ./test/**/*.js --exit",
+    "test": "npm run build && NODE_ENV=test mocha --require dotenv/config --timeout 30000 ./test/**/*.js --exit",
     "format": "prettier --write src/.",
     "lint": "tsc --noEmit && eslint --fix src/**/*.ts"
   }
