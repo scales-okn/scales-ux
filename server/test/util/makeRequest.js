@@ -1,24 +1,26 @@
 const app = require("../../build/index.js");
 const request = require("supertest")(app.default);
-const token = require("./token.js");
 
-// type makeRequestT = {
-//   endpoint: string;
-//   body: Record<string, any>;
-//   endCallback: (err: any, res: any) => void;
-//   method: "get" | "post" | "put" | "delete";
-// };
+const makeRequest = async ({ endpoint, body, method, token }) => {
+  return new Promise(async (resolve, reject) => {
+    try {
+      const req = request[method](endpoint);
 
-const makeRequest = ({ endpoint, body, endCallback, method, done }) => {
-  const req = request[method](endpoint)
-    .set("Authorization", token)
-    .send(body)
-    .end((err, res) => {
-      if (err) return done(err);
-      endCallback(res);
-    });
+      if (token) {
+        req.set("Authorization", token);
+      }
 
-  return req;
+      const res = await req.send(body);
+
+      if (res.body.code !== 200) {
+        return reject(new Error(`Request failed: ${res.body.message}`));
+      }
+
+      resolve(res);
+    } catch (err) {
+      reject(err);
+    }
+  });
 };
 
 module.exports = { makeRequest };

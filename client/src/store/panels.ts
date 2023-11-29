@@ -361,10 +361,10 @@ export const getPanelResults =
     // sort override is to account for async when updating panel and fetching results simultaneously. Somewhat hacky.
     try {
       const panel = panelSelector(getState(), panelId);
-      const { filters, ringId, sort } = panel;
+      const { filters, ringRid, sort } = panel;
 
       // @ts-ignore
-      const { rid, info, version } = ringSelector(getState(), ringId);
+      const { rid, info, version } = ringSelector(getState(), ringRid);
       dispatch(panelsActions.getPanelResults({ panelId }));
 
       const filterParams = filters
@@ -414,10 +414,10 @@ export const downloadCsv =
   (panelId) => async (dispatch: AppDispatch, getState) => {
     try {
       const panel = panelSelector(getState(), panelId);
-      const { filters, ringId } = panel;
+      const { filters, ringRid } = panel;
 
       // @ts-ignore
-      const { rid, info, version } = ringSelector(getState(), ringId);
+      const { rid, info, version } = ringSelector(getState(), ringRid);
       dispatch(panelsActions.getCsv({ panelId }));
       const filterParams = filters
         ?.map((filter) => {

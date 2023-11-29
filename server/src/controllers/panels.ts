@@ -1,7 +1,7 @@
 import { Request, Response } from "express";
 import { sequelize } from "../database";
-import accessControl from "../services/accesscontrol";
-import { Op } from "sequelize";
+// import accessControl from "../services/accesscontrol";
+// import { Op } from "sequelize";
 
 // Resources validations are made with validateResources middleware and validations schemas
 // server/middlewares/validateResources.ts
@@ -10,12 +10,12 @@ import { Op } from "sequelize";
 // Create Panel
 export const create = async (req: Request, res: Response) => {
   try {
-    const { description, notebookId, ringId, userId } = req.body;
+    const { description, notebookId, ringRid, userId } = req.body;
 
     const panel = await sequelize.models.Panel.create({
       description,
       notebookId,
-      ringId,
+      ringRid,
       userId,
     });
 

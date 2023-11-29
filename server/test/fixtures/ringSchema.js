@@ -1,15 +1,7 @@
 module.exports = {
   title: "RingSchema",
   type: "object",
-  required: [
-    "rid",
-    "name",
-    "version",
-    "userId",
-    "dataSource",
-    "ontology",
-    "visibility",
-  ],
+  required: ["rid", "name", "version", "userId", "dataSource", "ontology", "visibility"],
   properties: {
     id: {
       type: "number",
@@ -18,7 +10,7 @@ module.exports = {
       type: ["string", "null"],
     },
     rid: {
-      type: "string",
+      type: "number",
     },
     name: {
       type: "string",

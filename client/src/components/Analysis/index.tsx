@@ -1,5 +1,5 @@
 // @ts-nocheck
-import React, { useEffect, FunctionComponent, useState } from "react";
+import React, { useEffect, useState } from "react";
 
 import { usePanel } from "src/store/panels";
 import { useRing } from "src/store/rings";
@@ -25,14 +25,14 @@ import { queryBuilder } from "./queryBuilder";
 
 import "./style.scss";
 
-type Props = {
+type AnalysisT = {
   panelId: string;
 };
 
-const Analysis: FunctionComponent<Props> = ({ panelId }) => {
+const Analysis = ({ panelId }: AnalysisT) => {
   const { panel, analysis, updatePanel, filters } = usePanel(panelId);
 
-  const { ring, info } = useRing(panel?.ringId);
+  const { ring, info } = useRing(panel?.ringRid);
 
   const { width } = useWindowSize();
   const isTablet = width < 660;

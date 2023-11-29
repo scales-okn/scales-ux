@@ -14,6 +14,12 @@ jobs:
     steps:
       - name: Checkout the repo
         uses: actions/checkout@v2
+      - name: NPM install
+        working-directory: ./server
+        run: npm i
+      - name: Run tests
+        working-directory: ./server
+        run: npm test
       - name: Build image
         working-directory: ./server
         run: docker build -t registry.digitalocean.com/scales-okn/scales-ux-server:latest .

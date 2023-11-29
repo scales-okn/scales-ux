@@ -1,5 +1,4 @@
 import Sequelize from "sequelize";
-import Version from "sequelize-version";
 import UserModel from "../models/User";
 import PanelModel from "../models/Panel";
 import NotebookModel from "../models/Notebook";
@@ -10,8 +9,10 @@ import LogModel from "../models/Log";
 import logs from "./logs";
 import seeds from "./seeds";
 
+const dbName = process.env.NODE_ENV === "test" ? process.env.TEST_DB_NAME : process.env.DB_NAME;
+
 // @ts-ignore
-export const sequelize = new Sequelize(process.env.DB_NAME, process.env.DB_USERNAME, process.env.DB_PASSWORD, {
+export const sequelize = new Sequelize(dbName, process.env.DB_USERNAME, process.env.DB_PASSWORD, {
   host: process.env.DB_HOST,
   port: process.env.DB_PORT,
   dialect: process.env.DB_DIALECT,
@@ -63,26 +64,12 @@ const database = async () => {
       Ring,
       Notebook,
     });
+    Ring.associate({
+      User,
+    });
 
     // Logs
     LogModel(sequelize);
-
-    // Versioning
-    new Version(Notebook, {
-      sequelize,
-      underscored: false,
-      tableUnderscored: false,
-      prefix: "Version",
-      attributePrefix: "version",
-    });
-
-    new Version(Ring, {
-      sequelize,
-      underscored: false,
-      tableUnderscored: false,
-      prefix: "Version",
-      attributePrefix: "version",
-    });
   } catch (error) {
     console.error("src/models failed to initialize!", error);
   }

@@ -10,7 +10,7 @@ import dayjs from "dayjs";
 import ColumnHeader from "src/components/ColumnHeader";
 import Loader from "src/components/Loader";
 
-const RingsPage: React.FC = () => {
+const RingsPage = () => {
   const { getRings, rings, loadingRings } = useRings();
 
   useEffectOnce(() => {
@@ -33,16 +33,10 @@ const RingsPage: React.FC = () => {
       headerName: "Name",
       width: 150,
       renderCell: (params: GridCellParams) => (
-        <Link to={`/admin/rings/${params.row.id}`} className="ms-2">
+        <Link to={`/admin/rings/${params.row.rid}`} className="ms-2">
           {params.row.name}
         </Link>
       ),
-      renderHeader,
-    },
-    {
-      field: "rid",
-      headerName: "Ring ID",
-      width: 200,
       renderHeader,
     },
     {
@@ -85,6 +79,7 @@ const RingsPage: React.FC = () => {
             display: "flex",
             flexDirection: "column",
             alignItems: "flex-end",
+            marginBottom: "80px",
           }}
         >
           <Link
@@ -102,15 +97,24 @@ const RingsPage: React.FC = () => {
               Create Ring
             </Button>
           </Link>
-          <div style={{ height: "60vh", width: "100%", margin: "0 auto" }}>
+          <div
+            style={{
+              height: "60vh",
+              width: "100%",
+              margin: "0 auto",
+            }}
+          >
             <DataGrid
               rows={rings}
               columns={columns}
+              rowHeight={80}
               disableColumnMenu
               disableColumnFilter
               hideFooterPagination
+              hideFooter
               checkboxSelection={false}
               className="bg-white p-0"
+              autoHeight
             />
           </div>
         </div>

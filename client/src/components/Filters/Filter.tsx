@@ -53,7 +53,7 @@ const Filter = ({ panelId, filter }: Props) => {
   const sessionUser = useSessionUser();
   const sessionUserCanEdit = sessionUser?.id === panel?.userId;
 
-  const { ring, info } = useRing(panel.ringId);
+  const { ring, info } = useRing(panel.ringRid);
   const { type, id, value } = filter;
 
   const [isLoading, setIsLoading] = useState<boolean>(false);

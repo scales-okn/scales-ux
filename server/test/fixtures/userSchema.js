@@ -23,7 +23,14 @@ module.exports = {
       unique: true,
     },
     emailVerificationToken: {
-      type: "string",
+      anyOf: [
+        {
+          type: "string",
+        },
+        {
+          type: "null",
+        },
+      ],
     },
     emailIsVerified: {
       type: "boolean",

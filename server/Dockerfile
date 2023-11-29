@@ -6,11 +6,11 @@ WORKDIR /app/scales-ux-server
 
 COPY . .
 
-RUN npm install --legacy-peer-deps
+RUN npm install
 
 RUN npm run build
 
-RUN npm prune --omit=dev --legacy-peer-deps && npm cache clean --force
+RUN npm prune --omit=dev && npm cache clean --force
 
 FROM node:20-alpine
 
