@@ -5,6 +5,8 @@ on:
     branches: [develop]
     paths:
       - "server/**"
+    paths-ignore:
+      - "server/.github/**"
   # allows you to manually execute this pipeline from the Actions tab.
   workflow_dispatch:
 
