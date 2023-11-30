@@ -55,6 +55,11 @@ export default (sequelize, options) => {
         values: userRoleValues,
         defaultValue: "user",
       },
+      notifyOnNewRingVersion: {
+        type: DataTypes.BOOLEAN,
+        allowNull: false,
+        defaultValue: true,
+      },
     },
     options
   );
@@ -93,7 +98,6 @@ const verifyEmail = async (user, isAdmin, password = null) => {
       recipientName,
     };
 
-    // TODO: refactor to use RBAC once session concept more fleshed out
     if (isAdmin) {
       user.update({
         emailIsVerified: true,
