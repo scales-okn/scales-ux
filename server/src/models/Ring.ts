@@ -97,6 +97,8 @@ export const notifyAdminsOfRingChange = async ({ ringVersion }) => {
   const ringLabel = `${ringVersion.name} (RID: ${ringVersion.rid})`;
 
   admins.forEach((a) => {
+    if (a.notifyOnNewRingVersion === false) return;
+
     sendEmail({
       emailSubject: `Ring Updated: (${ringLabel})`,
       recipientEmail: a.email,
