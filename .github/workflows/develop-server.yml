@@ -2,9 +2,9 @@ name: QA Scales UX Server CI
 
 on:
   push:
-      branches: [integration-tests]
-    # paths:
-    #   - "server/**"
+      branches: [develop]
+      paths:
+        - "server/**"
   # allows you to manually execute this pipeline from the Actions tab.
   workflow_dispatch:
 
