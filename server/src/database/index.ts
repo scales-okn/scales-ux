@@ -16,6 +16,7 @@ export const sequelize = new Sequelize(dbName, process.env.DB_USERNAME, process.
   host: process.env.DB_HOST,
   port: process.env.DB_PORT,
   dialect: process.env.DB_DIALECT,
+  logging: !!process.env.DB_LOG,
   dialectOptions:
     process.env.STAGE != "local"
       ? {
