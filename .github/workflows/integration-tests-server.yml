@@ -4,8 +4,7 @@ on:
   push:
     branches: [integration-tests]
     # paths:
-    # - "server/**"
-    # - "!server/.github/**"
+    #   - "server/**"
   # allows you to manually execute this pipeline from the Actions tab.
   workflow_dispatch:
 
