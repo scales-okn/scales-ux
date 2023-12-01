@@ -8,7 +8,6 @@ import useWindowSize from "src/hooks/useWindowSize";
 import AppBar from "@mui/material/AppBar";
 import Box from "@mui/material/Box";
 import Toolbar from "@mui/material/Toolbar";
-import IconButton from "@mui/material/IconButton";
 import MenuIcon from "@mui/icons-material/Menu";
 import Container from "@mui/material/Container";
 
@@ -17,6 +16,7 @@ import MobileMenu from "./MobileMenu";
 import NavItem from "./NavItem";
 import Logout from "./LogoutMenu";
 import { styles } from "./styles";
+import { Button } from "@mui/material";
 
 type PageLayoutT = {
   pageTitle?: string;
@@ -77,10 +77,7 @@ const PageLayout = ({ id = "", children, pageTitle }: PageLayoutT) => {
               zIndex: "9001",
             }}
           >
-            <IconButton
-              size="small"
-              edge="start"
-              color="inherit"
+            <Button
               aria-label="menu"
               sx={{ width: isTablet ? "40px" : "160px" }}
             >
@@ -96,7 +93,7 @@ const PageLayout = ({ id = "", children, pageTitle }: PageLayoutT) => {
                   />
                 </Link>
               )}
-            </IconButton>
+            </Button>
             {!isTablet && (
               <Toolbar
                 sx={{
