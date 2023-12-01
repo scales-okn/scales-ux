@@ -95,7 +95,7 @@ const Ring = () => {
       visibility: yup.string().required("Visibility is required"),
     }),
     onSubmit: async (values) => {
-      createRing(values);
+      createRing({ ...values, userId: sessionUser.id });
     },
   });
 
