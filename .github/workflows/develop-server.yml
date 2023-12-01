@@ -4,6 +4,7 @@ on:
   workflow_run:
     branches: [integration-tests]
     workflows: [Scales UX Server Integration Test]
+    types: [completed]
   # allows you to manually execute this pipeline from the Actions tab.
   workflow_dispatch:
 
