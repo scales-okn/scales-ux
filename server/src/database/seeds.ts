@@ -81,8 +81,8 @@ const seedHelpTexts = async (sequelize) => {
 
 const seeds = async (sequelize) => {
   try {
-    seedUsers(sequelize);
-    seedHelpTexts(sequelize);
+    await seedUsers(sequelize);
+    await seedHelpTexts(sequelize);
   } catch (error) {
     console.warn(error); // eslint-disable-line no-console
   }

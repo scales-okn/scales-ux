@@ -59,7 +59,7 @@
   "scripts": {
     "build": "tsc --build src && cp src/services/sesMailer/*.html build/services/sesMailer/",
     "start": "nodemon -r dotenv/config src/index.ts",
-    "test": "npm run build && NODE_ENV=test mocha --require dotenv/config --timeout 30000 ./test/**/*.js --exit",
+    "test": "npm run build && NODE_ENV=test mocha --require dotenv/config --delay --timeout 30000 ./test/**/*.js --exit",
     "format": "prettier --write src/.",
     "lint": "tsc --noEmit && eslint --fix src/**/*.ts"
   }
