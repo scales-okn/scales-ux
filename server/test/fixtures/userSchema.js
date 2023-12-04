@@ -44,5 +44,8 @@ module.exports = {
     role: {
       type: "string",
     },
+    notifyOnNewRingVersion: {
+      type: "boolean",
+    },
   },
 };
