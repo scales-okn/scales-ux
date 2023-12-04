@@ -313,7 +313,7 @@ const Ring = () => {
                   Data Source
                 </Typography>
                 {/* Workaround for JSON editor's quirks. Only load the editor if we're creating a ring (no RID) or after we get ring data if we're editing a ring. Same below for ontology. */}
-                {(!rid || formik.values.rid) && currentVersion > 0 ? (
+                {!rid || formik.values.rid ? (
                   <Editor
                     mode="tree"
                     allowedModes={["code", "tree"]}
@@ -386,7 +386,7 @@ const Ring = () => {
                 <Typography variant="h5" mb={2} mt={4}>
                   Ontology
                 </Typography>
-                {(!rid || formik.values.rid) && currentVersion > 0 ? (
+                {!rid || formik.values.rid ? (
                   <Editor
                     mode="tree"
                     allowedModes={["code", "tree"]}
