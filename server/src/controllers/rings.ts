@@ -1,6 +1,6 @@
 import { Request, Response } from "express";
 import { sequelize } from "../database";
-// import { notifyAdminsOfRingChange } from "../models/Ring";
+import { notifyAdminsOfRingChange, createRingDiff } from "../models/Ring";
 
 // Resources validations are made with validateResources middleware and validations schemas
 // server/middlewares/validateResources.ts
@@ -12,25 +12,27 @@ export const create = async (req: Request, res: Response) => {
     const { userId, rid, name, description, schemaVersion, dataSource, ontology, visibility } = req.body;
 
     let newVersionNum = 1;
+    let ridToSave = rid;
     if (rid) {
       const existingRingVersions = await sequelize.models.Ring.findAll({
         where: { rid },
       });
       newVersionNum = existingRingVersions?.length + 1;
+    } else {
+      // Add one to the highest existing RID
+      const allRings = await sequelize.models.Ring.findAll({
+        attributes: [
+          [sequelize.fn("max", sequelize.cast(sequelize.col("rid"), "integer")), "max_rid"], // Calculate the maximum 'rid' and alias it as 'max_rid'
+        ],
+        raw: true, // To get raw data (an array of objects) instead of instances
+      });
+
+      const maxRid = allRings[0]?.max_rid || 0;
+      const maxNum = parseInt(maxRid, 10);
+      ridToSave = maxNum + 1;
     }
 
-    const allRings = await sequelize.models.Ring.findAll({
-      attributes: [
-        [sequelize.fn("max", sequelize.cast(sequelize.col("rid"), "integer")), "max_rid"], // Calculate the maximum 'rid' and alias it as 'max_rid'
-      ],
-      raw: true, // To get raw data (an array of objects) instead of instances
-    });
-
-    const maxRid = allRings[0]?.max_rid || 0;
-    const maxNum = parseInt(maxRid, 10);
-    const ridToSave = rid || maxNum + 1;
-
-    await sequelize.models.Ring.create({
+    const newVersion = await sequelize.models.Ring.create({
       userId,
       rid: ridToSave,
       name,
@@ -42,10 +44,17 @@ export const create = async (req: Request, res: Response) => {
       version: newVersionNum,
     });
 
-    // TODO: readd notifications?
-    // if (process.env.NODE_ENV === "production") {
-    //   notifyAdminsOfRingChange({ ring, updatedRing, oldDataSource, oldOntology });
-    // }
+    // only created diff if this is a new version to an existing ring
+    if (rid) {
+      const lastVersion = await sequelize.models.Ring.findOne({
+        where: { rid, version: newVersionNum - 1 },
+      });
+      const updatedRingVersion = await createRingDiff({ lastVersion, newVersion });
+
+      if (process.env.NODE_ENV === "production") {
+        notifyAdminsOfRingChange({ ringVersion: updatedRingVersion });
+      }
+    }
 
     const versions = await sequelize.models.Ring.findAll({
       where: { rid: ridToSave },
@@ -134,66 +143,6 @@ export const findById = async (req: Request, res: Response) => {
     return res.send_internalServerError("An error occurred, please try again!");
   }
 };
-
-// TODO remove all references to the below commented code
-
-// Find Ring by ringId
-// export const findRingByVersion = async (req: Request, res: Response) => {
-//   try {
-//     const { ringId, version } = req.params;
-//     const versions = await sequelize.models.Ring.getVersions({
-//       where: { rid: ringId, version },
-//       order: [["versionTimestamp", "DESC"]],
-//     });
-
-//     if (versions.length === 0) {
-//       return res.send_notFound("Ring version not found!");
-//     }
-//     const ring = Object.fromEntries(Object.entries(versions[0].dataValues).filter(([key]) => !["versionType", "versionTimestamp", "versionId"].includes(key)));
-
-//     return res.send_ok("", { ring });
-//   } catch (error) {
-//     console.warn(error); // eslint-disable-line no-console
-
-//     return res.send_internalServerError("An error occurred, please try again!");
-//   }
-// };
-
-// // Update a Ring
-// export const update = async (req: Request, res: Response) => {
-//   try {
-//     const { ringId } = req.params;
-
-//     const ring = await Ring.findOne({
-//       where: { id: ringId },
-//     });
-//     const oldDataSource = JSON.stringify(ring.dataSource);
-//     const oldOntology = JSON.stringify(ring.ontology);
-
-//     // Inject req for saveLog
-//     Ring.beforeUpdate((model) => {
-//       model.req = req;
-//     });
-
-//     const updatedRing = await ring.update(
-//       { ...req.body, version: ring.dataValues.version + 1 },
-//       {
-//         individualHooks: true,
-//         returning: true,
-//       }
-//     );
-
-//     if (!updatedRing) {
-//       return res.send_notModified("Ring has not been updated!");
-//     }
-
-//     return res.send_ok("Ring has been updated!", { ring });
-//   } catch (error) {
-//     console.warn(error); // eslint-disable-line no-console
-
-//     return res.send_internalServerError("An error occurred, please try again!");
-//   }
-// };
 
 // Delete a Ring
 export const deleteRing = async (req: Request, res: Response) => {
