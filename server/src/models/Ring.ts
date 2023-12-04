@@ -49,11 +49,11 @@ export default (sequelize, options) => {
         defaultValue: "private",
       },
       dataSourceDiff: {
-        type: DataTypes.STRING,
+        type: DataTypes.TEXT,
         allowNull: true,
       },
       ontologyDiff: {
-        type: DataTypes.STRING,
+        type: DataTypes.TEXT,
         allowNull: true,
       },
     },
