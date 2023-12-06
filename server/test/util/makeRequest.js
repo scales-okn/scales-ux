@@ -1,5 +1,9 @@
-const app = require("../../build/index.js");
-const request = require("supertest")(app.default);
+const app = require("../../build/index.js").default;
+const request = require("supertest")(app);
+
+app.on("ready", () => {
+    run();
+});
 
 const makeRequest = async ({ endpoint, body, method, token }) => {
   return new Promise(async (resolve, reject) => {

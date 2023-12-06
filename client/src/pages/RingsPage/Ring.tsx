@@ -19,6 +19,8 @@ import { pick } from "lodash";
 
 import useWindowSize from "src/hooks/useWindowSize";
 
+import colorVars from "src/styles/colorVars";
+
 import Loader from "src/components/Loader";
 import { useRing } from "src/store/rings";
 import ConfirmModal from "src/components/Modals/ConfirmModal";
@@ -93,7 +95,7 @@ const Ring = () => {
       visibility: yup.string().required("Visibility is required"),
     }),
     onSubmit: async (values) => {
-      createRing(values);
+      createRing({ ...values, userId: sessionUser.id });
     },
   });
 
@@ -193,19 +195,21 @@ const Ring = () => {
                       ))}
                     </Select>
                   ) : null}{" "}
-                  <Typography
-                    sx={{
-                      color: "GrayText",
-                      fontStyle: "italic",
-                      display: "inline",
-                    }}
-                  >
-                    {currentRing
-                      ? new Date(currentRing.createdAt).toLocaleString()
-                      : null}{" "}
-                    - {currentRing?.user?.firstName}{" "}
-                    {currentRing?.user?.lastName}
-                  </Typography>
+                  {currentRing && (
+                    <Typography
+                      sx={{
+                        color: "GrayText",
+                        fontStyle: "italic",
+                        display: "inline",
+                      }}
+                    >
+                      {currentRing
+                        ? new Date(currentRing.createdAt).toLocaleString()
+                        : null}{" "}
+                      - {currentRing?.user?.firstName}{" "}
+                      {currentRing?.user?.lastName}
+                    </Typography>
+                  )}
                 </Grid>
                 <Grid>
                   {ringVersions.length ? (
@@ -305,13 +309,13 @@ const Ring = () => {
                 {formik.errors.description}
               </Typography>
             ) : null}
-            <Grid container spacing={3}>
+            <Grid container spacing={3} sx={{ marginTop: "20px" }}>
               <Grid item xs={12}>
-                <Typography variant="h6" mb={2}>
+                <Typography variant="h5" mb={2}>
                   Data Source
                 </Typography>
                 {/* Workaround for JSON editor's quirks. Only load the editor if we're creating a ring (no RID) or after we get ring data if we're editing a ring. Same below for ontology. */}
-                {(!rid || formik.values.rid) && currentVersion > 0 ? (
+                {!rid || (formik.values.rid && currentVersion > 0) ? (
                   <Editor
                     mode="tree"
                     allowedModes={["code", "tree"]}
@@ -341,13 +345,50 @@ const Ring = () => {
                   </Typography>
                 ) : null}
               </Grid>
+              {currentRing?.dataSourceDiff ? (
+                <Grid
+                  item
+                  xs={12}
+                  sx={{
+                    position: "relative",
+                    marginLeft: "42px",
+                    marginBottom: "32px",
+                  }}
+                >
+                  <Box
+                    sx={{
+                      position: "absolute",
+                      left: "-2px",
+                      height: "100%",
+                      width: "2px",
+                      borderRadius: "2px",
+                      background: colorVars.grey,
+                    }}
+                  />
+                  <Typography mb={2} sx={{ fontSize: "18px" }}>
+                    Diff from Previous Version:
+                  </Typography>
+                  <Box
+                    sx={{
+                      backgroundColor: colorVars.grey,
+                      padding: "12px",
+                    }}
+                  >
+                    <div
+                      dangerouslySetInnerHTML={{
+                        __html: currentRing?.dataSourceDiff,
+                      }}
+                    />
+                  </Box>
+                </Grid>
+              ) : null}
             </Grid>
             <Grid container spacing={3}>
               <Grid item xs={12}>
-                <Typography variant="h6" mb={2} mt={4}>
+                <Typography variant="h5" mb={2} mt={4}>
                   Ontology
                 </Typography>
-                {(!rid || formik.values.rid) && currentVersion > 0 ? (
+                {!rid || (formik.values.rid && currentVersion > 0) ? (
                   <Editor
                     mode="tree"
                     allowedModes={["code", "tree"]}
@@ -377,6 +418,43 @@ const Ring = () => {
                   </Typography>
                 ) : null}
               </Grid>
+              {currentRing?.ontologyDiff ? (
+                <Grid
+                  item
+                  xs={12}
+                  sx={{
+                    position: "relative",
+                    marginLeft: "42px",
+                    marginBottom: "32px",
+                  }}
+                >
+                  <Box
+                    sx={{
+                      position: "absolute",
+                      left: "-2px",
+                      height: "100%",
+                      width: "2px",
+                      borderRadius: "2px",
+                      background: colorVars.grey,
+                    }}
+                  />
+                  <Typography mb={2} sx={{ fontSize: "18px" }}>
+                    Diff from Previous Version:
+                  </Typography>
+                  <Box
+                    sx={{
+                      backgroundColor: colorVars.grey,
+                      padding: "12px",
+                    }}
+                  >
+                    <div
+                      dangerouslySetInnerHTML={{
+                        __html: currentRing?.ontologyDiff,
+                      }}
+                    />
+                  </Box>
+                </Grid>
+              ) : null}
             </Grid>
           </form>
         </Loader>

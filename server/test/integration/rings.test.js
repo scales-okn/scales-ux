@@ -39,7 +39,6 @@ describe("Rings API", () => {
         token,
         body: {
           userId: 1,
-          rid: 2234,
           name: "Test Ring",
           description: "This is a test ring",
           schemaVersion: "1.0",

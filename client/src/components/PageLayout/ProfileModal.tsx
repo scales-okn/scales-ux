@@ -1,9 +1,12 @@
 import React from "react";
+
 import { TextField, Grid, Button } from "@mui/material";
 import { useFormik } from "formik";
 import * as yup from "yup";
 
 import { useAuth } from "src/store/auth";
+
+import { UserT } from "src/types/user";
 
 import ModalContainer from "src/components/Modals/ModalContainer";
 
@@ -11,17 +14,6 @@ type UserFields = {
   firstName: string;
   lastName: string;
   email: string;
-  usage?: string;
-};
-
-type UserT = {
-  approved: boolean;
-  blocked: boolean;
-  email: string;
-  firstName: string;
-  id: number;
-  lastName: string;
-  role: string;
   usage?: string;
 };
 
