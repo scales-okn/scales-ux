@@ -33,7 +33,7 @@ export const login = async (req: Request, res: Response) => {
       console.warn("User not found!", { email, password });
       return res.send_badRequest("Login failed. Please check your username and password.");
     }
-    const { id, role, firstName, lastName, blocked, approved, emailIsVerified, usage } = user.dataValues;
+    const { id, role, firstName, lastName, blocked, approved, emailIsVerified, usage, notifyOnNewRingVersion } = user.dataValues;
 
     if (blocked) {
       return res.send_forbidden("Access restricted!");
@@ -48,7 +48,7 @@ export const login = async (req: Request, res: Response) => {
       const defaultExpiry = "1d";
       const expiry = rememberMe ? process.env.JWT_EXP_LONG : process.env.JWT_EXP;
 
-      const token = jwt.sign({ user: { id, email, role, firstName, lastName, blocked, approved, usage } }, process.env.JWT_SECRET, { expiresIn: expiry || defaultExpiry });
+      const token = jwt.sign({ user: { id, email, role, firstName, lastName, blocked, approved, usage, notifyOnNewRingVersion } }, process.env.JWT_SECRET, { expiresIn: expiry || defaultExpiry });
 
       return res.send_ok("Login Successful!", {
         token,

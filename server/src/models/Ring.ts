@@ -48,6 +48,14 @@ export default (sequelize, options) => {
         values: ringVisibilityValues,
         defaultValue: "private",
       },
+      dataSourceDiff: {
+        type: DataTypes.TEXT,
+        allowNull: true,
+      },
+      ontologyDiff: {
+        type: DataTypes.TEXT,
+        allowNull: true,
+      },
     },
     options
   );
@@ -62,33 +70,48 @@ export default (sequelize, options) => {
   return Ring;
 };
 
-export const notifyAdminsOfRingChange = async ({ ring, updatedRing, oldDataSource, oldOntology }) => {
+export const createRingDiff = async ({ lastVersion, newVersion }) => {
+  const newDataSource = JSON.stringify(newVersion.dataSource);
+  const newOntology = JSON.stringify(newVersion.ontology);
+  const oldDataSource = JSON.stringify(lastVersion.dataSource);
+  const oldOntology = JSON.stringify(lastVersion.ontology);
+  const dataSourceDifferences = jsonDiff.diffString(JSON.parse(oldDataSource), JSON.parse(newDataSource));
+  const ontologyDifferences = jsonDiff.diffString(JSON.parse(oldOntology), JSON.parse(newOntology));
+  const convert = new Convert();
+  const dataSourceDiffHtml = convert.toHtml(dataSourceDifferences);
+  const ontologyDiffHtml = convert.toHtml(ontologyDifferences);
+
+  const updatedVersion = await newVersion.update({
+    dataSourceDiff: dataSourceDiffHtml,
+    ontologyDiff: ontologyDiffHtml,
+  });
+
+  return updatedVersion;
+};
+
+export const notifyAdminsOfRingChange = async ({ ringVersion }) => {
   const admins = await sequelize.models.User.findAll({
     where: { role: "admin" },
   });
 
-  const ringLabel = `${ring.name} (RID: ${ring.rid})`;
+  const ringLabel = `${ringVersion.name} (RID: ${ringVersion.rid})`;
 
-  const newDataSource = JSON.stringify(updatedRing.dataSource);
-  const newOntology = JSON.stringify(updatedRing.ontology);
-  const dataSourceDifferences = jsonDiff.diffString(JSON.parse(oldDataSource), JSON.parse(newDataSource));
-  const ontologyDifferences = jsonDiff.diffString(JSON.parse(oldOntology), JSON.parse(newOntology));
-
-  const convert = new Convert();
   admins.forEach((a) => {
+    if (a.notifyOnNewRingVersion === false) return;
+
     sendEmail({
-      emailSubject: `Ring Updated (${ringLabel})`,
+      emailSubject: `Ring Updated: (${ringLabel})`,
       recipientEmail: a.email,
       templateName: "ringUpdated",
       recipientName: `${a.firstName} ${a.lastName}`,
       templateArgs: {
         saturnUrl: process.env.UX_CLIENT_MAILER_URL,
         sesSender: process.env.SES_SENDER,
-        dataSource: JSON.stringify(updatedRing.dataSource),
-        ontology: JSON.stringify(updatedRing.ontology),
+        dataSource: ringVersion.dataSource,
+        ontology: ringVersion.ontology,
         ringLabel,
-        dataSourceDifferences: convert.toHtml(dataSourceDifferences),
-        ontologyDifferences: convert.toHtml(ontologyDifferences),
+        dataSourceDifferences: ringVersion.dataSourceDiff,
+        ontologyDifferences: ringVersion.ontologyDiff,
       },
     });
   });

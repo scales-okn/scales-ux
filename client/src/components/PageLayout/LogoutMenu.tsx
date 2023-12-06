@@ -6,6 +6,7 @@ import { sessionUserSelector, logout } from "../../store/auth";
 import Popover from "@mui/material/Popover";
 import ProfileModal from "./ProfileModal";
 import PasswordModal from "./PasswordModal";
+import EmailSettingsModal from "./EmailSettingsModal";
 
 import { logoutMenuStyles } from "./styles";
 
@@ -16,6 +17,8 @@ const LogoutMenu = () => {
 
   const [profileModalVisible, setProfileModalVisible] = useState(false);
   const [passwordModalVisible, setPasswordModalVisible] = useState(false);
+  const [emailSettingsModalVisible, setEmailSettingsModalVisible] =
+    useState(false);
 
   const handleClick = (event) => {
     setAnchorEl(event.currentTarget);
@@ -71,6 +74,17 @@ const LogoutMenu = () => {
           >
             Update Info
           </div>
+          {user.role === "admin" && (
+            <div
+              className="item"
+              onClick={() => {
+                setEmailSettingsModalVisible(true);
+                handleClose();
+              }}
+            >
+              Email Settings
+            </div>
+          )}
           <div className="item" onClick={() => dispatch(logout())}>
             Sign Out
           </div>
@@ -87,6 +101,13 @@ const LogoutMenu = () => {
         <PasswordModal
           visible={passwordModalVisible}
           setVisible={setPasswordModalVisible}
+        />
+      ) : null}
+      {emailSettingsModalVisible ? (
+        <EmailSettingsModal
+          visible={emailSettingsModalVisible}
+          setVisible={setEmailSettingsModalVisible}
+          user={user}
         />
       ) : null}
     </div>

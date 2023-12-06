@@ -1,7 +1,8 @@
-import React, { FunctionComponent, useState, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import { useParams } from "react-router";
 import Loader from "../../components/Loader";
 import { makeRequest } from "src/helpers/makeRequest";
+import { Box } from "@mui/material";
 
 type Params = {
   ringId: string | null;
@@ -10,7 +11,7 @@ type Params = {
   docId: string | null;
 };
 
-const DocumentPage: FunctionComponent = () => {
+const DocumentPage = () => {
   const {
     ringId = null,
     ringVersion = null,
@@ -52,7 +53,20 @@ const DocumentPage: FunctionComponent = () => {
 
   return (
     <Loader isVisible={!html}>
-      <div dangerouslySetInnerHTML={{ __html: html }}></div>
+      <Box sx={{ paddingBottom: "140px" }}>
+        <Box
+          dangerouslySetInnerHTML={{ __html: html }}
+          sx={{
+            background: "white",
+            padding: "48px",
+            borderRadius: "4px",
+
+            "& #cmecfMainContent": {
+              height: "unset !important", // overwrite height: 100% from source html
+            },
+          }}
+        ></Box>
+      </Box>
     </Loader>
   );
 };
