@@ -38,6 +38,7 @@ describe("Notebooks API", () => {
         title: "Test Notebook",
         description: "This is a test notebook",
         collaborators: [],
+        sharedWith: [],
         visibility: "public",
       },
     });
@@ -70,6 +71,7 @@ describe("Notebooks API", () => {
         title: "Test Notebook",
         description: "This is a test notebook",
         collaborators: [],
+        sharedWith: [],
         visibility: "public",
       },
     });

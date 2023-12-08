@@ -67,17 +67,6 @@ export const filterStyles = css`
   }
 `;
 
-export const filterTypeStyles = css`
-  height: 56px;
-  width: 56px;
-  border: 1px solid lightgray;
-  border-right: none;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  border-radius: 4px 0 0 4px;
-`;
-
 export const tooltipTitleStyles = css`
   h5 {
     color: var(--main-purple);

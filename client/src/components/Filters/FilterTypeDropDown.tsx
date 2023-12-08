@@ -6,8 +6,6 @@ import ArrowDropDownIcon from "@mui/icons-material/ArrowDropDown";
 
 import FilterTooltip from "../HelpTextTooltip";
 
-import { filterTypeStyles } from "./styles";
-
 type FilterT = {
   id: string;
   type: string;
@@ -71,7 +69,7 @@ const FilterTypeDropDown = ({
 
   const filtersToRender = getFiltersNormalized()
     ?.filter(
-      (x) => x.nicename !== "Case Name"
+      (x) => x.nicename !== "Case Name",
     ) /* hack due to complaints from the docket-preview pane when i tried to change these fields' ring settings */
     .map((filterInput) => {
       const { allowMultiple, key } = filterInput;
@@ -103,7 +101,19 @@ const FilterTypeDropDown = ({
   };
 
   return (
-    <div className={`filter-type ${filterTypeStyles}`}>
+    <Box
+      sx={{
+        minHeight: "56px",
+        height: "100%",
+        width: "36px",
+        border: "1px solid lightgray",
+        borderRight: "none",
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
+        borderRadius: "4px 0 0 4px",
+      }}
+    >
       <Box
         sx={{
           cursor: disabled ? "not-allowed" : "pointer",
@@ -163,7 +173,7 @@ const FilterTypeDropDown = ({
           );
         })}
       </Menu>
-    </div>
+    </Box>
   );
 };
 

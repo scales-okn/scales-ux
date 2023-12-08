@@ -41,6 +41,7 @@ describe("Panels API", () => {
           title: "Test Panel",
           description: "This is a test panel",
           collaborators: [],
+          sharedWith: [],
           visibility: "public",
           notebookId: 1,
         },
@@ -81,6 +82,7 @@ describe("Panels API", () => {
           title: "Updated Panel Title",
           description: "Updated panel description",
           collaborators: [],
+          sharedWith: [],
           visibility: "private",
         },
       });

@@ -292,6 +292,7 @@ const Filter = ({ panelId, filter }: Props) => {
       }}
       sx={{
         minWidth: "250px",
+        maxWidth: "60vw",
         "& .MuiInputBase-root": {
           cursor: sessionUserCanEdit ? "pointer" : "not-allowed",
           borderRadius: "0 4px 4px 0",

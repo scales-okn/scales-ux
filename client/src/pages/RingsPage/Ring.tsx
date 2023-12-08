@@ -195,7 +195,7 @@ const Ring = () => {
                       ))}
                     </Select>
                   ) : null}{" "}
-                  {currentRing && (
+                  {currentRing && !isTablet ? (
                     <Typography
                       sx={{
                         color: "GrayText",
@@ -209,7 +209,7 @@ const Ring = () => {
                       - {currentRing?.user?.firstName}{" "}
                       {currentRing?.user?.lastName}
                     </Typography>
-                  )}
+                  ) : null}
                 </Grid>
                 <Grid>
                   {ringVersions.length ? (
