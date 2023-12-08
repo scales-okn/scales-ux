@@ -1,6 +1,7 @@
 import React from "react";
 
 import { Box, Typography } from "@mui/material";
+import { useTheme } from "@mui/material/styles";
 import Arrow from "./Arrow";
 
 import useWindowSize from "src/hooks/useWindowSize";
@@ -22,6 +23,7 @@ const Pagination = ({
   zeroIndex = false,
   navOverride,
 }: PaginationT) => {
+  const theme = useTheme();
   const { width } = useWindowSize();
   const isTablet = width < 768;
 
@@ -60,8 +62,20 @@ const Pagination = ({
     }
   };
 
-  const current = renderDigit(paging.currentPage);
-  const total = renderDigit(lastPage);
+  const pagesToRender = () => {
+    const pages = [];
+    const start = Math.max(paging.currentPage - 2, 1);
+    const adjustedStart = zeroIndex ? start - 1 : start;
+    const end = Math.min(paging.currentPage + 2, lastPage);
+
+    for (let i = adjustedStart; i <= end; i++) {
+      if (i > paging.currentPage - 3) {
+        pages.push(i);
+      }
+    }
+
+    return pages;
+  };
 
   return (
     <Box
@@ -98,30 +112,42 @@ const Pagination = ({
           handleNavigate={handleNavClick}
           disabled={disabledLeft}
         />
-        <Typography color="#021949d2" sx={{ marginLeft: "4px" }}>
-          Page
-        </Typography>
-        <Typography
-          sx={{
-            display: "inline",
-            fontSize: "16px",
-            fontWeight: 600,
-            padding: "0 4px",
-          }}
-        >
-          {noResults ? 0 : current}
-        </Typography>
-        of
-        <Typography
-          sx={{
-            display: "inline",
-            fontSize: "16px",
-            fontWeight: 600,
-            padding: "0 4px",
-          }}
-        >
-          {total}
-        </Typography>
+        <Box sx={{ display: "flex", marginRight: "-2px", marginLeft: "2px" }}>
+          {pagesToRender().map((page, i) => (
+            <Box
+              key={i}
+              sx={{
+                display: "flex",
+                justifyContent: "center",
+                alignItems: "center",
+                background:
+                  page === paging.currentPage
+                    ? theme.palette.primary.main
+                    : theme.palette.primary.light,
+                borderRadius: "8px",
+                height: "32px",
+                padding: "0 6px",
+                color: "white",
+                fontSize: "14px",
+                fontWeight: "500",
+                marginRight: "4px",
+                cursor: "pointer",
+                minWidth: "32px",
+
+                "&:hover": {
+                  background:
+                    page === paging.currentPage
+                      ? theme.palette.primary.dark
+                      : theme.palette.primary.main,
+                },
+              }}
+              onClick={() => handleNavClick("", page)}
+            >
+              {renderDigit(page)}
+            </Box>
+          ))}
+        </Box>
+
         <Arrow
           direction="right"
           handleNavigate={handleNavClick}

@@ -41,7 +41,9 @@ const Arrow = ({
   return (
     <Box
       sx={{
-        borderRadius: "100%",
+        minWidth: "32px",
+        height: "32px",
+        borderRadius: "8px",
         display: "flex",
         justifyContent: "center",
         alignItems: "center",
