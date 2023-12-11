@@ -279,12 +279,10 @@ const Panel = ({ panelId, defaultCollapsed }: PanelT) => {
                             <Pagination
                               paging={paging}
                               zeroIndex
-                              fetchData={({ page }) =>
-                                getPanelResults({ page })
-                              }
-                              navOverride={(newPage) =>
-                                updatePanel({ page: newPage })
-                              }
+                              fetchData={({ page }) => {
+                                getPanelResults({ page });
+                                updatePanel({ page });
+                              }}
                             />
                             <DataGrid
                               rows={rows}

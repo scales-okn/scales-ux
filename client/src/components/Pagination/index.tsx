@@ -2,7 +2,6 @@ import React from "react";
 
 import { Box, Typography } from "@mui/material";
 import { useTheme } from "@mui/material/styles";
-import Arrow from "./Arrow";
 
 import useWindowSize from "src/hooks/useWindowSize";
 
@@ -13,7 +12,6 @@ type PaginationT = {
   fetchData: (arg: Record<string, unknown>) => void;
   leftContent?: JSX.Element;
   zeroIndex?: boolean;
-  navOverride?: (location: string) => void;
 };
 
 const Pagination = ({
@@ -21,13 +19,10 @@ const Pagination = ({
   fetchData,
   leftContent = <></>,
   zeroIndex = false,
-  navOverride,
 }: PaginationT) => {
   const theme = useTheme();
   const { width } = useWindowSize();
   const isTablet = width < 768;
-
-  const noResults = paging.totalPages === 0;
 
   const renderDigit = (num) => {
     if (typeof num !== "number") {
@@ -40,26 +35,8 @@ const Pagination = ({
   const firstPage = zeroIndex ? 0 : 1;
   const lastPage = zeroIndex ? paging.totalPages - 1 : paging.totalPages;
 
-  const disabledLeft = paging.currentPage === firstPage || noResults;
-  const disabledRight = paging.currentPage === lastPage || noResults;
-
-  const handleNavClick = (direction, pageOverride = null) => {
-    const newPage =
-      direction === "right" ? paging.currentPage + 1 : paging.currentPage - 1;
-
-    if (
-      (disabledLeft && direction === "left") ||
-      (disabledRight && direction === "right")
-    ) {
-      return;
-    }
-
-    const page = pageOverride === null ? newPage : pageOverride;
-    fetchData({ page });
-
-    if (navOverride) {
-      navOverride(page);
-    }
+  const handleNavClick = (newPage) => {
+    fetchData({ page: newPage });
   };
 
   const pagesToRender = () => {
@@ -72,6 +49,14 @@ const Pagination = ({
       if (i > paging.currentPage - 3) {
         pages.push(i);
       }
+    }
+
+    if (pages[0] !== firstPage) {
+      pages.unshift(firstPage, "...");
+    }
+
+    if (pages[pages.length - 1] !== lastPage) {
+      pages.push("...", lastPage);
     }
 
     return pages;
@@ -101,64 +86,79 @@ const Pagination = ({
           marginTop: isTablet ? "12px" : "0",
         }}
       >
-        <Arrow
-          direction="left"
-          handleNavigate={handleNavClick}
-          disabled={disabledLeft}
-          pageOverride={firstPage}
-        />
-        <Arrow
-          direction="left"
-          handleNavigate={handleNavClick}
-          disabled={disabledLeft}
-        />
-        <Box sx={{ display: "flex", marginRight: "-2px", marginLeft: "2px" }}>
-          {pagesToRender().map((page, i) => (
+        {paging.totalPages > 1 && (
+          <>
+            {!isTablet && (
+              <Typography
+                sx={{ marginRight: "12px", color: "rgb(157, 157, 157)" }}
+              >
+                Page {renderDigit(paging.currentPage)} of{" "}
+                {renderDigit(lastPage)}
+              </Typography>
+            )}
             <Box
-              key={i}
-              sx={{
-                display: "flex",
-                justifyContent: "center",
-                alignItems: "center",
-                background:
-                  page === paging.currentPage
-                    ? theme.palette.primary.main
-                    : theme.palette.primary.light,
-                borderRadius: "8px",
-                height: "32px",
-                padding: "0 6px",
-                color: "white",
-                fontSize: "14px",
-                fontWeight: "500",
-                marginRight: "4px",
-                cursor: "pointer",
-                minWidth: "32px",
-
-                "&:hover": {
-                  background:
-                    page === paging.currentPage
-                      ? theme.palette.primary.dark
-                      : theme.palette.primary.main,
-                },
-              }}
-              onClick={() => handleNavClick("", page)}
+              sx={{ display: "flex", marginRight: "-2px", marginLeft: "2px" }}
             >
-              {renderDigit(page)}
-            </Box>
-          ))}
-        </Box>
+              {pagesToRender().map((page, i) => {
+                if (page === "...") {
+                  return (
+                    <Typography
+                      key={i}
+                      sx={{
+                        display: "flex",
+                        justifyContent: "center",
+                        alignItems: "center",
+                        height: "32px",
+                        padding: "0 0px",
+                        color: theme.palette.primary.main,
+                        fontSize: "14px",
+                        fontWeight: "500",
+                        marginRight: "4px",
+                        minWidth: "18px",
+                      }}
+                    >
+                      {page}
+                    </Typography>
+                  );
+                }
+                return (
+                  <Box
+                    key={i}
+                    sx={{
+                      display: "flex",
+                      justifyContent: "center",
+                      alignItems: "center",
+                      background:
+                        page === paging.currentPage
+                          ? theme.palette.primary.main
+                          : theme.palette.primary.light,
+                      borderRadius: "8px",
+                      height: "32px",
+                      padding: "0 6px",
+                      color: "white",
+                      fontSize: "14px",
+                      fontWeight: "500",
+                      marginRight: "4px",
+                      cursor:
+                        page === paging.currentPage ? "not-allowed" : "pointer",
+                      minWidth: "32px",
 
-        <Arrow
-          direction="right"
-          handleNavigate={handleNavClick}
-          disabled={disabledRight}
-        />
-        <Arrow
-          direction="right"
-          handleNavigate={handleNavClick}
-          disabled={disabledRight}
-          pageOverride={lastPage}
-        />
+                      "&:hover": {
+                        background:
+                          page === paging.currentPage
+                            ? theme.palette.primary.dark
+                            : theme.palette.primary.main,
+                      },
+                    }}
+                    onClick={() => handleNavClick(page)}
+                  >
+                    {renderDigit(page)}
+                  </Box>
+                );
+              })}
+            </Box>
+          </>
+        )}
       </Box>
     </Box>
   );

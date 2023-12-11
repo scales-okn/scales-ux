@@ -119,9 +119,11 @@ const FilterTypeDropDown = ({
           cursor: disabled ? "not-allowed" : "pointer",
           height: "100%",
           width: "100%",
+          minHeight: "54px",
           display: "flex",
           alignItems: "center",
           justifyContent: "center",
+          borderRadius: "4px 0 0 4px",
         }}
         onClick={handleMenuOpen}
       >

@@ -21,12 +21,28 @@ Create a file called .env in ./sever/.env
 
 Copy and complete the .env.example variables
 
+Manually create db named process.env.DB_NAME on port process.env.PORT_NAME
+
 ### Running
 
 ```
 cd server
 npm install
 npm run start
+```
+
+### Migrations
+
+Migrations can be created using the following command:
+
+```
+npx sequelize-cli migration:generate --name <migration name>
+```
+
+and run with
+
+```
+npx sequelize-cli db:migrate
 ```
 
 ## Client
@@ -44,12 +60,6 @@ cd client
 npm install
 npm run start
 ```
-
-### For testing purposes:
-
-User: user@testing.test:Pass-word-25
-
-Admin: admin@testing.test:Pass-word-25
 
 ## API Spec v0.1 (Ported from satyrn-platform for reference)
 

@@ -39,7 +39,7 @@ const Dataset = ({ panelId }: DatasetProps) => {
   useEffect(() => {
     const defaultRing = rings.reduce((prev, curr) => {
       return prev.id < curr.id ? prev : curr;
-    });
+    }, []);
     if (defaultRing) {
       setSelectedRing(defaultRing);
     }
