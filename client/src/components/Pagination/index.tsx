@@ -131,14 +131,21 @@ const Pagination = ({
                       background:
                         page === paging.currentPage
                           ? theme.palette.primary.main
-                          : theme.palette.primary.light,
+                          : "none",
+                      border:
+                        page === paging.currentPage
+                          ? "none"
+                          : `1px solid ${theme.palette.primary.main}`,
+                      color:
+                        page === paging.currentPage
+                          ? "white"
+                          : theme.palette.primary.main,
                       borderRadius: "8px",
                       height: "32px",
                       padding: "0 6px",
-                      color: "white",
                       fontSize: "14px",
                       fontWeight: "500",
-                      marginRight: "4px",
+                      marginRight: "6px",
                       cursor:
                         page === paging.currentPage ? "not-allowed" : "pointer",
                       minWidth: "32px",
@@ -148,6 +155,7 @@ const Pagination = ({
                           page === paging.currentPage
                             ? theme.palette.primary.dark
                             : theme.palette.primary.main,
+                        color: "white",
                       },
                     }}
                     onClick={() => handleNavClick(page)}
