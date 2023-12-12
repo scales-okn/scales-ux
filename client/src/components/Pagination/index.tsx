@@ -35,6 +35,17 @@ const Pagination = ({
   const firstPage = zeroIndex ? 0 : 1;
   const lastPage = zeroIndex ? paging.totalPages - 1 : paging.totalPages;
 
+  const startBase = paging.currentPage * paging.pageSize;
+  const startItem = zeroIndex ? startBase + 1 : startBase - 1;
+
+  const adjustedCurrent = zeroIndex
+    ? paging.currentPage + 1
+    : paging.currentPage;
+  const endItem = Math.min(
+    adjustedCurrent * paging.pageSize,
+    paging.totalCount,
+  );
+
   const handleNavClick = (newPage) => {
     fetchData({ page: newPage });
   };
@@ -92,8 +103,9 @@ const Pagination = ({
               <Typography
                 sx={{ marginRight: "12px", color: "rgb(157, 157, 157)" }}
               >
-                Page {renderDigit(paging.currentPage)} of{" "}
-                {renderDigit(lastPage)}
+                Showing {startItem.toLocaleString()} -{" "}
+                {endItem.toLocaleString()} of{" "}
+                {paging.totalCount.toLocaleString()}
               </Typography>
             )}
             <Box

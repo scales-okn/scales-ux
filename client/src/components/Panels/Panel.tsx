@@ -58,6 +58,7 @@ const Panel = ({ panelId, defaultCollapsed }: PanelT) => {
     totalCount: results?.totalCount || 0,
     totalPages: results ? Math.ceil(results.totalCount / results.batchSize) : 0,
     currentPage: results?.page,
+    pageSize: results?.batchSize,
   };
 
   // Pop first panel on page load

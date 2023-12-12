@@ -12,15 +12,16 @@ export const findAllAndPaginate = async ({ model, query, dataName = "data", wher
     limit: pageSize,
   });
 
-  const totalItems = data.count;
-  const totalPages = Math.ceil(totalItems / pageSize);
+  const totalCount = data.count;
+  const totalPages = Math.ceil(totalCount / pageSize);
 
   return {
     [dataName]: data.rows,
     paging: {
-      totalItems,
+      totalCount,
       totalPages,
       currentPage: page,
+      pageSize,
     },
   };
 };
