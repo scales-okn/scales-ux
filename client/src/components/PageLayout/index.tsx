@@ -82,7 +82,11 @@ const PageLayout = ({ id = "", children, pageTitle }: PageLayoutT) => {
               sx={{ width: isTablet ? "40px" : "160px" }}
             >
               {isTablet ? (
-                <MenuIcon onClick={toggleDrawer} fontSize="large" />
+                <MenuIcon
+                  onClick={toggleDrawer}
+                  fontSize="large"
+                  sx={{ marginLeft: "-24px" }}
+                />
               ) : (
                 <Link to="/">
                   <img

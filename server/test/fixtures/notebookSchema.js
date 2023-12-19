@@ -15,6 +15,9 @@ module.exports = {
     collaborators: {
       type: "array",
     },
+    sharedWith: {
+      type: "array",
+    },
     visibility: {
       type: "string",
     },

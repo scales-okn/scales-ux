@@ -1,7 +1,7 @@
 import React from "react";
 
 import { Box, Typography } from "@mui/material";
-import Arrow from "./Arrow";
+import { useTheme } from "@mui/material/styles";
 
 import useWindowSize from "src/hooks/useWindowSize";
 
@@ -12,7 +12,6 @@ type PaginationT = {
   fetchData: (arg: Record<string, unknown>) => void;
   leftContent?: JSX.Element;
   zeroIndex?: boolean;
-  navOverride?: (location: string) => void;
 };
 
 const Pagination = ({
@@ -20,12 +19,10 @@ const Pagination = ({
   fetchData,
   leftContent = <></>,
   zeroIndex = false,
-  navOverride,
 }: PaginationT) => {
+  const theme = useTheme();
   const { width } = useWindowSize();
   const isTablet = width < 768;
-
-  const noResults = paging.totalPages === 0;
 
   const renderDigit = (num) => {
     if (typeof num !== "number") {
@@ -38,30 +35,43 @@ const Pagination = ({
   const firstPage = zeroIndex ? 0 : 1;
   const lastPage = zeroIndex ? paging.totalPages - 1 : paging.totalPages;
 
-  const disabledLeft = paging.currentPage === firstPage || noResults;
-  const disabledRight = paging.currentPage === lastPage || noResults;
+  const startBase = paging.currentPage * paging.pageSize;
+  const startItem = zeroIndex ? startBase + 1 : startBase - 1;
 
-  const handleNavClick = (direction, pageOverride = null) => {
-    const newPage =
-      direction === "right" ? paging.currentPage + 1 : paging.currentPage - 1;
+  const adjustedCurrent = zeroIndex
+    ? paging.currentPage + 1
+    : paging.currentPage;
+  const endItem = Math.min(
+    adjustedCurrent * paging.pageSize,
+    paging.totalCount,
+  );
 
-    if (
-      (disabledLeft && direction === "left") ||
-      (disabledRight && direction === "right")
-    ) {
-      return;
-    }
-
-    const page = pageOverride === null ? newPage : pageOverride;
-    fetchData({ page });
-
-    if (navOverride) {
-      navOverride(page);
-    }
+  const handleNavClick = (newPage) => {
+    fetchData({ page: newPage });
   };
 
-  const current = renderDigit(paging.currentPage);
-  const total = renderDigit(lastPage);
+  const pagesToRender = () => {
+    const pages = [];
+    const start = Math.max(paging.currentPage - 2, 1);
+    const adjustedStart = zeroIndex ? start - 1 : start;
+    const end = Math.min(paging.currentPage + 2, lastPage);
+
+    for (let i = adjustedStart; i <= end; i++) {
+      if (i > paging.currentPage - 3) {
+        pages.push(i);
+      }
+    }
+
+    if (pages[0] !== firstPage) {
+      pages.unshift(firstPage, "...");
+    }
+
+    if (pages[pages.length - 1] !== lastPage) {
+      pages.push("...", lastPage);
+    }
+
+    return pages;
+  };
 
   return (
     <Box
@@ -87,52 +97,88 @@ const Pagination = ({
           marginTop: isTablet ? "12px" : "0",
         }}
       >
-        <Arrow
-          direction="left"
-          handleNavigate={handleNavClick}
-          disabled={disabledLeft}
-          pageOverride={firstPage}
-        />
-        <Arrow
-          direction="left"
-          handleNavigate={handleNavClick}
-          disabled={disabledLeft}
-        />
-        <Typography color="#021949d2" sx={{ marginLeft: "4px" }}>
-          Page
-        </Typography>
-        <Typography
-          sx={{
-            display: "inline",
-            fontSize: "16px",
-            fontWeight: 600,
-            padding: "0 4px",
-          }}
-        >
-          {noResults ? 0 : current}
-        </Typography>
-        of
-        <Typography
-          sx={{
-            display: "inline",
-            fontSize: "16px",
-            fontWeight: 600,
-            padding: "0 4px",
-          }}
-        >
-          {total}
-        </Typography>
-        <Arrow
-          direction="right"
-          handleNavigate={handleNavClick}
-          disabled={disabledRight}
-        />
-        <Arrow
-          direction="right"
-          handleNavigate={handleNavClick}
-          disabled={disabledRight}
-          pageOverride={lastPage}
-        />
+        {paging.totalPages > 1 && (
+          <>
+            {!isTablet && (
+              <Typography
+                sx={{ marginRight: "12px", color: "rgb(157, 157, 157)" }}
+              >
+                Showing {startItem.toLocaleString()} -{" "}
+                {endItem.toLocaleString()} of{" "}
+                {paging.totalCount.toLocaleString()}
+              </Typography>
+            )}
+            <Box
+              sx={{ display: "flex", marginRight: "-2px", marginLeft: "2px" }}
+            >
+              {pagesToRender().map((page, i) => {
+                if (page === "...") {
+                  return (
+                    <Typography
+                      key={i}
+                      sx={{
+                        display: "flex",
+                        justifyContent: "center",
+                        alignItems: "center",
+                        height: "32px",
+                        padding: "0 0px",
+                        color: theme.palette.primary.main,
+                        fontSize: "14px",
+                        fontWeight: "500",
+                        marginRight: "4px",
+                        minWidth: "18px",
+                      }}
+                    >
+                      {page}
+                    </Typography>
+                  );
+                }
+                return (
+                  <Box
+                    key={i}
+                    sx={{
+                      display: "flex",
+                      justifyContent: "center",
+                      alignItems: "center",
+                      background:
+                        page === paging.currentPage
+                          ? theme.palette.primary.main
+                          : "none",
+                      border:
+                        page === paging.currentPage
+                          ? "none"
+                          : `1px solid ${theme.palette.primary.main}`,
+                      color:
+                        page === paging.currentPage
+                          ? "white"
+                          : theme.palette.primary.main,
+                      borderRadius: "8px",
+                      height: "32px",
+                      padding: "0 6px",
+                      fontSize: "14px",
+                      fontWeight: "500",
+                      marginRight: "6px",
+                      cursor:
+                        page === paging.currentPage ? "not-allowed" : "pointer",
+                      minWidth: "32px",
+
+                      "&:hover": {
+                        background:
+                          page === paging.currentPage
+                            ? theme.palette.primary.dark
+                            : theme.palette.primary.main,
+                        color: "white",
+                      },
+                    }}
+                    onClick={() => handleNavClick(page)}
+                  >
+                    {renderDigit(page)}
+                  </Box>
+                );
+              })}
+            </Box>
+          </>
+        )}
       </Box>
     </Box>
   );

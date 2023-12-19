@@ -7,6 +7,8 @@ import { useNotebook } from "src/store/notebook";
 import { usePanels } from "src/store/panels";
 import { useSessionUser } from "src/store/auth";
 
+import useWindowSize from "src/hooks/useWindowSize";
+
 import ContentCopyIcon from "@mui/icons-material/ContentCopy";
 import IosShareIcon from "@mui/icons-material/IosShare";
 import {
@@ -50,6 +52,8 @@ const Notebook = () => {
 
   const { notebookId: notebookIdParam } = useParams();
   const isNewNotebook = notebookIdParam === "new";
+  const { width } = useWindowSize();
+  const isMobile = width < 500;
 
   const sessionUser = useSessionUser();
   const sessionUserCanEdit = sessionUser?.id === notebook?.userId;
@@ -137,7 +141,12 @@ const Notebook = () => {
           },
         }}
       >
-        <Grid container alignItems="center" justifyContent="space-between">
+        <Grid
+          container
+          alignItems="center"
+          justifyContent="space-between"
+          sx={{ marginLeft: "12px" }}
+        >
           <Grid item xs={8}>
             <TextField
               fullWidth
@@ -190,7 +199,14 @@ const Notebook = () => {
 
           {notebook?.id ? (
             <>
-              <Grid item sx={{ display: "flex", alignItems: "center" }}>
+              <Grid
+                item
+                sx={{
+                  display: "flex",
+                  alignItems: "center",
+                  marginTop: isMobile ? "12px" : 0,
+                }}
+              >
                 {/* TODO: Componentize */}
                 {notebook.visibility === "public" ? (
                   <Tooltip title="Share Link to Notebook">

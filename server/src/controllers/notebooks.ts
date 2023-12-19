@@ -17,6 +17,7 @@ export const create = async (req: Request, res: Response) => {
       id = null, // ID of original notebook if this is a copy
       title,
       collaborators = [],
+      sharedWith = [],
       contents,
       visibility,
       parent = null,
@@ -28,6 +29,7 @@ export const create = async (req: Request, res: Response) => {
       title,
       userId,
       collaborators,
+      sharedWith,
       contents,
       visibility,
       parent,
@@ -89,11 +91,10 @@ export const findAll = async (req: Request, res: Response) => {
 
     if (req.query.type === "public") {
       where[Op.and] = [{ visibility: "public" }, { userId: { [Op.ne]: userId } }];
+    } else if (req.query.type === "shared") {
+      where[Op.and] = [{ visibility: "public" }, { sharedWith: { [Op.contains]: [userId] } }];
     } else {
-      where[Op.or] = [
-        { userId },
-        // { collaborators: { [Op.contains]: [userId] } },
-      ];
+      where[Op.or] = [{ userId }, { collaborators: { [Op.contains]: [userId] } }];
     }
 
     const result = await findAllAndPaginate({
@@ -135,8 +136,8 @@ export const findById = async (req: Request, res: Response) => {
       return res.send_notFound("Notebook not found!");
     }
 
-    const { visibility, collaborators, userId } = notebook;
-    if (role !== "admin" && visibility !== "public" && !collaborators.includes(reqUserId) && userId !== reqUserId) {
+    const { visibility, collaborators, userId, sharedWith } = notebook;
+    if (role !== "admin" && visibility !== "public" && !collaborators.includes(reqUserId) && !sharedWith.includes(reqUserId) && userId !== reqUserId) {
       return res.send_forbidden("Not allowed!");
     }
 
@@ -290,9 +291,10 @@ export const panels = async (req: Request, res: Response) => {
       return res.send_notFound("Notebook not found!");
     }
 
-    const { visibility, collaborators, userId } = notebook;
-    // what does userId !== userId mean??
-    if (role !== "admin" && visibility !== "public" && !collaborators.includes(userId) && userId !== userId) {
+    const { visibility, collaborators, sharedWith, userId } = notebook;
+
+    //@ts-ignore
+    if (role !== "admin" && visibility !== "public" && !collaborators.includes(userId) && !sharedWith.includes(userId) && userId !== req.user.id) {
       return res.send_forbidden("Not allowed!");
     }
 
@@ -321,6 +323,11 @@ export const shareLink = async (req: Request, res: Response) => {
     }
     if (!sender) {
       return res.status(404).json({ error: "Sender not found" });
+    }
+
+    const recipient = await sequelize.models.User.findOne({ where: { email: recipientEmail } });
+    if (recipient) {
+      await sequelize.models.Notebook.update({ sharedWith: sequelize.fn("array_append", sequelize.col("sharedWith"), recipient.id) }, { where: { id } });
     }
 
     sendEmail({

@@ -81,21 +81,9 @@ const userCanReadRing = ({ user, resource }) => {
 
 const accessControl = new AccessControlPlus();
 
-const userReadRestrictedFields = [
-  "!id",
-  "!emailIsVerified",
-  "!approved",
-  "!blocked",
-  "!emailVerificationToken",
-  "!passwordResetToken",
-  "!password",
-];
+const userReadRestrictedFields = ["!id", "!emailIsVerified", "!approved", "!blocked", "!emailVerificationToken", "!passwordResetToken", "!password"];
 
-const userUpdateRestrictedFields = [
-  "!id",
-  "!role",
-  ...userReadRestrictedFields,
-];
+const userUpdateRestrictedFields = ["!id", "!role", ...userReadRestrictedFields];
 
 //prettier-ignore
 accessControl
