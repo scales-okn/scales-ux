@@ -7,6 +7,7 @@ import DocumentPage from "src/pages/DocumentPage";
 import SignInPage from "src/pages/SignInPage";
 import SignUpPage from "src/pages/SignUpPage";
 import NotebooksPage from "src/pages/NotebooksPage";
+import ConnectionsPage from "src/pages/ConnectionsPage";
 import NotebookPage from "src/pages/NotebookPage";
 import EmailVerificationPage from "src/pages/EmailVerificationPage";
 import ForgotPasswordPage from "src/pages/ForgotPasswordPage";
@@ -34,6 +35,14 @@ const AppRoutes = () => {
       <Route
         path="/notebooks/:notebookId"
         element={requireAuth(<NotebookPage />)}
+      />
+      <Route
+        path="/connections/users"
+        element={requireAuth(<ConnectionsPage />)}
+      />
+      <Route
+        path="/connections/teams"
+        element={requireAuth(<ConnectionsPage />)}
       />
       <Route
         path="/document/:ringId/:ringVersion/:entityType/:docId"

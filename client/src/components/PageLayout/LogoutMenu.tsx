@@ -55,6 +55,19 @@ const LogoutMenu = () => {
             vertical: "bottom",
             horizontal: "left",
           }}
+          sx={{
+            "& .item": {
+              minWidth: "180px",
+              padding: "10px 20px",
+              transition: " 0.2s ease-in-out",
+              margin: "6px 0",
+              fontSize: "18px",
+
+              "&:hover": {
+                background: "var(--main-purple-lightest)",
+              },
+            },
+          }}
         >
           <div
             className="item"

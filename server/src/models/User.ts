@@ -77,6 +77,22 @@ export default (sequelize, options) => {
       foreignKey: "userId",
       as: "rings",
     });
+    models.User.hasMany(models.Connection, {
+      foreignKey: "sender",
+      as: "sentConnections",
+    });
+    models.User.hasMany(models.Connection, {
+      foreignKey: "receiver",
+      as: "receivedConnections",
+    });
+    models.User.hasMany(models.Alert, {
+      foreignKey: "userId",
+      as: "alerts",
+    });
+    models.User.hasMany(models.Alert, {
+      foreignKey: "initiatorUserId",
+      as: "initiatedAlerts",
+    });
   };
 
   return User;

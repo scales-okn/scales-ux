@@ -5,6 +5,8 @@ import NotebookModel from "../models/Notebook";
 import FeedbackModel from "../models/Feedback";
 import HelpTextModel from "../models/HelpText";
 import RingModel from "../models/Ring";
+import ConnectionModel from "../models/Connection";
+import AlertModel from "../models/Alert";
 import LogModel from "../models/Log";
 import logs from "./logs";
 import seeds from "./seeds";
@@ -44,6 +46,8 @@ const database = async () => {
     const Panel = PanelModel(sequelize, { hooks: logHooks });
     const Notebook = NotebookModel(sequelize, { hooks: logHooks });
     const Ring = RingModel(sequelize, { hooks: logHooks });
+    const Connection = ConnectionModel(sequelize, { hooks: logHooks });
+    const Alert = AlertModel(sequelize, { hooks: logHooks });
     FeedbackModel(sequelize, { hooks: logHooks });
     HelpTextModel(sequelize, { hooks: logHooks });
 
@@ -59,11 +63,22 @@ const database = async () => {
       Notebook,
       User,
     });
+    Connection.associate({
+      User,
+      Alert,
+    });
     User.associate({
       Panel,
       User,
       Ring,
       Notebook,
+      Connection,
+      Alert,
+    });
+    Alert.associate({
+      User,
+      Notebook,
+      Connection,
     });
     Ring.associate({
       User,

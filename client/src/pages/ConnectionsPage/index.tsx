@@ -1,25 +1,21 @@
 import React from "react";
+
 import { useLocation, useNavigate } from "react-router-dom";
+
 import { Tabs, Tab, Box } from "@mui/material";
+import ConnectionsTable from "./ConnectionsTable";
 
-import RingsPage from "src/pages/RingsPage";
-import UsersPage from "src/pages/UsersPage";
-import FeedbackPage from "src/pages/FeedbackPage";
-import HelpTextsPage from "src/pages/HelpTextsPage";
-
-const AdminPage = () => {
-  const location = useLocation();
+const ConnectionsPage = () => {
   const navigate = useNavigate();
+  const location = useLocation();
 
   const tabPaths = [
-    { path: "/admin/rings", component: <RingsPage />, label: "Rings" },
-    { path: "/admin/users", component: <UsersPage />, label: "Users" },
-    { path: "/admin/feedback", component: <FeedbackPage />, label: "Feedback" },
     {
-      path: "/admin/help-texts",
-      component: <HelpTextsPage />,
-      label: "Help Texts",
+      path: "/connections/users",
+      component: <ConnectionsTable />,
+      label: "Users",
     },
+    { path: "/connections/teams", component: <div />, label: "Teams" },
   ];
 
   const selectedTab =
@@ -30,7 +26,7 @@ const AdminPage = () => {
   };
 
   return (
-    <Box sx={{ paddingTop: "120px" }}>
+    <Box sx={{}}>
       <Tabs
         value={selectedTab.path}
         onChange={handleTabChange}
@@ -56,9 +52,11 @@ const AdminPage = () => {
           />
         ))}
       </Tabs>
-      <div className="container">{selectedTab.component}</div>
+      <Box sx={{ paddingTop: "120px", maxWidth: "90%", margin: "0 auto" }}>
+        {selectedTab.component}
+      </Box>
     </Box>
   );
 };
 
-export default AdminPage;
+export default ConnectionsPage;
