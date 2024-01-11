@@ -1,5 +1,7 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import PersonAddIcon from "@mui/icons-material/PersonAdd";
+import ThumbUpOffAltIcon from "@mui/icons-material/ThumbUpOffAlt";
+import ThumbDownOffAltIcon from "@mui/icons-material/ThumbDownOffAlt";
 
 import { Box, Typography } from "@mui/material";
 import ConnectModal from "./ConnectModal";
@@ -23,19 +25,44 @@ const NotificationsBell = ({ alert }) => {
         sx={{
           display: "flex",
           alignItems: "center",
+          cursor: alert.viewed ? "default" : "pointer",
         }}
         onClick={() => {
-          setModalVisible(true);
+          if (!alert.viewed) {
+            setModalVisible(true);
+          }
         }}
       >
-        <PersonAddIcon
-          sx={{ marginRight: "12px", color: alert.viewed ? "grey" : "#b4b8bc" }}
-        />
+        {alert.viewed ? (
+          <Box sx={{ marginRight: "12px" }}>
+            {alert.connection.approved ? (
+              <ThumbUpOffAltIcon color="success" />
+            ) : (
+              <ThumbDownOffAltIcon color="error" />
+            )}
+          </Box>
+        ) : (
+          <PersonAddIcon
+            sx={{
+              marginRight: "12px",
+              color: alert.viewed ? "grey" : "#006edb",
+            }}
+          />
+        )}
         <Box>
-          <Typography fontSize={14} sx={{ whiteSpace: "nowrap" }}>
+          <Typography
+            fontSize={14}
+            sx={{
+              whiteSpace: "nowrap",
+              color: alert.viewed ? "grey" : "black",
+            }}
+          >
             Connection Request
           </Typography>
-          <Typography fontSize={12} color="primary.main">
+          <Typography
+            fontSize={12}
+            color={alert.viewed ? "primary.light" : "primary.main"}
+          >
             {alert.initiatorUser.firstName}
             {alert.initiatorUser.lastName}
           </Typography>
@@ -47,9 +74,6 @@ const NotificationsBell = ({ alert }) => {
   return (
     <>
       <Box
-        onClick={() => {
-          setModalVisible(true);
-        }}
         sx={{
           minWidth: "180px",
           padding: "10px 20px",
@@ -58,6 +82,7 @@ const NotificationsBell = ({ alert }) => {
           fontSize: "18px",
           display: "flex",
           alignItems: "center",
+          cursor: "default",
 
           "&:hover": {
             background: "var(--main-purple-lightest)",

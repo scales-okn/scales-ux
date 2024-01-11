@@ -113,7 +113,10 @@ const PageLayout = ({ id = "", children, pageTitle }: PageLayoutT) => {
                 {user ? (
                   <>
                     <NavItem linkName="Notebooks" route={"/"} />
-                    <NavItem linkName="Connections" route={"/connections"} />
+                    <NavItem
+                      linkName="Connections"
+                      route={"/connections/users"}
+                    />
                     {isAdmin && (
                       <NavItem
                         key={"admin"}

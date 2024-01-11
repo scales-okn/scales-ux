@@ -16,17 +16,21 @@ const ConnectModal = ({ open, onClose, alert }: ConnectModalT) => {
   const { updateConnection } = useConnection();
 
   const handleResponse = (approved) => {
-    updateConnection({
-      id: alert.connectionId,
+    updateConnection(alert.connectionId, {
       approved,
-      pending: false,
     });
-    updateAlert({ id: alert.id, status: "read" });
+    setTimeout(() => {
+      updateAlert(alert.id, { viewed: "true" });
+    }, 100);
     onClose();
   };
 
   return (
-    <ModalContainer open={open} onClose={onClose}>
+    <ModalContainer
+      open={open}
+      onClose={onClose}
+      paperStyles={{ maxWidth: "500px", paddingBottom: "40px" }}
+    >
       <Typography
         sx={{
           fontSize: "32px",

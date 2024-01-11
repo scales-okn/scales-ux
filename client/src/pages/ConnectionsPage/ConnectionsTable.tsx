@@ -1,12 +1,20 @@
 import React, { useState, useEffect } from "react";
 
 import { DataGrid, GridColDef, GridCellParams } from "@mui/x-data-grid";
-import { Tooltip, Typography, Box } from "@mui/material";
+import {
+  Tooltip,
+  Typography,
+  Box,
+  Select,
+  MenuItem,
+  Grid,
+} from "@mui/material";
 // import SearchIcon from "@mui/icons-material/Search";
 import { useTheme } from "@mui/material/styles";
 import { useEffectOnce } from "react-use";
 import dayjs from "dayjs";
 
+import useWindowSize from "src/hooks/useWindowSize";
 import useDebounce from "src/hooks/useDebounce";
 
 import { useSessionUser } from "src/store/auth";
@@ -22,14 +30,22 @@ const ConnectionsTable = () => {
   const theme = useTheme();
   const { role, id: userId } = useSessionUser();
 
+  const [filterType, setFilterType] = useState("all");
   const [rawSearch, setRawSearch] = useState(null);
   const debouncedSearch = useDebounce(rawSearch, 1000);
 
+  const { width } = useWindowSize();
+  const isMobile = width < 500;
+
   useEffect(() => {
     fetchConnections({
-      ...(debouncedSearch ? { search: debouncedSearch, userId } : { userId }),
+      userId,
+      ...(debouncedSearch ? { search: debouncedSearch } : {}),
+      ...(filterType === "pending" ? { pending: true } : {}),
+      ...(filterType === "approved" ? { approved: true } : {}),
+      ...(filterType === "declined" ? { approved: false } : {}),
     });
-  }, [debouncedSearch]); // eslint-disable-line react-hooks/exhaustive-deps
+  }, [debouncedSearch, filterType]); // eslint-disable-line react-hooks/exhaustive-deps
 
   // const isAdmin = role === "admin";
 
@@ -126,7 +142,7 @@ const ConnectionsTable = () => {
                 borderRadius: "4px",
               }}
             >
-              {params.row.pending ? "Pending" : "Accepted"}
+              {params.row.pending ? "Pending" : "Approved"}
             </Box>
           </Tooltip>
         );
@@ -147,33 +163,31 @@ const ConnectionsTable = () => {
         <Pagination
           paging={connectionsPaging}
           fetchData={fetchConnections}
-          // leftContent={
-          //   <TextField
-          //     placeholder="Filter Connections"
-          //     value={rawSearch}
-          //     onChange={(event: React.ChangeEvent<HTMLInputElement>) =>
-          //       setRawSearch(event.target.value)
-          //     }
-          //     InputProps={{
-          //       startAdornment: (
-          //         <InputAdornment position="start">
-          //           <IconButton>
-          //             <SearchIcon />
-          //           </IconButton>
-          //         </InputAdornment>
-          //       ),
-          //     }}
-          //     sx={{
-          //       "& .MuiInputBase-root": {
-          //         border: "none",
-          //         height: "42px",
-          //         background: "white",
-          //       },
-
-          //       borderRadius: "4px",
-          //     }}
-          //   />
-          // }
+          leftContent={
+            <Grid container sx={{ flexDirection: isMobile ? "column" : "row" }}>
+              <Select
+                MenuProps={{
+                  disableScrollLock: true,
+                }}
+                value={filterType}
+                onChange={(event) => {
+                  setFilterType(event.target.value as string);
+                  setRawSearch("");
+                }}
+                sx={{
+                  background: "white",
+                  borderRadius: "4px",
+                  height: "42px",
+                  width: isMobile ? "100%" : "180px",
+                }}
+              >
+                <MenuItem value="all">All Connections</MenuItem>
+                <MenuItem value="approved">Approved</MenuItem>
+                <MenuItem value="declined">Declined</MenuItem>
+                <MenuItem value="pending">Pending</MenuItem>
+              </Select>
+            </Grid>
+          }
         />
         <DataGrid
           rows={connections}

@@ -3,23 +3,37 @@ import { sequelize } from "../database";
 import { findAllAndPaginate } from "./util/findAllAndPaginate";
 import { Op } from "sequelize";
 
-// PUT update (mostly for marking viewed)
+// PUT update (for marking viewed)
 export const update = async (req: Request, res: Response) => {
-  // try {
-  //   const { senderId, receiverId, approved } = req.params;
-  //   const connection = await sequelize.models.Connection.findOne({
-  //     where: { sender: senderId, receiver: receiverId },
-  //   });
-  //   if (!connection) {
-  //     return res.status(404).send("No pending connection found!");
-  //   }
-  //   await connection.update({ approved, pending: false });
-  //   // Send mailers here
-  //   return res.status(200).send("Connection updated successfully");
-  // } catch (error) {
-  //   console.error(error);
-  //   return res.status(500).send("Internal server error");
-  // }
+  try {
+    const { alertId } = req.params;
+    const { viewed } = req.body;
+
+    const alert = await sequelize.models.Alert.findOne({
+      where: { id: alertId },
+      include: [
+        {
+          model: sequelize.models.Connection,
+          as: "connection",
+        },
+      ],
+    });
+
+    if (!alert) {
+      return res.status(404).send("No pending alert found!");
+    }
+
+    await alert.update({ viewed });
+
+    // Send mailers here
+
+    return res.send_ok("User has been updated!", {
+      alert,
+    });
+  } catch (error) {
+    console.error(error);
+    return res.status(500).send("Internal server error");
+  }
 };
 
 export const findAll = async (req: Request, res: Response) => {

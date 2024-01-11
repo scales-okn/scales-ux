@@ -51,13 +51,14 @@ export const create = async (req: Request, res: Response) => {
   }
 };
 
-// PUT update (mostly for approval)
+// PUT update (for approval)
 export const update = async (req: Request, res: Response) => {
   try {
-    const { senderId, receiverId, approved } = req.params;
+    const { approved } = req.body;
+    const { connectionId } = req.params;
 
     const connection = await sequelize.models.Connection.findOne({
-      where: { sender: senderId, receiver: receiverId },
+      where: { id: connectionId },
     });
 
     if (!connection) {
@@ -68,7 +69,9 @@ export const update = async (req: Request, res: Response) => {
 
     // Send mailers here
 
-    return res.status(200).send("Connection updated successfully");
+    return res.send_ok("User has been updated!", {
+      connection,
+    });
   } catch (error) {
     console.error(error);
     return res.status(500).send("Internal server error");
@@ -77,6 +80,9 @@ export const update = async (req: Request, res: Response) => {
 
 export const findAll = async (req: Request, res: Response) => {
   try {
+    const { pending, approved } = req.query;
+    console.log("🚀 ~ findAll ~ req.query:", req.query);
+
     const sessionUser = await sequelize.models.User.findOne({
       // @ts-ignore
       where: { id: req.user.id },
@@ -86,25 +92,30 @@ export const findAll = async (req: Request, res: Response) => {
       return res.status(404).send("No user found!");
     }
 
-    // Find all where the sender is the user or the receiver is the user and approved is true
+    const filterConditions = {
+      ...(pending === "true" && { pending: true }),
+      ...(pending === "false" && { pending: false }),
+      ...(approved === "true" && { approved: true }),
+      ...(approved === "false" && { approved: false, pending: false }),
+    };
+
     const where = {
       [Op.or]: [
         {
           sender: sessionUser.id,
+          ...filterConditions,
         },
-        {
-          [Op.and]: [
-            {
-              receiver: sessionUser.id,
-            },
-            {
-              approved: true,
-            },
-          ],
-        },
+        ...(approved !== "false"
+          ? [
+              {
+                receiver: sessionUser.id,
+                ...filterConditions,
+                approved: true,
+              },
+            ]
+          : []),
       ],
     };
-
     const result = await findAllAndPaginate({
       model: sequelize.models.Connection,
       query: req.query,

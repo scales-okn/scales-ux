@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from "react";
-import { useSelector, useDispatch } from "react-redux";
+import React, { useEffect } from "react";
+import { useSelector } from "react-redux";
 import { useLocation } from "react-router-dom";
 
 import { sessionUserSelector } from "src/store/auth";
@@ -22,7 +22,6 @@ const NotificationsBell = () => {
 
   const { alerts, fetchAlerts } = useAlert();
 
-  // TODO: how often do we call?
   useEffect(() => {
     fetchAlerts();
   }, [location.pathname]); // eslint-disable-line react-hooks/exhaustive-deps
@@ -38,9 +37,8 @@ const NotificationsBell = () => {
   const open = Boolean(anchorEl);
 
   const user = useSelector(sessionUserSelector);
-  const dispatch = useDispatch();
 
-  const unreadAlerts = alerts.filter((alert) => !alert.viewed);
+  const unreadAlerts = alerts?.filter((alert) => !alert.viewed)?.length;
 
   return user ? (
     <Box sx={{ marginRight: "16px", cursor: "pointer" }}>
@@ -54,7 +52,9 @@ const NotificationsBell = () => {
           alignItems: "center",
         }}
       >
-        <NotificationsIcon sx={{ color: unreadAlerts ? "#5ad1ff" : "white" }} />
+        <NotificationsIcon
+          sx={{ color: unreadAlerts ? theme.palette.warning.light : "white" }}
+        />
       </Box>
       {open && (
         <Popover
