@@ -36,10 +36,7 @@ const AppRoutes = () => {
         path="/notebooks/:notebookId"
         element={requireAuth(<NotebookPage />)}
       />
-      <Route
-        path="/connections/users"
-        element={requireAuth(<ConnectionsPage />)}
-      />
+      <Route path="/connections" element={requireAuth(<ConnectionsPage />)} />
       <Route
         path="/connections/teams"
         element={requireAuth(<ConnectionsPage />)}

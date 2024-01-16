@@ -1,7 +1,8 @@
 import React, { useState } from "react";
 import PersonAddIcon from "@mui/icons-material/PersonAdd";
-import ThumbUpOffAltIcon from "@mui/icons-material/ThumbUpOffAlt";
-import ThumbDownOffAltIcon from "@mui/icons-material/ThumbDownOffAlt";
+// import ThumbUpOffAltIcon from "@mui/icons-material/ThumbUpOffAlt";
+// import ThumbDownOffAltIcon from "@mui/icons-material/ThumbDownOffAlt";
+import CheckCircleOutlineIcon from "@mui/icons-material/CheckCircleOutline";
 
 import { Box, Typography } from "@mui/material";
 import ConnectModal from "./ConnectModal";
@@ -35,11 +36,12 @@ const NotificationsBell = ({ alert }) => {
       >
         {alert.viewed ? (
           <Box sx={{ marginRight: "12px" }}>
-            {alert.connection.approved ? (
+            {/* {alert.connection.approved ? (
               <ThumbUpOffAltIcon color="success" />
             ) : (
               <ThumbDownOffAltIcon color="error" />
-            )}
+            )} */}
+            <CheckCircleOutlineIcon sx={{ color: "GrayText" }} />
           </Box>
         ) : (
           <PersonAddIcon

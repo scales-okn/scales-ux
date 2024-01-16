@@ -55,6 +55,7 @@ export const create = async (req: Request, res: Response) => {
 export const update = async (req: Request, res: Response) => {
   try {
     const { approved } = req.body;
+    console.log("🚀 ~ update ~ approved:", approved);
     const { connectionId } = req.params;
 
     const connection = await sequelize.models.Connection.findOne({
@@ -81,7 +82,6 @@ export const update = async (req: Request, res: Response) => {
 export const findAll = async (req: Request, res: Response) => {
   try {
     const { pending, approved } = req.query;
-    console.log("🚀 ~ findAll ~ req.query:", req.query);
 
     const sessionUser = await sequelize.models.User.findOne({
       // @ts-ignore

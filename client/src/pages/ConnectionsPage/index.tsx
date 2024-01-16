@@ -11,7 +11,7 @@ const ConnectionsPage = () => {
 
   const tabPaths = [
     {
-      path: "/connections/users",
+      path: "/connections",
       component: <ConnectionsTable />,
       label: "Users",
     },
@@ -19,7 +19,7 @@ const ConnectionsPage = () => {
   ];
 
   const selectedTab =
-    tabPaths.find((tab) => location.pathname.includes(tab.path)) || tabPaths[0];
+    tabPaths.find((tab) => location.pathname === tab.path) || tabPaths[0];
 
   const handleTabChange = (event, newValue) => {
     navigate(newValue);

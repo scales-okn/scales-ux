@@ -28,7 +28,7 @@ const ConnectionsTable = () => {
   // const { fetchUsers, users, usersPaging } = useUser();
   const { fetchConnections, connections, connectionsPaging } = useConnection();
   const theme = useTheme();
-  const { role, id: userId } = useSessionUser();
+  const { id: userId } = useSessionUser();
 
   const [filterType, setFilterType] = useState("all");
   const [rawSearch, setRawSearch] = useState(null);
@@ -130,8 +130,26 @@ const ConnectionsTable = () => {
       headerAlign: "center",
       renderHeader,
       renderCell: (params: GridCellParams) => {
-        const bgColor = params.row.pending === true ? "orange" : "green";
+        const displayItem = () => {
+          if (params.row.pending) {
+            return {
+              bgColor: theme.palette.warning.main,
+              itemText: "Pending",
+            };
+          }
 
+          return params.row.approved
+            ? {
+                bgColor: theme.palette.success.main,
+                itemText: "Approved",
+              }
+            : {
+                bgColor: theme.palette.error.main,
+                itemText: "Declined",
+              };
+        };
+
+        const { bgColor, itemText } = displayItem();
         return (
           <Tooltip title={params.row.usage}>
             <Box
@@ -142,7 +160,7 @@ const ConnectionsTable = () => {
                 borderRadius: "4px",
               }}
             >
-              {params.row.pending ? "Pending" : "Approved"}
+              {itemText}
             </Box>
           </Tooltip>
         );
