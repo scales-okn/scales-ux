@@ -7,6 +7,7 @@ import HelpTextModel from "../models/HelpText";
 import RingModel from "../models/Ring";
 import ConnectionModel from "../models/Connection";
 import AlertModel from "../models/Alert";
+import TeamModel from "../models/Team";
 import LogModel from "../models/Log";
 import logs from "./logs";
 import seeds from "./seeds";
@@ -48,6 +49,7 @@ const database = async () => {
     const Ring = RingModel(sequelize, { hooks: logHooks });
     const Connection = ConnectionModel(sequelize, { hooks: logHooks });
     const Alert = AlertModel(sequelize, { hooks: logHooks });
+    const Team = TeamModel(sequelize, { hooks: logHooks });
     FeedbackModel(sequelize, { hooks: logHooks });
     HelpTextModel(sequelize, { hooks: logHooks });
 
@@ -62,6 +64,7 @@ const database = async () => {
       Panel,
       Notebook,
       User,
+      Team,
     });
     Connection.associate({
       User,
@@ -74,11 +77,16 @@ const database = async () => {
       Notebook,
       Connection,
       Alert,
+      Team,
     });
     Alert.associate({
       User,
       Notebook,
       Connection,
+    });
+    Team.associate({
+      User,
+      Notebook,
     });
     Ring.associate({
       User,

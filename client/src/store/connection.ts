@@ -3,10 +3,11 @@ import type { RootState, AppDispatch } from "src/store";
 import { useSelector, useDispatch } from "react-redux";
 import { notify } from "reapop";
 import { PagingT } from "src/types/paging";
+import { UserT } from "./user";
 
 import { makeRequest } from "src/helpers/makeRequest";
 
-type ConnectionT = {
+export type ConnectionT = {
   id: number;
   senderId: number;
   recipientId: number;
@@ -19,6 +20,7 @@ type ConnectionT = {
 
 type InitialStateT = {
   connections: ConnectionT[];
+  approvedConnectionUsers: UserT[];
   paging: PagingT;
   loadingConnections: boolean;
   hasErrors: boolean;
@@ -26,6 +28,7 @@ type InitialStateT = {
 
 export const initialState: InitialStateT = {
   connections: [],
+  approvedConnectionUsers: [],
   paging: {
     totalCount: 0,
     totalPages: 0,
@@ -55,6 +58,23 @@ const connectionSlice = createSlice({
       };
     },
     fetchConnectionsFailure: (state) => ({
+      ...state,
+      loadingConnections: false,
+      hasErrors: true,
+    }),
+    findAllApprovedConnectionUsers: (state) => ({
+      ...state,
+      loadingConnections: true,
+    }),
+    findAllApprovedConnectionUsersSuccess: (state, { payload }) => {
+      return {
+        ...state,
+        loadingConnections: false,
+        hasErrors: false,
+        approvedConnectionUsers: payload,
+      };
+    },
+    findAllApprovedConnectionUsersFailure: (state) => ({
       ...state,
       loadingConnections: false,
       hasErrors: true,
@@ -90,6 +110,8 @@ export const connectionActions = connectionSlice.actions;
 // Selectors
 export const connectionsSelector = (state: RootState) =>
   state.connections.connections;
+export const approvedConnectionUsersSelector = (state: RootState) =>
+  state.connections.approvedConnectionUsers;
 export const connectionsPagingSelector = (state: RootState) =>
   state.connections.paging;
 
@@ -111,6 +133,33 @@ export const fetchConnections = (params) => {
 
       if (code === 200) {
         dispatch(connectionActions.fetchConnectionsSuccess(data));
+      } else {
+        dispatch(notify(message, "error"));
+        dispatch(connectionActions.fetchConnectionsFailure());
+      }
+    } catch (error) {
+      dispatch(connectionActions.fetchConnectionsFailure());
+    }
+  };
+};
+
+export const fetchApprovedConnectionUsers = (params) => {
+  return async (dispatch: AppDispatch, getState: () => RootState) => {
+    try {
+      const { data, message, code } = await makeRequest.get(
+        `/api/connections/findAllApprovedConnectionUsers`,
+        { params },
+      );
+
+      if (code === 200) {
+        // Dispatch an action to update the state with other users
+        dispatch(
+          connectionActions.fetchConnectionsSuccess({
+            connections: [],
+            paging: {},
+          }),
+        );
+        dispatch(connectionActions.findAllApprovedConnectionUsersSuccess(data));
       } else {
         dispatch(notify(message, "error"));
         dispatch(connectionActions.fetchConnectionsFailure());
@@ -163,14 +212,18 @@ export const createConnection = (payload: any = {}) => {
 // Hooks
 export const useConnection = () => {
   const connections = useSelector(connectionsSelector);
+  const approvedConnectionUsers = useSelector(approvedConnectionUsersSelector);
   const connectionsPaging = useSelector(connectionsPagingSelector);
   const dispatch = useDispatch();
 
   return {
     connections,
     connectionsPaging,
+    approvedConnectionUsers,
     fetchConnections: (payload: any = {}) =>
       dispatch(fetchConnections(payload)),
+    fetchApprovedConnectionUsers: (payload: any = {}) =>
+      dispatch(fetchApprovedConnectionUsers(payload)),
     createConnection: (payload: any = {}) =>
       dispatch(createConnection(payload)),
     updateConnection: (connectionId, payload: any = {}) =>

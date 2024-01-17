@@ -93,6 +93,11 @@ export default (sequelize, options) => {
       foreignKey: "initiatorUserId",
       as: "initiatedAlerts",
     });
+    models.User.belongsToMany(models.Team, {
+      through: "UserTeams",
+      foreignKey: "userId",
+      as: "teams",
+    });
   };
 
   return User;

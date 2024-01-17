@@ -3,15 +3,20 @@ import type { RootState, AppDispatch } from "src/store";
 import { useSelector, useDispatch } from "react-redux";
 import { notify } from "reapop";
 import { PagingT } from "src/types/paging";
+import { ConnectionT } from "./connection";
+import { UserT } from "./user";
 
 import { makeRequest } from "src/helpers/makeRequest";
 
-type AlertT = {
+export type AlertT = {
   id: number;
   userId: number;
   initiatorUserId: number;
+  initiatorUser?: UserT;
   notebookId: number | null;
   viewed: boolean;
+  connection?: ConnectionT;
+  connectionId?: number;
   createdAt: string;
   updatedAt: string;
 };

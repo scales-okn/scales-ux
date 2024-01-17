@@ -54,6 +54,10 @@ export default (sequelize, options) => {
       foreignKey: "userId",
       as: "user",
     });
+    models.Notebook.belongsTo(models.Team, {
+      foreignKey: "teamId",
+      as: "team",
+    });
   };
 
   return Notebook;

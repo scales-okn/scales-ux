@@ -55,7 +55,6 @@ export const create = async (req: Request, res: Response) => {
 export const update = async (req: Request, res: Response) => {
   try {
     const { approved } = req.body;
-    console.log("🚀 ~ update ~ approved:", approved);
     const { connectionId } = req.params;
 
     const connection = await sequelize.models.Connection.findOne({
@@ -134,6 +133,47 @@ export const findAll = async (req: Request, res: Response) => {
           attributes: ["id", "firstName", "lastName", "email"],
         },
       ],
+    });
+
+    return res.send_ok("", result);
+  } catch (error) {
+    console.error(error);
+    return res.status(500).send("Internal server error");
+  }
+};
+
+export const findAllApprovedConnectionUsers = async (req: Request, res: Response) => {
+  try {
+    const sessionUser = await sequelize.models.User.findOne({
+      // @ts-ignore
+      where: { id: req.user.id },
+    });
+
+    if (!sessionUser) {
+      return res.status(404).send("No user found!");
+    }
+
+    const connectionIds = await sequelize.models.Connection.findAll({
+      attributes: ["sender", "receiver"],
+      where: {
+        [Op.or]: [
+          { sender: sessionUser.id, approved: true },
+          { receiver: sessionUser.id, approved: true },
+        ],
+      },
+    });
+
+    const userIds = Array.from(new Set([...connectionIds.map((conn) => conn.sender), ...connectionIds.map((conn) => conn.receiver)]));
+
+    const otherUserIds = userIds.filter((userId) => userId !== sessionUser.Id);
+
+    const result = await sequelize.models.User.findAll({
+      where: {
+        id: {
+          [Op.in]: otherUserIds,
+        },
+      },
+      attributes: ["id", "firstName", "lastName", "email"],
     });
 
     return res.send_ok("", result);

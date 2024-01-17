@@ -8,7 +8,7 @@ import { PagingT } from "src/types/paging";
 
 import { makeRequest } from "src/helpers/makeRequest";
 
-type UserT = {
+export type UserT = {
   approved: boolean;
   blocked: boolean;
   createdAt: string;

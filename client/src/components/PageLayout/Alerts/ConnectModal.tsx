@@ -1,15 +1,16 @@
 import React from "react";
 import { Button, Typography, Box } from "@mui/material";
 import { useTheme } from "@mui/material/styles";
-import { useAlert } from "src/store/alerts";
+import { useAlert, AlertT } from "src/store/alerts";
 import { useConnection } from "src/store/connection";
 import ModalContainer from "src/components/Modals/ModalContainer";
 
 type ConnectModalT = {
   open: boolean;
   onClose: () => void;
-  alert: any;
+  alert: AlertT;
 };
+
 const ConnectModal = ({ open, onClose, alert }: ConnectModalT) => {
   const theme = useTheme();
   const { updateAlert } = useAlert();
@@ -70,6 +71,21 @@ const ConnectModal = ({ open, onClose, alert }: ConnectModalT) => {
       >
         {alert.initiatorUser.firstName} {alert.initiatorUser.lastName}
       </Typography>
+      {alert.connection?.note ? (
+        <Typography
+          sx={{
+            fontSize: "18px",
+            textAlign: "center",
+            marginTop: "24px",
+            marginBottom: "24px",
+            color: "GrayText",
+          }}
+        >
+          {'"'}
+          {alert.connection.note}
+          {'"'}
+        </Typography>
+      ) : null}
       <Typography
         sx={{
           fontSize: "14px",

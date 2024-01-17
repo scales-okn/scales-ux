@@ -4,6 +4,7 @@ import { useLocation, useNavigate } from "react-router-dom";
 
 import { Tabs, Tab, Box } from "@mui/material";
 import ConnectionsTable from "./ConnectionsTable";
+import TeamsTable from "./TeamsTable";
 
 const ConnectionsPage = () => {
   const navigate = useNavigate();
@@ -15,7 +16,7 @@ const ConnectionsPage = () => {
       component: <ConnectionsTable />,
       label: "Users",
     },
-    { path: "/connections/teams", component: <div />, label: "Teams" },
+    { path: "/connections/teams", component: <TeamsTable />, label: "Teams" },
   ];
 
   const selectedTab =
