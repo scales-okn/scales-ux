@@ -14,8 +14,11 @@ export default (sequelize, options) => {
         type: DataTypes.STRING,
         allowNull: true,
       },
-      // Collaborators currently unused
       collaborators: {
+        defaultValue: [],
+        type: DataTypes.ARRAY(DataTypes.INTEGER),
+      },
+      sharedWith: {
         defaultValue: [],
         type: DataTypes.ARRAY(DataTypes.INTEGER),
       },

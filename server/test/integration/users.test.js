@@ -26,7 +26,7 @@ describe("Users API", () => {
       chai.expect(res.body.data).to.have.keys("users", "paging");
       chai.expect(res.body.data.users).to.be.an("array");
       chai.expect(res.body.data.paging).to.be.an("object");
-      chai.expect(res.body.data.paging).to.have.keys("totalItems", "totalPages", "currentPage");
+      chai.expect(res.body.data.paging).to.have.keys("totalCount", "totalPages", "currentPage", "pageSize");
 
       res.body.data.users.forEach((user) => chai.expect(user).to.be.jsonSchema(userSchema));
     } catch (error) {

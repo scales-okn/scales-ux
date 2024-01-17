@@ -1,4 +1,4 @@
-import React, { FunctionComponent, useState } from "react";
+import React, { useState } from "react";
 import { useParams, Link, useNavigate } from "react-router-dom";
 
 import { useEffectOnce } from "react-use";
@@ -8,7 +8,7 @@ import { makeRequest } from "src/helpers/makeRequest";
 import Loader from "src/components/Loader";
 import { styles } from "./styles";
 
-const EmailVerificationPage: FunctionComponent = () => {
+const EmailVerificationPage = () => {
   const { token } = useParams();
   const navigate = useNavigate();
 

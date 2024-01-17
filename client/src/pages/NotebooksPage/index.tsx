@@ -79,19 +79,6 @@ const NotebooksPage = () => {
     });
   };
 
-  const notebooksData = notebooks
-    .filter((notebook) => {
-      if (notebooksType === "my-notebooks") {
-        return notebook.userId === user.id;
-      }
-      if (notebooksType === "public") {
-        return notebook.visibility === "public";
-      }
-
-      return true;
-    })
-    .filter((notebook) => notebook.title.toLowerCase());
-
   const renderHeader = (params) => {
     return (
       <ColumnHeader
@@ -265,6 +252,7 @@ const NotebooksPage = () => {
                 >
                   <MenuItem value="my-notebooks">My Notebooks</MenuItem>
                   <MenuItem value="public">Public Notebooks</MenuItem>
+                  <MenuItem value="shared">Shared with Me</MenuItem>
                 </Select>
 
                 <TextField
@@ -303,7 +291,7 @@ const NotebooksPage = () => {
             }
           />
           <DataGrid
-            rows={notebooksData}
+            rows={notebooks}
             columns={columns}
             disableColumnMenu
             disableColumnFilter

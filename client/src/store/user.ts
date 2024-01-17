@@ -37,6 +37,7 @@ export const initialState: InitialStateT = {
     totalCount: 0,
     totalPages: 0,
     currentPage: 0,
+    pageSize: 0,
   },
   loadingUsers: false,
   hasErrors: false,
