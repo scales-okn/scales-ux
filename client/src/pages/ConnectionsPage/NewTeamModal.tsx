@@ -10,6 +10,7 @@ import ModalContainer from "src/components/Modals/ModalContainer";
 
 type UserFields = {
   teamName: string;
+  description: string;
 };
 
 const NewTeamModal = () => {
@@ -25,17 +26,18 @@ const NewTeamModal = () => {
 
   const validationSchema = yup.object({
     teamName: yup.string().required("Name is required"),
-    note: yup.string(),
+    description: yup.string(),
   });
 
   const formik = useFormik({
     initialValues: {
       teamName: "",
+      description: "",
     },
     validationSchema,
     onSubmit: (values: UserFields) => {
-      const { teamName } = values;
-      createTeam({ name: teamName });
+      const { teamName, description } = values;
+      createTeam({ name: teamName, description });
       onClose();
     },
   });
@@ -81,17 +83,33 @@ const NewTeamModal = () => {
         </Typography>
         <form onSubmit={formik.handleSubmit}>
           <Grid container spacing={2}>
-            <Grid item xs={12} sx={{ marginBottom: "24px" }}>
+            <Grid item xs={12} sx={{ marginBottom: "6px" }}>
               <TextField
                 name="teamName"
                 label="Team Name*"
-                multiline
                 fullWidth
                 {...formik.getFieldProps("teamName")}
                 error={
                   formik.touched.teamName && Boolean(formik.errors.teamName)
                 }
                 helperText={formik.touched.teamName && formik.errors.teamName}
+              />
+            </Grid>
+            <Grid item xs={12} sx={{ marginBottom: "12px" }}>
+              <TextField
+                name="description"
+                label="Description"
+                multiline
+                rows={4}
+                fullWidth
+                {...formik.getFieldProps("description")}
+                error={
+                  formik.touched.description &&
+                  Boolean(formik.errors.description)
+                }
+                helperText={
+                  formik.touched.description && formik.errors.description
+                }
               />
             </Grid>
             <Grid

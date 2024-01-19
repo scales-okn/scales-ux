@@ -6,7 +6,7 @@ import { sequelize } from "../database";
 // POST create
 export const create = async (req: Request, res: Response) => {
   try {
-    const { name } = req.body;
+    const { name, description } = req.body;
 
     const sessionUser = await sequelize.models.User.findOne({
       //@ts-ignore
@@ -19,6 +19,7 @@ export const create = async (req: Request, res: Response) => {
 
     const newTeam = await sequelize.models.Team.create({
       name,
+      description,
     });
 
     await newTeam.addUsers(sessionUser, { through: { role: "lead" } });
@@ -82,6 +83,7 @@ export const findAll = async (req: Request, res: Response) => {
         {
           model: sequelize.models.Team,
           as: "teams",
+          attributes: ["name", "description"],
           include: [
             {
               model: sequelize.models.User,
@@ -98,9 +100,9 @@ export const findAll = async (req: Request, res: Response) => {
       return res.status(404).send("No user found!");
     }
 
-    const result = sessionUser.teams;
+    const teams = sessionUser.teams || [];
 
-    return res.send_ok("", result);
+    return res.send_ok("", { teams });
   } catch (error) {
     console.error(error);
     return res.status(500).send("Internal server error");

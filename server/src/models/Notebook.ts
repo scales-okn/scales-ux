@@ -35,6 +35,10 @@ export default (sequelize, options) => {
         type: DataTypes.STRING,
         allowNull: true,
       },
+      teamId: {
+        type: DataTypes.INTEGER,
+        allowNull: true,
+      },
     },
     options
   );

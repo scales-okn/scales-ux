@@ -8,6 +8,10 @@ export default (sequelize, options) => {
         type: DataTypes.STRING,
         allowNull: false,
       },
+      description: {
+        type: DataTypes.STRING,
+        allowNull: true,
+      },
     },
     options
   );

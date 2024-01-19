@@ -11,10 +11,11 @@ import {
   AccordionSummary,
   AccordionDetails,
 } from "@mui/material";
-import AddIcon from "@mui/icons-material/Add";
 import ArrowDropDownIcon from "@mui/icons-material/ArrowDropDown";
 import StarBorderPurple500Icon from "@mui/icons-material/StarBorderPurple500";
 import { useTheme } from "@mui/material/styles";
+
+import useWindowSize from "src/hooks/useWindowSize";
 
 import { useSessionUser } from "src/store/auth";
 import { useTeam } from "src/store/team";
@@ -27,7 +28,10 @@ const TeamsTable = () => {
   const { fetchTeams, teams } = useTeam();
   const { fetchApprovedConnectionUsers, approvedConnectionUsers } =
     useConnection();
-  console.log("🚀 ~ TeamsTable ~ connections:", approvedConnectionUsers);
+
+  const { width } = useWindowSize();
+  const isTablet = width < 900;
+
   const sessionUser = useSessionUser();
 
   useEffect(() => {
@@ -76,199 +80,229 @@ const TeamsTable = () => {
           gap: "24px",
           justifyContent: "space-between",
           flexWrap: "wrap",
+          paddingBottom: "80px",
         }}
       >
-        {teams.map((team) => {
-          const teamLead = team.users.find((u) => {
-            return u.UserTeams.role === "lead";
-          });
-          const teamUsers = prioritizeLead(team.users);
+        {teams.length > 0 ? (
+          teams.map((team, idx) => {
+            const teamLead = team.users.find((u) => {
+              return u.UserTeams.role === "lead";
+            });
+            const teamUsers = prioritizeLead(team.users);
 
-          return (
-            <Box
-              key={team.id}
-              sx={{
-                width: "48%",
-                minWidth: "400px",
-                maxWidth: "800px",
-                flexGrow: 1,
-              }}
-            >
-              <Accordion sx={{ marginBottom: "24px" }}>
-                <AccordionSummary
-                  expandIcon={<ArrowDropDownIcon />}
-                  aria-controls="panel2-content"
-                  id="panel2-header"
+            return (
+              <Box
+                key={team.id}
+                sx={{
+                  width: "48%",
+                  minWidth: "400px",
+                  // maxWidth: "800px",
+                  flexGrow: isTablet ? 1 : 0,
+                }}
+              >
+                <Accordion
+                  // defaultExpanded={idx === 0}
+                  sx={{ marginBottom: "24px" }}
                 >
-                  <Box
-                    sx={{
-                      display: "flex",
-                      alignItems: "center",
-                      justifyContent: "space-between",
-                      paddingRight: "12px",
-                      paddingLeft: "12px",
-                      width: "100%",
-                      minHeight: "56px",
-                    }}
+                  <AccordionSummary
+                    expandIcon={<ArrowDropDownIcon />}
+                    aria-controls="panel2-content"
+                    id="panel2-header"
                   >
-                    <Typography
-                      sx={{
-                        fontSize: "24px",
-                        fontWeight: "700",
-                        color: theme.palette.primary.main,
-                      }}
-                    >
-                      {team.name}
-                    </Typography>
                     <Box
                       sx={{
                         display: "flex",
                         alignItems: "center",
+                        justifyContent: "space-between",
+                        paddingRight: "12px",
+                        paddingLeft: "12px",
+                        width: "100%",
+                        minHeight: "56px",
                       }}
                     >
                       <Typography
                         sx={{
-                          marginRight: "4px",
+                          fontSize: "24px",
                           fontWeight: "700",
-                          color: "GrayText",
-                          display: "flex",
-                          alignItems: "center",
+                          color: theme.palette.primary.main,
                         }}
                       >
-                        {renderName(teamLead)}
-                        <StarBorderPurple500Icon
-                          color="primary"
-                          sx={{ fontSize: "1rem", marginLeft: "4px" }}
-                        />
+                        {team.name}
                       </Typography>
-                    </Box>
-                  </Box>
-                </AccordionSummary>
-                <AccordionDetails
-                  sx={{
-                    paddingLeft: "48px",
-                    borderTop: "1px solid lightgrey",
-                    padding: "26px",
-                  }}
-                >
-                  {team.description ? (
-                    <Box
-                      sx={{
-                        marginBottom: "36px",
-                        paddingBottom: "36px",
-                        paddingTop: "12px",
-                        borderBottom: "1px solid lightgrey",
-                        textAlign: "center",
-                        color: "grey",
-                      }}
-                    >
-                      {team.description}
-                    </Box>
-                  ) : null}
-                  {teamUsers.map((user) => {
-                    return (
                       <Box
-                        key={user.id}
                         sx={{
                           display: "flex",
                           alignItems: "center",
-                          justifyContent: "space-between",
                         }}
                       >
-                        <Box
+                        <Typography
                           sx={{
-                            padding: "12px",
+                            marginRight: "4px",
+                            fontWeight: "700",
+                            color: "GrayText",
+                            display: "flex",
+                            alignItems: "center",
                           }}
                         >
-                          <Typography
+                          {renderName(teamLead)}
+                          <StarBorderPurple500Icon
+                            color="primary"
+                            sx={{ fontSize: "1rem", marginLeft: "4px" }}
+                          />
+                        </Typography>
+                      </Box>
+                    </Box>
+                  </AccordionSummary>
+                  <AccordionDetails
+                    sx={{
+                      paddingLeft: "48px",
+                      borderTop: "1px solid lightgrey",
+                      padding: "26px",
+                    }}
+                  >
+                    {team.description ? (
+                      <Box
+                        sx={{
+                          marginBottom: "36px",
+                          paddingBottom: "36px",
+                          paddingTop: "12px",
+                          borderBottom: "1px solid lightgrey",
+                          textAlign: "center",
+                          color: "grey",
+                        }}
+                      >
+                        {team.description}
+                      </Box>
+                    ) : null}
+                    {teamUsers.map((user) => {
+                      return (
+                        <Box
+                          key={user.id}
+                          sx={{
+                            display: "flex",
+                            alignItems: "center",
+                            justifyContent: "space-between",
+                          }}
+                        >
+                          <Box
                             sx={{
-                              fontWeight: "600",
-                              color: "#333",
-                              display: "flex",
-                              alignItems: "center",
+                              padding: "12px",
                             }}
                           >
-                            {renderName(user)}
-                            {user.id === teamLead?.id ? (
-                              <StarBorderPurple500Icon
-                                color="primary"
-                                sx={{ fontSize: "1rem", marginLeft: "4px" }}
-                              />
-                            ) : null}
-                          </Typography>
+                            <Typography
+                              sx={{
+                                fontWeight: "600",
+                                color: "#333",
+                                display: "flex",
+                                alignItems: "center",
+                              }}
+                            >
+                              {renderName(user)}
+                              {user.id === teamLead?.id ? (
+                                <StarBorderPurple500Icon
+                                  color="primary"
+                                  sx={{ fontSize: "1rem", marginLeft: "4px" }}
+                                />
+                              ) : null}
+                            </Typography>
+                          </Box>
+                          <Select
+                            variant="outlined"
+                            value={user.UserTeams.role}
+                            disabled={user.UserTeams.role === "lead"}
+                            onChange={(event) => {
+                              console.log(event);
+                            }}
+                            sx={{
+                              background: "white",
+                              minWidth: "140px",
+                              height: "32px",
+                            }}
+                            MenuProps={{
+                              disableScrollLock: true,
+                            }}
+                          >
+                            {visibilityOptions.map((val) => (
+                              <MenuItem key={val} value={val}>
+                                <Typography
+                                  sx={{
+                                    color: selectColors[val],
+                                    textTransform: "capitalize",
+                                  }}
+                                >
+                                  {val}
+                                </Typography>
+                              </MenuItem>
+                            ))}
+                          </Select>
                         </Box>
-                        <Select
-                          variant="outlined"
-                          value={user.UserTeams.role}
-                          onChange={(event) => {
-                            console.log(event);
-                          }}
-                          sx={{
-                            background: "white",
-                            minWidth: "140px",
-                            height: "32px",
-                          }}
-                          MenuProps={{
-                            disableScrollLock: true,
-                          }}
-                        >
-                          {visibilityOptions.map((val) => (
-                            <MenuItem key={val} value={val}>
+                      );
+                    })}{" "}
+                    <Box
+                      sx={{
+                        background: "lightgrey",
+                        height: "1px",
+                        margin: "32px 0",
+                      }}
+                    />
+                    <Box
+                      sx={{
+                        width: "100%",
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "space-between",
+                      }}
+                    >
+                      <Typography sx={{ padding: "0 12px", color: "GrayText" }}>
+                        Add team member...
+                      </Typography>
+                      <Select
+                        variant="outlined"
+                        onChange={(event) => {
+                          console.log(event);
+                        }}
+                        sx={{
+                          background: "white",
+                          minWidth: "140px",
+                          height: "32px",
+                        }}
+                        MenuProps={{
+                          disableScrollLock: true,
+                        }}
+                      >
+                        {approvedConnectionUsers.map((connection) => {
+                          return (
+                            <MenuItem key={connection.id} value={connection.id}>
                               <Typography
                                 sx={{
-                                  color: selectColors[val],
                                   textTransform: "capitalize",
                                 }}
                               >
-                                {val}
+                                {`${connection.firstName} ${connection.lastName}`}
                               </Typography>
                             </MenuItem>
-                          ))}
-                        </Select>
-                      </Box>
-                    );
-                  })}{" "}
-                  <Box
-                    sx={{
-                      width: "100%",
-                      display: "flex",
-                      justifyContent: "flex-start",
-                    }}
-                  >
-                    <Select
-                      variant="outlined"
-                      onChange={(event) => {
-                        console.log(event);
-                      }}
-                      sx={{
-                        background: "white",
-                        minWidth: "140px",
-                        height: "32px",
-                      }}
-                      MenuProps={{
-                        disableScrollLock: true,
-                      }}
-                    >
-                      {approvedConnectionUsers.map((connection) => {
-                        return (
-                          <MenuItem key={connection.id} value={connection.id}>
-                            <Typography
-                              sx={{
-                                textTransform: "capitalize",
-                              }}
-                            >
-                              {`${connection.firstName} ${connection.lastName}`}
-                            </Typography>
-                          </MenuItem>
-                        );
-                      })}
-                    </Select>
-                  </Box>
-                </AccordionDetails>
-              </Accordion>
-            </Box>
-          );
-        })}
+                          );
+                        })}
+                      </Select>
+                    </Box>
+                  </AccordionDetails>
+                </Accordion>
+              </Box>
+            );
+          })
+        ) : (
+          <Box
+            sx={{
+              display: "flex",
+              justifyContent: "center",
+              alignItems: "center",
+              width: "100%",
+              height: "40vh",
+            }}
+          >
+            No teams to display
+          </Box>
+        )}
       </Box>
     </>
   );

@@ -100,7 +100,7 @@ export const fetchTeams = (params) => {
       });
 
       if (code === 200) {
-        dispatch(teamActions.fetchTeamsSuccess(data));
+        dispatch(teamActions.fetchTeamsSuccess(data.teams));
       } else {
         dispatch(notify(message, "error"));
         dispatch(teamActions.fetchTeamsFailure());
