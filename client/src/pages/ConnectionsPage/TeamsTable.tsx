@@ -46,34 +46,20 @@ const TeamsTable = () => {
     });
   }, []);
 
-  const renderName = (selectedUser) => {
+  const renderName = (selectedUser, replacementText = null) => {
     if (!selectedUser) return "";
+    const replacement = replacementText ? replacementText : "User";
 
     return selectedUser.id === sessionUser.id
-      ? "You"
+      ? replacement
       : `${selectedUser.firstName} ${selectedUser.lastName}`;
   };
 
-  const prioritizeLead = (arr = []) => {
-    const sortedArray = [...arr].sort((a, b) => {
-      if (a.UserTeams.role === "lead") {
-        return -1;
-      } else if (b.UserTeams.role === "lead") {
-        return 1;
-      } else {
-        return 0;
-      }
-    });
-
-    return sortedArray;
-  };
-
-  const visibilityOptions = ["lead", "editor", "read-only"];
+  const visibilityOptions = ["admin", "read-only"];
 
   const selectColors = {
-    [visibilityOptions[0]]: theme.palette.primary.light,
-    [visibilityOptions[1]]: theme.palette.success.main,
-    [visibilityOptions[2]]: theme.palette.warning.main,
+    [visibilityOptions[0]]: theme.palette.primary.main,
+    [visibilityOptions[1]]: theme.palette.warning.main,
   };
 
   return (
@@ -90,11 +76,12 @@ const TeamsTable = () => {
       >
         {teams.length > 0 ? (
           teams.map((team, idx) => {
-            const teamLead = team.users.find((u) => {
-              return u.UserTeams.role === "lead";
+            const adminUsers = team.users.filter(
+              (u) => u.UserTeams.role === "admin",
+            );
+            const sessionUserIsAdmin = adminUsers.find((u) => {
+              return sessionUser.id === u?.id;
             });
-            const teamUsers = prioritizeLead(team.users);
-            const sessionUserIsLead = teamLead?.id === sessionUser.id;
 
             const availableTeamMembers = approvedConnectionUsers
               .map((connection) => {
@@ -142,28 +129,6 @@ const TeamsTable = () => {
                       >
                         {team.name}
                       </Typography>
-                      <Box
-                        sx={{
-                          display: "flex",
-                          alignItems: "center",
-                        }}
-                      >
-                        <Typography
-                          sx={{
-                            marginRight: "4px",
-                            fontWeight: "700",
-                            color: "GrayText",
-                            display: "flex",
-                            alignItems: "center",
-                          }}
-                        >
-                          {renderName(teamLead)}
-                          <StarBorderPurple500Icon
-                            color="primary"
-                            sx={{ fontSize: "1rem", marginLeft: "4px" }}
-                          />
-                        </Typography>
-                      </Box>
                     </Box>
                   </AccordionSummary>
                   <AccordionDetails
@@ -182,7 +147,7 @@ const TeamsTable = () => {
                         color: "grey",
                       }}
                     >
-                      {sessionUserIsLead ? (
+                      {sessionUserIsAdmin ? (
                         <>
                           <Typography sx={{ marginBottom: "12px" }}>
                             Team Name:
@@ -229,7 +194,16 @@ const TeamsTable = () => {
                         </Typography>
                       )}
                     </Box>
-                    {teamUsers.map((user) => {
+                    {team.users.map((user) => {
+                      const onlyOneAdmin = adminUsers.length === 1;
+                      const userIsAdmin = user.UserTeams.role === "admin";
+                      const sessionUserIsUser = user.id === sessionUser.id;
+                      const deleteDisabled = onlyOneAdmin && userIsAdmin;
+
+                      const canDelete =
+                        (sessionUserIsAdmin || sessionUserIsUser) &&
+                        !deleteDisabled;
+
                       return (
                         <Box
                           key={user.id}
@@ -253,22 +227,13 @@ const TeamsTable = () => {
                               }}
                             >
                               {renderName(user)}
-                              {user.id === teamLead?.id ? (
-                                <StarBorderPurple500Icon
-                                  color="primary"
-                                  sx={{ fontSize: "1rem", marginLeft: "4px" }}
-                                />
-                              ) : null}
                             </Typography>
                           </Box>
                           <Box sx={{ display: "flex", alignItems: "center" }}>
                             <Select
                               variant="outlined"
                               value={user.UserTeams.role}
-                              disabled={
-                                user.UserTeams.role === "lead" ||
-                                !sessionUserIsLead
-                              }
+                              disabled={!sessionUserIsAdmin}
                               onChange={(event) => {
                                 updateTeam(team.id, {
                                   userIdToUpdate: user.id,
@@ -284,18 +249,27 @@ const TeamsTable = () => {
                                 disableScrollLock: true,
                               }}
                             >
-                              {visibilityOptions.map((val) => (
-                                <MenuItem key={val} value={val}>
-                                  <Typography
-                                    sx={{
-                                      color: selectColors[val],
-                                      textTransform: "capitalize",
-                                    }}
+                              {visibilityOptions.map((val) => {
+                                const optionDisabled =
+                                  adminUsers.length === 1 &&
+                                  user.UserTeams.role === "admin";
+                                return (
+                                  <MenuItem
+                                    key={val}
+                                    value={val}
+                                    disabled={optionDisabled}
                                   >
-                                    {val}
-                                  </Typography>
-                                </MenuItem>
-                              ))}
+                                    <Typography
+                                      sx={{
+                                        color: selectColors[val],
+                                        textTransform: "capitalize",
+                                      }}
+                                    >
+                                      {val}
+                                    </Typography>
+                                  </MenuItem>
+                                );
+                              })}
                             </Select>
                             <Tooltip title="Remove user from team">
                               <Button
@@ -303,11 +277,18 @@ const TeamsTable = () => {
                                   minWidth: "unset",
                                   padding: "0 0 0 12px",
                                 }}
+                                disabled={!canDelete}
                                 onClick={() =>
-                                  setUserToDelete({ ...user, teamId: team.id })
+                                  setUserToDelete({
+                                    ...user,
+                                    teamId: team.id,
+                                  })
                                 }
                               >
-                                <DeleteOutlineIcon color="error" />
+                                <DeleteOutlineIcon
+                                  color="error"
+                                  sx={{ color: !canDelete ? "grey" : null }}
+                                />
                               </Button>
                             </Tooltip>
                           </Box>
@@ -321,7 +302,7 @@ const TeamsTable = () => {
                         margin: "32px 0",
                       }}
                     />
-                    {sessionUserIsLead ? (
+                    {sessionUserIsAdmin ? (
                       <>
                         <Box
                           sx={{
@@ -504,8 +485,8 @@ const TeamsTable = () => {
               color: "GrayText",
             }}
           >
-            Are you sure you want to remove {userToDelete?.firstName}{" "}
-            {userToDelete?.firstName} from this team?
+            Are you sure you want to remove{" "}
+            {renderName(userToDelete, "yourself")} from this team?
           </Typography>
           <Box sx={{ display: "flex", justifyContent: "center" }}>
             <Button

@@ -22,7 +22,7 @@ export const create = async (req: Request, res: Response) => {
       description,
     });
 
-    await newTeam.addUsers(sessionUser, { through: { role: "lead" } });
+    await newTeam.addUsers(sessionUser, { through: { role: "admin" } });
 
     const teamWithUsers = await sequelize.models.Team.findByPk(newTeam.id, {
       include: [
@@ -30,6 +30,11 @@ export const create = async (req: Request, res: Response) => {
           model: sequelize.models.User,
           as: "users",
           through: { attributes: ["role"] },
+        },
+        {
+          model: sequelize.models.Notebook,
+          as: "notebooks",
+          attributes: ["id", "title", "description"],
         },
       ],
     });
