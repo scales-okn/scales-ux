@@ -6,6 +6,7 @@ import { useRings } from "src/store/rings";
 import { useNotebook } from "src/store/notebook";
 import { usePanels } from "src/store/panels";
 import { useSessionUser } from "src/store/auth";
+import { useTeam } from "src/store/team";
 
 import useWindowSize from "src/hooks/useWindowSize";
 
@@ -18,6 +19,8 @@ import {
   Switch,
   Box,
   Tooltip,
+  MenuItem,
+  Select,
   Typography,
 } from "@mui/material";
 import DeleteButton from "src/components/Buttons/DeleteButton";
@@ -45,6 +48,7 @@ const Notebook = () => {
     hasErrors,
   } = useNotebook();
   const { getPanels, clearPanels } = usePanels(notebook?.id);
+  const { fetchTeams, teams } = useTeam();
 
   const navigate = useNavigate();
   const location = useLocation();
@@ -58,7 +62,6 @@ const Notebook = () => {
   const sessionUser = useSessionUser();
   const sessionUserCanEdit = sessionUser?.id === notebook?.userId;
   const updatesDisabled = !sessionUserCanEdit && !isNewNotebook;
-  const isAdmin = sessionUser.role === "admin";
 
   const theme = useTheme();
 
@@ -94,6 +97,8 @@ const Notebook = () => {
       getPanels();
       notebookRef.current = notebook?.id;
     }
+
+    fetchTeams();
   }, [notebook?.id]); // eslint-disable-line react-hooks/exhaustive-deps
 
   useEffect(() => {
@@ -288,17 +293,104 @@ const Notebook = () => {
                   },
                 }}
               >
-                {isAdmin && (
-                  <div>
-                    <span className="title">Owner:</span>
-                    <span className="name">
-                      {notebook?.user?.firstName} {notebook?.user?.lastName}
-                    </span>
-                  </div>
-                )}
-                <div>
+                <Box
+                  sx={{
+                    display: "flex",
+                    alignItems: "center",
+                    marginBottom: "12px",
+                  }}
+                >
+                  <Typography
+                    sx={{
+                      fontsize: "18px",
+                      fontWeight: "600",
+                      marginRight: "12px",
+                    }}
+                  >
+                    Owner:
+                  </Typography>
+                  <Typography>
+                    {notebook?.user?.firstName} {notebook?.user?.lastName}
+                  </Typography>
+                </Box>
+                <Box
+                  sx={{
+                    display: "flex",
+                    alignItems: "center",
+                    marginBottom: "6px",
+                  }}
+                >
+                  <Tooltip title="Owners of notebooks can assign/unassign to teams they belong to">
+                    <Typography
+                      sx={{
+                        fontsize: "18px",
+                        fontWeight: "600",
+                        marginRight: "20px",
+                      }}
+                    >
+                      Team:
+                    </Typography>
+                  </Tooltip>
+                  <Typography sx={{ color: "GrayText" }}>
+                    {notebook?.user?.id === sessionUser?.id ? (
+                      <Select
+                        variant="outlined"
+                        value={notebook.team?.id}
+                        disabled={notebook.user?.id !== sessionUser?.id}
+                        onChange={(event) => {
+                          updateNotebook(notebook.id, {
+                            teamId: event.target.value,
+                          });
+                        }}
+                        sx={{
+                          background: "white",
+                          minWidth: "140px",
+                          height: "32px",
+                        }}
+                        MenuProps={{
+                          disableScrollLock: true,
+                        }}
+                      >
+                        <MenuItem key="none" value={null}>
+                          <Typography
+                            sx={{
+                              textTransform: "capitalize",
+                              color: "GrayText",
+                            }}
+                          >
+                            Unassign
+                          </Typography>
+                        </MenuItem>
+                        {teams.map((teamObj) => (
+                          <MenuItem key={teamObj.id} value={teamObj.id}>
+                            <Typography
+                              sx={{
+                                textTransform: "capitalize",
+                              }}
+                            >
+                              {teamObj.name}
+                            </Typography>
+                          </MenuItem>
+                        ))}
+                      </Select>
+                    ) : (
+                      <Typography>
+                        {notebook?.team?.name || "Unassigned"}
+                      </Typography>
+                    )}
+                  </Typography>
+                </Box>
+                <Box sx={{ display: "flex", alignItems: "center" }}>
                   <Tooltip title="Public notebooks can be seen and copied (but not modified) by any user">
-                    <span className="title">Public:</span>
+                    <Typography
+                      sx={{
+                        fontsize: "18px",
+                        fontWeight: "600",
+                        marginRight: "12px",
+                      }}
+                    >
+                      Public:
+                    </Typography>
                   </Tooltip>
                   <Switch
                     disabled={!sessionUserCanEdit}
@@ -312,7 +404,7 @@ const Notebook = () => {
                     color="primary"
                     sx={{ marginLeft: "-8px" }}
                   />
-                </div>
+                </Box>
               </Grid>
             </>
           ) : (

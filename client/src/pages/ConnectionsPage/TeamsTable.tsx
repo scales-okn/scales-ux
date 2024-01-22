@@ -3,13 +3,13 @@ import React, { useEffect, useState } from "react";
 import {
   Typography,
   Box,
-  Grid,
-  Button,
   Select,
   MenuItem,
   Accordion,
   AccordionSummary,
   AccordionDetails,
+  TextField,
+  Tooltip,
 } from "@mui/material";
 import ArrowDropDownIcon from "@mui/icons-material/ArrowDropDown";
 import StarBorderPurple500Icon from "@mui/icons-material/StarBorderPurple500";
@@ -22,6 +22,7 @@ import { useTeam } from "src/store/team";
 import { useConnection } from "src/store/connection";
 
 import NewTeamModal from "./NewTeamModal";
+import { Launch } from "@mui/icons-material";
 
 const TeamsTable = () => {
   const theme = useTheme();
@@ -89,7 +90,7 @@ const TeamsTable = () => {
               return u.UserTeams.role === "lead";
             });
             const teamUsers = prioritizeLead(team.users);
-
+            const sessionUserIsLead = teamLead?.id === sessionUser.id;
             return (
               <Box
                 key={team.id}
@@ -100,10 +101,7 @@ const TeamsTable = () => {
                   flexGrow: isTablet ? 1 : 0,
                 }}
               >
-                <Accordion
-                  // defaultExpanded={idx === 0}
-                  sx={{ marginBottom: "24px" }}
-                >
+                <Accordion sx={{ marginBottom: "24px" }}>
                   <AccordionSummary
                     expandIcon={<ArrowDropDownIcon />}
                     aria-controls="panel2-content"
@@ -160,20 +158,62 @@ const TeamsTable = () => {
                       padding: "26px",
                     }}
                   >
-                    {team.description ? (
-                      <Box
-                        sx={{
-                          marginBottom: "36px",
-                          paddingBottom: "36px",
-                          paddingTop: "12px",
-                          borderBottom: "1px solid lightgrey",
-                          textAlign: "center",
-                          color: "grey",
-                        }}
-                      >
-                        {team.description}
-                      </Box>
-                    ) : null}
+                    <Box
+                      sx={{
+                        marginBottom: "36px",
+                        paddingBottom: "36px",
+                        paddingTop: "12px",
+                        borderBottom: "1px solid lightgrey",
+                        color: "grey",
+                      }}
+                    >
+                      {sessionUserIsLead ? (
+                        <>
+                          <Typography sx={{ marginBottom: "12px" }}>
+                            Team Name:
+                          </Typography>
+                          <TextField
+                            multiline
+                            defaultValue={team.name}
+                            placeholder="Add a name..."
+                            sx={{ width: "100%" }}
+                            onBlur={(event) => {
+                              if (event.target.value !== team.name) {
+                                updateTeam(team.id, {
+                                  name: event.target.value,
+                                });
+                              }
+                            }}
+                          >
+                            {team.description}
+                          </TextField>
+                          <Typography
+                            sx={{ marginBottom: "12px", marginTop: "36px" }}
+                          >
+                            Description:
+                          </Typography>
+                          <TextField
+                            multiline
+                            defaultValue={team.description}
+                            placeholder="Add a description..."
+                            sx={{ width: "100%" }}
+                            onBlur={(event) => {
+                              if (event.target.value !== team.description) {
+                                updateTeam(team.id, {
+                                  description: event.target.value,
+                                });
+                              }
+                            }}
+                          >
+                            {team.description}
+                          </TextField>
+                        </>
+                      ) : (
+                        <Typography sx={{ textAlign: "center" }}>
+                          {team.description}
+                        </Typography>
+                      )}
+                    </Box>
                     {teamUsers.map((user) => {
                       return (
                         <Box
@@ -209,7 +249,10 @@ const TeamsTable = () => {
                           <Select
                             variant="outlined"
                             value={user.UserTeams.role}
-                            disabled={user.UserTeams.role === "lead"}
+                            disabled={
+                              user.UserTeams.role === "lead" ||
+                              !sessionUserIsLead
+                            }
                             onChange={(event) => {
                               // TODO: finish
                             }}
@@ -245,51 +288,140 @@ const TeamsTable = () => {
                         margin: "32px 0",
                       }}
                     />
+                    {sessionUserIsLead ? (
+                      <>
+                        <Box
+                          sx={{
+                            width: "100%",
+                            display: "flex",
+                            alignItems: "center",
+                            justifyContent: "space-between",
+                          }}
+                        >
+                          <Typography
+                            sx={{ padding: "0 12px", color: "GrayText" }}
+                          >
+                            Add contact to team...
+                          </Typography>
+                          <Select
+                            variant="outlined"
+                            onChange={(event) => {
+                              updateTeam(team.id, {
+                                userIdToAdd: event.target.value as number,
+                              });
+                            }}
+                            sx={{
+                              background: "white",
+                              minWidth: "140px",
+                              height: "32px",
+                            }}
+                            MenuProps={{
+                              disableScrollLock: true,
+                            }}
+                          >
+                            {approvedConnectionUsers.map((connection) => {
+                              const isAlreadyOnTeam = team.users.find(
+                                (user) => user.id === connection.id,
+                              );
+                              if (isAlreadyOnTeam) return null;
+                              return (
+                                <MenuItem
+                                  key={connection.id}
+                                  value={connection.id}
+                                >
+                                  <Typography
+                                    sx={{
+                                      textTransform: "capitalize",
+                                    }}
+                                  >
+                                    {`${connection.firstName} ${connection.lastName}`}
+                                  </Typography>
+                                </MenuItem>
+                              );
+                            })}
+                          </Select>
+                        </Box>
+                        <Box
+                          sx={{
+                            background: "lightgrey",
+                            height: "1px",
+                            margin: "32px 0",
+                          }}
+                        />
+                      </>
+                    ) : null}
                     <Box
                       sx={{
-                        width: "100%",
                         display: "flex",
+                        flexDirection: "column",
                         alignItems: "center",
-                        justifyContent: "space-between",
                       }}
                     >
-                      <Typography sx={{ padding: "0 12px", color: "GrayText" }}>
-                        Add team member...
-                      </Typography>
-                      <Select
-                        variant="outlined"
-                        onChange={(event) => {
-                          updateTeam(team.id, {
-                            userIdToAdd: event.target.value as number,
-                          });
-                        }}
+                      <Typography variant="h5">Notebooks</Typography>
+                      <Box
                         sx={{
-                          background: "white",
-                          minWidth: "140px",
-                          height: "32px",
-                        }}
-                        MenuProps={{
-                          disableScrollLock: true,
+                          width: "100%",
+                          marginTop: "24px",
+                          display: "flex",
+                          flexWrap: "wrap",
+                          gap: "12px",
                         }}
                       >
-                        {approvedConnectionUsers.map((connection) => {
-                          const isAlreadyOnTeam = team.users.find(
-                            (user) => user.id === connection.id,
-                          );
-                          if (isAlreadyOnTeam) return null;
-                          return (
-                            <MenuItem key={connection.id} value={connection.id}>
-                              <Typography
+                        {team.notebooks.length === 2 ? (
+                          team.notebooks.map((notebook) => {
+                            return (
+                              <Box
+                                key={notebook.id}
                                 sx={{
-                                  textTransform: "capitalize",
+                                  display: "flex",
+                                  alignItems: "center",
+                                  justifyContent: "space-between",
+                                  border: "1px solid grey",
+                                  borderRadius: "4px",
+                                  padding: "8px",
+                                  width: "48%",
+                                  cursor: "pointer",
+                                  "&:hover": {
+                                    border: "1px solid black",
+                                  },
+                                }}
+                                onClick={() => {
+                                  window.open(
+                                    `/notebooks/${notebook.id}`,
+                                    "_blank",
+                                  );
                                 }}
                               >
-                                {`${connection.firstName} ${connection.lastName}`}
-                              </Typography>
-                            </MenuItem>
-                          );
-                        })}
-                      </Select>
+                                <Tooltip title={notebook.description}>
+                                  <Typography
+                                    sx={{
+                                      padding: "0 12px",
+                                      textTransform: "capitalize",
+                                    }}
+                                  >
+                                    {notebook.title}
+                                  </Typography>
+                                </Tooltip>
+                                <Tooltip title="Go to Notebook">
+                                  <Launch color="primary" />
+                                </Tooltip>
+                              </Box>
+                            );
+                          })
+                        ) : (
+                          <Typography
+                            sx={{
+                              color: "GrayText",
+                              textAlign: "center",
+                              marginBottom: "24px",
+                            }}
+                          >
+                            This team currently has no notebooks to display. The
+                            owner of a notebook may assign it to a team from the
+                            notebook detail page.
+                          </Typography>
+                        )}
+                      </Box>
                     </Box>
                   </AccordionDetails>
                 </Accordion>

@@ -135,6 +135,13 @@ export const findById = async (req: Request, res: Response) => {
 
     const notebook = await sequelize.models.Notebook.findOne({
       where,
+      include: [
+        {
+          model: sequelize.models.Team,
+          as: "team",
+          attributes: ["id", "name", "description"],
+        },
+      ],
     });
 
     if (!notebook) {
@@ -248,6 +255,18 @@ export const update = async (req: Request, res: Response) => {
     }
     const updatedNotebook = await sequelize.models.Notebook.findOne({
       where: { id: notebookId },
+      include: [
+        {
+          model: sequelize.models.User,
+          as: "user",
+          attributes: ["id", "firstName", "lastName", "email"],
+        },
+        {
+          model: sequelize.models.Team,
+          as: "team",
+          attributes: ["id", "name", "description"],
+        },
+      ],
     });
 
     return res.send_ok(`Notebook ${notebookId} has been updated!`, {

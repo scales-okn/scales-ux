@@ -2,7 +2,8 @@ import { createSlice } from "@reduxjs/toolkit";
 import type { RootState, AppDispatch } from "src/store";
 import { useSelector, useDispatch } from "react-redux";
 import { notify } from "reapop";
-import { UserT } from "./user";
+import type { UserT } from "./user";
+import type { NotebookT } from "./notebook";
 
 import { makeRequest } from "src/helpers/makeRequest";
 
@@ -19,11 +20,12 @@ type UpdateTeamT = {
   name?: string;
 };
 
-type TeamT = {
+export type TeamT = {
   id: number;
   name: string;
   description: string;
   users: UserWithRoleT[];
+  notebooks: NotebookT[];
   createdAt: string;
   updatedAt: string;
 };

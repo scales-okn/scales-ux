@@ -45,7 +45,7 @@ export const create = async (req: Request, res: Response) => {
 export const update = async (req: Request, res: Response) => {
   try {
     const { teamId } = req.params;
-    const { viewed, userIdToAdd, userIdToRemove } = req.body;
+    const { viewed, userIdToAdd, userIdToRemove, description, name } = req.body;
 
     const team = await sequelize.models.Team.findOne({
       where: { id: teamId },
@@ -73,7 +73,7 @@ export const update = async (req: Request, res: Response) => {
       }
     }
 
-    await team.update({ viewed });
+    await team.update({ viewed, description, name });
 
     return res.send_ok("Team has been updated!", {
       team: await team.reload({
@@ -110,6 +110,11 @@ export const findAll = async (req: Request, res: Response) => {
               as: "users",
               attributes: ["id", "firstName", "lastName", "email"],
               through: { attributes: ["role"] },
+            },
+            {
+              model: sequelize.models.Notebook,
+              as: "notebooks",
+              attributes: ["id", "title", "description"],
             },
           ],
         },

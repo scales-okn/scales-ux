@@ -113,7 +113,7 @@ accessControl
       .create
       .update
         .where(userCanUpdateNotebook)
-          .onFields("title", "description", "visibility", "collaborators")
+          .onFields("title", "description", "visibility", "collaborators", "teamId")
   // Rings
   .grant("user")
     .resource("rings")
