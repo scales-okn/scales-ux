@@ -165,7 +165,7 @@ export const findAllApprovedConnectionUsers = async (req: Request, res: Response
 
     const userIds = Array.from(new Set([...connectionIds.map((conn) => conn.sender), ...connectionIds.map((conn) => conn.receiver)]));
 
-    const otherUserIds = userIds.filter((userId) => userId !== sessionUser.Id);
+    const otherUserIds = userIds.filter((userId) => userId !== sessionUser.id);
 
     const result = await sequelize.models.User.findAll({
       where: {

@@ -297,7 +297,7 @@ const Notebook = () => {
                   </div>
                 )}
                 <div>
-                  <Tooltip title="Public tooltips can be seen and copied (but not modified) by any user">
+                  <Tooltip title="Public notebooks can be seen and copied (but not modified) by any user">
                     <span className="title">Public:</span>
                   </Tooltip>
                   <Switch

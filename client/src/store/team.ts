@@ -12,6 +12,13 @@ type UserWithRoleT = UserT & {
   };
 };
 
+type UpdateTeamT = {
+  userIdToAdd?: number;
+  userIdToRemove?: number;
+  description?: string;
+  name?: string;
+};
+
 type TeamT = {
   id: number;
   name: string;
@@ -111,7 +118,7 @@ export const fetchTeams = (params) => {
   };
 };
 
-export const updateTeam = (teamId, payload: any = {}) => {
+export const updateTeam = (teamId, payload: UpdateTeamT = {}) => {
   return async (dispatch: AppDispatch) => {
     try {
       const { data, message, code } = await makeRequest.put(
@@ -159,7 +166,7 @@ export const useTeam = () => {
     teams,
     fetchTeams: (payload: any = {}) => dispatch(fetchTeams(payload)),
     createTeam: (payload: any = {}) => dispatch(createTeam(payload)),
-    updateTeam: (teamId, payload: any = {}) =>
+    updateTeam: (teamId, payload: UpdateTeamT = {}) =>
       dispatch(updateTeam(teamId, payload)),
   };
 };

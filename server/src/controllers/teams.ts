@@ -45,28 +45,47 @@ export const create = async (req: Request, res: Response) => {
 export const update = async (req: Request, res: Response) => {
   try {
     const { teamId } = req.params;
-    const { viewed } = req.body;
+    const { viewed, userIdToAdd, userIdToRemove } = req.body;
 
     const team = await sequelize.models.Team.findOne({
       where: { id: teamId },
-      include: [
-        {
-          model: sequelize.models.Connection,
-          as: "connection",
-        },
-      ],
     });
 
     if (!team) {
       return res.status(404).send("No pending team found!");
     }
 
+    if (userIdToAdd) {
+      const userToAdd = await sequelize.models.User.findByPk(userIdToAdd);
+      if (userToAdd) {
+        await team.addUsers(userToAdd, { through: { role: "read-only" } });
+      } else {
+        return res.status(404).send("User to add not found!");
+      }
+    }
+
+    if (userIdToRemove) {
+      const userToRemove = await sequelize.models.User.findByPk(userIdToRemove);
+      if (userToRemove) {
+        await team.removeUsers(userToRemove);
+      } else {
+        return res.status(404).send("User to remove not found!");
+      }
+    }
+
     await team.update({ viewed });
 
-    // Send mailers here
-
-    return res.send_ok("User has been updated!", {
-      team,
+    return res.send_ok("Team has been updated!", {
+      team: await team.reload({
+        include: [
+          {
+            model: sequelize.models.User,
+            as: "users",
+            attributes: ["id", "firstName", "lastName", "email"],
+            through: { attributes: ["role"] },
+          },
+        ],
+      }),
     });
   } catch (error) {
     console.error(error);
@@ -74,6 +93,7 @@ export const update = async (req: Request, res: Response) => {
   }
 };
 
+// GET findAll
 export const findAll = async (req: Request, res: Response) => {
   try {
     const sessionUser = await sequelize.models.User.findOne({
@@ -83,7 +103,7 @@ export const findAll = async (req: Request, res: Response) => {
         {
           model: sequelize.models.Team,
           as: "teams",
-          attributes: ["name", "description"],
+          attributes: ["id", "name", "description"],
           include: [
             {
               model: sequelize.models.User,

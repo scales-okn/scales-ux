@@ -25,7 +25,7 @@ import NewTeamModal from "./NewTeamModal";
 
 const TeamsTable = () => {
   const theme = useTheme();
-  const { fetchTeams, teams } = useTeam();
+  const { fetchTeams, updateTeam, teams } = useTeam();
   const { fetchApprovedConnectionUsers, approvedConnectionUsers } =
     useConnection();
 
@@ -211,7 +211,7 @@ const TeamsTable = () => {
                             value={user.UserTeams.role}
                             disabled={user.UserTeams.role === "lead"}
                             onChange={(event) => {
-                              console.log(event);
+                              // TODO: finish
                             }}
                             sx={{
                               background: "white",
@@ -259,7 +259,9 @@ const TeamsTable = () => {
                       <Select
                         variant="outlined"
                         onChange={(event) => {
-                          console.log(event);
+                          updateTeam(team.id, {
+                            userIdToAdd: event.target.value as number,
+                          });
                         }}
                         sx={{
                           background: "white",
@@ -271,6 +273,10 @@ const TeamsTable = () => {
                         }}
                       >
                         {approvedConnectionUsers.map((connection) => {
+                          const isAlreadyOnTeam = team.users.find(
+                            (user) => user.id === connection.id,
+                          );
+                          if (isAlreadyOnTeam) return null;
                           return (
                             <MenuItem key={connection.id} value={connection.id}>
                               <Typography

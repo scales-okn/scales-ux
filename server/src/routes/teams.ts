@@ -14,4 +14,7 @@ router.post("/", checkAuth, create);
 // Update a Team
 router.put("/:teamId", checkAuth, update);
 
+// Add User to Team
+router.put("/:teamId/updateTeamUsers", checkAuth, update);
+
 export default router;
