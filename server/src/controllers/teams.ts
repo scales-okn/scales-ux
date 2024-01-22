@@ -45,7 +45,7 @@ export const create = async (req: Request, res: Response) => {
 export const update = async (req: Request, res: Response) => {
   try {
     const { teamId } = req.params;
-    const { viewed, userIdToAdd, userIdToRemove, description, name } = req.body;
+    const { viewed, userIdToAdd, userIdToRemove, userIdToUpdate, newUserRole, description, name } = req.body;
 
     const team = await sequelize.models.Team.findOne({
       where: { id: teamId },
@@ -70,6 +70,18 @@ export const update = async (req: Request, res: Response) => {
         await team.removeUsers(userToRemove);
       } else {
         return res.status(404).send("User to remove not found!");
+      }
+    }
+
+    if (userIdToUpdate && newUserRole) {
+      const userTeamAssociation = await sequelize.models.UserTeams.findOne({
+        where: { userId: userIdToUpdate, teamId: team.id },
+      });
+
+      if (userTeamAssociation) {
+        await userTeamAssociation.update({ role: newUserRole });
+      } else {
+        return res.status(404).send("User-team association not found!");
       }
     }
 

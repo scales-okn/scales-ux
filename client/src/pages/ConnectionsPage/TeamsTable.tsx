@@ -10,9 +10,11 @@ import {
   AccordionDetails,
   TextField,
   Tooltip,
+  Button,
 } from "@mui/material";
 import ArrowDropDownIcon from "@mui/icons-material/ArrowDropDown";
 import StarBorderPurple500Icon from "@mui/icons-material/StarBorderPurple500";
+import DeleteOutlineIcon from "@mui/icons-material/DeleteOutline";
 import { useTheme } from "@mui/material/styles";
 
 import useWindowSize from "src/hooks/useWindowSize";
@@ -23,12 +25,14 @@ import { useConnection } from "src/store/connection";
 
 import NewTeamModal from "./NewTeamModal";
 import { Launch } from "@mui/icons-material";
+import ModalContainer from "src/components/Modals/ModalContainer";
 
 const TeamsTable = () => {
   const theme = useTheme();
   const { fetchTeams, updateTeam, teams } = useTeam();
   const { fetchApprovedConnectionUsers, approvedConnectionUsers } =
     useConnection();
+  const [userToDelete, setUserToDelete] = useState(null);
 
   const { width } = useWindowSize();
   const isTablet = width < 900;
@@ -91,6 +95,17 @@ const TeamsTable = () => {
             });
             const teamUsers = prioritizeLead(team.users);
             const sessionUserIsLead = teamLead?.id === sessionUser.id;
+
+            const availableTeamMembers = approvedConnectionUsers
+              .map((connection) => {
+                const isAlreadyOnTeam = team.users.find(
+                  (user) => user.id === connection.id,
+                );
+                if (isAlreadyOnTeam) return null;
+                return connection;
+              })
+              .filter((user) => user);
+
             return (
               <Box
                 key={team.id}
@@ -246,38 +261,56 @@ const TeamsTable = () => {
                               ) : null}
                             </Typography>
                           </Box>
-                          <Select
-                            variant="outlined"
-                            value={user.UserTeams.role}
-                            disabled={
-                              user.UserTeams.role === "lead" ||
-                              !sessionUserIsLead
-                            }
-                            onChange={(event) => {
-                              // TODO: finish
-                            }}
-                            sx={{
-                              background: "white",
-                              minWidth: "140px",
-                              height: "32px",
-                            }}
-                            MenuProps={{
-                              disableScrollLock: true,
-                            }}
-                          >
-                            {visibilityOptions.map((val) => (
-                              <MenuItem key={val} value={val}>
-                                <Typography
-                                  sx={{
-                                    color: selectColors[val],
-                                    textTransform: "capitalize",
-                                  }}
-                                >
-                                  {val}
-                                </Typography>
-                              </MenuItem>
-                            ))}
-                          </Select>
+                          <Box sx={{ display: "flex", alignItems: "center" }}>
+                            <Select
+                              variant="outlined"
+                              value={user.UserTeams.role}
+                              disabled={
+                                user.UserTeams.role === "lead" ||
+                                !sessionUserIsLead
+                              }
+                              onChange={(event) => {
+                                updateTeam(team.id, {
+                                  userIdToUpdate: user.id,
+                                  newUserRole: event.target.value as string,
+                                });
+                              }}
+                              sx={{
+                                background: "white",
+                                minWidth: "140px",
+                                height: "32px",
+                              }}
+                              MenuProps={{
+                                disableScrollLock: true,
+                              }}
+                            >
+                              {visibilityOptions.map((val) => (
+                                <MenuItem key={val} value={val}>
+                                  <Typography
+                                    sx={{
+                                      color: selectColors[val],
+                                      textTransform: "capitalize",
+                                    }}
+                                  >
+                                    {val}
+                                  </Typography>
+                                </MenuItem>
+                              ))}
+                            </Select>
+                            <Tooltip title="Remove user from team">
+                              <Button
+                                sx={{
+                                  minWidth: "unset",
+                                  padding: "0 0 0 12px",
+                                }}
+                                onClick={() =>
+                                  setUserToDelete({ ...user, teamId: team.id })
+                                }
+                              >
+                                <DeleteOutlineIcon color="error" />
+                              </Button>
+                            </Tooltip>
+                          </Box>
                         </Box>
                       );
                     })}{" "}
@@ -319,26 +352,33 @@ const TeamsTable = () => {
                               disableScrollLock: true,
                             }}
                           >
-                            {approvedConnectionUsers.map((connection) => {
-                              const isAlreadyOnTeam = team.users.find(
-                                (user) => user.id === connection.id,
-                              );
-                              if (isAlreadyOnTeam) return null;
-                              return (
-                                <MenuItem
-                                  key={connection.id}
-                                  value={connection.id}
-                                >
-                                  <Typography
-                                    sx={{
-                                      textTransform: "capitalize",
-                                    }}
+                            {availableTeamMembers.length ? (
+                              availableTeamMembers.map((connection) => {
+                                return (
+                                  <MenuItem
+                                    key={connection.id}
+                                    value={connection.id}
                                   >
-                                    {`${connection.firstName} ${connection.lastName}`}
-                                  </Typography>
-                                </MenuItem>
-                              );
-                            })}
+                                    <Typography
+                                      sx={{
+                                        textTransform: "capitalize",
+                                      }}
+                                    >
+                                      {`${connection.firstName} ${connection.lastName}`}
+                                    </Typography>
+                                  </MenuItem>
+                                );
+                              })
+                            ) : (
+                              <Typography
+                                sx={{
+                                  textTransform: "capitalize",
+                                  padding: "12px",
+                                }}
+                              >
+                                No users available to assign
+                              </Typography>
+                            )}
                           </Select>
                         </Box>
                         <Box
@@ -367,7 +407,7 @@ const TeamsTable = () => {
                           gap: "12px",
                         }}
                       >
-                        {team.notebooks.length === 2 ? (
+                        {team.notebooks.length ? (
                           team.notebooks.map((notebook) => {
                             return (
                               <Box
@@ -441,6 +481,53 @@ const TeamsTable = () => {
             No teams to display
           </Box>
         )}
+        <ModalContainer
+          onClose={() => setUserToDelete(null)}
+          open={userToDelete}
+          paperStyles={{ maxWidth: "500px" }}
+        >
+          <Typography
+            sx={{
+              fontSize: "32px",
+              textAlign: "center",
+              marginBottom: "12px",
+              color: theme.palette.primary.main,
+            }}
+          >
+            Please Confirm
+          </Typography>
+          <Typography
+            sx={{
+              fontSize: "14px",
+              marginBottom: "48px",
+              textAlign: "center",
+              color: "GrayText",
+            }}
+          >
+            Are you sure you want to remove {userToDelete?.firstName}{" "}
+            {userToDelete?.firstName} from this team?
+          </Typography>
+          <Box sx={{ display: "flex", justifyContent: "center" }}>
+            <Button
+              variant="outlined"
+              onClick={() => setUserToDelete(null)}
+              sx={{ marginRight: "12px" }}
+            >
+              Cancel
+            </Button>
+            <Button
+              variant="contained"
+              onClick={() => {
+                setUserToDelete(null);
+                updateTeam(userToDelete.teamId, {
+                  userIdToRemove: userToDelete.id,
+                });
+              }}
+            >
+              Confirm
+            </Button>
+          </Box>
+        </ModalContainer>
       </Box>
     </>
   );

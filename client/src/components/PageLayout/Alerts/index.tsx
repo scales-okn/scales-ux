@@ -4,6 +4,7 @@ import { useLocation } from "react-router-dom";
 
 import { sessionUserSelector } from "src/store/auth";
 import { useAlert } from "src/store/alerts";
+import { useSessionUser } from "src/store/auth";
 
 import NotificationsIcon from "@mui/icons-material/Notifications";
 import { Box } from "@mui/material";
@@ -21,9 +22,12 @@ const NotificationsBell = () => {
   const location = useLocation();
 
   const { alerts, fetchAlerts } = useAlert();
+  const sessionUser = useSessionUser();
 
   useEffect(() => {
-    fetchAlerts();
+    if (sessionUser?.id) {
+      fetchAlerts();
+    }
   }, [location.pathname]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const handleClick = (event) => {

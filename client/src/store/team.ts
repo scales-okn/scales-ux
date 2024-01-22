@@ -16,6 +16,8 @@ type UserWithRoleT = UserT & {
 type UpdateTeamT = {
   userIdToAdd?: number;
   userIdToRemove?: number;
+  userIdToUpdate?: number;
+  newUserRole?: string;
   description?: string;
   name?: string;
 };
