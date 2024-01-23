@@ -70,10 +70,36 @@ export const findAll = async (req: Request, res: Response) => {
           as: "connection",
           attributes: ["id", "sender", "receiver", "note", "approved", "pending"],
         },
+        {
+          model: sequelize.models.Team,
+          as: "team",
+          attributes: ["id", "name", "description"],
+        },
       ],
     });
 
     return res.send_ok("", result);
+  } catch (error) {
+    console.error(error);
+    return res.status(500).send("Internal server error");
+  }
+};
+
+export const deleteAlert = async (req: Request, res: Response) => {
+  try {
+    const { alertId } = req.params;
+
+    const alert = await sequelize.models.Alert.findOne({
+      where: { id: alertId },
+    });
+
+    if (!alert) {
+      return res.status(404).send("Alert not found!");
+    }
+
+    await alert.destroy();
+
+    return res.send_ok("Alert deleted successfully!");
   } catch (error) {
     console.error(error);
     return res.status(500).send("Internal server error");

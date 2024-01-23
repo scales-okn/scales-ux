@@ -18,6 +18,9 @@ export default (sequelize, options) => {
       connectionId: {
         type: DataTypes.INTEGER,
       },
+      teamId: {
+        type: DataTypes.INTEGER,
+      },
       viewed: {
         type: DataTypes.BOOLEAN,
         defaultValue: false,
@@ -33,7 +36,7 @@ export default (sequelize, options) => {
       },
       type: {
         type: DataTypes.ENUM,
-        values: ["connect", "shareNotebook", "addTeam"],
+        values: ["connect", "shareNotebook", "addedToTeam", "removedFromTeam", "notebookAddedToTeam"],
         allowNull: false,
       },
     },
@@ -52,6 +55,10 @@ export default (sequelize, options) => {
     Alert.belongsTo(models.Connection, {
       foreignKey: "connectionId",
       as: "connection",
+    });
+    Alert.belongsTo(models.Team, {
+      foreignKey: "teamId",
+      as: "team",
     });
   };
 

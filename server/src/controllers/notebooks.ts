@@ -250,6 +250,26 @@ export const update = async (req: Request, res: Response) => {
       individualHooks: true,
     });
 
+    // add notifications for team users if teamId added to notebook
+    if (req.body.teamId) {
+      const team = await sequelize.models.Team.findOne({
+        where: { id: req.body.teamId },
+      });
+      if (!team) {
+        return res.send_notFound("Team not found!");
+      }
+      const teamUsers = await team.getUsers();
+      const teamUsersIds = teamUsers.map((user) => user.id);
+      teamUsersIds.map(async (userId) => {
+        await sequelize.models.Alert.create({
+          userId,
+          initiatorUserId: reqUserId,
+          type: "addedToTeam",
+          teamId: team.id,
+        });
+      });
+    }
+
     if (!result.length) {
       return res.send_notModified("Notebook has not been updated!");
     }

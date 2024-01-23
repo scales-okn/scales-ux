@@ -1,14 +1,22 @@
 import React, { useState } from "react";
-import PersonAddIcon from "@mui/icons-material/PersonAdd";
-// import ThumbUpOffAltIcon from "@mui/icons-material/ThumbUpOffAlt";
-// import ThumbDownOffAltIcon from "@mui/icons-material/ThumbDownOffAlt";
-import CheckCircleOutlineIcon from "@mui/icons-material/CheckCircleOutline";
 
-import { Box, Typography } from "@mui/material";
+import { Box, Typography, Button } from "@mui/material";
+import DeleteOutlineIcon from "@mui/icons-material/DeleteOutline";
+import PersonAddIcon from "@mui/icons-material/PersonAdd";
+import CheckCircleOutlineIcon from "@mui/icons-material/CheckCircleOutline";
+import GroupAddIcon from "@mui/icons-material/GroupAdd";
+import GroupRemoveIcon from "@mui/icons-material/GroupRemove";
+
+import { useAlert } from "src/store/alerts";
+
 import ConnectModal from "./ConnectModal";
+import TeamModal from "./TeamModal";
 
 const NotificationsBell = ({ alert }) => {
   const [modalVisible, setModalVisible] = useState(false);
+  const { deleteAlert } = useAlert();
+
+  const [isHovered, setIsHovered] = useState(false);
 
   const modals = {
     connect: (
@@ -18,10 +26,26 @@ const NotificationsBell = ({ alert }) => {
         alert={alert}
       />
     ),
+    addedToTeam: (
+      <TeamModal
+        open={modalVisible}
+        onClose={() => setModalVisible(false)}
+        alert={alert}
+        added={true}
+      />
+    ),
+    removedFromTeam: (
+      <TeamModal
+        open={modalVisible}
+        onClose={() => setModalVisible(false)}
+        alert={alert}
+        added={false}
+      />
+    ),
   };
 
-  const alertItems = {
-    connect: (
+  const alertTemplate = ({ title, targetName, iconUnviewed }) => {
+    return (
       <Box
         sx={{
           display: "flex",
@@ -34,23 +58,31 @@ const NotificationsBell = ({ alert }) => {
           }
         }}
       >
-        {alert.viewed ? (
-          <Box sx={{ marginRight: "12px" }}>
-            {/* {alert.connection.approved ? (
-              <ThumbUpOffAltIcon color="success" />
-            ) : (
-              <ThumbDownOffAltIcon color="error" />
-            )} */}
-            <CheckCircleOutlineIcon sx={{ color: "GrayText" }} />
-          </Box>
-        ) : (
-          <PersonAddIcon
-            sx={{
-              marginRight: "12px",
-              color: alert.viewed ? "grey" : "#006edb",
-            }}
-          />
-        )}
+        <Box
+          sx={{ marginRight: "12px" }}
+          onMouseEnter={() => setIsHovered(true)}
+          onMouseLeave={() => setIsHovered(false)}
+        >
+          {alert.viewed ? (
+            <Button
+              onClick={() => deleteAlert(alert.id)}
+              sx={{
+                minWidth: "unset",
+                padding: "2px",
+                borderRadius: "24px",
+                marginLeft: "-4px",
+              }}
+            >
+              {isHovered ? (
+                <DeleteOutlineIcon sx={{ color: "#d24444" }} />
+              ) : (
+                <CheckCircleOutlineIcon sx={{ color: "GrayText" }} />
+              )}
+            </Button>
+          ) : (
+            iconUnviewed
+          )}
+        </Box>
         <Box>
           <Typography
             fontSize={14}
@@ -59,18 +91,40 @@ const NotificationsBell = ({ alert }) => {
               color: alert.viewed ? "grey" : "black",
             }}
           >
-            Connection Request
+            {title}
           </Typography>
           <Typography
             fontSize={12}
             color={alert.viewed ? "primary.light" : "primary.main"}
           >
-            {alert.initiatorUser.firstName}
-            {alert.initiatorUser.lastName}
+            {targetName}
           </Typography>
         </Box>
       </Box>
-    ),
+    );
+  };
+
+  const alertItems = {
+    connect: alertTemplate({
+      iconUnviewed: <PersonAddIcon color="primary" />,
+      title: "Connection Request",
+      targetName: alert.initiatorUser.firstName + alert.initiatorUser.lastName,
+    }),
+    addedToTeam: alertTemplate({
+      iconUnviewed: <GroupAddIcon color="primary" />,
+      title: (
+        <span>
+          {alert.initiatorUser.firstName} {alert.initiatorUser.lastName} added
+          you to a team:
+        </span>
+      ),
+      targetName: <span>{alert.team?.name}</span>,
+    }),
+    removedFromTeam: alertTemplate({
+      iconUnviewed: <GroupRemoveIcon color="primary" />,
+      title: <span>You have been removed from a team:</span>,
+      targetName: <span>{alert.team?.name}</span>,
+    }),
   };
 
   return (

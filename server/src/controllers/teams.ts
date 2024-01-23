@@ -49,6 +49,8 @@ export const create = async (req: Request, res: Response) => {
 // PUT update
 export const update = async (req: Request, res: Response) => {
   try {
+    // @ts-ignore
+    const sessionUserId = req.user.id;
     const { teamId } = req.params;
     const { viewed, userIdToAdd, userIdToRemove, userIdToUpdate, newUserRole, description, name } = req.body;
 
@@ -64,6 +66,12 @@ export const update = async (req: Request, res: Response) => {
       const userToAdd = await sequelize.models.User.findByPk(userIdToAdd);
       if (userToAdd) {
         await team.addUsers(userToAdd, { through: { role: "read-only" } });
+        await sequelize.models.Alert.create({
+          userId: userIdToAdd,
+          initiatorUserId: sessionUserId,
+          type: "addedToTeam",
+          teamId: team.id,
+        });
       } else {
         return res.status(404).send("User to add not found!");
       }
@@ -73,6 +81,14 @@ export const update = async (req: Request, res: Response) => {
       const userToRemove = await sequelize.models.User.findByPk(userIdToRemove);
       if (userToRemove) {
         await team.removeUsers(userToRemove);
+        if (userToRemove.id !== sessionUserId) {
+          await sequelize.models.Alert.create({
+            userId: userIdToRemove,
+            initiatorUserId: sessionUserId,
+            type: "removedFromTeam",
+            teamId: team.id,
+          });
+        }
       } else {
         return res.status(404).send("User to remove not found!");
       }

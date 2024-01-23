@@ -85,10 +85,12 @@ const database = async () => {
       User,
       Notebook,
       Connection,
+      Team,
     });
     Team.associate({
       User,
       Notebook,
+      Alert,
     });
     Ring.associate({
       User,

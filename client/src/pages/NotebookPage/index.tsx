@@ -351,16 +351,18 @@ const Notebook = () => {
                           disableScrollLock: true,
                         }}
                       >
-                        <MenuItem key="none" value={null}>
-                          <Typography
-                            sx={{
-                              textTransform: "capitalize",
-                              color: "GrayText",
-                            }}
-                          >
-                            Unassign
-                          </Typography>
-                        </MenuItem>
+                        {notebook.team?.id ? (
+                          <MenuItem key="none" value={null}>
+                            <Typography
+                              sx={{
+                                textTransform: "capitalize",
+                                color: "GrayText",
+                              }}
+                            >
+                              Unassign
+                            </Typography>
+                          </MenuItem>
+                        ) : null}
                         {teams.map((teamObj) => (
                           <MenuItem key={teamObj.id} value={teamObj.id}>
                             <Typography

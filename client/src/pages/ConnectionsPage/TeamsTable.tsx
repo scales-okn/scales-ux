@@ -13,7 +13,6 @@ import {
   Button,
 } from "@mui/material";
 import ArrowDropDownIcon from "@mui/icons-material/ArrowDropDown";
-import StarBorderPurple500Icon from "@mui/icons-material/StarBorderPurple500";
 import DeleteOutlineIcon from "@mui/icons-material/DeleteOutline";
 import { useTheme } from "@mui/material/styles";
 
@@ -48,7 +47,7 @@ const TeamsTable = () => {
 
   const renderName = (selectedUser, replacementText = null) => {
     if (!selectedUser) return "";
-    const replacement = replacementText ? replacementText : "User";
+    const replacement = replacementText ? replacementText : "You";
 
     return selectedUser.id === sessionUser.id
       ? replacement
@@ -271,23 +270,35 @@ const TeamsTable = () => {
                                 );
                               })}
                             </Select>
-                            <Tooltip title="Remove user from team">
+                            <Tooltip
+                              title={
+                                canDelete
+                                  ? "Remove User from Team"
+                                  : "This User Cannot be Removed"
+                              }
+                            >
                               <Button
                                 sx={{
                                   minWidth: "unset",
                                   padding: "0 0 0 12px",
                                 }}
-                                disabled={!canDelete}
-                                onClick={() =>
-                                  setUserToDelete({
-                                    ...user,
-                                    teamId: team.id,
-                                  })
-                                }
+                                onClick={() => {
+                                  if (canDelete) {
+                                    setUserToDelete({
+                                      ...user,
+                                      teamId: team.id,
+                                    });
+                                  }
+                                }}
                               >
                                 <DeleteOutlineIcon
                                   color="error"
-                                  sx={{ color: !canDelete ? "grey" : null }}
+                                  sx={{
+                                    color: !canDelete ? "grey" : null,
+                                    cursor: canDelete
+                                      ? "pointer"
+                                      : "not-allowed",
+                                  }}
                                 />
                               </Button>
                             </Tooltip>
@@ -391,29 +402,29 @@ const TeamsTable = () => {
                         {team.notebooks.length ? (
                           team.notebooks.map((notebook) => {
                             return (
-                              <Box
-                                key={notebook.id}
-                                sx={{
-                                  display: "flex",
-                                  alignItems: "center",
-                                  justifyContent: "space-between",
-                                  border: "1px solid grey",
-                                  borderRadius: "4px",
-                                  padding: "8px",
-                                  width: "48%",
-                                  cursor: "pointer",
-                                  "&:hover": {
-                                    border: "1px solid black",
-                                  },
-                                }}
-                                onClick={() => {
-                                  window.open(
-                                    `/notebooks/${notebook.id}`,
-                                    "_blank",
-                                  );
-                                }}
-                              >
-                                <Tooltip title={notebook.description}>
+                              <Tooltip title="Go to Notebook" key={notebook.id}>
+                                <Box
+                                  sx={{
+                                    display: "flex",
+                                    alignItems: "center",
+                                    justifyContent: "space-between",
+                                    border: "1px solid grey",
+                                    borderRadius: "4px",
+                                    padding: "8px",
+                                    width: "48%",
+                                    cursor: "pointer",
+                                    transition: ".2s all ease-in-out",
+                                    "&:hover": {
+                                      border: "1px solid black",
+                                    },
+                                  }}
+                                  onClick={() => {
+                                    window.open(
+                                      `/notebooks/${notebook.id}`,
+                                      "_blank",
+                                    );
+                                  }}
+                                >
                                   <Typography
                                     sx={{
                                       padding: "0 12px",
@@ -422,11 +433,9 @@ const TeamsTable = () => {
                                   >
                                     {notebook.title}
                                   </Typography>
-                                </Tooltip>
-                                <Tooltip title="Go to Notebook">
                                   <Launch color="primary" />
-                                </Tooltip>
-                              </Box>
+                                </Box>
+                              </Tooltip>
                             );
                           })
                         ) : (
@@ -499,10 +508,13 @@ const TeamsTable = () => {
             <Button
               variant="contained"
               onClick={() => {
-                setUserToDelete(null);
                 updateTeam(userToDelete.teamId, {
                   userIdToRemove: userToDelete.id,
                 });
+                setUserToDelete(null);
+                setTimeout(() => {
+                  fetchTeams();
+                }, 500);
               }}
             >
               Confirm

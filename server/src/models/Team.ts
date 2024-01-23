@@ -22,10 +22,13 @@ export default (sequelize, options) => {
       as: "users",
       foreignKey: "teamId",
     });
-
     Team.hasMany(models.Notebook, {
       foreignKey: "teamId",
       as: "notebooks",
+    });
+    Team.hasMany(models.Alert, {
+      foreignKey: "teamId",
+      as: "alerts",
     });
   };
 

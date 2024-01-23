@@ -2,9 +2,10 @@ import { createSlice } from "@reduxjs/toolkit";
 import type { RootState, AppDispatch } from "src/store";
 import { useSelector, useDispatch } from "react-redux";
 import { notify } from "reapop";
-import { PagingT } from "src/types/paging";
-import { ConnectionT } from "./connection";
-import { UserT } from "./user";
+import type { PagingT } from "src/types/paging";
+import type { ConnectionT } from "./connection";
+import type { UserT } from "./user";
+import type { TeamT } from "./team";
 
 import { makeRequest } from "src/helpers/makeRequest";
 
@@ -17,6 +18,8 @@ export type AlertT = {
   viewed: boolean;
   connection?: ConnectionT;
   connectionId?: number;
+  team?: TeamT;
+  teamId?: number;
   createdAt: string;
   updatedAt: string;
 };
@@ -82,6 +85,15 @@ const alertSlice = createSlice({
       hasErrors: false,
     }),
     createAlertFailure: (state) => ({
+      ...state,
+      hasErrors: true,
+    }),
+    deleteAlertSuccess: (state, { payload }) => ({
+      ...state,
+      alerts: state.alerts.filter((alert) => alert.id !== payload.id),
+      hasErrors: false,
+    }),
+    deleteAlertFailure: (state) => ({
       ...state,
       hasErrors: true,
     }),
@@ -159,6 +171,21 @@ export const createAlert = (payload: any = {}) => {
   };
 };
 
+export const deleteAlert = (alertId) => {
+  return async (dispatch: AppDispatch) => {
+    try {
+      const { code } = await makeRequest.delete(`/api/alerts/${alertId}`);
+      if (code === 200) {
+        dispatch(alertActions.deleteAlertSuccess({ id: alertId }));
+      } else {
+        dispatch(alertActions.deleteAlertFailure());
+      }
+    } catch (error) {
+      dispatch(alertActions.deleteAlertFailure());
+    }
+  };
+};
+
 // Hooks
 export const useAlert = () => {
   const alerts = useSelector(alertsSelector);
@@ -172,5 +199,6 @@ export const useAlert = () => {
     createAlert: (payload: any = {}) => dispatch(createAlert(payload)),
     updateAlert: (alertId, payload: any = {}) =>
       dispatch(updateAlert(alertId, payload)),
+    deleteAlert: (alertId, payload: any = {}) => dispatch(deleteAlert(alertId)),
   };
 };
