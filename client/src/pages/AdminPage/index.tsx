@@ -30,7 +30,7 @@ const AdminPage = () => {
   };
 
   return (
-    <Box sx={{ paddingTop: "120px" }}>
+    <Box>
       <Tabs
         value={selectedTab.path}
         onChange={handleTabChange}
@@ -56,7 +56,9 @@ const AdminPage = () => {
           />
         ))}
       </Tabs>
-      <div className="container">{selectedTab.component}</div>
+      <Box className="container" sx={{ paddingTop: "120px" }}>
+        {selectedTab.component}
+      </Box>
     </Box>
   );
 };
