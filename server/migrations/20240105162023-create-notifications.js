@@ -27,7 +27,7 @@ module.exports = {
       },
       type: {
         type: Sequelize.ENUM,
-        values: ["connect", "shareNotebook", "addTeam"],
+        values: ["connect", "shareNotebook", "addedToTeam", "removedFromTeam", "notebookAddedToTeam"],
         allowNull: false,
       },
       connectionId: {

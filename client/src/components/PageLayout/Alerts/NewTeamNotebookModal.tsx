@@ -5,14 +5,13 @@ import { useTheme } from "@mui/material/styles";
 import { useAlert, AlertT } from "src/store/alerts";
 import ModalContainer from "src/components/Modals/ModalContainer";
 
-type TeamModalT = {
+type NewTeamNotebookT = {
   open: boolean;
   onClose: () => void;
   alert: AlertT;
-  added: boolean;
 };
 
-const TeamModal = ({ open, onClose, alert, added }: TeamModalT) => {
+const NewTeamNotebook = ({ open, onClose, alert }: NewTeamNotebookT) => {
   const theme = useTheme();
   const { updateAlert } = useAlert();
 
@@ -35,7 +34,7 @@ const TeamModal = ({ open, onClose, alert, added }: TeamModalT) => {
           color: theme.palette.primary.main,
         }}
       >
-        {added ? "Added to Team" : "Removed from Team"}
+        New Team Notebook
       </Typography>
       <Box
         sx={{
@@ -55,9 +54,11 @@ const TeamModal = ({ open, onClose, alert, added }: TeamModalT) => {
           color: "GrayText",
         }}
       >
-        {added
-          ? "You have been added to the team:"
-          : "You have been removed from the team:"}
+        A new notebook{" "}
+        <span style={{ fontWeight: "bold", fontStyle: "italic" }}>
+          {alert.notebook.title}
+        </span>{" "}
+        has been added to the team:
       </Typography>
       <Typography
         sx={{
@@ -67,6 +68,7 @@ const TeamModal = ({ open, onClose, alert, added }: TeamModalT) => {
           color: theme.palette.primary.main,
         }}
       >
+        {" "}
         {alert.team.name}
       </Typography>
       {alert.connection?.note ? (
@@ -90,16 +92,18 @@ const TeamModal = ({ open, onClose, alert, added }: TeamModalT) => {
           color: "GrayText",
         }}
       >
-        {added ? (
-          <Typography>
-            To view this team, <Link to={`/connections/teams`}>click here</Link>
-          </Typography>
-        ) : (
-          "If you believe this is an error, please contact a team administrator."
-        )}
+        <Typography>
+          To view this notebook,{" "}
+          <Link
+            to={`/notebooks/${alert.notebookId}`}
+            style={{ textDecoration: "none" }}
+          >
+            <span style={{ color: "#0b44bfd2" }}>click here</span>
+          </Link>
+        </Typography>
       </Typography>
     </ModalContainer>
   );
 };
 
-export default TeamModal;
+export default NewTeamNotebook;

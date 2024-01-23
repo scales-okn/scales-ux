@@ -67,6 +67,7 @@ const database = async () => {
       Notebook,
       User,
       Team,
+      Alert,
     });
     Connection.associate({
       User,

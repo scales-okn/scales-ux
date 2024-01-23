@@ -6,11 +6,13 @@ import PersonAddIcon from "@mui/icons-material/PersonAdd";
 import CheckCircleOutlineIcon from "@mui/icons-material/CheckCircleOutline";
 import GroupAddIcon from "@mui/icons-material/GroupAdd";
 import GroupRemoveIcon from "@mui/icons-material/GroupRemove";
+import PostAddIcon from "@mui/icons-material/PostAdd";
 
 import { useAlert } from "src/store/alerts";
 
 import ConnectModal from "./ConnectModal";
 import TeamModal from "./TeamModal";
+import NewTeamNotebookModal from "./NewTeamNotebookModal";
 
 const NotificationsBell = ({ alert }) => {
   const [modalVisible, setModalVisible] = useState(false);
@@ -42,6 +44,13 @@ const NotificationsBell = ({ alert }) => {
         added={false}
       />
     ),
+    notebookAddedToTeam: (
+      <NewTeamNotebookModal
+        open={modalVisible}
+        onClose={() => setModalVisible(false)}
+        alert={alert}
+      />
+    ),
   };
 
   const alertTemplate = ({ title, targetName, iconUnviewed }) => {
@@ -50,12 +59,10 @@ const NotificationsBell = ({ alert }) => {
         sx={{
           display: "flex",
           alignItems: "center",
-          cursor: alert.viewed ? "default" : "pointer",
+          cursor: "pointer",
         }}
         onClick={() => {
-          if (!alert.viewed) {
-            setModalVisible(true);
-          }
+          setModalVisible(true);
         }}
       >
         <Box
@@ -65,7 +72,10 @@ const NotificationsBell = ({ alert }) => {
         >
           {alert.viewed ? (
             <Button
-              onClick={() => deleteAlert(alert.id)}
+              onClick={(e) => {
+                e.stopPropagation();
+                deleteAlert(alert.id);
+              }}
               sx={{
                 minWidth: "unset",
                 padding: "2px",
@@ -123,6 +133,11 @@ const NotificationsBell = ({ alert }) => {
     removedFromTeam: alertTemplate({
       iconUnviewed: <GroupRemoveIcon color="primary" />,
       title: <span>You have been removed from a team:</span>,
+      targetName: <span>{alert.team?.name}</span>,
+    }),
+    notebookAddedToTeam: alertTemplate({
+      iconUnviewed: <PostAddIcon color="primary" />,
+      title: <span>New Notebook add to team:</span>,
       targetName: <span>{alert.team?.name}</span>,
     }),
   };

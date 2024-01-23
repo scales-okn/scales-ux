@@ -6,6 +6,7 @@ import type { PagingT } from "src/types/paging";
 import type { ConnectionT } from "./connection";
 import type { UserT } from "./user";
 import type { TeamT } from "./team";
+import type { NotebookT } from "./notebook";
 
 import { makeRequest } from "src/helpers/makeRequest";
 
@@ -15,6 +16,7 @@ export type AlertT = {
   initiatorUserId: number;
   initiatorUser?: UserT;
   notebookId: number | null;
+  notebook: NotebookT;
   viewed: boolean;
   connection?: ConnectionT;
   connectionId?: number;

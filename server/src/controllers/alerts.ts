@@ -75,6 +75,11 @@ export const findAll = async (req: Request, res: Response) => {
           as: "team",
           attributes: ["id", "name", "description"],
         },
+        {
+          model: sequelize.models.Notebook,
+          as: "notebook",
+          attributes: ["id", "title", "description"],
+        },
       ],
     });
 

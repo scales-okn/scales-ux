@@ -60,6 +60,10 @@ export default (sequelize, options) => {
       foreignKey: "teamId",
       as: "team",
     });
+    Alert.belongsTo(models.Notebook, {
+      foreignKey: "notebookId",
+      as: "notebook",
+    });
   };
 
   return Alert;

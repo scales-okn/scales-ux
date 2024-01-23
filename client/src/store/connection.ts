@@ -12,8 +12,8 @@ export type ConnectionT = {
   senderId: number;
   recipientId: number;
   note: string;
-  pending: string;
-  accepted: string;
+  pending: boolean;
+  approved: boolean;
   createdAt: string;
   updatedAt: string;
 };

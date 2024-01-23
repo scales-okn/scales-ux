@@ -264,8 +264,9 @@ export const update = async (req: Request, res: Response) => {
         await sequelize.models.Alert.create({
           userId,
           initiatorUserId: reqUserId,
-          type: "addedToTeam",
+          type: "notebookAddedToTeam",
           teamId: team.id,
+          notebookId: notebookId,
         });
       });
     }

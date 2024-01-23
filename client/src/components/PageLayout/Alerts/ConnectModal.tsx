@@ -1,4 +1,5 @@
 import React from "react";
+import { Link } from "react-router-dom";
 import { Button, Typography, Box } from "@mui/material";
 import { useTheme } from "@mui/material/styles";
 import { useAlert, AlertT } from "src/store/alerts";
@@ -15,6 +16,16 @@ const ConnectModal = ({ open, onClose, alert }: ConnectModalT) => {
   const theme = useTheme();
   const { updateAlert } = useAlert();
   const { updateConnection } = useConnection();
+
+  const actionVerb = () => {
+    if (alert.connection?.pending === true) {
+      return "received";
+    } else if (alert.connection?.approved === true) {
+      return "accepted";
+    } else if (alert.connection?.approved === false) {
+      return "declined";
+    }
+  };
 
   const handleResponse = (approved) => {
     updateConnection(alert.connectionId, {
@@ -59,7 +70,7 @@ const ConnectModal = ({ open, onClose, alert }: ConnectModalT) => {
           color: "GrayText",
         }}
       >
-        You have a new connection request from:
+        You {actionVerb()} a new connection request from:
       </Typography>
       <Typography
         sx={{
@@ -86,33 +97,53 @@ const ConnectModal = ({ open, onClose, alert }: ConnectModalT) => {
           {'"'}
         </Typography>
       ) : null}
-      <Typography
-        sx={{
-          fontSize: "14px",
-          marginBottom: "56px",
-          textAlign: "center",
-          color: "GrayText",
-        }}
-      >
-        Would you like to accept this request?
-      </Typography>
-      <Box
-        sx={{
-          display: "flex",
-          justifyContent: "space-around",
-          alignItems: "center",
-          marginBottom: "48px",
-          width: "50%",
-          margin: "0 auto",
-        }}
-      >
-        <Button variant="outlined" onClick={() => handleResponse(false)}>
-          Decline
-        </Button>
-        <Button variant="contained" onClick={() => handleResponse(true)}>
-          Accept
-        </Button>
-      </Box>
+      {alert.viewed ? (
+        <Typography
+          sx={{
+            fontSize: "14px",
+            marginBottom: "36px",
+            textAlign: "center",
+            color: "GrayText",
+          }}
+        >
+          <Typography>
+            To view your connections,{" "}
+            <Link to={`/connections`} style={{ textDecoration: "none" }}>
+              <span style={{ color: "#0b44bfd2" }}>click here</span>
+            </Link>
+          </Typography>
+        </Typography>
+      ) : (
+        <>
+          <Typography
+            sx={{
+              fontSize: "14px",
+              marginBottom: "48px",
+              textAlign: "center",
+              color: "GrayText",
+            }}
+          >
+            Would you like to accept this request?
+          </Typography>
+          <Box
+            sx={{
+              display: "flex",
+              justifyContent: "space-around",
+              alignItems: "center",
+              marginBottom: "48px",
+              width: "50%",
+              margin: "0 auto",
+            }}
+          >
+            <Button variant="outlined" onClick={() => handleResponse(false)}>
+              Decline
+            </Button>
+            <Button variant="contained" onClick={() => handleResponse(true)}>
+              Accept
+            </Button>
+          </Box>
+        </>
+      )}
     </ModalContainer>
   );
 };
