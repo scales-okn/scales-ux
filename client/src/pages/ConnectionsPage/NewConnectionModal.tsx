@@ -92,8 +92,8 @@ const NewConnectionModal = () => {
             color: "GrayText",
           }}
         >
-          Enter a user&apos;s email to send them a request to connect. They will
-          receive an email with a link to accept the request.
+          Enter a user&apos;s email to request a connection. They will receive
+          an email with a link to accept the request.
         </Typography>
         <form onSubmit={formik.handleSubmit}>
           <Grid container spacing={2}>

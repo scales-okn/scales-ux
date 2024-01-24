@@ -152,14 +152,11 @@ export const fetchApprovedConnectionUsers = (params) => {
       );
 
       if (code === 200) {
-        // Dispatch an action to update the state with other users
         dispatch(
-          connectionActions.fetchConnectionsSuccess({
-            connections: [],
-            paging: {},
-          }),
+          connectionActions.findAllApprovedConnectionUsersSuccess(
+            data.connections,
+          ),
         );
-        dispatch(connectionActions.findAllApprovedConnectionUsersSuccess(data));
       } else {
         dispatch(notify(message, "error"));
         dispatch(connectionActions.fetchConnectionsFailure());

@@ -80,6 +80,21 @@ export const findAll = async (req: Request, res: Response) => {
     //@ts-ignore
     const { role, id: userId } = req.user;
 
+    const sessionUserTeams = await sequelize.models.Team.findAll({
+      attributes: ["id"],
+      include: [
+        {
+          model: sequelize.models.User,
+          as: "users",
+          where: { id: userId },
+          attributes: [],
+        },
+      ],
+      raw: true,
+    });
+
+    const teamIds = sessionUserTeams.map((team) => team.id);
+
     const permission = await accessControl.can(role, "notebooks:read");
     if (!permission.granted) {
       return res.send_forbidden("Not allowed!");
@@ -94,7 +109,7 @@ export const findAll = async (req: Request, res: Response) => {
     } else if (req.query.type === "shared") {
       where[Op.and] = [{ visibility: "public" }, { sharedWith: { [Op.contains]: [userId] } }];
     } else {
-      where[Op.or] = [{ userId }, { collaborators: { [Op.contains]: [userId] } }];
+      where[Op.or] = [{ userId }, { collaborators: { [Op.contains]: [userId] } }, { teamId: { [Op.in]: teamIds } }];
     }
 
     const result = await findAllAndPaginate({

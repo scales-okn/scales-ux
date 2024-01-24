@@ -167,7 +167,7 @@ export const findAllApprovedConnectionUsers = async (req: Request, res: Response
 
     const otherUserIds = userIds.filter((userId) => userId !== sessionUser.id);
 
-    const result = await sequelize.models.User.findAll({
+    const connections = await sequelize.models.User.findAll({
       where: {
         id: {
           [Op.in]: otherUserIds,
@@ -175,8 +175,7 @@ export const findAllApprovedConnectionUsers = async (req: Request, res: Response
       },
       attributes: ["id", "firstName", "lastName", "email"],
     });
-
-    return res.send_ok("", result);
+    return res.send_ok("", { connections });
   } catch (error) {
     console.error(error);
     return res.status(500).send("Internal server error");
