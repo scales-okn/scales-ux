@@ -9,8 +9,10 @@ import { makeRequest } from "src/helpers/makeRequest";
 
 export type ConnectionT = {
   id: number;
-  senderId: number;
-  recipientId: number;
+  sender: number;
+  receiver: number;
+  receiverUser: UserT;
+  senderUser: UserT;
   note: string;
   pending: boolean;
   approved: boolean;
@@ -97,9 +99,9 @@ const connectionSlice = createSlice({
       connections: [payload, ...state.connections],
       hasErrors: false,
     }),
-    createConnectionFailure: (state) => ({
+    createConnectionFailure: (state, { payload }) => ({
       ...state,
-      hasErrors: true,
+      hasErrors: payload,
     }),
   },
 });
@@ -114,6 +116,8 @@ export const approvedConnectionUsersSelector = (state: RootState) =>
   state.connections.approvedConnectionUsers;
 export const connectionsPagingSelector = (state: RootState) =>
   state.connections.paging;
+export const connectionsErrorsSelector = (state: RootState) =>
+  state.connections.hasErrors;
 
 // The reducer
 export default connectionSlice.reducer;
@@ -198,10 +202,10 @@ export const createConnection = (payload: any = {}) => {
         dispatch(connectionActions.createConnectionSuccess(data.newConnection));
       } else {
         dispatch(notify(message, "error"));
-        dispatch(connectionActions.createConnectionFailure());
+        dispatch(connectionActions.createConnectionFailure(message));
       }
     } catch (error) {
-      dispatch(connectionActions.createConnectionFailure());
+      dispatch(connectionActions.createConnectionFailure(error.message));
     }
   };
 };
@@ -211,12 +215,14 @@ export const useConnection = () => {
   const connections = useSelector(connectionsSelector);
   const approvedConnectionUsers = useSelector(approvedConnectionUsersSelector);
   const connectionsPaging = useSelector(connectionsPagingSelector);
+  const hasErrors = useSelector(connectionsErrorsSelector);
   const dispatch = useDispatch();
 
   return {
     connections,
     connectionsPaging,
     approvedConnectionUsers,
+    hasErrors,
     fetchConnections: (payload: any = {}) =>
       dispatch(fetchConnections(payload)),
     fetchApprovedConnectionUsers: (payload: any = {}) =>

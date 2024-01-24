@@ -65,6 +65,7 @@ export default (sequelize, options) => {
     models.Notebook.belongsTo(models.Alert, {
       foreignKey: "alertId",
       as: "alert",
+      onDelete: "CASCADE",
     });
   };
 

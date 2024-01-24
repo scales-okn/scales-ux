@@ -50,6 +50,7 @@ export const findAll = async (req: Request, res: Response) => {
     const result = await findAllAndPaginate({
       model: sequelize.models.Alert,
       dataName: "alerts",
+      query: { pageSize: 10 },
       where: {
         userId: sessionUser.id,
       },

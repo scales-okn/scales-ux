@@ -155,6 +155,14 @@ export const findById = async (req: Request, res: Response) => {
           model: sequelize.models.Team,
           as: "team",
           attributes: ["id", "name", "description"],
+          include: [
+            {
+              model: sequelize.models.User,
+              as: "users",
+              through: { attributes: ["role"] },
+              attributes: ["id", "firstName", "lastName", "email"],
+            },
+          ],
         },
       ],
     });
@@ -245,13 +253,6 @@ export const update = async (req: Request, res: Response) => {
     // General Case
     if (role !== "admin" && !collaborators.includes(reqUserId) && userId !== reqUserId) {
       return res.send_forbidden("Not allowed!");
-    }
-
-    //  Owner Operations Case
-    if (userId !== reqUserId) {
-      if (payload.includes("userId") || payload.includes("collaborators") || payload.includes("visibility")) {
-        return res.send_forbidden("Not allowed!");
-      }
     }
 
     // Inject req for saveLog

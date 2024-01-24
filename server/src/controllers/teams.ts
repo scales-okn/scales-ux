@@ -126,6 +126,28 @@ export const update = async (req: Request, res: Response) => {
   }
 };
 
+// DELETE team
+export const deleteTeam = async (req: Request, res: Response) => {
+  try {
+    const { teamId } = req.params;
+
+    const team = await sequelize.models.Team.findOne({
+      where: { id: teamId },
+    });
+
+    if (!team) {
+      return res.status(404).send("No team found!");
+    }
+
+    await team.destroy();
+
+    return res.send_ok("Team has been deleted!");
+  } catch (error) {
+    console.error(error);
+    return res.status(500).send("Internal server error");
+  }
+};
+
 // GET findAll
 export const findAll = async (req: Request, res: Response) => {
   try {

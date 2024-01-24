@@ -16,7 +16,18 @@ type UserFields = {
 
 const NewConnectionModal = () => {
   const [newUserModalVisible, setNewUserModalVisible] = useState(false);
-  const { createConnection } = useConnection();
+  const { createConnection, connections, hasErrors } = useConnection();
+
+  const invalidEmails = connections.reduce((acc, connection) => {
+    if (!acc.includes(connection.receiverUser.email)) {
+      acc.push(connection.receiverUser.email);
+    }
+    if (!acc.includes(connection.senderUser.email)) {
+      acc.push(connection.senderUser.email);
+    }
+    return acc;
+  }, []);
+
   const { id: sessionUserId } = useSessionUser();
 
   const theme = useTheme();
@@ -30,7 +41,12 @@ const NewConnectionModal = () => {
     email: yup
       .string()
       .email("Enter a valid email")
-      .required("Email is required"),
+      .required("Email is required")
+      .test(
+        "is-not-invalid-email",
+        "Email must not be a duplicate of an existing connection or your own",
+        (value) => !invalidEmails.includes(value),
+      ),
     note: yup.string(),
   });
 

@@ -97,6 +97,7 @@ const NewTeamNotebook = ({ open, onClose, alert }: NewTeamNotebookT) => {
           <Link
             to={`/notebooks/${alert.notebookId}`}
             style={{ textDecoration: "none" }}
+            onClick={onClose}
           >
             <span style={{ color: "#0b44bfd2" }}>click here</span>
           </Link>

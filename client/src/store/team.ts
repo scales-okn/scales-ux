@@ -79,6 +79,15 @@ const teamSlice = createSlice({
       ...state,
       hasErrors: true,
     }),
+    deleteTeamSuccess: (state, { payload }) => ({
+      ...state,
+      teams: state.teams.filter((team) => team.id !== payload),
+      hasErrors: false,
+    }),
+    deleteTeamFailure: (state) => ({
+      ...state,
+      hasErrors: true,
+    }),
     createTeamSuccess: (state, { payload }) => ({
       ...state,
       teams: [payload, ...state.teams],
@@ -141,6 +150,25 @@ export const updateTeam = (teamId, payload: UpdateTeamT = {}) => {
   };
 };
 
+export const deleteTeam = (teamId, payload: UpdateTeamT = {}) => {
+  return async (dispatch: AppDispatch) => {
+    try {
+      const { message, code } = await makeRequest.delete(
+        `/api/teams/${teamId}`,
+        payload,
+      );
+      if (code === 200) {
+        dispatch(teamActions.deleteTeamSuccess(teamId));
+      } else {
+        dispatch(notify(message, "error"));
+        dispatch(teamActions.deleteTeamFailure());
+      }
+    } catch (error) {
+      dispatch(teamActions.deleteTeamFailure());
+    }
+  };
+};
+
 export const createTeam = (payload: any = {}) => {
   return async (dispatch: AppDispatch) => {
     try {
@@ -172,5 +200,6 @@ export const useTeam = () => {
     createTeam: (payload: any = {}) => dispatch(createTeam(payload)),
     updateTeam: (teamId, payload: UpdateTeamT = {}) =>
       dispatch(updateTeam(teamId, payload)),
+    deleteTeam: (teamId) => dispatch(deleteTeam(teamId)),
   };
 };

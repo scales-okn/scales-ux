@@ -18,13 +18,15 @@ import { useTheme } from "@mui/material/styles";
 
 import useWindowSize from "src/hooks/useWindowSize";
 
+import { renderName } from "src/helpers/renderName";
 import { useSessionUser } from "src/store/auth";
 import { useTeam } from "src/store/team";
 import { useConnection } from "src/store/connection";
 
+import DeleteUserModal from "./DeleteUserModal";
+import DeleteTeamModal from "./DeleteTeamModal";
 import NewTeamModal from "./NewTeamModal";
 import { Launch } from "@mui/icons-material";
-import ModalContainer from "src/components/Modals/ModalContainer";
 
 const TeamsTable = () => {
   const theme = useTheme();
@@ -32,6 +34,7 @@ const TeamsTable = () => {
   const { fetchApprovedConnectionUsers, approvedConnectionUsers } =
     useConnection();
   const [userToDelete, setUserToDelete] = useState(null);
+  const [teamToDelete, setTeamToDelete] = useState(null);
 
   const { width } = useWindowSize();
   const isTablet = width < 900;
@@ -43,16 +46,7 @@ const TeamsTable = () => {
     fetchApprovedConnectionUsers({
       pageSize: 1000,
     });
-  }, []);
-
-  const renderName = (selectedUser, replacementText = null) => {
-    if (!selectedUser) return "";
-    const replacement = replacementText ? replacementText : "You";
-
-    return selectedUser.id === sessionUser.id
-      ? replacement
-      : `${selectedUser.firstName} ${selectedUser.lastName}`;
-  };
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   const visibilityOptions = ["admin", "read-only"];
 
@@ -98,7 +92,6 @@ const TeamsTable = () => {
                 sx={{
                   width: "48%",
                   minWidth: "400px",
-                  // maxWidth: "800px",
                   flexGrow: isTablet ? 1 : 0,
                 }}
               >
@@ -203,6 +196,15 @@ const TeamsTable = () => {
                         (sessionUserIsAdmin || sessionUserIsUser) &&
                         !deleteDisabled;
 
+                      let removeTooltip =
+                        user.id === sessionUser.id
+                          ? "Leave Team"
+                          : "Remove user from team";
+
+                      if (!canDelete) {
+                        removeTooltip = "This user cannot be removed";
+                      }
+
                       return (
                         <Box
                           key={user.id}
@@ -225,7 +227,7 @@ const TeamsTable = () => {
                                 alignItems: "center",
                               }}
                             >
-                              {renderName(user)}
+                              {renderName({ user: user, sessionUser })}
                             </Typography>
                           </Box>
                           <Box sx={{ display: "flex", alignItems: "center" }}>
@@ -270,13 +272,7 @@ const TeamsTable = () => {
                                 );
                               })}
                             </Select>
-                            <Tooltip
-                              title={
-                                canDelete
-                                  ? "Remove User from Team"
-                                  : "This User Cannot be Removed"
-                              }
-                            >
+                            <Tooltip title={removeTooltip}>
                               <Button
                                 sx={{
                                   minWidth: "unset",
@@ -453,6 +449,30 @@ const TeamsTable = () => {
                         )}
                       </Box>
                     </Box>
+                    <Box
+                      sx={{
+                        background: "lightgrey",
+                        height: "1px",
+                        margin: "32px 0",
+                      }}
+                    />
+                    <Box
+                      sx={{
+                        display: "flex",
+                        justifyContent: "center",
+                        width: "100%",
+                      }}
+                    >
+                      <Button
+                        variant="outlined"
+                        color="error"
+                        onClick={() => {
+                          setTeamToDelete(team);
+                        }}
+                      >
+                        Delete Team
+                      </Button>
+                    </Box>
                   </AccordionDetails>
                 </Accordion>
               </Box>
@@ -471,57 +491,15 @@ const TeamsTable = () => {
             No teams to display
           </Box>
         )}
-        <ModalContainer
-          onClose={() => setUserToDelete(null)}
-          open={userToDelete}
-          paperStyles={{ maxWidth: "500px" }}
-        >
-          <Typography
-            sx={{
-              fontSize: "32px",
-              textAlign: "center",
-              marginBottom: "12px",
-              color: theme.palette.primary.main,
-            }}
-          >
-            Please Confirm
-          </Typography>
-          <Typography
-            sx={{
-              fontSize: "14px",
-              marginBottom: "48px",
-              textAlign: "center",
-              color: "GrayText",
-            }}
-          >
-            Are you sure you want to remove{" "}
-            {renderName(userToDelete, "yourself")} from this team?
-          </Typography>
-          <Box sx={{ display: "flex", justifyContent: "center" }}>
-            <Button
-              variant="outlined"
-              onClick={() => setUserToDelete(null)}
-              sx={{ marginRight: "12px" }}
-            >
-              Cancel
-            </Button>
-            <Button
-              variant="contained"
-              onClick={() => {
-                updateTeam(userToDelete.teamId, {
-                  userIdToRemove: userToDelete.id,
-                });
-                setUserToDelete(null);
-                setTimeout(() => {
-                  fetchTeams();
-                }, 500);
-              }}
-            >
-              Confirm
-            </Button>
-          </Box>
-        </ModalContainer>
       </Box>
+      <DeleteUserModal
+        setUserToDelete={setUserToDelete}
+        userToDelete={userToDelete}
+      />
+      <DeleteTeamModal
+        setTeamToDelete={setTeamToDelete}
+        teamToDelete={teamToDelete}
+      />
     </>
   );
 };

@@ -8,6 +8,8 @@ import { usePanels } from "src/store/panels";
 import { useSessionUser } from "src/store/auth";
 import { useTeam } from "src/store/team";
 
+import { renderName } from "src/helpers/renderName";
+
 import useWindowSize from "src/hooks/useWindowSize";
 
 import ContentCopyIcon from "@mui/icons-material/ContentCopy";
@@ -49,21 +51,24 @@ const Notebook = () => {
   } = useNotebook();
   const { getPanels, clearPanels } = usePanels(notebook?.id);
   const { fetchTeams, teams } = useTeam();
-
+  const theme = useTheme();
   const navigate = useNavigate();
   const location = useLocation();
+  const sessionUser = useSessionUser();
+  const { notebookId: notebookIdParam } = useParams();
+
   const { page } = queryString.parse(location.search);
 
-  const { notebookId: notebookIdParam } = useParams();
   const isNewNotebook = notebookIdParam === "new";
   const { width } = useWindowSize();
   const isMobile = width < 500;
 
-  const sessionUser = useSessionUser();
-  const sessionUserCanEdit = sessionUser?.id === notebook?.userId;
+  const userIsNotebookOwner = sessionUser?.id === notebook?.userId;
+  const userIsNotebookTeamAdmin = notebook?.team?.users?.some(
+    (user) => user.id === sessionUser?.id && user.UserTeams?.role === "admin",
+  );
+  const sessionUserCanEdit = userIsNotebookOwner || userIsNotebookTeamAdmin;
   const updatesDisabled = !sessionUserCanEdit && !isNewNotebook;
-
-  const theme = useTheme();
 
   const [copyModalOpen, setCopyModalOpen] = useState(false);
 
@@ -196,8 +201,8 @@ const Notebook = () => {
                   color: "GrayText",
                 }}
               >
-                This is a read-only, public notebook. Use the copy button to
-                clone your own version.
+                This is a read-only notebook. Use the copy button to clone your
+                own version.
               </Typography>
             )}
           </Grid>
@@ -310,7 +315,7 @@ const Notebook = () => {
                     Owner:
                   </Typography>
                   <Typography>
-                    {notebook?.user?.firstName} {notebook?.user?.lastName}
+                    {renderName({ user: notebook?.user, sessionUser })}
                   </Typography>
                 </Box>
                 <Box
@@ -332,11 +337,11 @@ const Notebook = () => {
                     </Typography>
                   </Tooltip>
                   <Typography sx={{ color: "GrayText" }}>
-                    {notebook?.user?.id === sessionUser?.id ? (
+                    {sessionUserCanEdit ? (
                       <Select
                         variant="outlined"
                         value={notebook.team?.id}
-                        disabled={notebook.user?.id !== sessionUser?.id}
+                        // disabled={!sessionUserCanEdit}
                         onChange={(event) => {
                           updateNotebook(notebook.id, {
                             teamId: event.target.value,
@@ -429,7 +434,12 @@ const Notebook = () => {
         {notebook?.id && <></>}
       </Grid>
 
-      {notebook && <Panels notebookId={notebook?.id} />}
+      {notebook && (
+        <Panels
+          notebookId={notebook?.id}
+          sessionUserCanEdit={sessionUserCanEdit}
+        />
+      )}
       <AddPanel notebookId={notebook?.id} />
 
       {confirmVisible && (

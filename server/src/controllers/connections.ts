@@ -11,7 +11,7 @@ export const create = async (req: Request, res: Response) => {
     const receiver = await sequelize.models.User.findOne({ where: { email } });
 
     if (!receiver) {
-      return res.status(404).send("No user found with that email!");
+      return res.status(404).send({ code: 404, message: "No user found with that email!" });
     }
 
     const newConnection = await sequelize.models.Connection.create({
