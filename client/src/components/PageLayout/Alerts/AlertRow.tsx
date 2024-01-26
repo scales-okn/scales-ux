@@ -15,7 +15,6 @@ import PlaylistRemoveIcon from "@mui/icons-material/PlaylistRemove";
 import { useAlert } from "src/store/alerts";
 
 const AlertRow = ({ alert, setModalAlert }) => {
-  console.log("🚀 ~ AlertRow ~ alert:", alert);
   const { deleteAlert } = useAlert();
 
   const [isHovered, setIsHovered] = useState(false);

@@ -12,7 +12,6 @@ import NotebookSharedModal from "./NotebookSharedModal";
 import NotebookRemovedModal from "./NotebookRemovedModal";
 
 const ModalAlertElement = ({ modalAlert, setModalAlert }) => {
-  console.log("🚀 ~ ModalAlertElement ~ modalAlert:", modalAlert);
   const location = useLocation();
   const navigate = useNavigate();
   const search = queryString.parse(location.search);
