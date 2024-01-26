@@ -364,7 +364,7 @@ const TeamsTable = () => {
                                   padding: "12px",
                                 }}
                               >
-                                No users available to assign
+                                No connections available to assign
                               </Typography>
                             )}
                           </Select>

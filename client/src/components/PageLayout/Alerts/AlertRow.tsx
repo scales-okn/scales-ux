@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 
 import { Box, Typography, Button } from "@mui/material";
 import DeleteOutlineIcon from "@mui/icons-material/DeleteOutline";
@@ -10,48 +10,10 @@ import PostAddIcon from "@mui/icons-material/PostAdd";
 
 import { useAlert } from "src/store/alerts";
 
-import ConnectModal from "./ConnectModal";
-import TeamModal from "./TeamModal";
-import NewTeamNotebookModal from "./NewTeamNotebookModal";
-
-const NotificationsBell = ({ alert }) => {
-  const [modalVisible, setModalVisible] = useState(false);
+const AlertRow = ({ alert, setModalAlert }) => {
   const { deleteAlert } = useAlert();
 
   const [isHovered, setIsHovered] = useState(false);
-
-  const modals = {
-    connect: (
-      <ConnectModal
-        open={modalVisible}
-        onClose={() => setModalVisible(false)}
-        alert={alert}
-      />
-    ),
-    addedToTeam: (
-      <TeamModal
-        open={modalVisible}
-        onClose={() => setModalVisible(false)}
-        alert={alert}
-        added={true}
-      />
-    ),
-    removedFromTeam: (
-      <TeamModal
-        open={modalVisible}
-        onClose={() => setModalVisible(false)}
-        alert={alert}
-        added={false}
-      />
-    ),
-    notebookAddedToTeam: (
-      <NewTeamNotebookModal
-        open={modalVisible}
-        onClose={() => setModalVisible(false)}
-        alert={alert}
-      />
-    ),
-  };
 
   const alertTemplate = ({ title, targetName, iconUnviewed }) => {
     return (
@@ -62,7 +24,7 @@ const NotificationsBell = ({ alert }) => {
           cursor: "pointer",
         }}
         onClick={() => {
-          setModalVisible(true);
+          setModalAlert(alert);
         }}
       >
         <Box
@@ -137,7 +99,7 @@ const NotificationsBell = ({ alert }) => {
     }),
     notebookAddedToTeam: alertTemplate({
       iconUnviewed: <PostAddIcon color="primary" />,
-      title: <span>New Notebook add to team:</span>,
+      title: <span>New Notebook added to team:</span>,
       targetName: <span>{alert.team?.name}</span>,
     }),
   };
@@ -162,9 +124,8 @@ const NotificationsBell = ({ alert }) => {
       >
         {alertItems[alert.type]}
       </Box>
-      {modalVisible ? modals[alert.type] : null}
     </>
   );
 };
 
-export default NotificationsBell;
+export default AlertRow;

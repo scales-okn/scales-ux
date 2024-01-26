@@ -1,6 +1,7 @@
 import { Request, Response } from "express";
 import { sequelize } from "../database";
 import { findAllAndPaginate } from "./util/findAllAndPaginate";
+import { sendEmail } from "../services/sesMailer";
 import { Op } from "sequelize";
 
 // POST Create Connection Request
@@ -9,8 +10,9 @@ export const create = async (req: Request, res: Response) => {
     const { email, note, senderId } = req.body;
 
     const receiver = await sequelize.models.User.findOne({ where: { email } });
+    const sender = await sequelize.models.User.findOne({ where: { id: senderId } });
 
-    if (!receiver) {
+    if (!receiver || !sender) {
       return res.status(404).send({ code: 404, message: "No user found with that email!" });
     }
 
@@ -26,6 +28,21 @@ export const create = async (req: Request, res: Response) => {
       type: "connect",
       connectionId: newConnection.id,
     });
+
+    if (receiver.notifyOnConnectionRequest) {
+      sendEmail({
+        emailSubject: "You have a new connection request!",
+        recipientEmail: receiver.email,
+        templateName: "notifyOnConnectionRequest",
+        recipientName: `${receiver.firstName} ${receiver.lastName}`,
+        templateArgs: {
+          saturnUrl: process.env.UX_CLIENT_MAILER_URL,
+          sesSender: process.env.SES_SENDER,
+          senderName: `${sender.firstName} ${sender.lastName}`,
+          url: `${process.env.UX_CLIENT_MAILER_URL}/connections?connectionId=${newConnection.id}`,
+        },
+      });
+    }
 
     // include sender and receiver user
     await newConnection.reload({
@@ -67,7 +84,32 @@ export const update = async (req: Request, res: Response) => {
 
     await connection.update({ approved, pending: false });
 
-    // Send mailers here
+    const sender = await sequelize.models.User.findOne({
+      where: { id: connection.sender },
+    });
+    const receiver = await sequelize.models.User.findOne({
+      where: { id: connection.sender },
+    });
+
+    if (!sender || !receiver) {
+      return res.status(404).send("No user found!");
+    }
+
+    if (sender.notifyOnConnectionResponse) {
+      sendEmail({
+        emailSubject: `${receiver.firstName} ${receiver.lastName} has responded to your connection request!`,
+        recipientEmail: sender.email,
+        templateName: "notifyOnConnectionResponse",
+        recipientName: `${sender.firstName} ${sender.lastName}`,
+        templateArgs: {
+          saturnUrl: process.env.UX_CLIENT_MAILER_URL,
+          sesSender: process.env.SES_SENDER,
+          approvedText: approved ? "approved" : "denied",
+          receiverName: `${receiver.firstName} ${receiver.lastName}`,
+          url: `${process.env.UX_CLIENT_MAILER_URL}/connections`,
+        },
+      });
+    }
 
     return res.send_ok("User has been updated!", {
       connection,

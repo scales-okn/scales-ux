@@ -87,17 +87,15 @@ const LogoutMenu = () => {
           >
             Update Info
           </div>
-          {user.role === "admin" && (
-            <div
-              className="item"
-              onClick={() => {
-                setEmailSettingsModalVisible(true);
-                handleClose();
-              }}
-            >
-              Email Settings
-            </div>
-          )}
+          <div
+            className="item"
+            onClick={() => {
+              setEmailSettingsModalVisible(true);
+              handleClose();
+            }}
+          >
+            Email Settings
+          </div>
           <div className="item" onClick={() => dispatch(logout())}>
             Sign Out
           </div>

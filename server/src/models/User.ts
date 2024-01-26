@@ -60,6 +60,36 @@ export default (sequelize, options) => {
         allowNull: false,
         defaultValue: true,
       },
+      notifyOnConnectionRequest: {
+        type: DataTypes.BOOLEAN,
+        allowNull: false,
+        defaultValue: true,
+      },
+      notifyOnConnectionResponse: {
+        type: DataTypes.BOOLEAN,
+        allowNull: false,
+        defaultValue: true,
+      },
+      notifyOnNewNotebook: {
+        type: DataTypes.BOOLEAN,
+        allowNull: false,
+        defaultValue: true,
+      },
+      notifyOnSharedNotebook: {
+        type: DataTypes.BOOLEAN,
+        allowNull: false,
+        defaultValue: true,
+      },
+      notifyOnTeamChange: {
+        type: DataTypes.BOOLEAN,
+        allowNull: false,
+        defaultValue: true,
+      },
+      notifyOnTeamNotebookDelete: {
+        type: DataTypes.BOOLEAN,
+        allowNull: false,
+        defaultValue: true,
+      },
     },
     options
   );

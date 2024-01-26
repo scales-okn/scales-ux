@@ -8,8 +8,14 @@ const templatePaths = {
   resetPassword: path.join(__dirname, "./resetPassword.html"),
   confirmAccountAdminCreated: path.join(__dirname, "./confirmAccountAdminCreated.html"),
   ringUpdated: path.join(__dirname, "./ringUpdated.html"),
-  shareLink: path.join(__dirname, "./shareLink.html"),
   confirmPasswordChange: path.join(__dirname, "./confirmPasswordChange.html"),
+  shareLink: path.join(__dirname, "./shareLink.html"),
+  notifyOnAddedToTeam: path.join(__dirname, "./notifyOnAddedToTeam.html"),
+  notifyOnConnectionRequest: path.join(__dirname, "./notifyOnConnectionRequest.html"),
+  notifyOnConnectionResponse: path.join(__dirname, "./notifyOnConnectionResponse.html"),
+  notifyOnNewNotebook: path.join(__dirname, "./notifyOnNewNotebook.html"),
+  notifyOnRemovedFromTeam: path.join(__dirname, "./notifyOnRemovedFromTeam.html"),
+  notifyOnTeamNotebookDelete: path.join(__dirname, "./notifyOnTeamNotebookDelete.html"),
 };
 
 const SES_CONFIG = {
@@ -20,7 +26,7 @@ const SES_CONFIG = {
 
 const AWS_SES = new AWS.SES(SES_CONFIG);
 
-type templateNameT = "confirmAccount" | "resetPassword" | "confirmAccountAdminCreated" | "shareLink" | "ringUpdated" | "confirmPasswordChange";
+type templateNameT = "confirmAccount" | "resetPassword" | "confirmAccountAdminCreated" | "shareLink" | "ringUpdated" | "confirmPasswordChange" | "notifyOnAddedToTeam" | "notifyOnConnectionRequest" | "notifyOnConnectionResponse" | "notifyOnNewNotebook" | "notifyOnRemovedFromTeam" | "notifyOnTeamNotebookDelete";
 
 type sendMailT = {
   recipientEmail: string;
@@ -41,7 +47,11 @@ type sendMailT = {
     dataSourceDifferences?: string;
     message?: string;
     senderName?: string;
+    receiverName?: string;
     secondaryUrl?: string;
+    approvedText?: string;
+    teamName?: string;
+    notebookTitle?: string;
   };
 };
 

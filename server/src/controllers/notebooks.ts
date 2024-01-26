@@ -234,6 +234,7 @@ export const update = async (req: Request, res: Response) => {
     if (!notebook) {
       return res.send_notFound("Notebook not found!");
     }
+    const previousNotebookTeamId = notebook.teamId;
 
     const permission = await accessControl.can(role, "notebooks:update", {
       user: req.user,
@@ -275,15 +276,60 @@ export const update = async (req: Request, res: Response) => {
         return res.send_notFound("Team not found!");
       }
       const teamUsers = await team.getUsers();
-      const teamUsersIds = teamUsers.map((user) => user.id);
-      teamUsersIds.map(async (userId) => {
+      teamUsers.map(async (user) => {
+        if (user.notifyOnNewNotebook) {
+          sendEmail({
+            emailSubject: `A new notebook has been added to your team!`,
+            recipientEmail: user.email,
+            templateName: "notifyOnNewNotebook",
+            recipientName: `${user.firstName} ${user.lastName}`,
+            templateArgs: {
+              saturnUrl: process.env.UX_CLIENT_MAILER_URL,
+              sesSender: process.env.SES_SENDER,
+              notebookTitle: notebook.title,
+              url: `${process.env.UX_CLIENT_MAILER_URL}/notebooks/${notebookId}`,
+            },
+          });
+        }
         await sequelize.models.Alert.create({
-          userId,
+          userId: user.id,
           initiatorUserId: reqUserId,
           type: "notebookAddedToTeam",
           teamId: team.id,
           notebookId: notebookId,
         });
+      });
+    }
+
+    if (previousNotebookTeamId && req.body.teamId !== previousNotebookTeamId) {
+      const team = await sequelize.models.Team.findOne({
+        where: { id: previousNotebookTeamId },
+      });
+      const teamUsers = await team.getUsers();
+      teamUsers.map(async (user) => {
+        if (user.notifyOnTeamNotebookDelete && notebook.teamId) {
+          sendEmail({
+            emailSubject: `A notebook has been removed from your team!`,
+            recipientEmail: user.email,
+            templateName: "notifyOnTeamNotebookDelete",
+            recipientName: `${user.firstName} ${user.lastName}`,
+            templateArgs: {
+              saturnUrl: process.env.UX_CLIENT_MAILER_URL,
+              sesSender: process.env.SES_SENDER,
+              notebookTitle: notebook.title,
+              teamName: team.name,
+              url: `${process.env.UX_CLIENT_MAILER_URL}/notebooks`,
+            },
+          });
+        }
+        // TODO: create alert
+        // await sequelize.models.Alert.create({
+        //   userId: user.id,
+        //   initiatorUserId: reqUserId,
+        //   type: "notebookRemovedFromTeam",
+        //   teamId: team.id,
+        //   notebookId: notebookId,
+        // });
       });
     }
 
@@ -319,6 +365,7 @@ export const update = async (req: Request, res: Response) => {
 // Delete a Notebook
 export const deleteNotebook = async (req: Request, res: Response) => {
   try {
+    //@ts-ignore
     const { notebookId } = req.params;
 
     const notebook = await sequelize.models.Notebook.findOne({
@@ -329,7 +376,33 @@ export const deleteNotebook = async (req: Request, res: Response) => {
       return res.send_notFound("Notebook not found");
     }
 
+    const notebookTitle = notebook.title;
     await notebook.destroy();
+
+    const notebookTeam = await sequelize.models.Team.findOne({
+      where: { id: notebook.teamId },
+    });
+
+    if (notebookTeam) {
+      const teamUsers = await notebookTeam.getUsers();
+      teamUsers.map(async (user) => {
+        if (user.notifyOnTeamNotebookDelete && notebook.teamId) {
+          sendEmail({
+            emailSubject: `A notebook has been removed from your team!`,
+            recipientEmail: user.email,
+            templateName: "notifyOnTeamNotebookDelete",
+            recipientName: `${user.firstName} ${user.lastName}`,
+            templateArgs: {
+              saturnUrl: process.env.UX_CLIENT_MAILER_URL,
+              sesSender: process.env.SES_SENDER,
+              notebookTitle: notebookTitle,
+              teamName: notebookTeam.name,
+              url: `${process.env.UX_CLIENT_MAILER_URL}/notebooks`,
+            },
+          });
+        }
+      });
+    }
 
     return res.send_ok("Notebook deleted successfully");
   } catch (error) {
@@ -391,20 +464,22 @@ export const shareLink = async (req: Request, res: Response) => {
       await sequelize.models.Notebook.update({ sharedWith: sequelize.fn("array_append", sequelize.col("sharedWith"), recipient.id) }, { where: { id } });
     }
 
-    sendEmail({
-      emailSubject: "SCALES Notebook Link",
-      recipientEmail,
-      templateName: "shareLink",
-      recipientName,
-      templateArgs: {
-        saturnUrl: process.env.UX_CLIENT_MAILER_URL,
-        sesSender: process.env.SES_SENDER,
-        url: `${process.env.UX_CLIENT_MAILER_URL}/notebooks/${id}`,
-        message,
-        secondaryUrl: `${process.env.UX_CLIENT_MAILER_URL}/sign-up`,
-        senderName: `${sender.firstName} ${sender.lastName}`,
-      },
-    });
+    if (recipient.notifyOnSharedNotebook) {
+      sendEmail({
+        emailSubject: "SCALES Notebook Link",
+        recipientEmail,
+        templateName: "shareLink",
+        recipientName,
+        templateArgs: {
+          saturnUrl: process.env.UX_CLIENT_MAILER_URL,
+          sesSender: process.env.SES_SENDER,
+          url: `${process.env.UX_CLIENT_MAILER_URL}/notebooks/${id}`,
+          message,
+          secondaryUrl: `${process.env.UX_CLIENT_MAILER_URL}/sign-up`,
+          senderName: `${sender.firstName} ${sender.lastName}`,
+        },
+      });
+    }
 
     return res.send_ok("Notebook Link Shared Successfully", {});
   } catch (error) {

@@ -1,6 +1,7 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
-import { useLocation } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
+import queryString from "query-string";
 
 import { sessionUserSelector } from "src/store/auth";
 import { useAlert } from "src/store/alerts";
@@ -11,18 +12,36 @@ import { Box } from "@mui/material";
 import Popover from "@mui/material/Popover";
 import { useTheme } from "@mui/material/styles";
 
+import ConnectModal from "./ConnectModal";
+import TeamModal from "./TeamModal";
+import NewTeamNotebookModal from "./NewTeamNotebookModal";
+
 import AlertRow from "./AlertRow";
 
 const NotificationsBell = () => {
   const [anchorEl, setAnchorEl] = React.useState<HTMLButtonElement | null>(
     null,
   );
+  const open = Boolean(anchorEl);
+  const [modalAlert, setModalAlert] = useState(null);
+  console.log("🚀 ~ NotificationsBell ~ modalAlert:", modalAlert);
 
   const theme = useTheme();
   const location = useLocation();
+  const navigate = useNavigate();
+  const search = queryString.parse(location.search);
 
   const { alerts, fetchAlerts } = useAlert();
   const sessionUser = useSessionUser();
+
+  useEffect(() => {
+    const triggerAlert = alerts.find(
+      (alert) => alert.connection?.id?.toString() === search.connectionId,
+    );
+    if (triggerAlert) {
+      setModalAlert(triggerAlert);
+    }
+  }, [search.connectionId, alerts]);
 
   useEffect(() => {
     if (sessionUser?.id) {
@@ -38,11 +57,48 @@ const NotificationsBell = () => {
     setAnchorEl(null);
   };
 
-  const open = Boolean(anchorEl);
-
   const user = useSelector(sessionUserSelector);
 
   const unreadAlerts = alerts?.filter((alert) => !alert.viewed)?.length;
+
+  const modals = {
+    connect: (
+      <ConnectModal
+        open={!!modalAlert}
+        onClose={() => {
+          delete search.connectionId;
+          navigate({
+            search: queryString.stringify(search),
+          });
+          setModalAlert(null);
+        }}
+        alert={modalAlert}
+      />
+    ),
+    addedToTeam: (
+      <TeamModal
+        open={!!modalAlert}
+        onClose={() => setModalAlert(null)}
+        alert={modalAlert}
+        added={true}
+      />
+    ),
+    removedFromTeam: (
+      <TeamModal
+        open={!!modalAlert}
+        onClose={() => setModalAlert(null)}
+        alert={modalAlert}
+        added={false}
+      />
+    ),
+    notebookAddedToTeam: (
+      <NewTeamNotebookModal
+        open={!!modalAlert}
+        onClose={() => setModalAlert(null)}
+        alert={modalAlert}
+      />
+    ),
+  };
 
   return user ? (
     <Box sx={{ marginRight: "16px", cursor: "pointer" }}>
@@ -87,13 +143,20 @@ const NotificationsBell = () => {
         >
           {alerts.length ? (
             alerts.map((alert) => {
-              return <AlertRow alert={alert} key={alert.id} />;
+              return (
+                <AlertRow
+                  alert={alert}
+                  key={alert.id}
+                  setModalAlert={setModalAlert}
+                />
+              );
             })
           ) : (
             <Box sx={{ padding: "20px" }}>No New Notifications</Box>
           )}
         </Popover>
       )}
+      {modalAlert ? modals[modalAlert?.type] : null}
     </Box>
   ) : null;
 };

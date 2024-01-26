@@ -54,7 +54,7 @@ const DeleteUserModal = ({
           user: userToDelete,
           replacementText: "yourself",
           sessionUser,
-        })}
+        })}{" "}
         from this team?
       </Typography>
       <Box sx={{ display: "flex", justifyContent: "center" }}>

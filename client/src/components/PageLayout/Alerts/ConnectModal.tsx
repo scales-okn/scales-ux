@@ -15,7 +15,7 @@ type ConnectModalT = {
 const ConnectModal = ({ open, onClose, alert }: ConnectModalT) => {
   const theme = useTheme();
   const { updateAlert } = useAlert();
-  const { updateConnection } = useConnection();
+  const { updateConnection, fetchConnections } = useConnection();
 
   const actionVerb = () => {
     if (alert.connection?.pending === true) {
@@ -33,6 +33,7 @@ const ConnectModal = ({ open, onClose, alert }: ConnectModalT) => {
     });
     setTimeout(() => {
       updateAlert(alert.id, { viewed: "true" });
+      fetchConnections();
     }, 100);
     onClose();
   };

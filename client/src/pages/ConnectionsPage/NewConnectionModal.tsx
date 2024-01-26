@@ -16,7 +16,7 @@ type UserFields = {
 
 const NewConnectionModal = () => {
   const [newUserModalVisible, setNewUserModalVisible] = useState(false);
-  const { createConnection, connections, hasErrors } = useConnection();
+  const { createConnection, connections } = useConnection();
 
   const invalidEmails = connections.reduce((acc, connection) => {
     if (!acc.includes(connection.receiverUser.email)) {

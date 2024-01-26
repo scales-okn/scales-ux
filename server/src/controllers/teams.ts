@@ -1,7 +1,6 @@
 import { Request, Response } from "express";
 import { sequelize } from "../database";
-// import { findAllAndPaginate } from "./util/findAllAndPaginate";
-// import { Op } from "sequelize";
+import { sendEmail } from "../services/sesMailer";
 
 // POST create
 export const create = async (req: Request, res: Response) => {
@@ -72,6 +71,20 @@ export const update = async (req: Request, res: Response) => {
           type: "addedToTeam",
           teamId: team.id,
         });
+        if (userToAdd.notifyOnTeamChange) {
+          sendEmail({
+            emailSubject: `You have been added to a team!`,
+            recipientEmail: userToAdd.email,
+            templateName: "notifyOnAddedToTeam",
+            recipientName: `${userToAdd.firstName} ${userToAdd.lastName}`,
+            templateArgs: {
+              saturnUrl: process.env.UX_CLIENT_MAILER_URL,
+              sesSender: process.env.SES_SENDER,
+              teamName: team.name,
+              url: `${process.env.UX_CLIENT_MAILER_URL}/teams`,
+            },
+          });
+        }
       } else {
         return res.status(404).send("User to add not found!");
       }
@@ -88,6 +101,19 @@ export const update = async (req: Request, res: Response) => {
             type: "removedFromTeam",
             teamId: team.id,
           });
+          if (userToRemove.notifyOnTeamChange) {
+            sendEmail({
+              emailSubject: `You have been removed from a team`,
+              recipientEmail: userToRemove.email,
+              templateName: "notifyOnRemovedFromTeam",
+              recipientName: `${userToRemove.firstName} ${userToRemove.lastName}`,
+              templateArgs: {
+                saturnUrl: process.env.UX_CLIENT_MAILER_URL,
+                sesSender: process.env.SES_SENDER,
+                teamName: team.name,
+              },
+            });
+          }
         }
       } else {
         return res.status(404).send("User to remove not found!");
