@@ -61,6 +61,8 @@ export default (sequelize, options) => {
     models.Notebook.belongsTo(models.Team, {
       foreignKey: "teamId",
       as: "team",
+      onUpdate: "CASCADE",
+      onDelete: "SET NULL",
     });
     models.Notebook.belongsTo(models.Alert, {
       foreignKey: "alertId",

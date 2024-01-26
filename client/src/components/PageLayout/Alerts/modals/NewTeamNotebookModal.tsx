@@ -1,6 +1,6 @@
 import React, { useEffect } from "react";
 import { Link } from "react-router-dom";
-import { Button, Typography, Box } from "@mui/material";
+import { Typography, Box } from "@mui/material";
 import { useTheme } from "@mui/material/styles";
 import { useAlert, AlertT } from "src/store/alerts";
 import ModalContainer from "src/components/Modals/ModalContainer";
