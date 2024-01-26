@@ -51,9 +51,9 @@ export const create = async (req: Request, res: Response) => {
       });
       const updatedRingVersion = await createRingDiff({ lastVersion, newVersion });
 
-      if (process.env.NODE_ENV === "production") {
-        notifyAdminsOfRingChange({ ringVersion: updatedRingVersion });
-      }
+      // if (process.env.NODE_ENV === "production") {
+      notifyAdminsOfRingChange({ ringVersion: updatedRingVersion, initiatorUserId: userId });
+      // }
     }
 
     const versions = await sequelize.models.Ring.findAll({

@@ -4,7 +4,6 @@ import AddIcon from "@mui/icons-material/Add";
 import uniqid from "uniqid";
 
 import { usePanel } from "src/store/panels";
-import { useSessionUser } from "src/store/auth";
 
 import useWindowSize from "src/hooks/useWindowSize";
 
@@ -15,9 +14,10 @@ import { filterContainerStyles } from "./styles";
 
 type FiltersProps = {
   panelId: string;
+  sessionUserCanEdit: boolean;
 };
 
-const Filters = ({ panelId }: FiltersProps) => {
+const Filters = ({ panelId, sessionUserCanEdit }: FiltersProps) => {
   const {
     filters = [],
     setPanelFilters,
@@ -28,9 +28,6 @@ const Filters = ({ panelId }: FiltersProps) => {
 
   const { width } = useWindowSize();
   const isTablet = width < 768;
-
-  const sessionUser = useSessionUser();
-  const sessionUserCanEdit = sessionUser?.id === panel?.userId;
 
   const filterElements = useMemo(() => {
     return (

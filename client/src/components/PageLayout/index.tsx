@@ -15,6 +15,8 @@ import FeedbackWidget from "./FeedbackWidget";
 import MobileMenu from "./MobileMenu";
 import NavItem from "./NavItem";
 import Logout from "./LogoutMenu";
+import Alerts from "./Alerts";
+
 import { styles } from "./styles";
 import { Button } from "@mui/material";
 
@@ -45,6 +47,7 @@ const PageLayout = ({ id = "", children, pageTitle }: PageLayoutT) => {
   const location = useLocation();
   const isSignInView = location.pathname.includes("sign-in");
   const isAdminView = location.pathname.includes("admin");
+  const isConnectionsView = location.pathname.includes("connections");
   const user = useSelector(sessionUserSelector);
   const isAdmin = user?.role === "admin";
 
@@ -110,6 +113,7 @@ const PageLayout = ({ id = "", children, pageTitle }: PageLayoutT) => {
                 {user ? (
                   <>
                     <NavItem linkName="Notebooks" route={"/"} />
+                    <NavItem linkName="Connections" route={"/connections"} />
                     {isAdmin && (
                       <NavItem
                         key={"admin"}
@@ -127,7 +131,10 @@ const PageLayout = ({ id = "", children, pageTitle }: PageLayoutT) => {
                 )}
               </Toolbar>
             )}
-            <Logout />
+            <Box sx={{ display: "flex", alignItems: "center" }}>
+              <Alerts />
+              <Logout />
+            </Box>
           </AppBar>
         </Box>
 
@@ -137,7 +144,7 @@ const PageLayout = ({ id = "", children, pageTitle }: PageLayoutT) => {
           sx={{
             marginTop: "128px",
             minHeight: "70vh",
-            ...(isAdminView && {
+            ...((isAdminView || isConnectionsView) && {
               marginTop: "64px",
               maxWidth: "100% !important",
               padding: "0 !important",

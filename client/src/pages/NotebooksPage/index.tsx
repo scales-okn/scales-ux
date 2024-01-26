@@ -175,10 +175,17 @@ const NotebooksPage = () => {
               }
             },
           },
-        ]
-      : []),
-    ...(notebooksType === "my-notebooks" || isAdmin
-      ? [
+          {
+            field: "team",
+            headerName: "Team",
+            width: 150,
+            editable: false,
+            sortable: false,
+            renderHeader,
+            renderCell: (params: GridCellParams) => {
+              return <div>{params.row?.team?.name}</div>;
+            },
+          },
           {
             field: "delete",
             headerName: "Delete",

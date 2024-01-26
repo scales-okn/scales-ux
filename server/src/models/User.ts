@@ -60,6 +60,36 @@ export default (sequelize, options) => {
         allowNull: false,
         defaultValue: true,
       },
+      notifyOnConnectionRequest: {
+        type: DataTypes.BOOLEAN,
+        allowNull: false,
+        defaultValue: true,
+      },
+      notifyOnConnectionResponse: {
+        type: DataTypes.BOOLEAN,
+        allowNull: false,
+        defaultValue: true,
+      },
+      notifyOnNewNotebook: {
+        type: DataTypes.BOOLEAN,
+        allowNull: false,
+        defaultValue: true,
+      },
+      notifyOnSharedNotebook: {
+        type: DataTypes.BOOLEAN,
+        allowNull: false,
+        defaultValue: true,
+      },
+      notifyOnTeamChange: {
+        type: DataTypes.BOOLEAN,
+        allowNull: false,
+        defaultValue: true,
+      },
+      notifyOnTeamNotebookDelete: {
+        type: DataTypes.BOOLEAN,
+        allowNull: false,
+        defaultValue: true,
+      },
     },
     options
   );
@@ -76,6 +106,27 @@ export default (sequelize, options) => {
     models.User.hasMany(models.Ring, {
       foreignKey: "userId",
       as: "rings",
+    });
+    models.User.hasMany(models.Connection, {
+      foreignKey: "sender",
+      as: "sentConnections",
+    });
+    models.User.hasMany(models.Connection, {
+      foreignKey: "receiver",
+      as: "receivedConnections",
+    });
+    models.User.hasMany(models.Alert, {
+      foreignKey: "userId",
+      as: "alerts",
+    });
+    models.User.hasMany(models.Alert, {
+      foreignKey: "initiatorUserId",
+      as: "initiatedAlerts",
+    });
+    models.User.belongsToMany(models.Team, {
+      through: "UserTeams",
+      foreignKey: "userId",
+      as: "teams",
     });
   };
 

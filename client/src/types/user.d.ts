@@ -8,4 +8,10 @@ export type UserT = {
   role: string;
   usage?: string;
   notifyOnNewRingVersion?: boolean;
+  notifyOnConnectionRequest?: boolean;
+  notifyOnConnectionResponse?: boolean;
+  notifyOnNewNotebook?: boolean;
+  notifyOnSharedNotebook?: boolean;
+  notifyOnTeamChange?: boolean;
+  notifyOnTeamNotebookDelete?: boolean;
 };

@@ -12,7 +12,6 @@ import {
 
 import { usePanel } from "src/store/panels";
 import { useRing, useRings } from "src/store/rings";
-import { useSessionUser } from "src/store/auth";
 
 import Loader from "../Loader";
 
@@ -20,16 +19,15 @@ import "./Dataset.scss";
 
 type DatasetProps = {
   panelId: string;
+  sessionUserCanEdit: boolean;
 };
 
-const Dataset = ({ panelId }: DatasetProps) => {
-  const { updatePanel, panel, setPanelCollapsed } = usePanel(panelId);
+const Dataset = ({ panelId, sessionUserCanEdit }: DatasetProps) => {
+  const { updatePanel, setPanelCollapsed } = usePanel(panelId);
   const { rings, loadingRings } = useRings();
 
   const [selectedRing, setSelectedRing] = useState(null);
 
-  const sessionUser = useSessionUser();
-  const sessionUserCanEdit = sessionUser?.id === panel?.userId;
   const updatesDisabled = !sessionUserCanEdit;
 
   const { ring, loadingRingInfo, info, getRingInfo } = useRing(

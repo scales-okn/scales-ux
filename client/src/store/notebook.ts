@@ -7,15 +7,29 @@ import { useUnknownErrorNotificationMessage } from "src/components/Notifications
 import { useSelector, useDispatch } from "react-redux";
 import { makeRequest } from "src/helpers/makeRequest";
 import { PagingT } from "src/types/paging";
+import { UserT } from "./user";
+import { TeamT } from "./team";
+
+export type NotebookT = {
+  id: string;
+  title: string;
+  description: string;
+  createdAt: string;
+  updatedAt: string;
+  userId: string | number;
+  user: UserT;
+  team: TeamT;
+  visibility: string;
+};
 interface InitialState {
   loadingNotebook: boolean;
   creatingNotebook: boolean;
   savingNotebook: boolean;
   deletingNotebook: boolean;
-  notebook: any;
+  notebook: NotebookT;
   loadingNotebooks: boolean;
   hasErrors: boolean;
-  notebooks: any;
+  notebooks: NotebookT[];
   paging: PagingT;
 }
 
@@ -192,8 +206,10 @@ export function fetchNotebook(id: string) {
 export function updateNotebook(id: string, payload: any) {
   return async (dispatch: AppDispatch, getState) => {
     dispatch(notebookActions.saveNotebook());
+
     try {
       const response = await makeRequest.put(`/api/notebooks/${id}`, payload);
+
       if (response.status === "OK") {
         const { data } = response;
         // dispatch(notify(message, "success"));
