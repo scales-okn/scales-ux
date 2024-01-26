@@ -88,7 +88,7 @@ export const update = async (req: Request, res: Response) => {
       where: { id: connection.sender },
     });
     const receiver = await sequelize.models.User.findOne({
-      where: { id: connection.sender },
+      where: { id: connection.receiver },
     });
 
     if (!sender || !receiver) {
@@ -108,6 +108,12 @@ export const update = async (req: Request, res: Response) => {
           receiverName: `${receiver.firstName} ${receiver.lastName}`,
           url: `${process.env.UX_CLIENT_MAILER_URL}/connections`,
         },
+      });
+      await sequelize.models.Alert.create({
+        userId: sender.id,
+        initiatorUserId: receiver.id,
+        type: "connectResponse",
+        connectionId: connection.id,
       });
     }
 

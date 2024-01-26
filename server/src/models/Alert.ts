@@ -26,6 +26,12 @@ export default (sequelize, options) => {
         defaultValue: false,
         allowNull: false,
       },
+      deletedNotebookName: {
+        type: DataTypes.STRING,
+      },
+      ringLabel: {
+        type: DataTypes.STRING,
+      },
       createdAt: {
         type: DataTypes.DATE,
         allowNull: false,
@@ -35,8 +41,7 @@ export default (sequelize, options) => {
         allowNull: false,
       },
       type: {
-        type: DataTypes.ENUM,
-        values: ["connect", "shareNotebook", "addedToTeam", "removedFromTeam", "notebookAddedToTeam"],
+        type: DataTypes.STRING,
         allowNull: false,
       },
     },

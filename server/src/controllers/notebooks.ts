@@ -322,14 +322,13 @@ export const update = async (req: Request, res: Response) => {
             },
           });
         }
-        // TODO: create alert
-        // await sequelize.models.Alert.create({
-        //   userId: user.id,
-        //   initiatorUserId: reqUserId,
-        //   type: "notebookRemovedFromTeam",
-        //   teamId: team.id,
-        //   notebookId: notebookId,
-        // });
+        await sequelize.models.Alert.create({
+          userId: user.id,
+          initiatorUserId: reqUserId,
+          type: "notebookRemovedFromTeam",
+          teamId: team.id,
+          deletedNotebookName: team.name,
+        });
       });
     }
 
@@ -383,6 +382,10 @@ export const deleteNotebook = async (req: Request, res: Response) => {
       where: { id: notebook.teamId },
     });
 
+    const team = await sequelize.models.Team.findOne({
+      where: { id: notebook.teamId },
+    });
+
     if (notebookTeam) {
       const teamUsers = await notebookTeam.getUsers();
       teamUsers.map(async (user) => {
@@ -401,6 +404,13 @@ export const deleteNotebook = async (req: Request, res: Response) => {
             },
           });
         }
+        await sequelize.models.Alert.create({
+          userId: user.id,
+          initiatorUserId: user.id,
+          type: "notebookRemovedFromTeam",
+          teamId: team.id,
+          deletedNotebookName: notebookTitle,
+        });
       });
     }
 
@@ -480,6 +490,13 @@ export const shareLink = async (req: Request, res: Response) => {
         },
       });
     }
+
+    sequelize.models.Alert.create({
+      userId: recipient.id,
+      initiatorUserId: sender.id,
+      type: "notebookShared",
+      notebookId: id,
+    });
 
     return res.send_ok("Notebook Link Shared Successfully", {});
   } catch (error) {

@@ -165,6 +165,12 @@ export const deleteTeam = async (req: Request, res: Response) => {
       return res.status(404).send("No team found!");
     }
 
+    const alerts = await sequelize.models.Alert.findAll({
+      where: { teamId },
+    });
+
+    await Promise.all(alerts.map((alert) => alert.destroy()));
+
     await team.destroy();
 
     return res.send_ok("Team has been deleted!");

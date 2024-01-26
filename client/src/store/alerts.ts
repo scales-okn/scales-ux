@@ -24,6 +24,8 @@ export type AlertT = {
   teamId?: number;
   createdAt: string;
   updatedAt: string;
+  ringLabel?: string;
+  deletedNotebookName?: string;
 };
 
 type InitialStateT = {

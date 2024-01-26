@@ -28,6 +28,8 @@ const AWS_SES = new AWS.SES(SES_CONFIG);
 
 type templateNameT = "confirmAccount" | "resetPassword" | "confirmAccountAdminCreated" | "shareLink" | "ringUpdated" | "confirmPasswordChange" | "notifyOnAddedToTeam" | "notifyOnConnectionRequest" | "notifyOnConnectionResponse" | "notifyOnNewNotebook" | "notifyOnRemovedFromTeam" | "notifyOnTeamNotebookDelete";
 
+// values: ["shareLink", "ringUpdated", "confirmPasswordChange", "notifyOnAddedToTeam", "notifyOnConnectionRequest", "notifyOnConnectionResponse", "notifyOnNewNotebook", "notifyOnRemovedFromTeam", "notifyOnTeamNotebookDelete"],
+
 type sendMailT = {
   recipientEmail: string;
   templateName: templateNameT;

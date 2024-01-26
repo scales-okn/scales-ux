@@ -28,7 +28,7 @@ const NewConnectionModal = () => {
     return acc;
   }, []);
 
-  const { id: sessionUserId } = useSessionUser();
+  const { id: sessionUserId, email } = useSessionUser();
 
   const theme = useTheme();
 
@@ -45,7 +45,7 @@ const NewConnectionModal = () => {
       .test(
         "is-not-invalid-email",
         "Email must not be a duplicate of an existing connection or your own",
-        (value) => !invalidEmails.includes(value),
+        (value) => ![...invalidEmails, email].includes(value),
       ),
     note: yup.string(),
   });

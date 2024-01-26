@@ -7,10 +7,15 @@ import CheckCircleOutlineIcon from "@mui/icons-material/CheckCircleOutline";
 import GroupAddIcon from "@mui/icons-material/GroupAdd";
 import GroupRemoveIcon from "@mui/icons-material/GroupRemove";
 import PostAddIcon from "@mui/icons-material/PostAdd";
+import DataSaverOffIcon from "@mui/icons-material/DataSaverOff";
+import PeopleAltIcon from "@mui/icons-material/PeopleAlt";
+import MobileScreenShareIcon from "@mui/icons-material/MobileScreenShare";
+import PlaylistRemoveIcon from "@mui/icons-material/PlaylistRemove";
 
 import { useAlert } from "src/store/alerts";
 
 const AlertRow = ({ alert, setModalAlert }) => {
+  console.log("🚀 ~ AlertRow ~ alert:", alert);
   const { deleteAlert } = useAlert();
 
   const [isHovered, setIsHovered] = useState(false);
@@ -80,7 +85,11 @@ const AlertRow = ({ alert, setModalAlert }) => {
     connect: alertTemplate({
       iconUnviewed: <PersonAddIcon color="primary" />,
       title: "Connection Request",
-      targetName: alert.initiatorUser.firstName + alert.initiatorUser.lastName,
+      targetName: (
+        <span>
+          {alert.initiatorUser.firstName} {alert.initiatorUser.lastName}
+        </span>
+      ),
     }),
     addedToTeam: alertTemplate({
       iconUnviewed: <GroupAddIcon color="primary" />,
@@ -99,8 +108,36 @@ const AlertRow = ({ alert, setModalAlert }) => {
     }),
     notebookAddedToTeam: alertTemplate({
       iconUnviewed: <PostAddIcon color="primary" />,
-      title: <span>New Notebook added to team:</span>,
+      title: <span>New notebook added to team:</span>,
       targetName: <span>{alert.team?.name}</span>,
+    }),
+    ringUpdated: alertTemplate({
+      iconUnviewed: <DataSaverOffIcon color="primary" />,
+      title: <span>Ring Updated:</span>,
+      targetName: <span>{alert.ringLabel}</span>,
+    }),
+    connectResponse: alertTemplate({
+      iconUnviewed: <PeopleAltIcon color="primary" />,
+      title: <span>Response to connection request from:</span>,
+      targetName: (
+        <span>
+          {alert.initiatorUser.firstName} {alert.initiatorUser.lastName}
+        </span>
+      ),
+    }),
+    notebookShared: alertTemplate({
+      iconUnviewed: <MobileScreenShareIcon color="primary" />,
+      title: <span>New notebook shared with you from:</span>,
+      targetName: (
+        <span>
+          {alert.initiatorUser.firstName} {alert.initiatorUser.lastName}
+        </span>
+      ),
+    }),
+    notebookRemovedFromTeam: alertTemplate({
+      iconUnviewed: <PlaylistRemoveIcon color="primary" />,
+      title: <span>Notebook removed from team:</span>,
+      targetName: <span>{alert.deletedNotebookName}</span>,
     }),
   };
 

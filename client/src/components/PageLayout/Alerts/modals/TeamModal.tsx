@@ -92,7 +92,10 @@ const TeamModal = ({ open, onClose, alert, added }: TeamModalT) => {
       >
         {added ? (
           <Typography>
-            To view this team, <Link to={`/connections/teams`}>click here</Link>
+            To view this team,{" "}
+            <Link to={`/connections/teams`} onClick={onClose}>
+              <span style={{ color: "#0b44bfd2" }}>click here</span>
+            </Link>
           </Typography>
         ) : (
           "If you believe this is an error, please contact a team administrator."

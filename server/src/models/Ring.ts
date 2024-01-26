@@ -89,7 +89,7 @@ export const createRingDiff = async ({ lastVersion, newVersion }) => {
   return updatedVersion;
 };
 
-export const notifyAdminsOfRingChange = async ({ ringVersion }) => {
+export const notifyAdminsOfRingChange = async ({ ringVersion, initiatorUserId }) => {
   const admins = await sequelize.models.User.findAll({
     where: { role: "admin" },
   });
@@ -97,22 +97,29 @@ export const notifyAdminsOfRingChange = async ({ ringVersion }) => {
   const ringLabel = `${ringVersion.name} (RID: ${ringVersion.rid})`;
 
   admins.forEach((a) => {
+    sequelize.models.Alert.create({
+      userId: a.id,
+      initiatorUserId,
+      type: "ringUpdated",
+      ringLabel,
+    });
+
     if (a.notifyOnNewRingVersion === false) return;
 
-    sendEmail({
-      emailSubject: `Ring Updated: (${ringLabel})`,
-      recipientEmail: a.email,
-      templateName: "ringUpdated",
-      recipientName: `${a.firstName} ${a.lastName}`,
-      templateArgs: {
-        saturnUrl: process.env.UX_CLIENT_MAILER_URL,
-        sesSender: process.env.SES_SENDER,
-        dataSource: ringVersion.dataSource,
-        ontology: ringVersion.ontology,
-        ringLabel,
-        dataSourceDifferences: ringVersion.dataSourceDiff,
-        ontologyDifferences: ringVersion.ontologyDiff,
-      },
-    });
+    // sendEmail({
+    //   emailSubject: `Ring Updated: (${ringLabel})`,
+    //   recipientEmail: a.email,
+    //   templateName: "ringUpdated",
+    //   recipientName: `${a.firstName} ${a.lastName}`,
+    //   templateArgs: {
+    //     saturnUrl: process.env.UX_CLIENT_MAILER_URL,
+    //     sesSender: process.env.SES_SENDER,
+    //     dataSource: ringVersion.dataSource,
+    //     ontology: ringVersion.ontology,
+    //     ringLabel,
+    //     dataSourceDifferences: ringVersion.dataSourceDiff,
+    //     ontologyDifferences: ringVersion.ontologyDiff,
+    //   },
+    // });
   });
 };

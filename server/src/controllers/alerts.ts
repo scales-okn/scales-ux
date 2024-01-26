@@ -54,7 +54,7 @@ export const findAll = async (req: Request, res: Response) => {
       where: {
         userId: sessionUser.id,
       },
-      attributes: ["id", "viewed", "createdAt", "type", "connectionId"],
+      attributes: ["id", "viewed", "createdAt", "type", "connectionId", "deletedNotebookName", "ringLabel"],
       include: [
         {
           model: sequelize.models.User,
