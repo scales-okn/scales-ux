@@ -37,7 +37,7 @@ const NotificationsBell = () => {
     if (triggerAlert && connectionId) {
       setModalAlert(triggerAlert);
     }
-  }, [search.connectionId, alerts]);
+  }, [search.connectionId, alerts]); // eslint-disable-line react-hooks/exhaustive-deps
 
   useEffect(() => {
     setAnchorEl(null);
