@@ -442,7 +442,10 @@ const Notebook = () => {
           sessionUserCanEdit={sessionUserCanEdit}
         />
       )}
-      <AddPanel notebookId={notebook?.id} />
+      <AddPanel
+        notebookId={notebook?.id}
+        sessionUserCanEdit={sessionUserCanEdit}
+      />
 
       {confirmVisible && (
         <ConfirmModal

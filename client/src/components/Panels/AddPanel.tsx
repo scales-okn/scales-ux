@@ -2,19 +2,17 @@ import React from "react";
 
 import { usePanels } from "src/store/panels";
 import { useNotebook } from "src/store/notebook";
-import { useSessionUser } from "src/store/auth";
 
 import { Button } from "@mui/material";
 
 type AddPanelProps = {
   notebookId: string | null;
+  sessionUserCanEdit: boolean;
 };
 
-const AddPanel = ({ notebookId }: AddPanelProps) => {
+const AddPanel = ({ notebookId, sessionUserCanEdit }: AddPanelProps) => {
   const { notebook } = useNotebook();
   const { createPanel } = usePanels(notebookId);
-  const sessionUser = useSessionUser();
-  const sessionUserCanEdit = sessionUser?.id === notebook?.userId;
 
   return (
     <Button

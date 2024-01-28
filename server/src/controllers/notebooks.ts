@@ -10,6 +10,31 @@ import { sendEmail } from "../services/sesMailer";
 // server/middlewares/validateResources.ts
 // server/validation/notebook.ts
 
+const userOwnsNotebook = async (user, notebook) => {
+  const sessionUserTeam = await sequelize.models.Team.findOne({
+    attributes: ["id"],
+    include: [
+      {
+        model: sequelize.models.User,
+        as: "users",
+        where: { id: user.id },
+        attributes: [],
+      },
+    ],
+    raw: true,
+  });
+
+  const { visibility, collaborators, userId, sharedWith } = notebook;
+  const isAdmin = user.role === "admin";
+  const notebookIsPublic = visibility === "public";
+  const sessionUserIsCollaborator = collaborators.includes(user.id);
+  const notebookSharedWithSessionUser = sharedWith.includes(user.id);
+  const sessionUserIsOwner = userId !== user.id;
+  const sessionUserIsNotebookTeamMember = sessionUserTeam && sessionUserTeam.id === notebook.teamId;
+
+  return isAdmin || notebookIsPublic || sessionUserIsCollaborator || notebookSharedWithSessionUser || sessionUserIsOwner || sessionUserIsNotebookTeamMember;
+};
+
 // Create Notebook
 export const create = async (req: Request, res: Response) => {
   try {
@@ -171,28 +196,7 @@ export const findById = async (req: Request, res: Response) => {
       return res.send_notFound("Notebook not found!");
     }
 
-    const sessionUserTeam = await sequelize.models.Team.findOne({
-      attributes: ["id"],
-      include: [
-        {
-          model: sequelize.models.User,
-          as: "users",
-          where: { id: reqUserId },
-          attributes: [],
-        },
-      ],
-      raw: true,
-    });
-
-    const { visibility, collaborators, userId, sharedWith } = notebook;
-    const isAdmin = role === "admin";
-    const notebookIsPublic = visibility === "public";
-    const sessionUserIsCollaborator = collaborators.includes(reqUserId);
-    const notebookSharedWithSessionUser = sharedWith.includes(reqUserId);
-    const sessionUserIsOwner = userId !== reqUserId;
-    const sessionUserIsNotebookTeamMember = sessionUserTeam && sessionUserTeam.id === notebook.teamId;
-
-    if (!isAdmin && !notebookIsPublic && !sessionUserIsCollaborator && !notebookSharedWithSessionUser && !sessionUserIsOwner && !sessionUserIsNotebookTeamMember) {
+    if (!userOwnsNotebook(req.user, notebook)) {
       return res.send_forbidden("Not allowed!");
     }
 
@@ -270,9 +274,8 @@ export const update = async (req: Request, res: Response) => {
       return res.send_notModified("Notebook has not been updated!");
     }
 
-    const { collaborators, userId } = notebook;
     // General Case
-    if (role !== "admin" && !collaborators.includes(reqUserId) && userId !== reqUserId) {
+    if (!userOwnsNotebook(req.user, notebook)) {
       return res.send_forbidden("Not allowed!");
     }
 
@@ -455,10 +458,8 @@ export const panels = async (req: Request, res: Response) => {
       return res.send_notFound("Notebook not found!");
     }
 
-    const { visibility, collaborators, sharedWith, userId } = notebook;
-
     //@ts-ignore
-    if (role !== "admin" && visibility !== "public" && !collaborators.includes(userId) && !sharedWith.includes(userId) && userId !== req.user.id) {
+    if (!userOwnsNotebook(req.user, notebook)) {
       return res.send_forbidden("Not allowed!");
     }
 
