@@ -171,8 +171,28 @@ export const findById = async (req: Request, res: Response) => {
       return res.send_notFound("Notebook not found!");
     }
 
+    const sessionUserTeam = await sequelize.models.Team.findOne({
+      attributes: ["id"],
+      include: [
+        {
+          model: sequelize.models.User,
+          as: "users",
+          where: { id: reqUserId },
+          attributes: [],
+        },
+      ],
+      raw: true,
+    });
+
     const { visibility, collaborators, userId, sharedWith } = notebook;
-    if (role !== "admin" && visibility !== "public" && !collaborators.includes(reqUserId) && !sharedWith.includes(reqUserId) && userId !== reqUserId) {
+    const isAdmin = role === "admin";
+    const notebookIsPublic = visibility === "public";
+    const sessionUserIsCollaborator = collaborators.includes(reqUserId);
+    const notebookSharedWithSessionUser = sharedWith.includes(reqUserId);
+    const sessionUserIsOwner = userId !== reqUserId;
+    const sessionUserIsNotebookTeamMember = sessionUserTeam && sessionUserTeam.id === notebook.teamId;
+
+    if (!isAdmin && !notebookIsPublic && !sessionUserIsCollaborator && !notebookSharedWithSessionUser && !sessionUserIsOwner && !sessionUserIsNotebookTeamMember) {
       return res.send_forbidden("Not allowed!");
     }
 
