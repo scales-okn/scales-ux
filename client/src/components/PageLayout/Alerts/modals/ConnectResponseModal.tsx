@@ -74,7 +74,11 @@ const ConnectResponseModal = ({
       >
         <Typography>
           To view your connections,{" "}
-          <Link to={`/connections`} style={{ textDecoration: "none" }}>
+          <Link
+            to={`/connections`}
+            onClick={onClose}
+            style={{ textDecoration: "none" }}
+          >
             <span style={{ color: "#0b44bfd2" }}>click here</span>
           </Link>
         </Typography>
