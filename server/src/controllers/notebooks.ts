@@ -1,6 +1,6 @@
 import { Request, Response } from "express";
 import { sequelize } from "../database";
-import accessControl from "../services/accesscontrol";
+import accessControl, { userOwnsNotebook } from "../services/accesscontrol";
 import { Op } from "sequelize";
 import { permissionsFieldsFilter } from "../services/accesscontrol";
 import { findAllAndPaginate } from "./util/findAllAndPaginate";
@@ -9,31 +9,6 @@ import { sendEmail } from "../services/sesMailer";
 // Resources validations are made with validateResources middleware and validations schemas
 // server/middlewares/validateResources.ts
 // server/validation/notebook.ts
-
-const userOwnsNotebook = async (user, notebook) => {
-  const sessionUserTeam = await sequelize.models.Team.findOne({
-    attributes: ["id"],
-    include: [
-      {
-        model: sequelize.models.User,
-        as: "users",
-        where: { id: user.id },
-        attributes: [],
-      },
-    ],
-    raw: true,
-  });
-
-  const { visibility, collaborators, userId, sharedWith } = notebook;
-  const isAdmin = user.role === "admin";
-  const notebookIsPublic = visibility === "public";
-  const sessionUserIsCollaborator = collaborators.includes(user.id);
-  const notebookSharedWithSessionUser = sharedWith.includes(user.id);
-  const sessionUserIsOwner = userId !== user.id;
-  const sessionUserIsNotebookTeamMember = sessionUserTeam && sessionUserTeam.id === notebook.teamId;
-
-  return isAdmin || notebookIsPublic || sessionUserIsCollaborator || notebookSharedWithSessionUser || sessionUserIsOwner || sessionUserIsNotebookTeamMember;
-};
 
 // Create Notebook
 export const create = async (req: Request, res: Response) => {
@@ -168,8 +143,8 @@ export const findAll = async (req: Request, res: Response) => {
 export const findById = async (req: Request, res: Response) => {
   try {
     const notebookId = req.params.notebookId;
-    //@ts-ignore
-    const { role, id: reqUserId } = req.user;
+    // @ts-ignore
+    const userId = req.user.id;
 
     let where = { id: notebookId };
 
@@ -192,11 +167,14 @@ export const findById = async (req: Request, res: Response) => {
       ],
     });
 
-    if (!notebook) {
+    const isOwner = await userOwnsNotebook({ user: req.user, notebook });
+    const validNotebook = !!notebook && (isOwner || notebook.visibility === "public" || notebook.sharedWith.includes(userId));
+
+    if (!validNotebook) {
       return res.send_notFound("Notebook not found!");
     }
 
-    if (!userOwnsNotebook(req.user, notebook)) {
+    if (!userOwnsNotebook({ user: req.user, notebook })) {
       return res.send_forbidden("Not allowed!");
     }
 
@@ -262,7 +240,7 @@ export const update = async (req: Request, res: Response) => {
 
     const permission = await accessControl.can(role, "notebooks:update", {
       user: req.user,
-      resource: notebook,
+      notebook,
     });
     if (!permission.granted) {
       return res.send_forbidden("Not allowed!");
@@ -275,7 +253,7 @@ export const update = async (req: Request, res: Response) => {
     }
 
     // General Case
-    if (!userOwnsNotebook(req.user, notebook)) {
+    if (!userOwnsNotebook({ user: req.user, notebook })) {
       return res.send_forbidden("Not allowed!");
     }
 
@@ -370,6 +348,14 @@ export const update = async (req: Request, res: Response) => {
           model: sequelize.models.Team,
           as: "team",
           attributes: ["id", "name", "description"],
+          include: [
+            {
+              model: sequelize.models.User,
+              as: "users",
+              through: { attributes: ["role"] },
+              attributes: ["id", "firstName", "lastName", "email"],
+            },
+          ],
         },
       ],
     });
@@ -448,8 +434,7 @@ export const deleteNotebook = async (req: Request, res: Response) => {
 export const panels = async (req: Request, res: Response) => {
   try {
     const { notebookId } = req.params;
-    //@ts-ignore
-    const { role } = req.user;
+
     const notebook = await sequelize.models.Notebook.findOne({
       where: { id: notebookId },
     });
@@ -459,7 +444,7 @@ export const panels = async (req: Request, res: Response) => {
     }
 
     //@ts-ignore
-    if (!userOwnsNotebook(req.user, notebook)) {
+    if (!userOwnsNotebook({ user: req.user, notebook })) {
       return res.send_forbidden("Not allowed!");
     }
 
