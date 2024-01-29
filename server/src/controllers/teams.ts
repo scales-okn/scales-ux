@@ -81,7 +81,7 @@ export const update = async (req: Request, res: Response) => {
               saturnUrl: process.env.UX_CLIENT_MAILER_URL,
               sesSender: process.env.SES_SENDER,
               teamName: team.name,
-              url: `${process.env.UX_CLIENT_MAILER_URL}/teams`,
+              url: `${process.env.UX_CLIENT_MAILER_URL}/connections/teams`,
             },
           });
         }
