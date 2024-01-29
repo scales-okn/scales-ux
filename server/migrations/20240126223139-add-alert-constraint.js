@@ -2,8 +2,6 @@
 
 module.exports = {
   up: async (queryInterface, Sequelize) => {
-    await queryInterface.removeConstraint("Alerts", "Alerts_notebookId_fkey");
-
     await queryInterface.addConstraint("Alerts", {
       fields: ["notebookId"],
       type: "foreign key",
