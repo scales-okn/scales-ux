@@ -310,7 +310,7 @@ export const update = async (req: Request, res: Response) => {
       teamUsers.map(async (user) => {
         if (user.notifyOnTeamNotebookDelete && notebook.teamId) {
           sendEmail({
-            emailSubject: `A notebook has been removed from your team!`,
+            emailSubject: `A notebook has been removed from your team`,
             recipientEmail: user.email,
             templateName: "notifyOnTeamNotebookDelete",
             recipientName: `${user.firstName} ${user.lastName}`,
@@ -400,7 +400,7 @@ export const deleteNotebook = async (req: Request, res: Response) => {
       teamUsers.map(async (user) => {
         if (user.notifyOnTeamNotebookDelete && notebook.teamId) {
           sendEmail({
-            emailSubject: `A notebook has been removed from your team!`,
+            emailSubject: `A notebook has been removed from your team`,
             recipientEmail: user.email,
             templateName: "notifyOnTeamNotebookDelete",
             recipientName: `${user.firstName} ${user.lastName}`,
