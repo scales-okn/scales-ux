@@ -314,7 +314,7 @@ const Notebook = () => {
                   >
                     Owner:
                   </Typography>
-                  <Typography>
+                  <Typography sx={{ textTransform: "capitalize" }}>
                     {renderName({ user: notebook?.user, sessionUser })}
                   </Typography>
                 </Box>
