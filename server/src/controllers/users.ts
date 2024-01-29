@@ -207,6 +207,24 @@ export const deleteUser = async (req: Request, res: Response) => {
       return res.send_forbidden("Not allowed!");
     }
     const { userId } = req.params;
+
+    // find all user's notebooks
+    const notebooks = await sequelize.models.Notebook.findAll({
+      where: { userId },
+    });
+
+    // delete all user's notebooks
+    await sequelize.models.Notebook.destroy({
+      where: { userId },
+    });
+
+    // delete all connections where user is sender or receiver
+    await sequelize.models.Connection.destroy({
+      where: {
+        [Op.or]: [{ sender: userId }, { receiver: userId }],
+      },
+    });
+
     const result = await sequelize.models.User.destroy({
       where: { id: userId },
     });
