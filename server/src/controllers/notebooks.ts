@@ -127,6 +127,14 @@ export const findAll = async (req: Request, res: Response) => {
           model: sequelize.models.Team,
           as: "team",
           attributes: ["id", "name", "description"],
+          include: [
+            {
+              model: sequelize.models.User,
+              as: "users",
+              through: { attributes: ["role"] },
+              attributes: ["id", "firstName", "lastName", "email"],
+            },
+          ],
         },
       ],
     });

@@ -15,6 +15,7 @@ import {
   Switch,
   Button,
   Tooltip,
+  Typography,
 } from "@mui/material";
 
 import SearchIcon from "@mui/icons-material/Search";
@@ -23,6 +24,7 @@ import dayjs from "dayjs";
 import { sessionUserSelector } from "src/store/auth";
 import { useNotebook } from "src/store/notebook";
 
+import { useSessionUser } from "src/store/auth";
 import useWindowSize from "src/hooks/useWindowSize";
 import useDebounce from "src/hooks/useDebounce";
 
@@ -57,6 +59,8 @@ const NotebooksPage = () => {
 
   const [rawSearch, setRawSearch] = useState(null);
   const debouncedSearch = useDebounce(rawSearch, 1000);
+
+  const sessionUser = useSessionUser();
 
   useEffect(() => {
     fetchNotebooks({
@@ -137,9 +141,19 @@ const NotebooksPage = () => {
             sortable: false,
             renderHeader,
             renderCell: (params: GridCellParams) => {
+              const userIsNotebookOwner =
+                sessionUser?.id === params.row?.userId;
+              const userIsNotebookTeamAdmin = params.row?.team?.users?.some(
+                (user) =>
+                  user.id === sessionUser?.id &&
+                  user.UserTeams?.role === "admin",
+              );
+              const sessionUserCanEdit =
+                userIsNotebookOwner || userIsNotebookTeamAdmin;
+
               return (
                 <Switch
-                  disabled={params.row.userId !== user.id}
+                  disabled={!sessionUserCanEdit}
                   checked={params.row.visibility === "public"}
                   onChange={() =>
                     updateNotebookVisibility(
@@ -166,11 +180,17 @@ const NotebooksPage = () => {
             renderCell: (params: GridCellParams) => {
               if (params.row.userId === user.id) {
                 return <>You</>;
-              } else {
+              } else if (isAdmin) {
                 return (
                   <Link to="/admin/users">
                     {params.row.user?.firstName} {params.row.user?.lastName}
                   </Link>
+                );
+              } else {
+                return (
+                  <Typography sx={{ textTransform: "capitalize" }}>
+                    {params.row.user?.firstName} {params.row.user?.lastName}
+                  </Typography>
                 );
               }
             },
@@ -183,7 +203,11 @@ const NotebooksPage = () => {
             sortable: false,
             renderHeader,
             renderCell: (params: GridCellParams) => {
-              return <div>{params.row?.team?.name}</div>;
+              return (
+                <Typography sx={{ textTransform: "capitalize" }}>
+                  {params.row?.team?.name}
+                </Typography>
+              );
             },
           },
           {
