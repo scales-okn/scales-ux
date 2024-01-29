@@ -35,6 +35,10 @@ export default (sequelize, options) => {
         type: DataTypes.STRING,
         allowNull: true,
       },
+      teamId: {
+        type: DataTypes.INTEGER,
+        allowNull: true,
+      },
     },
     options
   );
@@ -53,6 +57,17 @@ export default (sequelize, options) => {
     models.Notebook.belongsTo(models.User, {
       foreignKey: "userId",
       as: "user",
+    });
+    models.Notebook.belongsTo(models.Team, {
+      foreignKey: "teamId",
+      as: "team",
+      onUpdate: "CASCADE",
+      onDelete: "SET NULL",
+    });
+    models.Notebook.belongsTo(models.Alert, {
+      foreignKey: "alertId",
+      as: "alert",
+      onDelete: "CASCADE",
     });
   };
 

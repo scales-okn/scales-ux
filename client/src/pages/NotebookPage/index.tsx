@@ -6,6 +6,9 @@ import { useRings } from "src/store/rings";
 import { useNotebook } from "src/store/notebook";
 import { usePanels } from "src/store/panels";
 import { useSessionUser } from "src/store/auth";
+import { useTeam } from "src/store/team";
+
+import { renderName } from "src/helpers/renderName";
 
 import useWindowSize from "src/hooks/useWindowSize";
 
@@ -18,6 +21,8 @@ import {
   Switch,
   Box,
   Tooltip,
+  MenuItem,
+  Select,
   Typography,
 } from "@mui/material";
 import DeleteButton from "src/components/Buttons/DeleteButton";
@@ -45,22 +50,25 @@ const Notebook = () => {
     hasErrors,
   } = useNotebook();
   const { getPanels, clearPanels } = usePanels(notebook?.id);
-
+  const { fetchTeams, teams } = useTeam();
+  const theme = useTheme();
   const navigate = useNavigate();
   const location = useLocation();
+  const sessionUser = useSessionUser();
+  const { notebookId: notebookIdParam } = useParams();
+
   const { page } = queryString.parse(location.search);
 
-  const { notebookId: notebookIdParam } = useParams();
   const isNewNotebook = notebookIdParam === "new";
   const { width } = useWindowSize();
   const isMobile = width < 500;
 
-  const sessionUser = useSessionUser();
-  const sessionUserCanEdit = sessionUser?.id === notebook?.userId;
+  const userIsNotebookOwner = sessionUser?.id === notebook?.userId;
+  const userIsNotebookTeamAdmin = notebook?.team?.users?.some(
+    (user) => user.id === sessionUser?.id && user.UserTeams?.role === "admin",
+  );
+  const sessionUserCanEdit = userIsNotebookOwner || userIsNotebookTeamAdmin;
   const updatesDisabled = !sessionUserCanEdit && !isNewNotebook;
-  const isAdmin = sessionUser.role === "admin";
-
-  const theme = useTheme();
 
   const [copyModalOpen, setCopyModalOpen] = useState(false);
 
@@ -94,6 +102,8 @@ const Notebook = () => {
       getPanels();
       notebookRef.current = notebook?.id;
     }
+
+    fetchTeams();
   }, [notebook?.id]); // eslint-disable-line react-hooks/exhaustive-deps
 
   useEffect(() => {
@@ -191,8 +201,8 @@ const Notebook = () => {
                   color: "GrayText",
                 }}
               >
-                This is a read-only, public notebook. Use the copy button to
-                clone your own version.
+                This is a read-only notebook. Use the copy button to clone your
+                own version.
               </Typography>
             )}
           </Grid>
@@ -288,17 +298,108 @@ const Notebook = () => {
                   },
                 }}
               >
-                {isAdmin && (
-                  <div>
-                    <span className="title">Owner:</span>
-                    <span className="name">
-                      {notebook?.user?.firstName} {notebook?.user?.lastName}
-                    </span>
-                  </div>
-                )}
-                <div>
-                  <Tooltip title="Public tooltips can be seen and copied (but not modified) by any user">
-                    <span className="title">Public:</span>
+                <Box
+                  sx={{
+                    display: "flex",
+                    alignItems: "center",
+                    marginBottom: "12px",
+                  }}
+                >
+                  <Typography
+                    sx={{
+                      fontsize: "18px",
+                      fontWeight: "600",
+                      marginRight: "12px",
+                    }}
+                  >
+                    Owner:
+                  </Typography>
+                  <Typography sx={{ textTransform: "capitalize" }}>
+                    {renderName({ user: notebook?.user, sessionUser })}
+                  </Typography>
+                </Box>
+                {teams.length ? (
+                  <Box
+                    sx={{
+                      display: "flex",
+                      alignItems: "center",
+                      marginBottom: "6px",
+                    }}
+                  >
+                    <Tooltip title="Owners of notebooks can assign/unassign to teams they belong to">
+                      <Typography
+                        sx={{
+                          fontsize: "18px",
+                          fontWeight: "600",
+                          marginRight: "20px",
+                        }}
+                      >
+                        Team:
+                      </Typography>
+                    </Tooltip>
+                    <Typography sx={{ color: "GrayText" }}>
+                      {sessionUserCanEdit ? (
+                        <Select
+                          variant="outlined"
+                          value={notebook.team?.id}
+                          // disabled={!sessionUserCanEdit}
+                          onChange={(event) => {
+                            updateNotebook(notebook.id, {
+                              teamId: event.target.value,
+                            });
+                          }}
+                          sx={{
+                            background: "white",
+                            minWidth: "140px",
+                            height: "32px",
+                          }}
+                          MenuProps={{
+                            disableScrollLock: true,
+                          }}
+                        >
+                          {notebook.team?.id ? (
+                            <MenuItem key="none" value={null}>
+                              <Typography
+                                sx={{
+                                  textTransform: "capitalize",
+                                  color: "GrayText",
+                                }}
+                              >
+                                Unassign
+                              </Typography>
+                            </MenuItem>
+                          ) : null}
+                          {teams.map((teamObj) => (
+                            <MenuItem key={teamObj.id} value={teamObj.id}>
+                              <Typography
+                                sx={{
+                                  textTransform: "capitalize",
+                                }}
+                              >
+                                {teamObj.name}
+                              </Typography>
+                            </MenuItem>
+                          ))}
+                        </Select>
+                      ) : (
+                        <Typography>
+                          {notebook?.team?.name || "Unassigned"}
+                        </Typography>
+                      )}
+                    </Typography>
+                  </Box>
+                ) : null}
+                <Box sx={{ display: "flex", alignItems: "center" }}>
+                  <Tooltip title="Public notebooks can be seen and copied (but not modified) by any user">
+                    <Typography
+                      sx={{
+                        fontsize: "18px",
+                        fontWeight: "600",
+                        marginRight: "12px",
+                      }}
+                    >
+                      Public:
+                    </Typography>
                   </Tooltip>
                   <Switch
                     disabled={!sessionUserCanEdit}
@@ -312,7 +413,7 @@ const Notebook = () => {
                     color="primary"
                     sx={{ marginLeft: "-8px" }}
                   />
-                </div>
+                </Box>
               </Grid>
             </>
           ) : (
@@ -335,8 +436,16 @@ const Notebook = () => {
         {notebook?.id && <></>}
       </Grid>
 
-      {notebook && <Panels notebookId={notebook?.id} />}
-      <AddPanel notebookId={notebook?.id} />
+      {notebook && (
+        <Panels
+          notebookId={notebook?.id}
+          sessionUserCanEdit={sessionUserCanEdit}
+        />
+      )}
+      <AddPanel
+        notebookId={notebook?.id}
+        sessionUserCanEdit={sessionUserCanEdit}
+      />
 
       {confirmVisible && (
         <ConfirmModal

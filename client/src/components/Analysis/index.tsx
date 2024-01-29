@@ -3,7 +3,6 @@ import React, { useEffect, useState } from "react";
 
 import { usePanel } from "src/store/panels";
 import { useRing } from "src/store/rings";
-import { useSessionUser } from "src/store/auth";
 
 import { Grid, Paper, Button, Box, Typography } from "@mui/material";
 import AddIcon from "@mui/icons-material/Add";
@@ -27,18 +26,16 @@ import "./style.scss";
 
 type AnalysisT = {
   panelId: string;
+  sessionUserCanEdit: boolean;
 };
 
-const Analysis = ({ panelId }: AnalysisT) => {
+const Analysis = ({ panelId, sessionUserCanEdit }: AnalysisT) => {
   const { panel, analysis, updatePanel, filters } = usePanel(panelId);
 
   const { ring, info } = useRing(panel?.ringRid);
 
   const { width } = useWindowSize();
   const isTablet = width < 660;
-
-  const sessionUser = useSessionUser();
-  const sessionUserCanEdit = sessionUser?.id === panel?.userId;
 
   const [statementOptions, setStatementOptions] = useState([]);
 

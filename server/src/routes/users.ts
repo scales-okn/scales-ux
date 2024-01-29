@@ -1,20 +1,7 @@
 import express from "express";
-import {
-  create,
-  findAllUsers,
-  login,
-  findById,
-  update,
-  deleteUser,
-  verifyEmail,
-  forgotPassword,
-  resetPassword,
-} from "../controllers/users";
+import { create, findAllUsers, login, findById, update, deleteUser, verifyEmail, forgotPassword, resetPassword } from "../controllers/users";
 import validateResource from "../middlewares/validateResources";
-import {
-  createUserValidationSchema,
-  loginUserValidationSchema,
-} from "../validation/users";
+import { createUserValidationSchema, loginUserValidationSchema } from "../validation/users";
 import checkAuth from "../middlewares/checkAuth";
 
 const router = express.Router();

@@ -1,48 +1,37 @@
 import { AccessControlPlus } from "accesscontrol-plus";
+import { sequelize } from "../database";
 
 const userIsUserOwner = ({ user, resource }) => {
   return user.id === resource.id;
 };
 
-const userIsResourceOwner = ({ user, resource }) => {
-  return user.id === resource.userId;
+export const userOwnsNotebook = async ({ user, notebook }) => {
+  const sessionUserTeam = await sequelize.models.Team.findOne({
+    attributes: ["id"],
+    include: [
+      {
+        model: sequelize.models.User,
+        as: "users",
+        where: { id: user.id },
+        attributes: [],
+      },
+    ],
+    raw: true,
+  });
+
+  const { visibility, collaborators, userId, sharedWith } = notebook;
+  const isAdmin = user.role === "admin";
+  const notebookIsPublic = visibility === "public";
+  const sessionUserIsCollaborator = collaborators.includes(user.id);
+  const notebookSharedWithSessionUser = sharedWith.includes(user.id);
+  const sessionUserIsOwner = userId === user.id;
+  const sessionUserIsNotebookTeamMember = sessionUserTeam && sessionUserTeam.id === notebook.teamId;
+
+  return isAdmin || notebookIsPublic || sessionUserIsCollaborator || notebookSharedWithSessionUser || sessionUserIsOwner || sessionUserIsNotebookTeamMember;
 };
 
-const userIsNotebookContributor = ({ user, resource }) => {
-  return resource.collaborators.includes(user.id);
-};
-
-const userIsAllowedToReadNotebook = ({ user, resource }) => {
-  return resource.visibility.includes(user.id);
-};
-
-const userCanReadNotebook = ({ user, resource }) => {
-  if (userIsResourceOwner({ user, resource })) {
-    return true;
-  }
-  // If notebook is private
-  if (resource.visibility === "private") {
-    if (userIsNotebookContributor({ user, resource })) {
-      return true;
-    }
-    return false;
-  }
-  // If the notebook is public
-  if (resource.visibility === "public") {
-    return true;
-  }
-  if (userIsAllowedToReadNotebook({ user, resource })) {
-    return true;
-  }
-  return false;
-};
-
-const userCanUpdateNotebook = ({ user, resource }) => {
-  if (userIsResourceOwner({ user, resource })) {
-    return true;
-  }
-
-  if (userIsNotebookContributor({ user, resource })) {
+const userCanUpdateNotebook = ({ user, notebook }) => {
+  if (userOwnsNotebook({ user, notebook })) {
     return true;
   }
 
@@ -113,7 +102,7 @@ accessControl
       .create
       .update
         .where(userCanUpdateNotebook)
-          .onFields("title", "description", "visibility", "collaborators")
+          .onFields("title", "description", "visibility", "collaborators", "teamId")
   // Rings
   .grant("user")
     .resource("rings")

@@ -59,16 +59,4 @@ export const logoutMenuStyles = css`
       text-transform: uppercase;
     }
   }
-
-  .item {
-    min-width: 180px;
-    padding: 10px 10px 10px 20px;
-    transition: 0.2s ease-in-out;
-    margin: 6px 0;
-    font-size: 18px;
-
-    &:hover {
-      background: var(--main-purple-lightest);
-    }
-  }
 `;

@@ -13,6 +13,9 @@ import notebook from "./notebook";
 import panels from "./panels";
 import helpTexts from "./helpTexts";
 import user from "./user";
+import connections from "./connection";
+import teams from "./team";
+import alerts from "./alerts";
 
 // Create a separate reducer for the auth slice
 const authPersistConfig = {
@@ -33,6 +36,9 @@ const store = configureStore({
     user,
     panels,
     helpTexts,
+    connections,
+    teams,
+    alerts,
     notifications: notificationsReducer(),
   }),
   // @ts-ignore

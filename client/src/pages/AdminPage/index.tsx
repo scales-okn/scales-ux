@@ -1,13 +1,11 @@
 import React from "react";
 import { useLocation, useNavigate } from "react-router-dom";
-import { Tabs, Tab } from "@mui/material";
+import { Tabs, Tab, Box } from "@mui/material";
 
 import RingsPage from "src/pages/RingsPage";
 import UsersPage from "src/pages/UsersPage";
 import FeedbackPage from "src/pages/FeedbackPage";
 import HelpTextsPage from "src/pages/HelpTextsPage";
-
-import { adminPageStyles } from "./styles";
 
 const AdminPage = () => {
   const location = useLocation();
@@ -32,7 +30,7 @@ const AdminPage = () => {
   };
 
   return (
-    <div className={`adminPage ${adminPageStyles}`}>
+    <Box>
       <Tabs
         value={selectedTab.path}
         onChange={handleTabChange}
@@ -58,8 +56,10 @@ const AdminPage = () => {
           />
         ))}
       </Tabs>
-      <div className="container">{selectedTab.component}</div>
-    </div>
+      <Box className="container" sx={{ paddingTop: "120px" }}>
+        {selectedTab.component}
+      </Box>
+    </Box>
   );
 };
 

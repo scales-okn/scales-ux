@@ -2,7 +2,6 @@ import React, { useState, useEffect, useMemo } from "react";
 import { Link } from "react-router-dom";
 import { usePanel } from "src/store/panels";
 import { useRing } from "src/store/rings";
-import { useSessionUser } from "src/store/auth";
 
 import {
   Accordion,
@@ -35,9 +34,10 @@ import { useEffectOnce } from "react-use";
 type PanelT = {
   panelId: string;
   defaultCollapsed: boolean;
+  sessionUserCanEdit: boolean;
 };
 
-const Panel = ({ panelId, defaultCollapsed }: PanelT) => {
+const Panel = ({ panelId, defaultCollapsed, sessionUserCanEdit }: PanelT) => {
   const {
     panel,
     deletePanel,
@@ -67,9 +67,6 @@ const Panel = ({ panelId, defaultCollapsed }: PanelT) => {
       setPanelCollapsed(false);
     }
   });
-
-  const sessionUser = useSessionUser();
-  const sessionUserCanEdit = sessionUser?.id === panel?.userId;
 
   const { ring, info, getRingInfo } = useRing(panel?.ringRid);
 
@@ -169,7 +166,10 @@ const Panel = ({ panelId, defaultCollapsed }: PanelT) => {
     getPanelResults({ sortOverride: sort });
   };
 
-  if (!panel?.ringRid) return <Dataset panelId={panel.id} />;
+  if (!panel?.ringRid)
+    return (
+      <Dataset panelId={panel.id} sessionUserCanEdit={sessionUserCanEdit} />
+    );
 
   return (
     <Accordion expanded={!collapsed} className="mb-4">
@@ -257,7 +257,7 @@ const Panel = ({ panelId, defaultCollapsed }: PanelT) => {
               }}
             />
           </FormControl>
-          <Filters panelId={panel.id} />
+          <Filters panelId={panel.id} sessionUserCanEdit={sessionUserCanEdit} />
           <div className="p-0 bg-light border-top">
             <Loader
               contentHeight={resultsCollapsed ? "60px" : "400px"}
@@ -368,7 +368,10 @@ const Panel = ({ panelId, defaultCollapsed }: PanelT) => {
 
           <div className="bg-white p-3">
             <Grid>
-              <Analysis panelId={panelId} />
+              <Analysis
+                panelId={panelId}
+                sessionUserCanEdit={sessionUserCanEdit}
+              />
             </Grid>
           </div>
         </CardContent>

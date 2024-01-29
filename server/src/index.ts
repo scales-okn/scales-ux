@@ -14,6 +14,9 @@ import ringsRouter from "./routes/rings";
 import panelsRouter from "./routes/panels";
 import notebooksRouter from "./routes/notebooks";
 import feedbackRouter from "./routes/feedback";
+import connectionsRouter from "./routes/connections";
+import alertsRouter from "./routes/alerts";
+import teamsRouter from "./routes/teams";
 import helpTextsRouter from "./routes/helpTexts";
 
 const app = express();
@@ -69,11 +72,20 @@ app.use("/api/notebooks", notebooksRouter);
 // Feedback Router
 app.use("/api/feedback", feedbackRouter);
 
+// Connections Router
+app.use("/api/connections", connectionsRouter);
+
 // Help Texts Router
 app.use("/api/helpTexts", helpTextsRouter);
 
 // Panels Router
 app.use("/api/panels", panelsRouter);
+
+// Alerts Router
+app.use("/api/alerts", alertsRouter);
+
+// Teams Router
+app.use("/api/teams", teamsRouter);
 
 // Serve React App
 app.use(express.static(path.join(__dirname, "../build")));

@@ -33,7 +33,9 @@ export const login = async (req: Request, res: Response) => {
       console.warn("User not found!", { email, password });
       return res.send_badRequest("Login failed. Please check your username and password.");
     }
-    const { id, role, firstName, lastName, blocked, approved, emailIsVerified, usage, notifyOnNewRingVersion } = user.dataValues;
+
+    const { password: unusedPassword, emailVerificationToken, ...userWithoutPassword } = user.dataValues;
+    const { blocked, emailIsVerified } = user.dataValues;
 
     if (blocked) {
       return res.send_forbidden("Access restricted!");
@@ -48,7 +50,7 @@ export const login = async (req: Request, res: Response) => {
       const defaultExpiry = "1d";
       const expiry = rememberMe ? process.env.JWT_EXP_LONG : process.env.JWT_EXP;
 
-      const token = jwt.sign({ user: { id, email, role, firstName, lastName, blocked, approved, usage, notifyOnNewRingVersion } }, process.env.JWT_SECRET, { expiresIn: expiry || defaultExpiry });
+      const token = jwt.sign({ user: userWithoutPassword }, process.env.JWT_SECRET, { expiresIn: expiry || defaultExpiry });
 
       return res.send_ok("Login Successful!", {
         token,
@@ -205,6 +207,24 @@ export const deleteUser = async (req: Request, res: Response) => {
       return res.send_forbidden("Not allowed!");
     }
     const { userId } = req.params;
+
+    // find all user's notebooks
+    const notebooks = await sequelize.models.Notebook.findAll({
+      where: { userId },
+    });
+
+    // delete all user's notebooks
+    await sequelize.models.Notebook.destroy({
+      where: { userId },
+    });
+
+    // delete all connections where user is sender or receiver
+    await sequelize.models.Connection.destroy({
+      where: {
+        [Op.or]: [{ sender: userId }, { receiver: userId }],
+      },
+    });
+
     const result = await sequelize.models.User.destroy({
       where: { id: userId },
     });
