@@ -449,30 +449,34 @@ const TeamsTable = () => {
                         )}
                       </Box>
                     </Box>
-                    <Box
-                      sx={{
-                        background: "lightgrey",
-                        height: "1px",
-                        margin: "32px 0",
-                      }}
-                    />
-                    <Box
-                      sx={{
-                        display: "flex",
-                        justifyContent: "center",
-                        width: "100%",
-                      }}
-                    >
-                      <Button
-                        variant="outlined"
-                        color="error"
-                        onClick={() => {
-                          setTeamToDelete(team);
-                        }}
-                      >
-                        Delete Team
-                      </Button>
-                    </Box>
+                    {sessionUserIsAdmin ? (
+                      <>
+                        <Box
+                          sx={{
+                            background: "lightgrey",
+                            height: "1px",
+                            margin: "32px 0",
+                          }}
+                        />
+                        <Box
+                          sx={{
+                            display: "flex",
+                            justifyContent: "center",
+                            width: "100%",
+                          }}
+                        >
+                          <Button
+                            variant="outlined"
+                            color="error"
+                            onClick={() => {
+                              setTeamToDelete(team);
+                            }}
+                          >
+                            Delete Team
+                          </Button>
+                        </Box>
+                      </>
+                    ) : null}
                   </AccordionDetails>
                 </Accordion>
               </Box>
