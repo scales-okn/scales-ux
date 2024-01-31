@@ -141,7 +141,7 @@ const NotificationsBell = () => {
                       Click to Confirm
                     </Typography>
                     <Typography sx={{ fontWeight: "600", fontSize: "14px" }}>
-                      Delete All
+                      Clear All
                     </Typography>
                   </Box>
                 ) : (
