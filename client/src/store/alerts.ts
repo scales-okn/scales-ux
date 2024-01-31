@@ -101,6 +101,15 @@ const alertSlice = createSlice({
       ...state,
       hasErrors: true,
     }),
+    deleteAllAlertsFailure: (state) => ({
+      ...state,
+      hasErrors: true,
+    }),
+    deleteAllAlertsSuccess: (state) => ({
+      ...state,
+      alerts: [],
+      hasErrors: false,
+    }),
   },
 });
 
@@ -190,6 +199,22 @@ export const deleteAlert = (alertId) => {
   };
 };
 
+export const deleteAllAlerts = () => {
+  return async (dispatch: AppDispatch) => {
+    try {
+      const { code } = await makeRequest.post(`/api/alerts/deleteAll`, {});
+
+      if (code === 200) {
+        dispatch(alertActions.deleteAllAlertsSuccess());
+      } else {
+        dispatch(alertActions.deleteAllAlertsFailure());
+      }
+    } catch (error) {
+      dispatch(alertActions.deleteAllAlertsFailure());
+    }
+  };
+};
+
 // Hooks
 export const useAlert = () => {
   const alerts = useSelector(alertsSelector);
@@ -203,6 +228,7 @@ export const useAlert = () => {
     createAlert: (payload: any = {}) => dispatch(createAlert(payload)),
     updateAlert: (alertId, payload: any = {}) =>
       dispatch(updateAlert(alertId, payload)),
-    deleteAlert: (alertId, payload: any = {}) => dispatch(deleteAlert(alertId)),
+    deleteAlert: (alertId) => dispatch(deleteAlert(alertId)),
+    deleteAllAlerts: () => dispatch(deleteAllAlerts()),
   };
 };

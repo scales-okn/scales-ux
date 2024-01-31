@@ -8,7 +8,7 @@ import { useAlert } from "src/store/alerts";
 import { useSessionUser } from "src/store/auth";
 
 import NotificationsIcon from "@mui/icons-material/Notifications";
-import { Box } from "@mui/material";
+import { Box, Button, Typography } from "@mui/material";
 import Popover from "@mui/material/Popover";
 import { useTheme } from "@mui/material/styles";
 
@@ -21,12 +21,13 @@ const NotificationsBell = () => {
   );
   const open = Boolean(anchorEl);
   const [modalAlert, setModalAlert] = useState(null);
+  const [clearActive, setClearActive] = useState(null);
 
   const theme = useTheme();
   const location = useLocation();
   const search = queryString.parse(location.search);
 
-  const { alerts, fetchAlerts } = useAlert();
+  const { alerts, fetchAlerts, deleteAllAlerts } = useAlert();
   const sessionUser = useSessionUser();
 
   useEffect(() => {
@@ -103,17 +104,55 @@ const NotificationsBell = () => {
           }}
         >
           {alerts.length ? (
-            alerts.map((alert) => {
-              return (
-                <AlertRow
-                  alert={alert}
-                  key={alert.id}
-                  setModalAlert={setModalAlert}
-                />
-              );
-            })
+            <Box
+              sx={{
+                display: "flex",
+                flexDirection: "column",
+                alignItems: "center",
+              }}
+            >
+              {alerts.map((alert) => {
+                return (
+                  <AlertRow
+                    alert={alert}
+                    key={alert.id}
+                    setModalAlert={setModalAlert}
+                  />
+                );
+              })}
+              <Button
+                sx={{
+                  marginTop: "12px",
+                  marginBottom: "6px",
+                  width: "calc(100% - 24px)",
+                }}
+                onClick={() => {
+                  if (clearActive) {
+                    setClearActive(false);
+                    deleteAllAlerts();
+                  } else {
+                    setClearActive(true);
+                  }
+                }}
+              >
+                {clearActive ? (
+                  <Box>
+                    <Typography sx={{ fontWeight: "300", fontSize: "12px" }}>
+                      Click to Confirm
+                    </Typography>
+                    <Typography sx={{ fontWeight: "600", fontSize: "14px" }}>
+                      Delete All
+                    </Typography>
+                  </Box>
+                ) : (
+                  "Clear All"
+                )}
+              </Button>
+            </Box>
           ) : (
-            <Box sx={{ padding: "20px" }}>No New Notifications</Box>
+            <Box sx={{ padding: "20px", cursor: "default" }}>
+              No New Notifications
+            </Box>
           )}
         </Popover>
       )}
