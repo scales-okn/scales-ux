@@ -94,6 +94,16 @@ const connectionSlice = createSlice({
       ...state,
       hasErrors: true,
     }),
+    deleteConnectionSuccess: (state, { payload }) => ({
+      ...state,
+      connections: state.connections.filter(
+        (connection) => connection.id !== payload,
+      ),
+    }),
+    deleteConnectionFailure: (state) => ({
+      ...state,
+      hasErrors: true,
+    }),
     createConnectionSuccess: (state, { payload }) => ({
       ...state,
       connections: [payload, ...state.connections],
@@ -190,6 +200,25 @@ export const updateConnection = (connectionId, payload: any = {}) => {
   };
 };
 
+export const deleteConnection = (connectionId) => {
+  return async (dispatch: AppDispatch) => {
+    try {
+      const { message, code } = await makeRequest.delete(
+        `/api/connections/${connectionId}`,
+      );
+
+      if (code === 200) {
+        dispatch(connectionActions.deleteConnectionSuccess(connectionId));
+      } else {
+        dispatch(notify(message, "error"));
+        dispatch(connectionActions.deleteConnectionFailure());
+      }
+    } catch (error) {
+      dispatch(connectionActions.deleteConnectionFailure());
+    }
+  };
+};
+
 export const createConnection = (payload: any = {}) => {
   return async (dispatch: AppDispatch) => {
     try {
@@ -231,5 +260,7 @@ export const useConnection = () => {
       dispatch(createConnection(payload)),
     updateConnection: (connectionId, payload: any = {}) =>
       dispatch(updateConnection(connectionId, payload)),
+    deleteConnection: (connectionId) =>
+      dispatch(deleteConnection(connectionId)),
   };
 };
