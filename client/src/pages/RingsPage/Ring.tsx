@@ -84,6 +84,7 @@ const Ring = () => {
       ontology: {},
       visibility: "public",
       userId: sessionUser.id,
+      dbType: "sql",
     },
     validationSchema: yup.object({
       rid: yup.string(),
@@ -93,6 +94,7 @@ const Ring = () => {
       dataSource: yup.object().required("Data source is required"),
       ontology: yup.object().required("Ontology is required"),
       visibility: yup.string().required("Visibility is required"),
+      dbType: yup.string().required("DB Type is required"),
     }),
     onSubmit: async (values) => {
       createRing({ ...values, userId: sessionUser.id });
@@ -115,6 +117,7 @@ const Ring = () => {
         "dataSource",
         "ontology",
         "visibility",
+        "dbType",
       ]);
 
       formik.setValues(existingValues);
@@ -164,7 +167,7 @@ const Ring = () => {
                 xs={12}
                 sx={{ display: "flex", justifyContent: "space-between" }}
               >
-                <Grid>
+                <Grid sx={{ display: "flex", alignItems: "center" }}>
                   {ringVersions.length ? (
                     <Select
                       value={currentVersion}
@@ -183,7 +186,7 @@ const Ring = () => {
                       }}
                       sx={{
                         minWidth: "140px",
-                        marginBottom: "24px",
+                        marginRight: "12px",
                         height: "42px",
                         background: "white",
                       }}
@@ -194,7 +197,7 @@ const Ring = () => {
                         </MenuItem>
                       ))}
                     </Select>
-                  ) : null}{" "}
+                  ) : null}
                   {currentRing && !isTablet ? (
                     <Typography
                       sx={{
@@ -211,7 +214,26 @@ const Ring = () => {
                     </Typography>
                   ) : null}
                 </Grid>
-                <Grid>
+                <Grid sx={{ display: "flex", alignItems: "center" }}>
+                  <Grid
+                    sx={{
+                      display: "flex",
+                      alignItems: "center",
+                      marginRight: "12px",
+                    }}
+                  >
+                    <Typography>Public</Typography>
+                    <Switch
+                      checked={formik.values.visibility === "public"}
+                      color="primary"
+                      onChange={(e) => {
+                        formik.setFieldValue(
+                          "visibility",
+                          e.target.checked ? "public" : "private",
+                        );
+                      }}
+                    />
+                  </Grid>
                   {ringVersions.length ? (
                     <Button
                       variant="contained"
@@ -278,17 +300,26 @@ const Ring = () => {
                   paddingBottom: "24px",
                 }}
               >
-                <Typography>Public</Typography>
-                <Switch
-                  checked={formik.values.visibility === "public"}
-                  color="primary"
-                  onChange={(e) => {
-                    formik.setFieldValue(
-                      "visibility",
-                      e.target.checked ? "public" : "private",
-                    );
-                  }}
-                />
+                <TextField
+                  id="dbType"
+                  variant="outlined"
+                  fullWidth
+                  select
+                  label="DB Type"
+                  {...formik.getFieldProps("dbType")}
+                  inputProps={{ style: { color: "white" } }}
+                  sx={{ background: "white" }}
+                >
+                  <MenuItem key="sql" value="sql">
+                    SQL
+                  </MenuItem>
+                  <MenuItem key="sparql" value="sparql">
+                    SPARQL
+                  </MenuItem>
+                  <MenuItem key="mongo" value="mongo">
+                    Mongo
+                  </MenuItem>
+                </TextField>
               </Grid>
             </Grid>
             <TextField

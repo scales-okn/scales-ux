@@ -5,6 +5,7 @@ import { sendEmail } from "../services/sesMailer";
 import { sequelize } from "../database";
 
 export const ringVisibilityValues = ["public", "private"];
+export const ringDbTypeValues = ["sql", "sparql", "mongo"];
 
 export default (sequelize, options) => {
   const Ring = sequelize.define(
@@ -55,6 +56,12 @@ export default (sequelize, options) => {
       ontologyDiff: {
         type: DataTypes.TEXT,
         allowNull: true,
+      },
+      dbType: {
+        type: DataTypes.ENUM,
+        values: ringDbTypeValues,
+        allowNull: false,
+        defaultValue: "sql",
       },
     },
     options

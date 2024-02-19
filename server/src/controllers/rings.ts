@@ -9,7 +9,7 @@ import { notifyAdminsOfRingChange, createRingDiff } from "../models/Ring";
 // Create Ring
 export const create = async (req: Request, res: Response) => {
   try {
-    const { userId, rid, name, description, schemaVersion, dataSource, ontology, visibility } = req.body;
+    const { userId, rid, name, description, schemaVersion, dataSource, ontology, visibility, dbType } = req.body;
 
     let newVersionNum = 1;
     let ridToSave = rid;
@@ -41,6 +41,7 @@ export const create = async (req: Request, res: Response) => {
       dataSource,
       ontology,
       visibility,
+      dbType,
       version: newVersionNum,
     });
 
