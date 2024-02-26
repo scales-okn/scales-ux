@@ -1,3 +1,4 @@
+// @ts-nocheck
 import { createSlice } from "@reduxjs/toolkit";
 import type { RootState, AppDispatch } from "src/store";
 import { useSelector, useDispatch } from "react-redux";

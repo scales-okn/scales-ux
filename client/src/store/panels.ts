@@ -364,7 +364,11 @@ export const getPanelResults =
       const { filters, ringRid, sort } = panel;
 
       // @ts-ignore
-      const { rid, info, version } = ringSelector(getState(), ringRid);
+      const { rid, info, version, dataSource } = ringSelector(
+        getState(),
+        ringRid,
+      );
+
       dispatch(panelsActions.getPanelResults({ panelId }));
 
       const filterParams = filters
@@ -382,14 +386,20 @@ export const getPanelResults =
         .join("&");
 
       const currentSort = sortOverride || sort;
-      const sortString = `sortBy=${currentSort.field}&sortDirection=${currentSort.sort}`;
+      const sortBy = currentSort.field ? `sortBy=${currentSort.field}&` : "";
+      const sortDirection = currentSort.sort
+        ? `sortDirection=${currentSort.sort}`
+        : "";
+      const sortString = `${sortBy || sortDirection ? "&" : ""}${sortBy}${
+        sortBy && sortDirection ? "&" : ""
+      }${sortDirection}`;
+
+      const resultType = dataSource.type === "mongo" ? "mongo_" : "";
+
+      const endpoint = `/proxy/${resultType}results/${rid}/${version}/${info.defaultEntity}?page=${page}&batchSize=${batchSize}${sortString}`;
 
       const response = await makeRequest.get(
-        appendQuery(
-          `/proxy/results/${rid}/${version}/${info.defaultEntity}?page=${page}&batchSize=${batchSize}&${sortString}`,
-          filterParams,
-          { encodeComponents: false },
-        ),
+        appendQuery(endpoint, filterParams, { encodeComponents: false }),
       );
 
       if (response) {

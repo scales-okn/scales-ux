@@ -55,7 +55,8 @@ const Analysis = ({ panelId, sessionUserCanEdit }: AnalysisT) => {
   const { notify } = useNotify();
 
   useEffect(() => {
-    if (!info) return;
+    // TODO: Remove TEMP exception
+    if (!info || info.dbType !== "sql") return;
 
     const satyrnRes = new Satyrn(
       info.defaultEntity,

@@ -115,6 +115,22 @@ const Panel = ({ panelId, defaultCollapsed, sessionUserCanEdit }: PanelT) => {
               />
             );
           },
+          renderCell: (item) => {
+            return (
+              <Tooltip title={item.row[column.key]}>
+                <Typography
+                  sx={{
+                    overflow: "hidden",
+                    textOverflow: "ellipsis",
+                    whiteSpace: "nowrap",
+                    fontSize: "0.9rem",
+                  }}
+                >
+                  {item.row[column.key] || "None"}
+                </Typography>
+              </Tooltip>
+            );
+          },
         })) || [];
 
     out.unshift({
@@ -125,7 +141,7 @@ const Panel = ({ panelId, defaultCollapsed, sessionUserCanEdit }: PanelT) => {
         return (
           <Tooltip title="Open Docket in New Tab">
             <Link
-              to={`/document/${ring.rid}/${ring.version}/Case/${item.row.__uniqueId.ucid}`}
+              to={`/document/${ring.rid}/${ring.version}/Case/${item.row.__uniqueId?.ucid}`}
               target="_blank"
               rel="noopener noreferrer"
             >
