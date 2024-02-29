@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 
 import { Box, Typography, Button } from "@mui/material";
 import DeleteOutlineIcon from "@mui/icons-material/DeleteOutline";
@@ -25,6 +25,7 @@ const AlertRow = ({ alert, setModalAlert }) => {
         sx={{
           display: "flex",
           alignItems: "center",
+          width: "100%",
           cursor: "pointer",
         }}
         onClick={() => {
@@ -145,6 +146,7 @@ const AlertRow = ({ alert, setModalAlert }) => {
       <Box
         sx={{
           minWidth: "180px",
+          width: "100%",
           padding: "10px 20px",
           transition: " 0.2s ease-in-out",
           margin: "6px 0",
