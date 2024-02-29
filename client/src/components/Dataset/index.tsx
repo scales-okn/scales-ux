@@ -39,7 +39,12 @@ const Dataset = ({ panelId, sessionUserCanEdit }: DatasetProps) => {
       return prev.id < curr.id ? prev : curr;
     }, []);
     if (defaultRing) {
-      setSelectedRing(defaultRing);
+      setSelectedRing((prev) => {
+        if (!prev) {
+          return defaultRing;
+        }
+        return prev;
+      });
     }
   }, [rings]);
 
