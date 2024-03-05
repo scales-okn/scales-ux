@@ -339,6 +339,7 @@ const TeamsTable = () => {
                             MenuProps={{
                               disableScrollLock: true,
                             }}
+                            defaultValue={null}
                           >
                             {availableTeamMembers.length ? (
                               availableTeamMembers.map((connection) => {
