@@ -1,8 +1,8 @@
 import dayjs from "dayjs";
 
 type queryBuilderT = {
-  filters: any;
-  info: any;
+  filters: Record<string, unknown>;
+  info: Record<string, unknown>;
 };
 
 export const queryBuilder = ({ filters, info }: queryBuilderT) => {

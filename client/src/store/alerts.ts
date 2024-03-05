@@ -146,7 +146,7 @@ export const fetchAlerts = (params) => {
   };
 };
 
-export const updateAlert = (alertId, payload: any = {}) => {
+export const updateAlert = (alertId, payload: Record<string, unknown> = {}) => {
   return async (dispatch: AppDispatch) => {
     try {
       const { data, message, code } = await makeRequest.put(
@@ -165,7 +165,7 @@ export const updateAlert = (alertId, payload: any = {}) => {
   };
 };
 
-export const createAlert = (payload: any = {}) => {
+export const createAlert = (payload: Record<string, unknown> = {}) => {
   return async (dispatch: AppDispatch) => {
     try {
       const { data, message, code } = await makeRequest.post(
@@ -225,9 +225,11 @@ export const useAlert = () => {
   return {
     alerts,
     alertsPaging,
-    fetchAlerts: (payload: any = {}) => dispatch(fetchAlerts(payload)),
-    createAlert: (payload: any = {}) => dispatch(createAlert(payload)),
-    updateAlert: (alertId, payload: any = {}) =>
+    fetchAlerts: (payload: Record<string, unknown> = {}) =>
+      dispatch(fetchAlerts(payload)),
+    createAlert: (payload: Record<string, unknown> = {}) =>
+      dispatch(createAlert(payload)),
+    updateAlert: (alertId, payload: Record<string, unknown> = {}) =>
       dispatch(updateAlert(alertId, payload)),
     deleteAlert: (alertId) => dispatch(deleteAlert(alertId)),
     deleteAllAlerts: () => dispatch(deleteAllAlerts()),

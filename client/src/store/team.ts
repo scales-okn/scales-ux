@@ -169,7 +169,7 @@ export const deleteTeam = (teamId, payload: UpdateTeamT = {}) => {
   };
 };
 
-export const createTeam = (payload: any = {}) => {
+export const createTeam = (payload: Record<string, unknown> = {}) => {
   return async (dispatch: AppDispatch) => {
     try {
       const { data, message, code } = await makeRequest.post(
@@ -196,8 +196,10 @@ export const useTeam = () => {
 
   return {
     teams,
-    fetchTeams: (payload: any = {}) => dispatch(fetchTeams(payload)),
-    createTeam: (payload: any = {}) => dispatch(createTeam(payload)),
+    fetchTeams: (payload: Record<string, unknown> = {}) =>
+      dispatch(fetchTeams(payload)),
+    createTeam: (payload: Record<string, unknown> = {}) =>
+      dispatch(createTeam(payload)),
     updateTeam: (teamId, payload: UpdateTeamT = {}) =>
       dispatch(updateTeam(teamId, payload)),
     deleteTeam: (teamId) => dispatch(deleteTeam(teamId)),

@@ -271,7 +271,8 @@ export const useRing = (rid) => {
     ringVersions,
     loadingRingInfo,
     getRingInfo: (version: number) => dispatch(getRingInfo(ring.rid, version)),
-    createRing: (params: any) => dispatch(createRing(params)),
+    createRing: (params: Record<string, unknown>) =>
+      dispatch(createRing(params)),
     getRingVersions: (rid: string) => dispatch(getRingVersions(rid)),
     clearRingVersions: () => dispatch(ringsActions.getRingVersionsSuccess([])),
     deleteRing: (rid: string) => dispatch(deleteRing(rid)),
