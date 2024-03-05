@@ -181,7 +181,10 @@ export const fetchApprovedConnectionUsers = (params) => {
   };
 };
 
-export const updateConnection = (connectionId, payload: any = {}) => {
+export const updateConnection = (
+  connectionId,
+  payload: Record<string, unknown> = {},
+) => {
   return async (dispatch: AppDispatch) => {
     try {
       const { data, message, code } = await makeRequest.put(
@@ -219,7 +222,7 @@ export const deleteConnection = (connectionId) => {
   };
 };
 
-export const createConnection = (payload: any = {}) => {
+export const createConnection = (payload: Record<string, unknown> = {}) => {
   return async (dispatch: AppDispatch) => {
     try {
       const { data, message, code } = await makeRequest.post(
@@ -252,13 +255,13 @@ export const useConnection = () => {
     connectionsPaging,
     approvedConnectionUsers,
     hasErrors,
-    fetchConnections: (payload: any = {}) =>
+    fetchConnections: (payload: Record<string, unknown> = {}) =>
       dispatch(fetchConnections(payload)),
-    fetchApprovedConnectionUsers: (payload: any = {}) =>
+    fetchApprovedConnectionUsers: (payload: Record<string, unknown> = {}) =>
       dispatch(fetchApprovedConnectionUsers(payload)),
-    createConnection: (payload: any = {}) =>
+    createConnection: (payload: Record<string, unknown> = {}) =>
       dispatch(createConnection(payload)),
-    updateConnection: (connectionId, payload: any = {}) =>
+    updateConnection: (connectionId, payload: Record<string, unknown> = {}) =>
       dispatch(updateConnection(connectionId, payload)),
     deleteConnection: (connectionId) =>
       dispatch(deleteConnection(connectionId)),

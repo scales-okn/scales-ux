@@ -5,7 +5,6 @@ import { Typography, Box, Button } from "@mui/material";
 import { useTheme } from "@mui/material/styles";
 
 import { useTeam } from "src/store/team";
-import { useSessionUser } from "src/store/auth";
 import { UserT } from "src/store/user";
 
 import ModalContainer from "src/components/Modals/ModalContainer";
