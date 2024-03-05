@@ -18,6 +18,7 @@ interface InitialState extends DecodedToken {
   errors: any;
   loading: boolean;
   token: string;
+  savedUrl: string;
 }
 
 export const initialState: InitialState = {
@@ -28,6 +29,7 @@ export const initialState: InitialState = {
   user: null,
   iat: null,
   exp: null,
+  savedUrl: null,
 };
 
 // Slice
@@ -149,10 +151,12 @@ export const useAuthHeader = () => {
 
 export const useAuth = () => {
   const { token } = useSelector(authSelector);
+  const { savedUrl } = useSelector(authSelector);
   const dispatch = useDispatch();
 
   return {
     token,
+    savedUrl,
     login: (email: string, password: string) => {
       dispatch(login(email, password));
     },

@@ -1,4 +1,7 @@
-import React, { FunctionComponent, useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { useNavigate, useLocation } from "react-router-dom";
+
 import * as yup from "yup";
 import {
   Typography,
@@ -8,10 +11,10 @@ import {
   Button,
   Checkbox,
 } from "@mui/material";
-import { useNavigate } from "react-router-dom";
-import { authSelector, login } from "src/store/auth";
-import { useDispatch, useSelector } from "react-redux";
 import { useFormik } from "formik";
+import queryString from "query-string";
+
+import { authSelector, login } from "src/store/auth";
 
 import { signInPageStyles } from "./styles";
 
@@ -28,15 +31,22 @@ export const UserSignInValidationSchema = yup.object({
   password: yup.string().required("Password is required"),
 });
 
-const SignInPage: FunctionComponent = () => {
+const SignInPage = () => {
   const navigate = useNavigate();
   const { user, errors } = useSelector(authSelector);
   const dispatch = useDispatch();
   const [rememberMe, setRememberMe] = useState(false);
 
+  const location = useLocation();
+  const search = queryString.parse(location.search);
+
   useEffect(() => {
     if (user) {
-      navigate("/");
+      if (search.alr) {
+        navigate(search.alr.toString());
+      } else {
+        navigate("/");
+      }
     }
   }, [user, navigate]);
 
