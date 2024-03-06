@@ -1,8 +1,14 @@
 // @ts-nocheck
 import dayjs from "dayjs";
 
+type filterT = {
+  id: string;
+  type: string;
+  value: any;
+};
+
 type queryBuilderT = {
-  filters: Record<string, unknown>;
+  filters: filterT[];
   info: Record<string, unknown>;
 };
 
