@@ -56,7 +56,7 @@ const Analysis = ({ panelId, sessionUserCanEdit }: AnalysisT) => {
 
   useEffect(() => {
     // TODO: Remove TEMP exception
-    if (!info || info.dbType !== "sql") return;
+    if (!info || info.dbType === "mongo") return;
 
     const satyrnRes = new Satyrn(
       info.defaultEntity,
