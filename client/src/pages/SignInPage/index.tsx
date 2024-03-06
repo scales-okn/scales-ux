@@ -48,7 +48,7 @@ const SignInPage = () => {
         navigate("/");
       }
     }
-  }, [user, navigate]);
+  }, [user, navigate]); // eslint-disable-line
 
   const formik = useFormik({
     initialValues: {
