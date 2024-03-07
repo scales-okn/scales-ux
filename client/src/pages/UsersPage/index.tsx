@@ -116,7 +116,7 @@ const AdminUsersPages = () => {
       renderCell: (params: GridCellParams) => (
         <Tooltip title={params.row.createdAt}>
           <Typography noWrap variant="body2">
-            <div>{dayjs(params.row.createdAt).format("MM/DD/YYYY")}</div>
+            {dayjs(params.row.createdAt).format("MM/DD/YYYY")}
           </Typography>
         </Tooltip>
       ),

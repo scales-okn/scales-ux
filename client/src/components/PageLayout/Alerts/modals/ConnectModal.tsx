@@ -2,7 +2,8 @@ import React from "react";
 import { Link } from "react-router-dom";
 import { Button, Typography, Box } from "@mui/material";
 import { useTheme } from "@mui/material/styles";
-import { useAlert, AlertT } from "src/store/alerts";
+import { useAlert } from "src/store/alerts";
+import type { AlertT } from "src/types/alert";
 import { useConnection } from "src/store/connection";
 import ModalContainer from "src/components/Modals/ModalContainer";
 

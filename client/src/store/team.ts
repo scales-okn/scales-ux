@@ -2,35 +2,10 @@ import { createSlice } from "@reduxjs/toolkit";
 import type { RootState, AppDispatch } from "src/store";
 import { useSelector, useDispatch } from "react-redux";
 import { notify } from "reapop";
-import type { UserT } from "./user";
-import type { NotebookT } from "./notebook";
+
+import type { TeamT, UpdateTeamT } from "src/types/team";
 
 import { makeRequest } from "src/helpers/makeRequest";
-
-type UserWithRoleT = UserT & {
-  UserTeams: {
-    role: string;
-  };
-};
-
-type UpdateTeamT = {
-  userIdToAdd?: number;
-  userIdToRemove?: number;
-  userIdToUpdate?: number;
-  newUserRole?: string;
-  description?: string;
-  name?: string;
-};
-
-export type TeamT = {
-  id: number;
-  name: string;
-  description: string;
-  users: UserWithRoleT[];
-  notebooks: NotebookT[];
-  createdAt: string;
-  updatedAt: string;
-};
 
 type InitialStateT = {
   teams: TeamT[];

@@ -1,7 +1,8 @@
 import React from "react";
 import { Typography, Box } from "@mui/material";
 import { useTheme } from "@mui/material/styles";
-import { useAlert, AlertT } from "src/store/alerts";
+import { useAlert } from "src/store/alerts";
+import type { AlertT } from "src/types/alert";
 import ModalContainer from "src/components/Modals/ModalContainer";
 import { useEffectOnce } from "react-use";
 

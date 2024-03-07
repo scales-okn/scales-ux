@@ -3,30 +3,9 @@ import type { RootState, AppDispatch } from "src/store";
 import { useSelector, useDispatch } from "react-redux";
 import { notify } from "reapop";
 import type { PagingT } from "src/types/paging";
-import type { ConnectionT } from "./connection";
-import type { UserT } from "./user";
-import type { TeamT } from "./team";
-import type { NotebookT } from "./notebook";
+import type { AlertT } from "src/types/alert";
 
 import { makeRequest } from "src/helpers/makeRequest";
-
-export type AlertT = {
-  id: number;
-  userId: number;
-  initiatorUserId: number;
-  initiatorUser?: UserT;
-  notebookId: number | null;
-  notebook: NotebookT;
-  viewed: boolean;
-  connection?: ConnectionT;
-  connectionId?: number;
-  team?: TeamT;
-  teamId?: number;
-  createdAt: string;
-  updatedAt: string;
-  ringLabel?: string;
-  deletedNotebookName?: string;
-};
 
 type InitialStateT = {
   alerts: AlertT[];

@@ -4,7 +4,7 @@ import { Typography, Box, Button } from "@mui/material";
 
 import { useTheme } from "@mui/material/styles";
 
-import type { UserT } from "src/store/user";
+import type { UserT } from "src/types/user";
 import { useTeam } from "src/store/team";
 import { useSessionUser } from "src/store/auth";
 

@@ -7,6 +7,11 @@ export type UserT = {
   lastName: string;
   role: string;
   usage?: string;
+  createdAt?: string;
+  emailIsVerified?: boolean;
+  emailVerificationToken?: string;
+  passwordResetToken?: string;
+  updatedAt?: string;
   notifyOnNewRingVersion?: boolean;
   notifyOnConnectionRequest?: boolean;
   notifyOnConnectionResponse?: boolean;

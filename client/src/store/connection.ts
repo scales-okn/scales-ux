@@ -2,23 +2,11 @@ import { createSlice } from "@reduxjs/toolkit";
 import type { RootState, AppDispatch } from "src/store";
 import { useSelector, useDispatch } from "react-redux";
 import { notify } from "reapop";
-import { PagingT } from "src/types/paging";
-import { UserT } from "./user";
+import type { PagingT } from "src/types/paging";
+import type { UserT } from "src/types/user";
+import type { ConnectionT } from "src/types/connection";
 
 import { makeRequest } from "src/helpers/makeRequest";
-
-export type ConnectionT = {
-  id: number;
-  sender: number;
-  receiver: number;
-  receiverUser: UserT;
-  senderUser: UserT;
-  note: string;
-  pending: boolean;
-  approved: boolean;
-  createdAt: string;
-  updatedAt: string;
-};
 
 type InitialStateT = {
   connections: ConnectionT[];

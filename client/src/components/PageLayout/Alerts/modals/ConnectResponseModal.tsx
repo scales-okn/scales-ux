@@ -3,7 +3,8 @@ import { Link } from "react-router-dom";
 import { Typography, Box } from "@mui/material";
 import { useEffectOnce } from "react-use";
 import { useTheme } from "@mui/material/styles";
-import { useAlert, AlertT } from "src/store/alerts";
+import { useAlert } from "src/store/alerts";
+import type { AlertT } from "src/types/alert";
 import ModalContainer from "src/components/Modals/ModalContainer";
 
 type ConnectResponseModalT = {

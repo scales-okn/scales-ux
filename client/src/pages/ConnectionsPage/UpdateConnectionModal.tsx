@@ -2,7 +2,8 @@ import React from "react";
 import { Button, Box, Typography } from "@mui/material";
 import { useTheme } from "@mui/material/styles";
 
-import { ConnectionT, useConnection } from "src/store/connection";
+import { useConnection } from "src/store/connection";
+import type { ConnectionT } from "src/types/connection";
 import { useSessionUser } from "src/store/auth";
 
 import ModalContainer from "src/components/Modals/ModalContainer";

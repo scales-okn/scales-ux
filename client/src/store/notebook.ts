@@ -6,21 +6,9 @@ import { notify } from "reapop";
 import { useUnknownErrorNotificationMessage } from "src/components/Notifications";
 import { useSelector, useDispatch } from "react-redux";
 import { makeRequest } from "src/helpers/makeRequest";
-import { PagingT } from "src/types/paging";
-import { UserT } from "./user";
-import { TeamT } from "./team";
+import type { PagingT } from "src/types/paging";
+import type { NotebookT } from "src/types/notebook";
 
-export type NotebookT = {
-  id: string;
-  title: string;
-  description: string;
-  createdAt: string;
-  updatedAt: string;
-  userId: string | number;
-  user: UserT;
-  team: TeamT;
-  visibility: string;
-};
 interface InitialState {
   loadingNotebook: boolean;
   creatingNotebook: boolean;
