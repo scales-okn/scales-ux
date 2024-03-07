@@ -14,6 +14,8 @@ import PlaylistRemoveIcon from "@mui/icons-material/PlaylistRemove";
 
 import { useAlert } from "src/store/alerts";
 
+import colorVars from "src/styles/colorVars";
+
 const AlertRow = ({ alert, setModalAlert }) => {
   const { deleteAlert } = useAlert();
 
@@ -156,7 +158,7 @@ const AlertRow = ({ alert, setModalAlert }) => {
           cursor: "default",
 
           "&:hover": {
-            background: "var(--main-purple-lightest)",
+            background: colorVars.mainPurpleLightest,
           },
         }}
       >

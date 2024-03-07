@@ -13,6 +13,7 @@ import {
 } from "@mui/material";
 import { useNotify } from "src/components/Notifications";
 import { makeRequest } from "src/helpers/makeRequest";
+import colorVars from "src/styles/colorVars";
 
 interface ForgotPasswordFields {
   email: string;
@@ -86,7 +87,7 @@ const ForgotPassword = () => {
               <Link
                 href="/sign-in"
                 className="small"
-                style={{ color: "var(--details-blue)" }}
+                style={{ color: colorVars.detailsBlue }}
               >
                 Already have an account? Sign in
               </Link>

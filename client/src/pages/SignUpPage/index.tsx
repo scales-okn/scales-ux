@@ -21,6 +21,7 @@ import Loader from "src/components/Loader";
 import { UserSignInFields } from "../SignInPage";
 import { UserSignUpValidationSchema } from "./schema";
 import { signUpPageStyles } from "./styles";
+import colorVars from "src/styles/colorVars";
 
 interface UserSignUpFields extends UserSignInFields {
   firstName: string;
@@ -254,7 +255,7 @@ const SignUpPage = () => {
                     <Typography variant="body2" className="text-start">
                       <a
                         href="/sign-in"
-                        style={{ color: "var(--details-blue)" }}
+                        style={{ color: colorVars.detailsBlue }}
                       >
                         Already have an account? Sign in
                       </a>

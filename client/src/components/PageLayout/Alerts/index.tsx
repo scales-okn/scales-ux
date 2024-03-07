@@ -15,6 +15,8 @@ import { useTheme } from "@mui/material/styles";
 import AlertRow from "./AlertRow";
 import ModalAlertElement from "./modals";
 
+import colorVars from "src/styles/colorVars";
+
 const NotificationsBell = () => {
   const [anchorEl, setAnchorEl] = React.useState<HTMLButtonElement | null>(
     null,
@@ -98,7 +100,7 @@ const NotificationsBell = () => {
               fontSize: "18px",
 
               "&:hover": {
-                background: "var(--main-purple-lightest)",
+                background: colorVars.mainPurpleLightest,
               },
             },
           }}

@@ -17,6 +17,7 @@ import queryString from "query-string";
 import { authSelector, login } from "src/store/auth";
 
 import { signInPageStyles } from "./styles";
+import colorVars from "src/styles/colorVars";
 
 export interface UserSignInFields {
   email: string;
@@ -134,7 +135,7 @@ const SignInPage = () => {
               variant="body2"
               component="a"
               href="/forgot-password"
-              style={{ color: "var(--details-blue)" }}
+              style={{ color: colorVars.detailsBlue }}
             >
               Forgot password?
             </Typography>
@@ -144,7 +145,7 @@ const SignInPage = () => {
               variant="body2"
               component="a"
               href="/sign-up"
-              style={{ color: "var(--details-blue)" }}
+              style={{ color: colorVars.detailsBlue }}
             >
               {`Don't have an account? Sign Up`}
             </Typography>

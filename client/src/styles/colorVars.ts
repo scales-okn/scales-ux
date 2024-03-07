@@ -1,6 +1,10 @@
 const colorVars = {
-  darkGrey: "rgb(75, 75, 75)", // header of json editor
   grey: "rgb(154, 153, 153)", // body of json editor
+  mainPurple: "#4e2a84",
+  mainPurpleLight: "#915edd",
+  mainPurpleLightest: "#e6d5ff",
+  detailsBlue: "#4879c5",
+  lightGrey: "rgb(248, 249, 250)",
 };
 
 export default colorVars;

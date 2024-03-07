@@ -1,6 +1,7 @@
 import React from "react";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import { Box } from "@mui/material";
+import colorVars from "src/styles/colorVars";
 
 const BackButton = ({ onClick }) => {
   return (
@@ -11,7 +12,7 @@ const BackButton = ({ onClick }) => {
         alignItems: "center",
         cursor: "pointer",
         color: "white",
-        background: "var(--main-purple)",
+        background: colorVars.mainPurple,
         padding: "8px 16px 8px 8px",
         borderRadius: "0 4px 4px 0",
         position: "absolute",

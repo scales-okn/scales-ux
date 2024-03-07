@@ -30,6 +30,7 @@ import DeleteButton from "../Buttons/DeleteButton";
 import DownloadButton from "../Buttons/DownloadButton";
 import { panelHeaderStyles } from "./styles";
 import { useEffectOnce } from "react-use";
+import colorVars from "src/styles/colorVars";
 
 type PanelT = {
   panelId: string;
@@ -246,7 +247,7 @@ const Panel = ({ panelId, defaultCollapsed, sessionUserCanEdit }: PanelT) => {
                 }
               }}
               sx={{
-                background: "var(--light-grey)",
+                background: colorVars.lightGrey,
                 height: "56px",
                 "& fieldset": {
                   borderRadius: "0",

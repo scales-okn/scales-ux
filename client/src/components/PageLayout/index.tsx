@@ -20,6 +20,8 @@ import Alerts from "./Alerts";
 import { styles } from "./styles";
 import { Button } from "@mui/material";
 
+import colorVars from "src/styles/colorVars";
+
 type PageLayoutT = {
   pageTitle?: string;
   id?: string;
@@ -69,8 +71,7 @@ const PageLayout = ({ id = "", children, pageTitle }: PageLayoutT) => {
           <AppBar
             position="static"
             sx={{
-              background:
-                "linear-gradient(to right, var(--main-purple), var(--main-purple-light))",
+              background: `linear-gradient(to right, ${colorVars.mainPurple}, ${colorVars.mainPurpleLight})`,
               display: "flex",
               flexDirection: "row",
               justifyContent: "space-between",

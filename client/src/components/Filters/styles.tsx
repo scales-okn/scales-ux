@@ -1,4 +1,5 @@
 import { css } from "@emotion/css";
+import colorVars from "src/styles/colorVars";
 
 export const filterContainerStyles = css`
   background-color: white;
@@ -69,7 +70,7 @@ export const filterStyles = css`
 
 export const tooltipTitleStyles = css`
   h5 {
-    color: var(--main-purple);
+    color: ${colorVars.mainPurple};
     font-weight: 700;
     margin-bottom: 12px;
   }

@@ -8,7 +8,7 @@ import reportWebVitals from "./reportWebVitals";
 import "./hijackEffects";
 import App from "./App";
 import "../node_modules/bootstrap/scss/bootstrap.scss";
-import "./styles/global.scss";
+import "./styles/global.css";
 
 const container = document.getElementById("root");
 const root = createRoot(container);

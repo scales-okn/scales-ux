@@ -16,6 +16,8 @@ import { useNotify } from "src/components/Notifications";
 
 import { styles } from "./styles";
 
+import colorVars from "src/styles/colorVars";
+
 const FeedbackWidget = () => {
   const [feedbackModalOpen, setFeedbackModalOpen] = useState(false);
   const [isHovered, setIsHovered] = useState(false);
@@ -62,7 +64,7 @@ const FeedbackWidget = () => {
           left: "8px",
           height: "32px",
           width: isHovered ? "120px" : "32px",
-          background: "var(--main-purple-light)",
+          background: colorVars.mainPurpleLight,
           color: "white",
           borderRadius: "6px",
           cursor: "pointer",
@@ -97,7 +99,7 @@ const FeedbackWidget = () => {
           <form onSubmit={formik.handleSubmit}>
             <Box
               sx={{
-                background: "var(--main-purple-light)",
+                background: colorVars.mainPurpleLight,
                 padding: "18px",
               }}
               color="white"

@@ -4,7 +4,7 @@ import { useHelpTexts } from "./store/helpTexts";
 
 import { ErrorBoundary } from "react-error-boundary";
 import { ThemeProvider, createTheme } from "@mui/material/styles";
-import { Button, hexToRgb } from "@mui/material";
+import { Button, hexToRgb, Box } from "@mui/material";
 import ReactGA from "react-ga4";
 
 import { useSessionUser } from "./store/auth";
@@ -76,7 +76,7 @@ const App = () => {
 
   return (
     <ThemeProvider theme={theme}>
-      <div className="app">
+      <Box className="app">
         <ErrorBoundary
           FallbackComponent={ErrorFallback}
           onReset={() => {
@@ -90,7 +90,7 @@ const App = () => {
             </PageLayout>
           </BrowserRouter>
         </ErrorBoundary>
-      </div>
+      </Box>
     </ThemeProvider>
   );
 };

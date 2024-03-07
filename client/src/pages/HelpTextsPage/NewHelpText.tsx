@@ -6,6 +6,7 @@ import * as yup from "yup";
 
 import ModalContainer from "src/components/Modals/ModalContainer";
 import { useHelpTexts } from "src/store/helpTexts";
+import colorVars from "src/styles/colorVars";
 
 type HelpTextFields = {
   slug: string;
@@ -67,7 +68,7 @@ const NewHelpText = () => {
         </Button>
       </div>
       <ModalContainer open={newHelpTextVisible} onClose={onClose}>
-        <h3 style={{ margin: "12px 0 24px 0", color: "var(--main-purple)" }}>
+        <h3 style={{ margin: "12px 0 24px 0", color: colorVars.mainPurple }}>
           Add New Help Text
         </h3>
         <form onSubmit={formik.handleSubmit}>
