@@ -55,6 +55,7 @@ const MobileMenu = ({ drawerOpen, toggleDrawer, isAdmin }: MobileMenuT) => {
             <Divider />
             <List sx={{ margin: "24px", marginLeft: "32px" }}>
               <NavItem linkName="Notebooks" route={"/"} isMobile />
+              <NavItem linkName="Connections" route={"/connections"} isMobile />
               {isAdmin && (
                 <NavItem
                   key={"admin"}
