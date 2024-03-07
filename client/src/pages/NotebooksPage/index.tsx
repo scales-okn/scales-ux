@@ -32,7 +32,6 @@ import Pagination from "src/components/Pagination";
 import Loader from "src/components/Loader";
 import ColumnHeader from "src/components/ColumnHeader";
 
-import "./NotebooksPage.scss";
 import DeleteNotebook from "./DeleteNotebook";
 
 const NotebooksPage = () => {

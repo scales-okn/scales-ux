@@ -15,8 +15,6 @@ import { useRing, useRings } from "src/store/rings";
 
 import Loader from "../Loader";
 
-import "./Dataset.scss";
-
 type DatasetProps = {
   panelId: string;
   sessionUserCanEdit: boolean;
