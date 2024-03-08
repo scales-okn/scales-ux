@@ -101,7 +101,11 @@ const Pagination = ({
           <>
             {!isTablet && (
               <Typography
-                sx={{ marginRight: "12px", color: "rgb(157, 157, 157)" }}
+                sx={{
+                  marginRight: "12px",
+                  color: "rgb(157, 157, 157)",
+                  fontStyle: "italic",
+                }}
               >
                 Showing {startItem.toLocaleString()} -{" "}
                 {endItem.toLocaleString()} of{" "}

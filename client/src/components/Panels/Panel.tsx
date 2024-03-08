@@ -17,7 +17,9 @@ import {
 } from "@mui/material";
 import { DataGrid } from "@mui/x-data-grid";
 import { UnfoldLess, UnfoldMore } from "@mui/icons-material";
+import OpenInNewIcon from "@mui/icons-material/OpenInNew";
 import uniqid from "uniqid";
+import dayjs from "dayjs";
 
 import Pagination from "src/components/Pagination";
 import Filters from "../Filters";
@@ -116,6 +118,27 @@ const Panel = ({ panelId, defaultCollapsed, sessionUserCanEdit }: PanelT) => {
               />
             );
           },
+          renderCell: (item) => {
+            let value = item.value;
+            const dateRegex = /^\d{4}-\d{2}-\d{2}$/;
+            if (dateRegex.test(value)) {
+              value = dayjs(value).format("MMM D, YYYY");
+            }
+            return (
+              <Tooltip title={value}>
+                <Typography
+                  sx={{
+                    overflow: "hidden",
+                    textOverflow: "ellipsis",
+                    whiteSpace: "nowrap",
+                    fontSize: ".85rem",
+                  }}
+                >
+                  {value}
+                </Typography>
+              </Tooltip>
+            );
+          },
         })) || [];
 
     out.unshift({
@@ -131,6 +154,13 @@ const Panel = ({ panelId, defaultCollapsed, sessionUserCanEdit }: PanelT) => {
               rel="noopener noreferrer"
             >
               {item.row.case_id}
+              <OpenInNewIcon
+                sx={{
+                  fontSize: "16px",
+                  marginLeft: "8px",
+                  marginBottom: "2px",
+                }}
+              />
             </Link>
           </Tooltip>
         );
