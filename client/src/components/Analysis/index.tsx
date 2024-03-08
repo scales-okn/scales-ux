@@ -321,24 +321,22 @@ const Analysis = ({ panelId, sessionUserCanEdit }: AnalysisT) => {
             border: "1px solid black",
             color: "black",
             marginRight: "12px",
-            width: "36px",
             height: "36px",
             minWidth: 0,
-          }}
-        >
-          <AddIcon fontSize="medium" />
-        </Button>
-        <Typography
-          sx={{
             color: sessionUserCanEdit ? "black" : "GrayText",
             fontWeight: "600",
-            display: "inline",
+            display: "flex",
+            alignItems: "center",
             textTransform: "uppercase",
-            fontSize: "14px",
+            fontSize: "16px",
           }}
         >
+          <AddIcon
+            fontSize="medium"
+            sx={{ marginRight: "6px", marginBottom: "1px" }}
+          />
           Add Analysis
-        </Typography>
+        </Button>
       </Paper>
     </div>
   );

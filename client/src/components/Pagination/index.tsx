@@ -104,12 +104,13 @@ const Pagination = ({
                 sx={{
                   marginRight: "12px",
                   color: "rgb(157, 157, 157)",
-                  fontStyle: "italic",
                 }}
               >
-                Showing {startItem.toLocaleString()} -{" "}
-                {endItem.toLocaleString()} of{" "}
-                {paging.totalCount.toLocaleString()}
+                Showing{" "}
+                <strong>
+                  {startItem.toLocaleString()} - {endItem.toLocaleString()}
+                </strong>{" "}
+                of <strong>{paging.totalCount.toLocaleString()}</strong>
               </Typography>
             )}
             <Box
