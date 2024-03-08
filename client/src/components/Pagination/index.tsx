@@ -166,6 +166,7 @@ const Pagination = ({
                       cursor:
                         page === paging.currentPage ? "not-allowed" : "pointer",
                       minWidth: "32px",
+                      transition: "all 0.2s",
 
                       "&:hover": {
                         background:

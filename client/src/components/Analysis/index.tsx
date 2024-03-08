@@ -23,6 +23,7 @@ import Statements from "./Statements";
 import { queryBuilder } from "./queryBuilder";
 
 import "./style.scss";
+import colorVars from "src/styles/colorVars";
 
 type AnalysisT = {
   panelId: string;
@@ -328,14 +329,26 @@ const Analysis = ({ panelId, sessionUserCanEdit }: AnalysisT) => {
             display: "flex",
             alignItems: "center",
             textTransform: "uppercase",
-            fontSize: "16px",
+            fontSize: "14px",
+            "*": {
+              transition: ".2s all ease-in-out",
+            },
+            "&:hover": {
+              "*": {
+                color: colorVars.detailsBlue,
+              },
+            },
           }}
         >
           <AddIcon
             fontSize="medium"
-            sx={{ marginRight: "6px", marginBottom: "1px" }}
+            sx={{
+              marginRight: "6px",
+              marginBottom: "1px",
+              transition: ".1s all ease-in-out",
+            }}
           />
-          Add Analysis
+          <Typography>Add Analysis</Typography>
         </Button>
       </Paper>
     </div>

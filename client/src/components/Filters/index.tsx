@@ -5,6 +5,8 @@ import uniqid from "uniqid";
 
 import { usePanel } from "src/store/panels";
 
+import colorVars from "src/styles/colorVars";
+
 import useWindowSize from "src/hooks/useWindowSize";
 
 import { Button, Typography } from "@mui/material";
@@ -93,9 +95,14 @@ const Filters = ({ panelId, sessionUserCanEdit }: FiltersProps) => {
               width: "36px",
               height: "36px",
               minWidth: 0,
+              "&:hover": {
+                "*": {
+                  color: colorVars.detailsBlue,
+                },
+              },
             }}
           >
-            <AddIcon fontSize="medium" />
+            <AddIcon fontSize="medium" sx={{ transition: ".2s all linear" }} />
           </Button>
           {filters?.length > 0 ? null : (
             <Typography
