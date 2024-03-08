@@ -9,7 +9,7 @@ import colorVars from "src/styles/colorVars";
 
 import useWindowSize from "src/hooks/useWindowSize";
 
-import { Button, Typography } from "@mui/material";
+import { Box, Button, Typography } from "@mui/material";
 import Filter from "./Filter";
 
 import { filterContainerStyles } from "./styles";
@@ -77,7 +77,11 @@ const Filters = ({ panelId, sessionUserCanEdit }: FiltersProps) => {
           Update Results
         </Button>
         {filterElements}
-        <div className="d-inline-block">
+        <Box
+          sx={{
+            display: "inline-block",
+          }}
+        >
           <Button
             variant="outlined"
             color="primary"
@@ -116,7 +120,7 @@ const Filters = ({ panelId, sessionUserCanEdit }: FiltersProps) => {
               Add a filter
             </Typography>
           )}
-        </div>
+        </Box>
       </div>
     </div>
   );

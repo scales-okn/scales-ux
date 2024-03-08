@@ -155,7 +155,10 @@ const AdminFeedbackPage = () => {
               }
             }}
             checkboxSelection={false}
-            className="bg-white p-0"
+            sx={{
+              bgcolor: "white",
+              padding: 0,
+            }}
             autoHeight
           />
         </div>

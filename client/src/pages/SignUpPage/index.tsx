@@ -250,18 +250,11 @@ const SignUpPage = () => {
                   </Button>
                 </div>
 
-                <Grid container className="mb-5">
-                  <Grid item xs={12} sm={6}>
-                    <Typography variant="body2" className="text-start">
-                      <a
-                        href="/sign-in"
-                        style={{ color: colorVars.detailsBlue }}
-                      >
-                        Already have an account? Sign in
-                      </a>
-                    </Typography>
-                  </Grid>
-                </Grid>
+                <Typography variant="body2" sx={{ marginTop: "84px" }}>
+                  <a href="/sign-in" style={{ color: colorVars.detailsBlue }}>
+                    Already have an account? Sign in
+                  </a>
+                </Typography>
               </form>
             )}
           </Loader>

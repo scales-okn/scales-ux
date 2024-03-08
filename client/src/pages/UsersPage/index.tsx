@@ -246,7 +246,10 @@ const AdminUsersPages = () => {
             hideFooter
             hideFooterPagination
             checkboxSelection={false}
-            className="bg-white p-0"
+            sx={{
+              bgcolor: "white",
+              padding: 0,
+            }}
             autoHeight
           />
         </div>

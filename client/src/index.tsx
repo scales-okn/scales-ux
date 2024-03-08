@@ -7,7 +7,7 @@ import { Provider } from "react-redux";
 import reportWebVitals from "./reportWebVitals";
 import "./hijackEffects";
 import App from "./App";
-import "../node_modules/bootstrap/scss/bootstrap.scss";
+// import "../node_modules/bootstrap/scss/bootstrap.scss";
 import "./styles/global.css";
 
 const container = document.getElementById("root");

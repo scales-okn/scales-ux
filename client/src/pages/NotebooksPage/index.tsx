@@ -14,6 +14,7 @@ import {
   Grid,
   Switch,
   Button,
+  Box,
   Tooltip,
   Typography,
 } from "@mui/material";
@@ -102,8 +103,14 @@ const NotebooksPage = () => {
       renderHeader,
       renderCell: (params: GridCellParams) => (
         <Tooltip title="View Notebook">
-          <Link to={`/notebooks/${params.row.id}`} className="ms-2">
-            {params.row.title}
+          <Link to={`/notebooks/${params.row.id}`}>
+            <Box
+              sx={{
+                marginLeft: (theme) => theme.spacing(2),
+              }}
+            >
+              {params.row.title}
+            </Box>
           </Link>
         </Tooltip>
       ),
@@ -244,7 +251,7 @@ const NotebooksPage = () => {
             marginTop: "60px",
           }}
         >
-          <Link to="/notebooks/new" className="text-white text-decoration-none">
+          <Link to="/notebooks/new">
             <Button color="primary" variant="contained">
               Create Notebook
             </Button>
@@ -329,8 +336,9 @@ const NotebooksPage = () => {
             hideFooterPagination
             rowCount={notebooks?.length}
             checkboxSelection={false}
-            className="bg-white"
+            sx={{ background: "white" }}
             autoHeight
+            rowHeight={64}
             paginationMode="server"
           />
         </div>

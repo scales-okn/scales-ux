@@ -1,6 +1,6 @@
 import React from "react";
 import { useLocation, useNavigate } from "react-router-dom";
-import { Tabs, Tab, Box } from "@mui/material";
+import { Tabs, Tab, Box, Container } from "@mui/material";
 
 import RingsPage from "src/pages/RingsPage";
 import UsersPage from "src/pages/UsersPage";
@@ -56,9 +56,9 @@ const AdminPage = () => {
           />
         ))}
       </Tabs>
-      <Box className="container" sx={{ paddingTop: "120px" }}>
+      <Container sx={{ paddingTop: "120px" }}>
         {selectedTab.component}
-      </Box>
+      </Container>
     </Box>
   );
 };

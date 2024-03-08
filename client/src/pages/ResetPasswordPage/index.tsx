@@ -8,10 +8,21 @@ const ResetPassword = () => {
       container
       justifyContent="center"
       alignItems="center"
-      className="h-100 text-center"
+      sx={{
+        display: "flex",
+        justifyContent: "center",
+        alignItems: "center",
+        textAlign: "center",
+      }}
     >
       <Grid item md={5}>
-        <Typography variant="h4" className="mb-5 mt-5">
+        <Typography
+          variant="h4"
+          sx={{
+            marginBottom: (theme) => theme.spacing(5),
+            marginTop: (theme) => theme.spacing(5),
+          }}
+        >
           Set a New Password
         </Typography>
         <ResetPasswordForm />

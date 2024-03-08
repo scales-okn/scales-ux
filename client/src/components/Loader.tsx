@@ -30,7 +30,9 @@ const Loader = ({ isVisible = false, size = 60, children }: LoaderT) => {
           }}
         >
           <CircularProgress
-            className="align-self-center"
+            sx={{
+              alignSelf: "center",
+            }}
             size={size}
             thickness={5}
           />

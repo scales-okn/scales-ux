@@ -10,6 +10,7 @@ import {
   FormControlLabel,
   Button,
   Checkbox,
+  Box,
 } from "@mui/material";
 import { useFormik } from "formik";
 import queryString from "query-string";
@@ -92,7 +93,12 @@ const SignInPage = () => {
             className="input"
           />
         </div>
-        <div className="form-floating mb-3">
+        <Box
+          sx={{
+            position: "relative",
+            marginBottom: "1rem",
+          }}
+        >
           <TextField
             fullWidth
             type="password"
@@ -105,7 +111,7 @@ const SignInPage = () => {
             helperText={formik.touched.password && formik.errors?.password}
             className="input"
           />
-        </div>
+        </Box>
 
         <div className="buttonRow">
           <FormControlLabel
@@ -129,7 +135,13 @@ const SignInPage = () => {
             Sign in
           </Button>
         </div>
-        <Grid container justifyContent="space-between" className="mb-5">
+        <Grid
+          container
+          justifyContent="space-between"
+          sx={{
+            marginBottom: (theme) => theme.spacing(5),
+          }}
+        >
           <Grid item xs={6}>
             <Typography
               variant="body2"

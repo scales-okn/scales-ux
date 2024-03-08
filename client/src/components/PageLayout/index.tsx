@@ -83,7 +83,7 @@ const PageLayout = ({ id = "", children, pageTitle }: PageLayoutT) => {
           >
             <Button
               aria-label="menu"
-              sx={{ width: isTablet ? "40px" : "160px" }}
+              sx={{ width: isTablet ? "40px" : "160px", marginTop: "6px" }}
             >
               {isTablet ? (
                 <MenuIcon

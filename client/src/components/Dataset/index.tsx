@@ -54,8 +54,10 @@ const Dataset = ({ panelId, sessionUserCanEdit }: DatasetProps) => {
   return (
     <Loader isVisible={loadingRings}>
       <Container
-        className="bg-light border p-5 mb-4"
         sx={{
+          padding: "3rem",
+          background: "white",
+          marginBottom: "1.5rem",
           "*": {
             transition: ".2s all",
           },
@@ -113,7 +115,15 @@ const Dataset = ({ panelId, sessionUserCanEdit }: DatasetProps) => {
 
         <Loader isVisible={ring && loadingRingInfo}>
           <Grid container justifyContent="center">
-            <Grid item xs={12} sm={6} className="justify-content-center d-flex">
+            <Grid
+              item
+              xs={12}
+              sm={6}
+              sx={{
+                display: "flex",
+                justifyContent: "center",
+              }}
+            >
               {ring && loadingRingInfo ? (
                 <div style={{ marginTop: "12px" }} />
               ) : (
