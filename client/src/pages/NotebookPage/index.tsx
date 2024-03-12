@@ -34,6 +34,7 @@ import Loader from "src/components/Loader";
 import Panels from "src/components/Panels";
 import DuplicateNotebookModal from "./DuplicateNotebookModal";
 import ShareLinkModal from "./ShareLinkModal";
+import ActionButton from "./ActionButton";
 
 const Notebook = () => {
   const { getRings } = useRings();
@@ -217,62 +218,18 @@ const Notebook = () => {
                   marginTop: isMobile ? "12px" : 0,
                 }}
               >
-                {/* TODO: Componentize */}
                 {notebook.visibility === "public" ? (
-                  <Tooltip title="Share Link to Notebook">
-                    <Box
-                      sx={{
-                        border: `1px solid ${theme.palette.info.main}`,
-                        borderRadius: "4px",
-                        padding: "4px",
-                        height: "36px",
-                        width: "36px",
-                        marginRight: "10px",
-                        display: "flex",
-                        alignItems: "center",
-                        justifyContent: "center",
-                        cursor: "pointer",
-                        transition: ".2s all",
-
-                        "&:hover": {
-                          border: `1px solid ${theme.palette.info.dark}`,
-                          background: "#60118e1a",
-                        },
-                      }}
-                      onClick={() => setShareLinkModalOpen(true)}
-                    >
-                      <IosShareIcon color="info" sx={{ fontSize: "22px" }} />
-                    </Box>
-                  </Tooltip>
+                  <ActionButton
+                    setOpen={() => setShareLinkModalOpen(true)}
+                    tooltipTitle="Share Link to Notebook"
+                    type="share"
+                  />
                 ) : null}
-                <Tooltip title="Make a Copy">
-                  <Box
-                    sx={{
-                      border: `1px solid ${theme.palette.success.main}`,
-                      borderRadius: "4px",
-                      padding: "4px",
-                      height: "36px",
-                      width: "36px",
-                      marginRight: "10px",
-                      display: "flex",
-                      alignItems: "center",
-                      justifyContent: "center",
-                      cursor: "pointer",
-                      transition: ".2s all",
-
-                      "&:hover": {
-                        border: `1px solid ${theme.palette.success.dark}`,
-                        background: "#118e151a",
-                      },
-                    }}
-                    onClick={() => setCopyModalOpen(true)}
-                  >
-                    <ContentCopyIcon
-                      color="success"
-                      sx={{ fontSize: "22px" }}
-                    />
-                  </Box>
-                </Tooltip>
+                <ActionButton
+                  setOpen={() => setCopyModalOpen(true)}
+                  tooltipTitle="Make a Copy"
+                  type="copy"
+                />
                 <DeleteButton
                   onClick={() => setConfirmVisible(true)}
                   disabled={deletingNotebook || updatesDisabled}

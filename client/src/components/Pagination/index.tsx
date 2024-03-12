@@ -85,7 +85,6 @@ const Pagination = ({
         alignItems: "center",
         justifyContent: "space-between",
         padding: "12px 18px",
-        boxSizing: "border-box",
         borderRadius: "4px",
         boxShadow: "2px 2px 4px rgba(0, 0, 0, 0.05)",
       }}

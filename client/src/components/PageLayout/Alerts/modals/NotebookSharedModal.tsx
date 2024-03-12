@@ -72,12 +72,10 @@ const NotebookSharedModal = ({
       >
         <Typography>
           To view this notebook,{" "}
-          <Link
-            to={`/notebooks/${alert.notebook.id}`}
-            style={{ textDecoration: "none" }}
-            onClick={onClose}
-          >
-            <span style={{ color: "#0b44bfd2" }}>click here</span>
+          <Link to={`/notebooks/${alert.notebook.id}`} onClick={onClose}>
+            <Typography sx={{ color: "#0b44bfd2", fontSize: "14px" }}>
+              click here
+            </Typography>
           </Link>
         </Typography>
       </Typography>

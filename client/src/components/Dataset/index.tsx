@@ -8,6 +8,7 @@ import {
   Select,
   Button,
   Typography,
+  Box,
 } from "@mui/material";
 
 import { usePanel } from "src/store/panels";
@@ -58,6 +59,8 @@ const Dataset = ({ panelId, sessionUserCanEdit }: DatasetProps) => {
           padding: "3rem",
           background: "white",
           marginBottom: "1.5rem",
+          marginTop: "24px",
+
           "*": {
             transition: ".2s all",
           },
@@ -71,7 +74,7 @@ const Dataset = ({ panelId, sessionUserCanEdit }: DatasetProps) => {
           }}
         >
           <Typography
-            style={{
+            sx={{
               fontSize: "18px",
               marginRight: "18px",
               textAlign: "center",
@@ -101,11 +104,7 @@ const Dataset = ({ panelId, sessionUserCanEdit }: DatasetProps) => {
           >
             {rings?.map((ring, index) => (
               <MenuItem key={index} value={ring.name}>
-                <Tooltip
-                  title={
-                    <span style={{ fontSize: "16px" }}>{ring.description}</span>
-                  }
-                >
+                <Tooltip title={<Typography>{ring.description}</Typography>}>
                   <span>{ring.name}</span>
                 </Tooltip>
               </MenuItem>
@@ -125,7 +124,7 @@ const Dataset = ({ panelId, sessionUserCanEdit }: DatasetProps) => {
               }}
             >
               {ring && loadingRingInfo ? (
-                <div style={{ marginTop: "12px" }} />
+                <Box sx={{ marginTop: "12px" }} />
               ) : (
                 <Button
                   variant="contained"

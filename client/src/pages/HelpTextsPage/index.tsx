@@ -146,7 +146,7 @@ const HelpTextsPage = () => {
       {!isAdmin ? (
         <NotAuthorized />
       ) : (
-        <div style={{ paddingBottom: "80px", margin: "0 auto" }}>
+        <Box sx={{ paddingBottom: "80px", margin: "0 auto" }}>
           <DataGrid
             rows={rows}
             columns={columns}
@@ -162,7 +162,7 @@ const HelpTextsPage = () => {
             }}
             autoHeight
           />
-        </div>
+        </Box>
       )}
     </>
   );

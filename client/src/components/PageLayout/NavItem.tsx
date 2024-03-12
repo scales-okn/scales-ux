@@ -57,7 +57,7 @@ const NavItem = ({ linkName, route, isMobile, disableUnderline }: NavItemT) => {
         },
       }}
     >
-      <Link to={route} style={{ textDecoration: "none" }}>
+      <Link to={route}>
         <div className="nav-item">{linkName}</div>
       </Link>
     </Box>

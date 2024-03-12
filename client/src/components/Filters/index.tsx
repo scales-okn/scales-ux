@@ -68,7 +68,7 @@ const Filters = ({ panelId, sessionUserCanEdit }: FiltersProps) => {
           variant="contained"
           disabled={!sessionUserCanEdit}
           onClick={handleUpdateResults}
-          style={{
+          sx={{
             position: isTablet ? "relative" : "absolute",
             ...(isTablet ? {} : { right: "16px" }),
             ...(isTablet ? {} : { top: filters?.length > 0 ? "32px" : "24px" }),

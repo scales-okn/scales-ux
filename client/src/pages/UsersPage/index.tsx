@@ -199,8 +199,8 @@ const AdminUsersPages = () => {
       {!isAdmin ? (
         <NotAuthorized />
       ) : (
-        <div
-          style={{
+        <Box
+          sx={{
             minHeight: "300px",
             width: "100%",
             margin: "0 auto",
@@ -252,7 +252,7 @@ const AdminUsersPages = () => {
             }}
             autoHeight
           />
-        </div>
+        </Box>
       )}
     </Box>
   );

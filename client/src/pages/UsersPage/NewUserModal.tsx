@@ -72,7 +72,7 @@ const NewUser = () => {
   return (
     <>
       <Box
-        style={{
+        sx={{
           display: "flex",
           alignItems: "center",
           justifyContent: "flex-end",
@@ -96,17 +96,12 @@ const NewUser = () => {
           </Button>
         </Grid>
       </Box>
-      <ModalContainer open={newUserModalVisible} onClose={onClose}>
-        <Typography
-          sx={{
-            fontSize: "32px",
-            textAlign: "center",
-            marginBottom: "24px",
-            color: theme.palette.primary.main,
-          }}
-        >
-          Add New User
-        </Typography>
+      <ModalContainer
+        open={newUserModalVisible}
+        onClose={onClose}
+        title="Add New User"
+        subtitle="New users will receive an email with their login credentials. Users created here will be immediately active and will not need to confirm via email."
+      >
         <form onSubmit={formik.handleSubmit}>
           <Grid container spacing={2}>
             <Grid item xs={6}>

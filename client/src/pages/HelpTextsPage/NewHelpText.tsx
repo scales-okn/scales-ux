@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { TextField, Grid, Button } from "@mui/material";
+import { TextField, Grid, Button, Typography, Box } from "@mui/material";
 
 import { useFormik } from "formik";
 import * as yup from "yup";
@@ -51,8 +51,8 @@ const NewHelpText = () => {
 
   return (
     <>
-      <div
-        style={{
+      <Box
+        sx={{
           display: "flex",
           alignItems: "center",
           justifyContent: "flex-end",
@@ -62,15 +62,16 @@ const NewHelpText = () => {
           color="primary"
           variant="contained"
           onClick={() => setNewHelpTextVisible(true)}
-          style={{ marginBottom: "24px" }}
+          sx={{ marginBottom: "24px" }}
         >
           Add Help Text
         </Button>
-      </div>
-      <ModalContainer open={newHelpTextVisible} onClose={onClose}>
-        <h3 style={{ margin: "12px 0 24px 0", color: colorVars.mainPurple }}>
-          Add New Help Text
-        </h3>
+      </Box>
+      <ModalContainer
+        open={newHelpTextVisible}
+        onClose={onClose}
+        title="Add New Help Text"
+      >
         <form onSubmit={formik.handleSubmit}>
           <Grid container spacing={2}>
             <Grid item xs={12}>

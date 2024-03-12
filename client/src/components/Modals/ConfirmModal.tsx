@@ -54,7 +54,7 @@ const ConfirmModal = ({
             variant="contained"
             color="error"
             onClick={onConfirm}
-            style={{ color: "white" }}
+            sx={{ color: "white" }}
           >
             Delete
           </Button>

@@ -141,7 +141,7 @@ const AdminFeedbackPage = () => {
       {!isAdmin ? (
         <NotAuthorized />
       ) : (
-        <div style={{ paddingBottom: "80px" }}>
+        <Box sx={{ paddingBottom: "80px" }}>
           <DataGrid
             rows={rows}
             columns={columns}
@@ -161,7 +161,7 @@ const AdminFeedbackPage = () => {
             }}
             autoHeight
           />
-        </div>
+        </Box>
       )}
     </>
   );

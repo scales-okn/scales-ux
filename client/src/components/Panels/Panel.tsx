@@ -152,14 +152,15 @@ const Panel = ({ panelId, defaultCollapsed, sessionUserCanEdit }: PanelT) => {
               target="_blank"
               rel="noopener noreferrer"
             >
-              {item.row.case_id}
-              <OpenInNewIcon
-                sx={{
-                  fontSize: "16px",
-                  marginLeft: "8px",
-                  marginBottom: "2px",
-                }}
-              />
+              <Box sx={{ display: "flex", alignItems: "center" }}>
+                {item.row.case_id}
+                <OpenInNewIcon
+                  sx={{
+                    fontSize: "16px",
+                    marginLeft: "8px",
+                  }}
+                />
+              </Box>
             </Link>
           </Tooltip>
         );
@@ -213,11 +214,11 @@ const Panel = ({ panelId, defaultCollapsed, sessionUserCanEdit }: PanelT) => {
           borderRadius: "4px 4px 0 0",
           boxShadow: "0px 1px 8px rgba(0, 0, 0, 0.06)",
           padding: "1rem",
-          boxSizing: "border-box",
           position: "relative",
           width: "100%",
           zIndex: 1,
           height: "80px",
+          marginTop: "24px",
           ".buttonRow": {
             display: "flex",
             alignItems: "center",
@@ -285,9 +286,6 @@ const Panel = ({ panelId, defaultCollapsed, sessionUserCanEdit }: PanelT) => {
                 setPanelDescription(event.target.value);
               }}
               value={panel?.description || ""}
-              style={{
-                fontSize: "0.9rem",
-              }}
               className="description"
               onBlur={() => {
                 if (panel?.description !== description) {
@@ -303,6 +301,7 @@ const Panel = ({ panelId, defaultCollapsed, sessionUserCanEdit }: PanelT) => {
                   borderTop: "none",
                   borderLeft: "none",
                   borderRight: "none",
+                  fontSize: "0.9rem",
                 },
               }}
             />
@@ -326,8 +325,8 @@ const Panel = ({ panelId, defaultCollapsed, sessionUserCanEdit }: PanelT) => {
                 <Accordion expanded={resultsCollapsed === true}>
                   <AccordionDetails sx={{ padding: "0px" }}>
                     <>
-                      <div
-                        style={{
+                      <Box
+                        sx={{
                           width: "100%",
                           overflowX: "hidden",
                         }}
@@ -377,7 +376,7 @@ const Panel = ({ panelId, defaultCollapsed, sessionUserCanEdit }: PanelT) => {
                             />
                           </>
                         )}
-                      </div>
+                      </Box>
                       <Box
                         sx={{
                           padding: "18px",

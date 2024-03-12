@@ -88,8 +88,8 @@ const ForgotPassword = () => {
               helperText={formik.touched.email && formik.errors?.email}
               sx={{ marginBottom: "24px", background: "white" }}
             />
-            <div
-              style={{
+            <Box
+              sx={{
                 display: "flex",
                 justifyContent: "space-between",
               }}
@@ -104,7 +104,7 @@ const ForgotPassword = () => {
               <Button color="primary" variant="contained" type="submit">
                 Submit
               </Button>
-            </div>
+            </Box>
           </Box>
         </Grid>
       </Grid>

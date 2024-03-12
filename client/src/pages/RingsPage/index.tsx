@@ -108,8 +108,8 @@ const RingsPage = () => {
               Create Ring
             </Button>
           </Link>
-          <div
-            style={{
+          <Box
+            sx={{
               height: "60vh",
               width: "100%",
               margin: "0 auto",
@@ -130,7 +130,7 @@ const RingsPage = () => {
               }}
               autoHeight
             />
-          </div>
+          </Box>
         </Box>
       </Loader>
     </>

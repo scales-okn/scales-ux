@@ -171,8 +171,8 @@ const ConnectionsTable = () => {
   return (
     <Box sx={{ paddingBottom: "80px" }}>
       <NewConnectionModal />
-      <div
-        style={{
+      <Box
+        sx={{
           minHeight: "300px",
           width: "100%",
           margin: "0 auto",
@@ -225,7 +225,7 @@ const ConnectionsTable = () => {
           }}
           autoHeight
         />
-      </div>
+      </Box>
       <UpdateConnectionModal
         connectionDetail={connectionDetail}
         setConnectionDetail={setConnectionDetail}

@@ -225,12 +225,12 @@ const NotebooksPage = () => {
             renderCell: (params: GridCellParams) => {
               const canDelete = params.row.userId === user.id || isAdmin;
               return (
-                <div style={{ paddingLeft: "5px" }}>
+                <Box sx={{ paddingLeft: "5px" }}>
                   <DeleteNotebook
                     notebookId={params.row.id}
                     disabled={!canDelete}
                   />
-                </div>
+                </Box>
               );
             },
             renderHeader,
@@ -258,8 +258,8 @@ const NotebooksPage = () => {
           </Link>
         </Grid>
 
-        <div
-          style={{
+        <Box
+          sx={{
             width: "100%",
             paddingBottom: "80px",
             marginTop: "24px",
@@ -341,7 +341,7 @@ const NotebooksPage = () => {
             rowHeight={64}
             paginationMode="server"
           />
-        </div>
+        </Box>
       </>
     </Loader>
   );

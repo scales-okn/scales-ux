@@ -13,18 +13,16 @@ const BackButton = ({ onClick }) => {
         cursor: "pointer",
         color: "white",
         background: colorVars.mainPurple,
-        padding: "8px 16px 8px 8px",
+        padding: "8px",
         borderRadius: "0 4px 4px 0",
         position: "absolute",
         top: "80px",
         left: "0",
         opacity: "0.8",
         transition: "background 0.2s ease-in-out",
-        width: "38px",
       }}
     >
       <ArrowBackIcon sx={{ fontSize: "22px" }} />
-      <div style={{ marginLeft: "6px" }}></div>
     </Box>
   );
 };
