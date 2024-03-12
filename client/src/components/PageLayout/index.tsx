@@ -139,12 +139,15 @@ const PageLayout = ({ id = "", children, pageTitle }: PageLayoutT) => {
           </AppBar>
         </Box>
 
-        <Container
+        <Box
           id="main"
           className="main"
           sx={{
-            marginTop: "128px",
             minHeight: "70vh",
+            padding: "0 5%",
+            maxWidth: "3000px",
+            margin: "0 auto",
+            marginTop: "128px",
             ...((isAdminView || isConnectionsView) && {
               marginTop: "64px",
               maxWidth: "100% !important",
@@ -154,7 +157,7 @@ const PageLayout = ({ id = "", children, pageTitle }: PageLayoutT) => {
         >
           {pageTitle && <h4>{pageTitle}</h4>}
           {children}
-        </Container>
+        </Box>
       </div>
       {isTablet && (
         <MobileMenu

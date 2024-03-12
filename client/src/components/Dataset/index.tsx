@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from "react";
 
 import {
-  Container,
   Grid,
   Tooltip,
   MenuItem,
@@ -54,7 +53,7 @@ const Dataset = ({ panelId, sessionUserCanEdit }: DatasetProps) => {
 
   return (
     <Loader isVisible={loadingRings}>
-      <Container
+      <Box
         sx={{
           padding: "3rem",
           background: "white",
@@ -141,7 +140,7 @@ const Dataset = ({ panelId, sessionUserCanEdit }: DatasetProps) => {
             </Grid>
           </Grid>
         </Loader>
-      </Container>
+      </Box>
     </Loader>
   );
 };

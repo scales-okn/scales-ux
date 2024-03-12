@@ -108,6 +108,7 @@ const Panel = ({ panelId, defaultCollapsed, sessionUserCanEdit }: PanelT) => {
           field: column.key,
           headerName: column.nicename,
           width: 200,
+          flex: 1,
           renderHeader: (params) => {
             return (
               <ColumnHeader
@@ -144,6 +145,7 @@ const Panel = ({ panelId, defaultCollapsed, sessionUserCanEdit }: PanelT) => {
       field: "button",
       headerName: "Docket ID",
       width: 180,
+      flex: 1,
       renderCell: (item) => {
         return (
           <Tooltip title="Open Docket in New Tab">

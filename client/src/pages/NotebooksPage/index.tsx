@@ -19,6 +19,7 @@ import {
   Typography,
 } from "@mui/material";
 import SearchIcon from "@mui/icons-material/Search";
+import ArrowOutwardIcon from "@mui/icons-material/ArrowOutward";
 import dayjs from "dayjs";
 
 import { sessionUserSelector } from "src/store/auth";
@@ -112,9 +113,11 @@ const NotebooksPage = () => {
                 fontSize: "16px",
                 display: "flex",
                 alignItems: "center",
+                textDecoration: "underline",
               }}
             >
               {params.row.title}
+              <ArrowOutwardIcon sx={{ fontSize: "16px", marginLeft: "4px" }} />
             </Box>
           </Link>
         </Tooltip>
