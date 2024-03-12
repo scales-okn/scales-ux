@@ -1,11 +1,5 @@
 import React, { useState } from "react";
-import {
-  Modal,
-  TextareaAutosize,
-  Typography,
-  Box,
-  Button,
-} from "@mui/material";
+import { TextField, Typography, Box, Button } from "@mui/material";
 import ErrorOutlineIcon from "@mui/icons-material/ErrorOutline";
 import { useFormik } from "formik";
 import * as yup from "yup";
@@ -17,6 +11,7 @@ import { useNotify } from "src/components/Notifications";
 import { styles } from "./styles";
 
 import colorVars from "src/styles/colorVars";
+import ModalContainer from "../Modals/ModalContainer";
 
 const FeedbackWidget = () => {
   const [feedbackModalOpen, setFeedbackModalOpen] = useState(false);
@@ -85,53 +80,40 @@ const FeedbackWidget = () => {
           <ErrorOutlineIcon />
         )}
       </Box>
-      <Modal
+      <ModalContainer
         open={feedbackModalOpen}
         onClose={() => setFeedbackModalOpen(false)}
-        sx={{
-          maxWidth: "500px",
-          width: "100%",
-          margin: "0 auto",
-          marginTop: "160px",
-        }}
+        paperStyles={{ maxWidth: "600px" }}
+        title="Report Bug / Suggest Feature"
+        subtitle="We'd love to hear from you! Please let us know what's on your mind. Specifics are very helpful: Who, What, Where, When, Why"
       >
-        <div style={{ background: "white", outline: "none" }}>
+        <>
           <form onSubmit={formik.handleSubmit}>
-            <Box
+            <TextField
+              name="body"
+              placeholder="Type your feedback here"
+              onChange={formik.handleChange}
+              value={formik.values.body}
+              multiline
+              rows={8}
               sx={{
-                background: colorVars.mainPurpleLight,
-                padding: "18px",
+                width: "100%",
+                padding: "12px",
+                marginBottom: "24px",
               }}
-              color="white"
-            >
-              <Typography variant="h6">
-                Report a Bug or Suggest a Feature
-              </Typography>
-            </Box>
-            <Box sx={{ padding: "36px 18px" }}>
-              <TextareaAutosize
-                name="body"
-                placeholder="Specifics are very helpful: Who, What, Where, When, Why"
-                onChange={formik.handleChange}
-                value={formik.values.body}
-                style={{
-                  width: "100%",
-                  minHeight: "250px",
-                  padding: "12px ",
-                }}
-              />
-              {formik.touched.body && formik.errors.body && (
-                <Typography color="error">{formik.errors.body}</Typography>
-              )}
-            </Box>
+            />
+            {formik.touched.body && formik.errors.body && (
+              <Typography color="error">{formik.errors.body}</Typography>
+            )}
+
             <Box sx={{ padding: "0px 18px 24px 0px" }} textAlign="right">
               <Button color="info" variant="contained" type="submit">
                 Submit
               </Button>
             </Box>
           </form>
-        </div>
-      </Modal>
+        </>
+      </ModalContainer>
     </div>
   );
 };

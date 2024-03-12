@@ -13,6 +13,8 @@ import {
 } from "recharts";
 import dayjs from "dayjs";
 import _ from "lodash";
+import Typography from "@mui/material/Typography";
+import Box from "@mui/material/Box";
 
 import getRandomColor from "src/helpers/getRandomColor";
 import { formatXUnits, stringIsNumber } from "src/helpers/stringHelpers";
@@ -116,11 +118,13 @@ const Answers = ({
   }, [containerWidth, expanded, xLabels.length]);
 
   return (
-    <div
-      style={{ width: chartWidth, background: "white" }}
+    <Box
+      sx={{ width: chartWidth, background: "white" }}
       id={`data-chart-${panelId}`}
     >
-      {answerText}
+      <Typography variant="h6" sx={{ fontWeight: 600 }}>
+        {answerText}
+      </Typography>
       <ResponsiveContainer height="80%">
         <LineChart margin={chartMargins}>
           <XAxis
@@ -200,7 +204,7 @@ const Answers = ({
           })}
         </LineChart>
       </ResponsiveContainer>
-    </div>
+    </Box>
   );
 };
 

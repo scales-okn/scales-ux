@@ -74,6 +74,7 @@ const EmailSettingsModal = ({
         onClose={() => setVisible(false)}
         paperStyles={{ maxWidth: "500px" }}
         title="Email Settings"
+        subtitle="Choose which events you'd like to receive email notifications for. These settings can be updated at any time and changes will take effect immediately."
       >
         <Typography
           variant="h6"

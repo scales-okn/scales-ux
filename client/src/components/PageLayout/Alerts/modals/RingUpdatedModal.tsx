@@ -68,8 +68,10 @@ const RingUpdatedModal = ({ open, onClose, alert }: RingUpdatedModalT) => {
       >
         <Typography>
           To view rings,{" "}
-          <Link to={`/rings`} style={{ textDecoration: "none" }}>
-            <span style={{ color: "#0b44bfd2" }}>click here</span>
+          <Link to={`/rings`}>
+            <Typography sx={{ color: "#0b44bfd2", fontSize: "14px" }}>
+              click here
+            </Typography>
           </Link>
         </Typography>
       </Typography>

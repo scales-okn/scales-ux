@@ -4,7 +4,7 @@ import { useHelpTexts } from "./store/helpTexts";
 
 import { ErrorBoundary } from "react-error-boundary";
 import { ThemeProvider, createTheme } from "@mui/material/styles";
-import { Button, hexToRgb, Box } from "@mui/material";
+import { Button, hexToRgb, Box, Typography } from "@mui/material";
 import ReactGA from "react-ga4";
 
 import { useSessionUser } from "./store/auth";
@@ -15,20 +15,20 @@ import Notifications from "src/components/Notifications";
 const theme = createTheme({
   palette: {
     primary: {
-      main: hexToRgb("#4c79db"),
-      dark: hexToRgb("#0b44bfd2"),
+      main: hexToRgb("#4e77cf"),
+      dark: hexToRgb("#1e3c7e"),
     },
     success: {
-      main: hexToRgb("#099E0F"),
-      dark: hexToRgb("#087e0c"),
+      main: hexToRgb("#1e9722"),
+      dark: hexToRgb("#1a7f1d"),
     },
     error: {
-      main: hexToRgb("#EB3C1A"),
-      dark: hexToRgb("#c2192c"),
+      main: hexToRgb("#c0462e"),
+      dark: hexToRgb("#9c1323"),
     },
     info: {
-      main: hexToRgb("#915edd"),
-      dark: hexToRgb("#a268f9"),
+      main: hexToRgb("#7e56b9"),
+      dark: hexToRgb("#6d4b9f"),
     },
   },
 });
@@ -36,8 +36,8 @@ const theme = createTheme({
 const ErrorFallback = ({ error, resetErrorBoundary }) => {
   return (
     <div role="alert">
-      <div
-        style={{
+      <Box
+        sx={{
           display: "flex",
           flexDirection: "column",
           alignContent: "center",
@@ -48,11 +48,13 @@ const ErrorFallback = ({ error, resetErrorBoundary }) => {
         }}
       >
         <h3>Something went wrong:</h3>
-        <h6 style={{ marginBottom: "36px" }}>{error.message}</h6>
+        <Typography variant="h6" sx={{ marginBottom: "36px" }}>
+          {error.message}
+        </Typography>
         <Button variant="contained" onClick={resetErrorBoundary}>
           Try again
         </Button>
-      </div>
+      </Box>
     </div>
   );
 };

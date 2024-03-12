@@ -1,4 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
+import { Box, Typography } from "@mui/material";
 import React, { memo } from "react";
 import {
   Label,
@@ -73,11 +74,13 @@ const LineChartDisplay = ({
   };
 
   return (
-    <div
-      style={{ width: chartWidth, background: "white" }}
+    <Box
+      sx={{ width: chartWidth, background: "white" }}
       id={`data-chart-${panelId}`}
     >
-      {answerText}
+      <Typography variant="h6" sx={{ fontWeight: 600 }}>
+        {answerText}
+      </Typography>
       <ResponsiveContainer>
         <LineChart
           data={data.results.map((result) => {
@@ -134,7 +137,7 @@ const LineChartDisplay = ({
                   /> */}
         </LineChart>
       </ResponsiveContainer>
-    </div>
+    </Box>
   );
 };
 

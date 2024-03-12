@@ -1,13 +1,13 @@
 import React, { useEffect, useState } from "react";
 
 import {
-  Container,
   Grid,
   Tooltip,
   MenuItem,
   Select,
   Button,
   Typography,
+  Box,
 } from "@mui/material";
 
 import { usePanel } from "src/store/panels";
@@ -53,9 +53,13 @@ const Dataset = ({ panelId, sessionUserCanEdit }: DatasetProps) => {
 
   return (
     <Loader isVisible={loadingRings}>
-      <Container
-        className="bg-light border p-5 mb-4"
+      <Box
         sx={{
+          padding: "3rem",
+          background: "white",
+          marginBottom: "1.5rem",
+          marginTop: "24px",
+
           "*": {
             transition: ".2s all",
           },
@@ -69,7 +73,7 @@ const Dataset = ({ panelId, sessionUserCanEdit }: DatasetProps) => {
           }}
         >
           <Typography
-            style={{
+            sx={{
               fontSize: "18px",
               marginRight: "18px",
               textAlign: "center",
@@ -99,11 +103,7 @@ const Dataset = ({ panelId, sessionUserCanEdit }: DatasetProps) => {
           >
             {rings?.map((ring, index) => (
               <MenuItem key={index} value={ring.name}>
-                <Tooltip
-                  title={
-                    <span style={{ fontSize: "16px" }}>{ring.description}</span>
-                  }
-                >
+                <Tooltip title={<Typography>{ring.description}</Typography>}>
                   <span>{ring.name}</span>
                 </Tooltip>
               </MenuItem>
@@ -113,9 +113,17 @@ const Dataset = ({ panelId, sessionUserCanEdit }: DatasetProps) => {
 
         <Loader isVisible={ring && loadingRingInfo}>
           <Grid container justifyContent="center">
-            <Grid item xs={12} sm={6} className="justify-content-center d-flex">
+            <Grid
+              item
+              xs={12}
+              sm={6}
+              sx={{
+                display: "flex",
+                justifyContent: "center",
+              }}
+            >
               {ring && loadingRingInfo ? (
-                <div style={{ marginTop: "12px" }} />
+                <Box sx={{ marginTop: "12px" }} />
               ) : (
                 <Button
                   variant="contained"
@@ -132,7 +140,7 @@ const Dataset = ({ panelId, sessionUserCanEdit }: DatasetProps) => {
             </Grid>
           </Grid>
         </Loader>
-      </Container>
+      </Box>
     </Loader>
   );
 };

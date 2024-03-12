@@ -3,7 +3,7 @@ import { usePanel } from "src/store/panels";
 
 import dayjs from "dayjs";
 import { isEmpty } from "lodash";
-import { Button, Tooltip, Box } from "@mui/material";
+import { Button, Tooltip, Box, Typography } from "@mui/material";
 import { CameraAlt, UnfoldLess, UnfoldMore } from "@mui/icons-material";
 import * as htmlToImage from "html-to-image";
 import download from "downloadjs";
@@ -169,14 +169,14 @@ const Answers = ({
         <Loader isVisible={loadingAnswers}>
           <>
             {!isEmpty(data) && answer && (
-              <div
-                style={{
+              <Box
+                sx={{
                   overflowX: "auto",
-                  overflowY: "visible",
                   marginTop: "48px",
+                  padding: "12px 0",
                 }}
               >
-                {plainTextAnswer ? answerText : null}
+                <Typography>{plainTextAnswer ? answerText : null}</Typography>
                 {isBarChart && (
                   <BarChartDisplay
                     data={data}
@@ -209,7 +209,7 @@ const Answers = ({
                     answerText={answerText}
                   />
                 )}
-              </div>
+              </Box>
             )}
           </>
         </Loader>

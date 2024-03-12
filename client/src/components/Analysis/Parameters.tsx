@@ -77,9 +77,6 @@ const Parameters = ({
                   disableScrollLock: true,
                 }}
                 sx={{
-                  "*": {
-                    fontWeight: 600,
-                  },
                   "& .MuiSelect-select": {
                     paddingLeft: "24px",
                   },

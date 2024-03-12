@@ -34,9 +34,6 @@ const Statements = ({
             }}
             sx={{
               minWidth: "300px",
-              "*": {
-                fontWeight: 600,
-              },
             }}
             placeholder="Search or select a statement..."
           />

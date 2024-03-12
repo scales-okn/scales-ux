@@ -95,7 +95,9 @@ const TeamModal = ({ open, onClose, alert, added }: TeamModalT) => {
           <Typography>
             To view this team,{" "}
             <Link to={`/connections/teams`} onClick={onClose}>
-              <span style={{ color: "#0b44bfd2" }}>click here</span>
+              <Typography sx={{ color: "#0b44bfd2", fontSize: "14px" }}>
+                click here
+              </Typography>
             </Link>
           </Typography>
         ) : (

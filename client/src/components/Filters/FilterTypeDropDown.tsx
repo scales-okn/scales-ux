@@ -142,7 +142,13 @@ const FilterTypeDropDown = ({
         disableScrollLock={true}
       >
         <MenuItem>
-          <ListItemText className="text-muted fs-6 ms-3">
+          <ListItemText
+            sx={{
+              color: "text.secondary",
+              fontSize: "0.75rem",
+              marginLeft: "1rem",
+            }}
+          >
             <small>Select a filter type...</small>
           </ListItemText>
         </MenuItem>
@@ -159,12 +165,21 @@ const FilterTypeDropDown = ({
                 }}
                 disabled={disabled}
               >
-                <ListItemText className={disabled ? "text-muted" : ""}>
+                <ListItemText
+                  sx={{
+                    color: disabled ? "text.secondary" : "",
+                  }}
+                >
                   {nicename}
                 </ListItemText>
                 <>
                   {desc && (
-                    <ListItemText className="text-muted fs-6">
+                    <ListItemText
+                      sx={{
+                        color: "text.secondary",
+                        fontSize: "0.75rem",
+                      }}
+                    >
                       <small>{desc}</small>
                     </ListItemText>
                   )}

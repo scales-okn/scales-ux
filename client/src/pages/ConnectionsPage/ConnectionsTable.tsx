@@ -171,8 +171,8 @@ const ConnectionsTable = () => {
   return (
     <Box sx={{ paddingBottom: "80px" }}>
       <NewConnectionModal />
-      <div
-        style={{
+      <Box
+        sx={{
           minHeight: "300px",
           width: "100%",
           margin: "0 auto",
@@ -219,10 +219,13 @@ const ConnectionsTable = () => {
           hideFooter
           hideFooterPagination
           checkboxSelection={false}
-          className="bg-white p-0"
+          sx={{
+            bgcolor: "white",
+            padding: 0,
+          }}
           autoHeight
         />
-      </div>
+      </Box>
       <UpdateConnectionModal
         connectionDetail={connectionDetail}
         setConnectionDetail={setConnectionDetail}

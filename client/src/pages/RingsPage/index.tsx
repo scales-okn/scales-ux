@@ -3,8 +3,8 @@ import { Link } from "react-router-dom";
 import { useRings } from "src/store/rings";
 
 import { useEffectOnce } from "react-use";
-import { DataGrid, GridCellParams } from "@mui/x-data-grid";
-import { Button } from "@mui/material";
+import { DataGrid, GridCellParams, GridColDef } from "@mui/x-data-grid";
+import { Button, Box, Typography } from "@mui/material";
 import dayjs from "dayjs";
 
 import ColumnHeader from "src/components/ColumnHeader";
@@ -27,15 +27,14 @@ const RingsPage = () => {
     );
   };
 
-  const columns = [
+  const columns: GridColDef[] = [
     {
       field: "name",
       headerName: "Name",
-      width: 150,
+      minWidth: 150,
+      flex: 1,
       renderCell: (params: GridCellParams) => (
-        <Link to={`/admin/rings/${params.row.rid}`} className="ms-2">
-          {params.row.name}
-        </Link>
+        <Link to={`/admin/rings/${params.row.rid}`}>{params.row.name}</Link>
       ),
       renderHeader,
     },
@@ -43,23 +42,28 @@ const RingsPage = () => {
       field: "description",
       headerName: "Description",
       width: 200,
+      flex: 2,
       renderHeader,
     },
     {
       field: "createdAt",
-      headerName: "Created at",
-      width: 200,
+      headerName: "Created",
+      width: 150,
+      headerAlign: "center",
+      align: "center",
       renderCell: (params: GridCellParams) => (
-        <>{dayjs(params.row.createdAt).format("M/D/YYYY")}</>
+        <>{dayjs(params.row.createdAt).format("MMM D, YYYY")}</>
       ),
       renderHeader,
     },
     {
       field: "updatedAt",
-      headerName: "Updated at",
-      width: 200,
+      headerName: "Updated",
+      width: 150,
+      headerAlign: "center",
+      align: "center",
       renderCell: (params: GridCellParams) => (
-        <>{dayjs(params.row.updatedAt).format("M/D/YYYY")}</>
+        <>{dayjs(params.row.updatedAt).format("MMM D, YYYY")}</>
       ),
       renderHeader,
     },
@@ -68,14 +72,21 @@ const RingsPage = () => {
       headerName: "Visibility",
       width: 150,
       renderHeader,
+      headerAlign: "center",
+      align: "center",
+      renderCell: (params: GridCellParams) => (
+        <Typography sx={{ textTransform: "capitalize", fontSize: "14px" }}>
+          {params.row.visibility}
+        </Typography>
+      ),
     },
   ];
 
   return (
     <>
       <Loader isVisible={loadingRings}>
-        <div
-          style={{
+        <Box
+          sx={{
             display: "flex",
             flexDirection: "column",
             alignItems: "flex-end",
@@ -97,8 +108,8 @@ const RingsPage = () => {
               Create Ring
             </Button>
           </Link>
-          <div
-            style={{
+          <Box
+            sx={{
               height: "60vh",
               width: "100%",
               margin: "0 auto",
@@ -113,11 +124,14 @@ const RingsPage = () => {
               hideFooterPagination
               hideFooter
               checkboxSelection={false}
-              className="bg-white p-0"
+              sx={{
+                bgcolor: "white",
+                padding: 0,
+              }}
               autoHeight
             />
-          </div>
-        </div>
+          </Box>
+        </Box>
       </Loader>
     </>
   );

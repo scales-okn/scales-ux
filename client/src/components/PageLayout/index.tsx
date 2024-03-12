@@ -65,7 +65,7 @@ const PageLayout = ({ id = "", children, pageTitle }: PageLayoutT) => {
             position: "fixed",
             top: 0,
             width: "100%",
-            zIndex: "1000",
+            zIndex: "221000",
           }}
         >
           <AppBar
@@ -83,7 +83,7 @@ const PageLayout = ({ id = "", children, pageTitle }: PageLayoutT) => {
           >
             <Button
               aria-label="menu"
-              sx={{ width: isTablet ? "40px" : "160px" }}
+              sx={{ width: isTablet ? "40px" : "160px", marginTop: "6px" }}
             >
               {isTablet ? (
                 <MenuIcon
@@ -139,12 +139,15 @@ const PageLayout = ({ id = "", children, pageTitle }: PageLayoutT) => {
           </AppBar>
         </Box>
 
-        <Container
+        <Box
           id="main"
           className="main"
           sx={{
-            marginTop: "128px",
             minHeight: "70vh",
+            padding: "0 5%",
+            maxWidth: "3000px",
+            margin: "0 auto",
+            marginTop: "128px",
             ...((isAdminView || isConnectionsView) && {
               marginTop: "64px",
               maxWidth: "100% !important",
@@ -154,7 +157,7 @@ const PageLayout = ({ id = "", children, pageTitle }: PageLayoutT) => {
         >
           {pageTitle && <h4>{pageTitle}</h4>}
           {children}
-        </Container>
+        </Box>
       </div>
       {isTablet && (
         <MobileMenu

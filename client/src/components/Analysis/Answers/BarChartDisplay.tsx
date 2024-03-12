@@ -9,6 +9,7 @@ import {
   Tooltip,
   Legend,
 } from "recharts";
+import { Box, Typography } from "@mui/material";
 
 type BarChartDisplayT = {
   data: any;
@@ -60,11 +61,13 @@ const Answers = ({
   }, [data]); // eslint-disable-line react-hooks/exhaustive-deps
 
   return (
-    <div
-      style={{ width: chartWidth, minHeight: "700px", background: "white" }}
+    <Box
+      sx={{ width: chartWidth, minHeight: "700px", background: "white" }}
       id={`data-chart-${panelId}`}
     >
-      {answerText}
+      <Typography variant="h6" sx={{ fontWeight: 600 }}>
+        {answerText}
+      </Typography>
       <BarChart
         height={600}
         width={chartWidth}
@@ -90,7 +93,7 @@ const Answers = ({
         <Legend />
         <Bar dataKey={yUnits} fill="#82ca9d" />
       </BarChart>
-    </div>
+    </Box>
   );
 };
 

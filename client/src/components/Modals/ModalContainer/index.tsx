@@ -9,6 +9,7 @@ type ModalContainerT = {
   modalStyles?: Record<string, unknown>;
   paperStyles?: Record<string, unknown>;
   title?: string;
+  subtitle?: string;
 };
 
 const ModalContainer = ({
@@ -18,6 +19,7 @@ const ModalContainer = ({
   modalStyles = {},
   paperStyles = {},
   title,
+  subtitle,
 }: ModalContainerT) => {
   const theme = useTheme();
 
@@ -45,11 +47,23 @@ const ModalContainer = ({
             sx={{
               fontSize: "32px",
               textAlign: "center",
-              marginBottom: "48px",
+              marginBottom: subtitle ? "12px" : "48px",
               color: theme.palette.primary.main,
             }}
           >
             {title}
+          </Typography>
+        )}
+        {subtitle && (
+          <Typography
+            sx={{
+              fontSize: "14px",
+              marginBottom: "36px",
+              textAlign: "center",
+              color: "GrayText",
+            }}
+          >
+            {subtitle}
           </Typography>
         )}
         {children}
