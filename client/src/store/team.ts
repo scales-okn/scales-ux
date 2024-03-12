@@ -2,35 +2,10 @@ import { createSlice } from "@reduxjs/toolkit";
 import type { RootState, AppDispatch } from "src/store";
 import { useSelector, useDispatch } from "react-redux";
 import { notify } from "reapop";
-import type { UserT } from "./user";
-import type { NotebookT } from "./notebook";
+
+import type { TeamT, UpdateTeamT } from "src/types/team";
 
 import { makeRequest } from "src/helpers/makeRequest";
-
-type UserWithRoleT = UserT & {
-  UserTeams: {
-    role: string;
-  };
-};
-
-type UpdateTeamT = {
-  userIdToAdd?: number;
-  userIdToRemove?: number;
-  userIdToUpdate?: number;
-  newUserRole?: string;
-  description?: string;
-  name?: string;
-};
-
-export type TeamT = {
-  id: number;
-  name: string;
-  description: string;
-  users: UserWithRoleT[];
-  notebooks: NotebookT[];
-  createdAt: string;
-  updatedAt: string;
-};
 
 type InitialStateT = {
   teams: TeamT[];
@@ -169,7 +144,7 @@ export const deleteTeam = (teamId, payload: UpdateTeamT = {}) => {
   };
 };
 
-export const createTeam = (payload: any = {}) => {
+export const createTeam = (payload: Record<string, unknown> = {}) => {
   return async (dispatch: AppDispatch) => {
     try {
       const { data, message, code } = await makeRequest.post(
@@ -196,8 +171,10 @@ export const useTeam = () => {
 
   return {
     teams,
-    fetchTeams: (payload: any = {}) => dispatch(fetchTeams(payload)),
-    createTeam: (payload: any = {}) => dispatch(createTeam(payload)),
+    fetchTeams: (payload: Record<string, unknown> = {}) =>
+      dispatch(fetchTeams(payload)),
+    createTeam: (payload: Record<string, unknown> = {}) =>
+      dispatch(createTeam(payload)),
     updateTeam: (teamId, payload: UpdateTeamT = {}) =>
       dispatch(updateTeam(teamId, payload)),
     deleteTeam: (teamId) => dispatch(deleteTeam(teamId)),

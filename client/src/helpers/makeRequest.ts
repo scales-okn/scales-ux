@@ -77,8 +77,7 @@ const sendRequest = async ({
     } else {
       data = await response.json();
     }
-
-    if (data.code !== 200) {
+    if (data.code && data.code !== 200) {
       console.error(data.message);
       if (options?.notify) {
         options.notify(data.message, "error");

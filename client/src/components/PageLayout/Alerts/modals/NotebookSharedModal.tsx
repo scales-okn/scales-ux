@@ -2,7 +2,8 @@ import React from "react";
 import { Link } from "react-router-dom";
 import { Typography, Box } from "@mui/material";
 import { useTheme } from "@mui/material/styles";
-import { useAlert, AlertT } from "src/store/alerts";
+import { useAlert } from "src/store/alerts";
+import type { AlertT } from "src/types/alert";
 import ModalContainer from "src/components/Modals/ModalContainer";
 import { useEffectOnce } from "react-use";
 
@@ -71,12 +72,10 @@ const NotebookSharedModal = ({
       >
         <Typography>
           To view this notebook,{" "}
-          <Link
-            to={`/notebooks/${alert.notebook.id}`}
-            style={{ textDecoration: "none" }}
-            onClick={onClose}
-          >
-            <span style={{ color: "#0b44bfd2" }}>click here</span>
+          <Link to={`/notebooks/${alert.notebook.id}`} onClick={onClose}>
+            <Typography sx={{ color: "#0b44bfd2", fontSize: "14px" }}>
+              click here
+            </Typography>
           </Link>
         </Typography>
       </Typography>

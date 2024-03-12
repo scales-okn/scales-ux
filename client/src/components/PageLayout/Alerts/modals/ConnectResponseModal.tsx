@@ -3,7 +3,8 @@ import { Link } from "react-router-dom";
 import { Typography, Box } from "@mui/material";
 import { useEffectOnce } from "react-use";
 import { useTheme } from "@mui/material/styles";
-import { useAlert, AlertT } from "src/store/alerts";
+import { useAlert } from "src/store/alerts";
+import type { AlertT } from "src/types/alert";
 import ModalContainer from "src/components/Modals/ModalContainer";
 
 type ConnectResponseModalT = {
@@ -74,12 +75,10 @@ const ConnectResponseModal = ({
       >
         <Typography>
           To view your connections,{" "}
-          <Link
-            to={`/connections`}
-            onClick={onClose}
-            style={{ textDecoration: "none" }}
-          >
-            <span style={{ color: "#0b44bfd2" }}>click here</span>
+          <Link to={`/connections`} onClick={onClose}>
+            <Typography sx={{ color: "#0b44bfd2", fontSize: "14px" }}>
+              click here
+            </Typography>
           </Link>
         </Typography>
       </Typography>

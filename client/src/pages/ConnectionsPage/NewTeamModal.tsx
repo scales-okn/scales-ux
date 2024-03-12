@@ -45,7 +45,7 @@ const NewTeamModal = () => {
   return (
     <>
       <Box
-        style={{
+        sx={{
           display: "flex",
           alignItems: "center",
           justifyContent: "flex-end",
@@ -70,17 +70,12 @@ const NewTeamModal = () => {
           </Button>
         </Grid>
       </Box>
-      <ModalContainer open={newTeamModalVisible} onClose={onClose}>
-        <Typography
-          sx={{
-            fontSize: "32px",
-            textAlign: "center",
-            color: theme.palette.primary.main,
-            marginBottom: "36px",
-          }}
-        >
-          Add New Team
-        </Typography>
+      <ModalContainer
+        open={newTeamModalVisible}
+        onClose={onClose}
+        title="Add New Team"
+        subtitle="Teams allow you to group your connections and share access to team notebooks"
+      >
         <form onSubmit={formik.handleSubmit}>
           <Grid container spacing={2}>
             <Grid item xs={12} sx={{ marginBottom: "6px" }}>

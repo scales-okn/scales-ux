@@ -2,27 +2,14 @@
 
 import { createSlice } from "@reduxjs/toolkit";
 import type { RootState, AppDispatch } from "src/store";
+
 import { useSelector, useDispatch } from "react-redux";
 import { notify } from "reapop";
-import { PagingT } from "src/types/paging";
+
+import type { PagingT } from "src/types/paging";
+import type { UserT } from "src/types/user";
 
 import { makeRequest } from "src/helpers/makeRequest";
-
-export type UserT = {
-  approved: boolean;
-  blocked: boolean;
-  createdAt: string;
-  email: string;
-  emailIsVerified: boolean;
-  emailVerificationToken: string;
-  firstName: string;
-  id: number;
-  lastName: string;
-  passwordResetToken: string;
-  role: string;
-  updatedAt: string;
-  usage: string;
-};
 
 type InitialStateT = {
   users: UserT[];

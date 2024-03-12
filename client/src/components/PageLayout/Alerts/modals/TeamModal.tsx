@@ -1,8 +1,9 @@
 import React, { useEffect } from "react";
 import { Link } from "react-router-dom";
-import { Button, Typography, Box } from "@mui/material";
+import { Typography, Box } from "@mui/material";
 import { useTheme } from "@mui/material/styles";
-import { useAlert, AlertT } from "src/store/alerts";
+import { useAlert } from "src/store/alerts";
+import type { AlertT } from "src/types/alert";
 import ModalContainer from "src/components/Modals/ModalContainer";
 
 type TeamModalT = {
@@ -94,7 +95,9 @@ const TeamModal = ({ open, onClose, alert, added }: TeamModalT) => {
           <Typography>
             To view this team,{" "}
             <Link to={`/connections/teams`} onClick={onClose}>
-              <span style={{ color: "#0b44bfd2" }}>click here</span>
+              <Typography sx={{ color: "#0b44bfd2", fontSize: "14px" }}>
+                click here
+              </Typography>
             </Link>
           </Typography>
         ) : (

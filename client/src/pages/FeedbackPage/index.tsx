@@ -141,7 +141,7 @@ const AdminFeedbackPage = () => {
       {!isAdmin ? (
         <NotAuthorized />
       ) : (
-        <div style={{ paddingBottom: "80px" }}>
+        <Box sx={{ paddingBottom: "80px" }}>
           <DataGrid
             rows={rows}
             columns={columns}
@@ -155,10 +155,13 @@ const AdminFeedbackPage = () => {
               }
             }}
             checkboxSelection={false}
-            className="bg-white p-0"
+            sx={{
+              bgcolor: "white",
+              padding: 0,
+            }}
             autoHeight
           />
-        </div>
+        </Box>
       )}
     </>
   );

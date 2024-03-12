@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import React from "react";
-import { CircularProgress } from "@mui/material";
+import { CircularProgress, Box } from "@mui/material";
 
 interface LoaderT {
   isVisible: boolean;
@@ -11,8 +11,8 @@ interface LoaderT {
 
 const Loader = ({ isVisible = false, size = 60, children }: LoaderT) => {
   return (
-    <div
-      style={{
+    <Box
+      sx={{
         position: "relative",
         height: "100%",
         width: "100%",
@@ -21,8 +21,8 @@ const Loader = ({ isVisible = false, size = 60, children }: LoaderT) => {
       }}
     >
       {isVisible && (
-        <div
-          style={{
+        <Box
+          sx={{
             position: "absolute",
             zIndex: 1000,
             top: "40%",
@@ -30,14 +30,16 @@ const Loader = ({ isVisible = false, size = 60, children }: LoaderT) => {
           }}
         >
           <CircularProgress
-            className="align-self-center"
+            sx={{
+              alignSelf: "center",
+            }}
             size={size}
             thickness={5}
           />
-        </div>
+        </Box>
       )}
       {children}
-    </div>
+    </Box>
   );
 
   return children;

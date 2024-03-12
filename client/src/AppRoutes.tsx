@@ -1,6 +1,6 @@
 import React from "react";
 import { useSelector } from "react-redux";
-import { Route, Routes, Navigate } from "react-router-dom";
+import { Route, Routes, Navigate, useLocation } from "react-router-dom";
 import { authSelector } from "./store/auth";
 
 import DocumentPage from "src/pages/DocumentPage";
@@ -18,10 +18,15 @@ import { useGoogleAnalytics } from "./hooks/useGAPageView";
 
 const AppRoutes = () => {
   const { user } = useSelector(authSelector);
+  const location = useLocation();
 
   const requireAuth = (element) => {
     if (!user) {
-      return <Navigate to="/sign-in" />;
+      let url = "/sign-in";
+      if (location.pathname !== "/sign-in" && location.pathname !== "/") {
+        url += `?alr=${location.pathname}${location.search}`;
+      }
+      return <Navigate to={url} />;
     }
 
     return element;

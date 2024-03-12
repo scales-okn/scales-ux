@@ -76,6 +76,11 @@ const Parameters = ({
                 MenuProps={{
                   disableScrollLock: true,
                 }}
+                sx={{
+                  "& .MuiSelect-select": {
+                    paddingLeft: "24px",
+                  },
+                }}
               >
                 {(parameter.options.length === 6
                   ? parameter.options

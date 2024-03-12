@@ -7,6 +7,7 @@ import Popover from "@mui/material/Popover";
 import ProfileModal from "./ProfileModal";
 import PasswordModal from "./PasswordModal";
 import EmailSettingsModal from "./EmailSettingsModal";
+import colorVars from "src/styles/colorVars";
 
 import { logoutMenuStyles } from "./styles";
 
@@ -64,7 +65,7 @@ const LogoutMenu = () => {
               fontSize: "18px",
 
               "&:hover": {
-                background: "var(--main-purple-lightest)",
+                background: colorVars.mainPurpleLightest,
               },
             },
           }}

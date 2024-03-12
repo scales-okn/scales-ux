@@ -17,7 +17,9 @@ import {
 } from "@mui/material";
 import { DataGrid } from "@mui/x-data-grid";
 import { UnfoldLess, UnfoldMore } from "@mui/icons-material";
+import OpenInNewIcon from "@mui/icons-material/OpenInNew";
 import uniqid from "uniqid";
+import dayjs from "dayjs";
 
 import Pagination from "src/components/Pagination";
 import Filters from "../Filters";
@@ -28,8 +30,8 @@ import ConfirmModal from "src/components/Modals/ConfirmModal";
 import ColumnHeader from "src/components/ColumnHeader";
 import DeleteButton from "../Buttons/DeleteButton";
 import DownloadButton from "../Buttons/DownloadButton";
-import { panelHeaderStyles } from "./styles";
 import { useEffectOnce } from "react-use";
+import colorVars from "src/styles/colorVars";
 
 type PanelT = {
   panelId: string;
@@ -106,6 +108,7 @@ const Panel = ({ panelId, defaultCollapsed, sessionUserCanEdit }: PanelT) => {
           field: column.key,
           headerName: column.nicename,
           width: 200,
+          flex: 1,
           renderHeader: (params) => {
             return (
               <ColumnHeader
@@ -115,12 +118,34 @@ const Panel = ({ panelId, defaultCollapsed, sessionUserCanEdit }: PanelT) => {
               />
             );
           },
+          renderCell: (item) => {
+            let value = item.value;
+            const dateRegex = /^\d{4}-\d{2}-\d{2}$/;
+            if (dateRegex.test(value)) {
+              value = dayjs(value).format("MMM D, YYYY");
+            }
+            return (
+              <Tooltip title={value}>
+                <Typography
+                  sx={{
+                    overflow: "hidden",
+                    textOverflow: "ellipsis",
+                    whiteSpace: "nowrap",
+                    fontSize: ".85rem",
+                  }}
+                >
+                  {value}
+                </Typography>
+              </Tooltip>
+            );
+          },
         })) || [];
 
     out.unshift({
       field: "button",
       headerName: "Docket ID",
       width: 180,
+      flex: 1,
       renderCell: (item) => {
         return (
           <Tooltip title="Open Docket in New Tab">
@@ -129,7 +154,24 @@ const Panel = ({ panelId, defaultCollapsed, sessionUserCanEdit }: PanelT) => {
               target="_blank"
               rel="noopener noreferrer"
             >
-              {item.row.case_id}
+              <Box
+                sx={{
+                  display: "flex",
+                  alignItems: "center",
+                  color: (theme) => theme.palette.primary.dark,
+                  fontWeight: "bold",
+                }}
+              >
+                {item.row.case_id}
+                <OpenInNewIcon
+                  sx={{
+                    fontSize: "16px",
+                    marginLeft: "8px",
+                    color: (theme) => theme.palette.primary.dark,
+                    fontWeight: "bold",
+                  }}
+                />
+              </Box>
             </Link>
           </Tooltip>
         );
@@ -172,8 +214,28 @@ const Panel = ({ panelId, defaultCollapsed, sessionUserCanEdit }: PanelT) => {
     );
 
   return (
-    <Accordion expanded={!collapsed} className="mb-4">
-      <div className={`panelHeaderStyles ${panelHeaderStyles}`}>
+    <Accordion expanded={!collapsed} sx={{ marginBottom: "1.5rem" }}>
+      <Box
+        sx={{
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "space-between",
+          background: "white",
+          border: "1px solid #e5e5e5",
+          borderRadius: "4px 4px 0 0",
+          boxShadow: "0px 1px 8px rgba(0, 0, 0, 0.06)",
+          padding: "1rem",
+          position: "relative",
+          width: "100%",
+          zIndex: 1,
+          height: "80px",
+          marginTop: "24px",
+          ".buttonRow": {
+            display: "flex",
+            alignItems: "center",
+          },
+        }}
+      >
         <Tooltip title="Dataset Name">
           <Typography
             sx={{
@@ -216,7 +278,7 @@ const Panel = ({ panelId, defaultCollapsed, sessionUserCanEdit }: PanelT) => {
             </Button>
           </Tooltip>
         </div>
-      </div>
+      </Box>
 
       <AccordionDetails sx={{ padding: 0 }}>
         <CardContent
@@ -235,9 +297,6 @@ const Panel = ({ panelId, defaultCollapsed, sessionUserCanEdit }: PanelT) => {
                 setPanelDescription(event.target.value);
               }}
               value={panel?.description || ""}
-              style={{
-                fontSize: "0.9rem",
-              }}
               className="description"
               onBlur={() => {
                 if (panel?.description !== description) {
@@ -246,19 +305,27 @@ const Panel = ({ panelId, defaultCollapsed, sessionUserCanEdit }: PanelT) => {
                 }
               }}
               sx={{
-                background: "var(--light-grey)",
+                background: colorVars.lightGrey,
                 height: "56px",
                 "& fieldset": {
                   borderRadius: "0",
                   borderTop: "none",
                   borderLeft: "none",
                   borderRight: "none",
+                  fontSize: "0.9rem",
                 },
               }}
             />
           </FormControl>
           <Filters panelId={panel.id} sessionUserCanEdit={sessionUserCanEdit} />
-          <div className="p-0 bg-light border-top">
+          <Box
+            sx={{
+              p: 0,
+              bgcolor: "background.paper",
+              borderTop: 1,
+              borderColor: "divider",
+            }}
+          >
             <Loader
               contentHeight={resultsCollapsed ? "60px" : "400px"}
               isVisible={
@@ -269,8 +336,8 @@ const Panel = ({ panelId, defaultCollapsed, sessionUserCanEdit }: PanelT) => {
                 <Accordion expanded={resultsCollapsed === true}>
                   <AccordionDetails sx={{ padding: "0px" }}>
                     <>
-                      <div
-                        style={{
+                      <Box
+                        sx={{
                           width: "100%",
                           overflowX: "hidden",
                         }}
@@ -308,10 +375,11 @@ const Panel = ({ panelId, defaultCollapsed, sessionUserCanEdit }: PanelT) => {
                               columns={columns}
                               rowCount={results?.totalCount}
                               checkboxSelection={false}
-                              className="bg-white border-0 rounded-0"
                               sortingMode="server"
                               paginationMode="server"
                               sx={{
+                                border: "none",
+                                paddingTop: "24px",
                                 "& .MuiDataGrid-virtualScroller": {
                                   minHeight: "400px",
                                 },
@@ -319,7 +387,7 @@ const Panel = ({ panelId, defaultCollapsed, sessionUserCanEdit }: PanelT) => {
                             />
                           </>
                         )}
-                      </div>
+                      </Box>
                       <Box
                         sx={{
                           padding: "18px",
@@ -331,7 +399,7 @@ const Panel = ({ panelId, defaultCollapsed, sessionUserCanEdit }: PanelT) => {
                         <Typography sx={{ fontSize: "16px", fontWeight: 600 }}>
                           {results?.totalCount?.toLocaleString()}
                         </Typography>
-                        <Typography sx={{ margin: "0 6px" }}>
+                        <Typography sx={{ margin: "12px 6px" }}>
                           Dockets Found
                         </Typography>
                         <Tooltip
@@ -364,16 +432,21 @@ const Panel = ({ panelId, defaultCollapsed, sessionUserCanEdit }: PanelT) => {
                 </Accordion>
               )}
             </Loader>
-          </div>
+          </Box>
 
-          <div className="bg-white p-3">
+          <Box
+            sx={{
+              bgcolor: "white",
+              p: 3,
+            }}
+          >
             <Grid>
               <Analysis
                 panelId={panelId}
                 sessionUserCanEdit={sessionUserCanEdit}
               />
             </Grid>
-          </div>
+          </Box>
         </CardContent>
       </AccordionDetails>
 

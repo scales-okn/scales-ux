@@ -2,7 +2,8 @@ import React, { useEffect } from "react";
 import { Link } from "react-router-dom";
 import { Typography, Box } from "@mui/material";
 import { useTheme } from "@mui/material/styles";
-import { useAlert, AlertT } from "src/store/alerts";
+import { useAlert } from "src/store/alerts";
+import type { AlertT } from "src/types/alert";
 import ModalContainer from "src/components/Modals/ModalContainer";
 
 type NewTeamNotebookT = {
@@ -55,9 +56,9 @@ const NewTeamNotebook = ({ open, onClose, alert }: NewTeamNotebookT) => {
         }}
       >
         A new notebook{" "}
-        <span style={{ fontWeight: "bold", fontStyle: "italic" }}>
+        <Typography sx={{ fontWeight: "bold", fontStyle: "italic" }}>
           {alert.notebook.title}
-        </span>{" "}
+        </Typography>{" "}
         has been added to the team:
       </Typography>
       <Typography
@@ -94,12 +95,10 @@ const NewTeamNotebook = ({ open, onClose, alert }: NewTeamNotebookT) => {
       >
         <Typography>
           To view this notebook,{" "}
-          <Link
-            to={`/notebooks/${alert.notebookId}`}
-            style={{ textDecoration: "none" }}
-            onClick={onClose}
-          >
-            <span style={{ color: "#0b44bfd2" }}>click here</span>
+          <Link to={`/notebooks/${alert.notebookId}`} onClick={onClose}>
+            <Typography sx={{ color: "#0b44bfd2", fontSize: "14px" }}>
+              click here
+            </Typography>
           </Link>
         </Typography>
       </Typography>

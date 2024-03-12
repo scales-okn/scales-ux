@@ -111,3 +111,25 @@ export const deleteAlert = async (req: Request, res: Response) => {
     return res.status(500).send("Internal server error");
   }
 };
+
+export const deleteAll = async (req: Request, res: Response) => {
+  try {
+    const sessionUser = await sequelize.models.User.findOne({
+      // @ts-ignore
+      where: { id: req.user.id },
+    });
+
+    if (!sessionUser) {
+      return res.status(404).send("Session user not found!");
+    }
+
+    await sequelize.models.Alert.destroy({
+      where: { userId: sessionUser.id },
+    });
+
+    return res.send_ok("Alert deleted successfully!");
+  } catch (error) {
+    console.error(error);
+    return res.status(500).send("Internal server error");
+  }
+};

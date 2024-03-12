@@ -24,10 +24,10 @@ tr.jsoneditor-selected {
   background-color: #808080;
 }
 
-div.jsoneditor-field[contenteditable=true]:focus,
-div.jsoneditor-field[contenteditable=true]:hover,
-div.jsoneditor-value[contenteditable=true]:focus,
-div.jsoneditor-value[contenteditable=true]:hover,
+div.jsoneditor-field[contenteditable="true"]:focus,
+div.jsoneditor-field[contenteditable="true"]:hover,
+div.jsoneditor-value[contenteditable="true"]:focus,
+div.jsoneditor-value[contenteditable="true"]:hover,
 div.jsoneditor-field.jsoneditor-highlight,
 div.jsoneditor-value.jsoneditor-highlight {
   background-color: #808080;
@@ -73,4 +73,8 @@ div.jsoneditor-value.jsoneditor-null {
 }
 div.jsoneditor-value.jsoneditor-invalid {
   color: white;
+}
+
+.jsoneditor-tree-inner {
+  min-height: 300px;
 }

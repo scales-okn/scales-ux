@@ -3,7 +3,7 @@ import { useNavigate, useParams } from "react-router-dom";
 import { useFormik } from "formik";
 import * as yup from "yup";
 
-import { TextField } from "@mui/material";
+import { Box, TextField } from "@mui/material";
 
 import { makeRequest } from "src/helpers/makeRequest";
 
@@ -97,11 +97,11 @@ const ResetPasswordForm = ({ sessionUserId = null }: ResetPasswordFormT) => {
         helperText={formik.touched.repassword && formik.errors?.repassword}
         sx={{ marginBottom: "36px", background: "white" }}
       />
-      <div style={{ display: "flex", justifyContent: "flex-end" }}>
+      <Box sx={{ display: "flex", justifyContent: "flex-end" }}>
         <Button color="primary" variant="contained" type="submit">
           Reset Password
         </Button>
-      </div>
+      </Box>
     </form>
   );
 };

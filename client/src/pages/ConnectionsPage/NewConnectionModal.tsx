@@ -66,7 +66,7 @@ const NewConnectionModal = () => {
   return (
     <>
       <Box
-        style={{
+        sx={{
           display: "flex",
           alignItems: "center",
           justifyContent: "flex-end",
@@ -90,27 +90,12 @@ const NewConnectionModal = () => {
           </Button>
         </Grid>
       </Box>
-      <ModalContainer open={newUserModalVisible} onClose={onClose}>
-        <Typography
-          sx={{
-            fontSize: "32px",
-            textAlign: "center",
-            color: theme.palette.primary.main,
-          }}
-        >
-          Add New Connection
-        </Typography>
-        <Typography
-          sx={{
-            fontSize: "14px",
-            marginBottom: "24px",
-            textAlign: "center",
-            color: "GrayText",
-          }}
-        >
-          Enter a user&apos;s email to request a connection. They will receive
-          an email with a link to accept the request.
-        </Typography>
+      <ModalContainer
+        open={newUserModalVisible}
+        onClose={onClose}
+        title="Add New Connection"
+        subtitle="Enter a user's email to request a connection. They will receive an email with a link to accept the request."
+      >
         <form onSubmit={formik.handleSubmit}>
           <Grid container spacing={2}>
             <Grid item xs={12}>

@@ -9,7 +9,7 @@ import {
   MenuItem,
   Grid,
 } from "@mui/material";
-// import SearchIcon from "@mui/icons-material/Search";
+
 import { useTheme } from "@mui/material/styles";
 import { useEffectOnce } from "react-use";
 import dayjs from "dayjs";
@@ -23,12 +23,14 @@ import { useConnection } from "src/store/connection";
 import ColumnHeader from "src/components/ColumnHeader";
 import Pagination from "src/components/Pagination";
 import NewConnectionModal from "./NewConnectionModal";
+import UpdateConnectionModal from "./UpdateConnectionModal";
 
 const ConnectionsTable = () => {
-  // const { fetchUsers, users, usersPaging } = useUser();
   const { fetchConnections, connections, connectionsPaging } = useConnection();
   const theme = useTheme();
   const { id: userId } = useSessionUser();
+
+  const [connectionDetail, setConnectionDetail] = useState(null);
 
   const [filterType, setFilterType] = useState("all");
   const [rawSearch, setRawSearch] = useState(null);
@@ -46,8 +48,6 @@ const ConnectionsTable = () => {
       ...(filterType === "declined" ? { approved: false } : {}),
     });
   }, [debouncedSearch, filterType]); // eslint-disable-line react-hooks/exhaustive-deps
-
-  // const isAdmin = role === "admin";
 
   useEffectOnce(() => {
     fetchConnections({ userId });
@@ -171,8 +171,8 @@ const ConnectionsTable = () => {
   return (
     <Box sx={{ paddingBottom: "80px" }}>
       <NewConnectionModal />
-      <div
-        style={{
+      <Box
+        sx={{
           minHeight: "300px",
           width: "100%",
           margin: "0 auto",
@@ -211,15 +211,25 @@ const ConnectionsTable = () => {
           rows={connections}
           columns={columns}
           rowHeight={80}
+          onRowClick={(data) => {
+            setConnectionDetail(data.row);
+          }}
           disableColumnMenu
           disableColumnFilter
           hideFooter
           hideFooterPagination
           checkboxSelection={false}
-          className="bg-white p-0"
+          sx={{
+            bgcolor: "white",
+            padding: 0,
+          }}
           autoHeight
         />
-      </div>
+      </Box>
+      <UpdateConnectionModal
+        connectionDetail={connectionDetail}
+        setConnectionDetail={setConnectionDetail}
+      />
     </Box>
   );
 };

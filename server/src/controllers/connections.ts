@@ -157,7 +157,7 @@ export const findAll = async (req: Request, res: Response) => {
               {
                 receiver: sessionUser.id,
                 ...filterConditions,
-                approved: true,
+                pending: false,
               },
             ]
           : []),
@@ -224,6 +224,50 @@ export const findAllApprovedConnectionUsers = async (req: Request, res: Response
       attributes: ["id", "firstName", "lastName", "email"],
     });
     return res.send_ok("", { connections });
+  } catch (error) {
+    console.error(error);
+    return res.status(500).send("Internal server error");
+  }
+};
+
+export const remove = async (req: Request, res: Response) => {
+  try {
+    const { connectionId } = req.params;
+    const sessionUser = await sequelize.models.User.findOne({
+      // @ts-ignore
+      where: { id: req.user.id },
+    });
+
+    if (!sessionUser) {
+      return res.status(404).send("No user found!");
+    }
+
+    const connection = await sequelize.models.Connection.findOne({
+      where: { id: connectionId },
+    });
+
+    if (!connection) {
+      return res.status(404).send("No connection found!");
+    }
+
+    const sender = await sequelize.models.User.findOne({
+      where: { id: connection.sender },
+    });
+    const receiver = await sequelize.models.User.findOne({
+      where: { id: connection.receiver },
+    });
+
+    if (!sender || !receiver) {
+      return res.status(404).send("No user found!");
+    }
+
+    if (sender.id !== sessionUser.id && receiver.id !== sessionUser.id) {
+      return res.status(403).send("You are not authorized to delete this connection!");
+    }
+
+    await connection.destroy();
+
+    return res.send_ok("Connection has been deleted!");
   } catch (error) {
     console.error(error);
     return res.status(500).send("Internal server error");

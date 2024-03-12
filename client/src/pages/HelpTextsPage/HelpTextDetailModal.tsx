@@ -3,11 +3,11 @@ import { useHelpTexts } from "src/store/helpTexts";
 
 import * as yup from "yup";
 import { useFormik } from "formik";
-import { TextField, Button } from "@mui/material";
+import { TextField, Button, Typography, Box } from "@mui/material";
 
 import ModalContainer from "src/components/Modals/ModalContainer";
 
-import { detailStyles } from "./styles";
+import colorVars from "src/styles/colorVars";
 
 type FeedbackDetailModalT = {
   feedbackDetail: Record<string, unknown>;
@@ -78,14 +78,35 @@ const FeedbackDetailModal: FunctionComponent<FeedbackDetailModalT> = ({
 
   return (
     <ModalContainer open onClose={closeModal}>
-      <div className={`tooltip-title ${detailStyles}`}>
+      <Box
+        sx={{
+          minWidth: "200px",
+          "& p": {
+            fontSize: "14px",
+          },
+
+          "& section": {
+            marginBottom: "24px",
+          },
+        }}
+      >
         <section>
-          <h5>Slug:</h5>
+          <Typography
+            variant="h5"
+            sx={{ color: colorVars.mainPurple, marginBottom: "12px" }}
+          >
+            Slug:
+          </Typography>
           <p>{slug}</p>
         </section>
 
         <section>
-          <h5>Description:</h5>
+          <Typography
+            variant="h5"
+            sx={{ color: colorVars.mainPurple, marginBottom: "12px" }}
+          >
+            Description:
+          </Typography>
           <TextField
             fullWidth
             multiline
@@ -98,7 +119,12 @@ const FeedbackDetailModal: FunctionComponent<FeedbackDetailModalT> = ({
         </section>
 
         <section>
-          <h5>Examples:</h5>
+          <Typography
+            variant="h5"
+            sx={{ color: colorVars.mainPurple, marginBottom: "12px" }}
+          >
+            Examples:
+          </Typography>
           <TextField
             fullWidth
             multiline
@@ -111,7 +137,12 @@ const FeedbackDetailModal: FunctionComponent<FeedbackDetailModalT> = ({
         </section>
 
         <section>
-          <h5>Options:</h5>
+          <Typography
+            variant="h5"
+            sx={{ color: colorVars.mainPurple, marginBottom: "12px" }}
+          >
+            Options:
+          </Typography>
           <TextField
             fullWidth
             multiline
@@ -124,7 +155,12 @@ const FeedbackDetailModal: FunctionComponent<FeedbackDetailModalT> = ({
         </section>
 
         <section>
-          <h5>Links:</h5>
+          <Typography
+            variant="h5"
+            sx={{ color: colorVars.mainPurple, marginBottom: "12px" }}
+          >
+            Links:
+          </Typography>
           <TextField
             fullWidth
             multiline
@@ -135,7 +171,15 @@ const FeedbackDetailModal: FunctionComponent<FeedbackDetailModalT> = ({
             helperText={"* Separate by !!"}
           />
         </section>
-        <div className="buttonRow">
+        <Box
+          sx={{
+            width: "100%",
+            display: "flex",
+            justifyContent: "flex-end",
+            alignItems: "center",
+            marginTop: "48px",
+          }}
+        >
           <Button
             color="error"
             variant="outlined"
@@ -149,8 +193,8 @@ const FeedbackDetailModal: FunctionComponent<FeedbackDetailModalT> = ({
           <Button variant="contained" onClick={() => formik.handleSubmit()}>
             Update
           </Button>
-        </div>
-      </div>
+        </Box>
+      </Box>
     </ModalContainer>
   );
 };

@@ -5,9 +5,11 @@ import uniqid from "uniqid";
 
 import { usePanel } from "src/store/panels";
 
+import colorVars from "src/styles/colorVars";
+
 import useWindowSize from "src/hooks/useWindowSize";
 
-import { Button, Typography } from "@mui/material";
+import { Box, Button, Typography } from "@mui/material";
 import Filter from "./Filter";
 
 import { filterContainerStyles } from "./styles";
@@ -66,7 +68,7 @@ const Filters = ({ panelId, sessionUserCanEdit }: FiltersProps) => {
           variant="contained"
           disabled={!sessionUserCanEdit}
           onClick={handleUpdateResults}
-          style={{
+          sx={{
             position: isTablet ? "relative" : "absolute",
             ...(isTablet ? {} : { right: "16px" }),
             ...(isTablet ? {} : { top: filters?.length > 0 ? "32px" : "24px" }),
@@ -75,7 +77,11 @@ const Filters = ({ panelId, sessionUserCanEdit }: FiltersProps) => {
           Update Results
         </Button>
         {filterElements}
-        <div className="d-inline-block">
+        <Box
+          sx={{
+            display: "inline-block",
+          }}
+        >
           <Button
             variant="outlined"
             color="primary"
@@ -93,9 +99,14 @@ const Filters = ({ panelId, sessionUserCanEdit }: FiltersProps) => {
               width: "36px",
               height: "36px",
               minWidth: 0,
+              "&:hover": {
+                "*": {
+                  color: colorVars.detailsBlue,
+                },
+              },
             }}
           >
-            <AddIcon fontSize="medium" />
+            <AddIcon fontSize="medium" sx={{ transition: ".2s all linear" }} />
           </Button>
           {filters?.length > 0 ? null : (
             <Typography
@@ -109,7 +120,7 @@ const Filters = ({ panelId, sessionUserCanEdit }: FiltersProps) => {
               Add a filter
             </Typography>
           )}
-        </div>
+        </Box>
       </div>
     </div>
   );

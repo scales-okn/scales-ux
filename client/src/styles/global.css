@@ -1,0 +1,20 @@
+html {
+  padding: 0;
+}
+
+body {
+  background: #e9ecef;
+  height: "100vh";
+  margin: 0;
+  padding: 0;
+  font-family: "Roboto", sans-serif;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+a {
+  text-decoration: none;
+  color: inherit;
+}

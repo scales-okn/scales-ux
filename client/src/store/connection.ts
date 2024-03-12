@@ -2,23 +2,11 @@ import { createSlice } from "@reduxjs/toolkit";
 import type { RootState, AppDispatch } from "src/store";
 import { useSelector, useDispatch } from "react-redux";
 import { notify } from "reapop";
-import { PagingT } from "src/types/paging";
-import { UserT } from "./user";
+import type { PagingT } from "src/types/paging";
+import type { UserT } from "src/types/user";
+import type { ConnectionT } from "src/types/connection";
 
 import { makeRequest } from "src/helpers/makeRequest";
-
-export type ConnectionT = {
-  id: number;
-  sender: number;
-  receiver: number;
-  receiverUser: UserT;
-  senderUser: UserT;
-  note: string;
-  pending: boolean;
-  approved: boolean;
-  createdAt: string;
-  updatedAt: string;
-};
 
 type InitialStateT = {
   connections: ConnectionT[];
@@ -91,6 +79,16 @@ const connectionSlice = createSlice({
       hasErrors: false,
     }),
     updateConnectionFailure: (state) => ({
+      ...state,
+      hasErrors: true,
+    }),
+    deleteConnectionSuccess: (state, { payload }) => ({
+      ...state,
+      connections: state.connections.filter(
+        (connection) => connection.id !== payload,
+      ),
+    }),
+    deleteConnectionFailure: (state) => ({
       ...state,
       hasErrors: true,
     }),
@@ -171,7 +169,10 @@ export const fetchApprovedConnectionUsers = (params) => {
   };
 };
 
-export const updateConnection = (connectionId, payload: any = {}) => {
+export const updateConnection = (
+  connectionId,
+  payload: Record<string, unknown> = {},
+) => {
   return async (dispatch: AppDispatch) => {
     try {
       const { data, message, code } = await makeRequest.put(
@@ -190,7 +191,26 @@ export const updateConnection = (connectionId, payload: any = {}) => {
   };
 };
 
-export const createConnection = (payload: any = {}) => {
+export const deleteConnection = (connectionId) => {
+  return async (dispatch: AppDispatch) => {
+    try {
+      const { message, code } = await makeRequest.delete(
+        `/api/connections/${connectionId}`,
+      );
+
+      if (code === 200) {
+        dispatch(connectionActions.deleteConnectionSuccess(connectionId));
+      } else {
+        dispatch(notify(message, "error"));
+        dispatch(connectionActions.deleteConnectionFailure());
+      }
+    } catch (error) {
+      dispatch(connectionActions.deleteConnectionFailure());
+    }
+  };
+};
+
+export const createConnection = (payload: Record<string, unknown> = {}) => {
   return async (dispatch: AppDispatch) => {
     try {
       const { data, message, code } = await makeRequest.post(
@@ -223,13 +243,15 @@ export const useConnection = () => {
     connectionsPaging,
     approvedConnectionUsers,
     hasErrors,
-    fetchConnections: (payload: any = {}) =>
+    fetchConnections: (payload: Record<string, unknown> = {}) =>
       dispatch(fetchConnections(payload)),
-    fetchApprovedConnectionUsers: (payload: any = {}) =>
+    fetchApprovedConnectionUsers: (payload: Record<string, unknown> = {}) =>
       dispatch(fetchApprovedConnectionUsers(payload)),
-    createConnection: (payload: any = {}) =>
+    createConnection: (payload: Record<string, unknown> = {}) =>
       dispatch(createConnection(payload)),
-    updateConnection: (connectionId, payload: any = {}) =>
+    updateConnection: (connectionId, payload: Record<string, unknown> = {}) =>
       dispatch(updateConnection(connectionId, payload)),
+    deleteConnection: (connectionId) =>
+      dispatch(deleteConnection(connectionId)),
   };
 };

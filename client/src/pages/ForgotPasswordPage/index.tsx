@@ -13,6 +13,7 @@ import {
 } from "@mui/material";
 import { useNotify } from "src/components/Notifications";
 import { makeRequest } from "src/helpers/makeRequest";
+import colorVars from "src/styles/colorVars";
 
 interface ForgotPasswordFields {
   email: string;
@@ -55,10 +56,20 @@ const ForgotPassword = () => {
   });
 
   return (
-    <Container className="h-100">
+    <Container
+      sx={{
+        height: "100%",
+      }}
+    >
       <Grid
         container
-        className="h-100 justify-content-center align-items-center text-center"
+        sx={{
+          height: "100%",
+          justifyContent: "center",
+          alignItems: "center",
+          textAlign: "center",
+          display: "flex",
+        }}
       >
         <Grid item xs={12} md={5}>
           <Box component="form" onSubmit={formik.handleSubmit}>
@@ -77,8 +88,8 @@ const ForgotPassword = () => {
               helperText={formik.touched.email && formik.errors?.email}
               sx={{ marginBottom: "24px", background: "white" }}
             />
-            <div
-              style={{
+            <Box
+              sx={{
                 display: "flex",
                 justifyContent: "space-between",
               }}
@@ -86,14 +97,14 @@ const ForgotPassword = () => {
               <Link
                 href="/sign-in"
                 className="small"
-                style={{ color: "var(--details-blue)" }}
+                style={{ color: colorVars.detailsBlue }}
               >
                 Already have an account? Sign in
               </Link>
-              <Button color="info" variant="contained" type="submit">
+              <Button color="primary" variant="contained" type="submit">
                 Submit
               </Button>
-            </div>
+            </Box>
           </Box>
         </Grid>
       </Grid>

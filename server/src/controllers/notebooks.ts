@@ -473,8 +473,11 @@ export const shareLink = async (req: Request, res: Response) => {
   try {
     const { id, recipientName, recipientEmail, message, senderId } = req.body;
 
-    const notebook = await sequelize.models.Notebook.findOne({ id });
-    const sender = await sequelize.models.User.findOne({ id: senderId });
+    const notebook = await sequelize.models.Notebook.findOne({
+      where: { id: id },
+    });
+
+    const sender = await sequelize.models.User.findOne({ where: { id: senderId } });
 
     if (!notebook) {
       return res.status(404).json({ error: "Notebook not found" });

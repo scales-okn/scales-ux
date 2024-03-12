@@ -101,11 +101,16 @@ const Pagination = ({
           <>
             {!isTablet && (
               <Typography
-                sx={{ marginRight: "12px", color: "rgb(157, 157, 157)" }}
+                sx={{
+                  marginRight: "12px",
+                  color: "rgb(157, 157, 157)",
+                }}
               >
-                Showing {startItem.toLocaleString()} -{" "}
-                {endItem.toLocaleString()} of{" "}
-                {paging.totalCount.toLocaleString()}
+                Showing{" "}
+                <strong>
+                  {startItem.toLocaleString()} - {endItem.toLocaleString()}
+                </strong>{" "}
+                of <strong>{paging.totalCount.toLocaleString()}</strong>
               </Typography>
             )}
             <Box
@@ -161,6 +166,7 @@ const Pagination = ({
                       cursor:
                         page === paging.currentPage ? "not-allowed" : "pointer",
                       minWidth: "32px",
+                      transition: "all 0.2s",
 
                       "&:hover": {
                         background:

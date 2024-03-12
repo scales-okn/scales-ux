@@ -23,6 +23,7 @@ import Statements from "./Statements";
 import { queryBuilder } from "./queryBuilder";
 
 import "./style.scss";
+import colorVars from "src/styles/colorVars";
 
 type AnalysisT = {
   panelId: string;
@@ -321,24 +322,34 @@ const Analysis = ({ panelId, sessionUserCanEdit }: AnalysisT) => {
             border: "1px solid black",
             color: "black",
             marginRight: "12px",
-            width: "36px",
             height: "36px",
             minWidth: 0,
-          }}
-        >
-          <AddIcon fontSize="medium" />
-        </Button>
-        <Typography
-          sx={{
             color: sessionUserCanEdit ? "black" : "GrayText",
             fontWeight: "600",
-            display: "inline",
+            display: "flex",
+            alignItems: "center",
             textTransform: "uppercase",
             fontSize: "14px",
+            "*": {
+              transition: ".2s all ease-in-out",
+            },
+            "&:hover": {
+              "*": {
+                color: colorVars.detailsBlue,
+              },
+            },
           }}
         >
-          Add Analysis
-        </Typography>
+          <AddIcon
+            fontSize="medium"
+            sx={{
+              marginRight: "6px",
+              marginBottom: "1px",
+              transition: ".1s all ease-in-out",
+            }}
+          />
+          <Typography>Add Analysis</Typography>
+        </Button>
       </Paper>
     </div>
   );

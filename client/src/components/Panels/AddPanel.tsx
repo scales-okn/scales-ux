@@ -16,13 +16,17 @@ const AddPanel = ({ notebookId, sessionUserCanEdit }: AddPanelProps) => {
 
   return (
     <Button
-      style={{ marginBottom: "80px", width: "100%" }}
+      sx={{
+        marginBottom: "80px",
+        marginTop: "24px",
+        width: "100%",
+        border: "1px dashed grey",
+      }}
       size="large"
       color="primary"
       variant="outlined"
       disabled={!notebook || !sessionUserCanEdit}
       onClick={() => createPanel()}
-      sx={{ border: "1px dashed grey" }}
     >
       Add Panel
     </Button>

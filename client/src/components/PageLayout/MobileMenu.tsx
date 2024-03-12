@@ -7,6 +7,7 @@ import ListItem from "@mui/material/ListItem";
 import ListItemButton from "@mui/material/ListItemButton";
 import ListItemText from "@mui/material/ListItemText";
 import NavItem from "./NavItem";
+import colorVars from "src/styles/colorVars";
 
 type MobileMenuT = {
   drawerOpen: boolean;
@@ -27,7 +28,7 @@ const MobileMenu = ({ drawerOpen, toggleDrawer, isAdmin }: MobileMenuT) => {
           <Box
             sx={{
               width: 250,
-              backgroundColor: "var(--main-purple)",
+              backgroundColor: colorVars.mainPurple,
               height: "100%",
             }}
             role="presentation"
@@ -54,6 +55,7 @@ const MobileMenu = ({ drawerOpen, toggleDrawer, isAdmin }: MobileMenuT) => {
             <Divider />
             <List sx={{ margin: "24px", marginLeft: "32px" }}>
               <NavItem linkName="Notebooks" route={"/"} isMobile />
+              <NavItem linkName="Connections" route={"/connections"} isMobile />
               {isAdmin && (
                 <NavItem
                   key={"admin"}

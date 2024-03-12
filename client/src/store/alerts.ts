@@ -3,30 +3,9 @@ import type { RootState, AppDispatch } from "src/store";
 import { useSelector, useDispatch } from "react-redux";
 import { notify } from "reapop";
 import type { PagingT } from "src/types/paging";
-import type { ConnectionT } from "./connection";
-import type { UserT } from "./user";
-import type { TeamT } from "./team";
-import type { NotebookT } from "./notebook";
+import type { AlertT } from "src/types/alert";
 
 import { makeRequest } from "src/helpers/makeRequest";
-
-export type AlertT = {
-  id: number;
-  userId: number;
-  initiatorUserId: number;
-  initiatorUser?: UserT;
-  notebookId: number | null;
-  notebook: NotebookT;
-  viewed: boolean;
-  connection?: ConnectionT;
-  connectionId?: number;
-  team?: TeamT;
-  teamId?: number;
-  createdAt: string;
-  updatedAt: string;
-  ringLabel?: string;
-  deletedNotebookName?: string;
-};
 
 type InitialStateT = {
   alerts: AlertT[];
@@ -101,6 +80,15 @@ const alertSlice = createSlice({
       ...state,
       hasErrors: true,
     }),
+    deleteAllAlertsFailure: (state) => ({
+      ...state,
+      hasErrors: true,
+    }),
+    deleteAllAlertsSuccess: (state) => ({
+      ...state,
+      alerts: [],
+      hasErrors: false,
+    }),
   },
 });
 
@@ -136,7 +124,7 @@ export const fetchAlerts = (params) => {
   };
 };
 
-export const updateAlert = (alertId, payload: any = {}) => {
+export const updateAlert = (alertId, payload: Record<string, unknown> = {}) => {
   return async (dispatch: AppDispatch) => {
     try {
       const { data, message, code } = await makeRequest.put(
@@ -155,7 +143,7 @@ export const updateAlert = (alertId, payload: any = {}) => {
   };
 };
 
-export const createAlert = (payload: any = {}) => {
+export const createAlert = (payload: Record<string, unknown> = {}) => {
   return async (dispatch: AppDispatch) => {
     try {
       const { data, message, code } = await makeRequest.post(
@@ -190,6 +178,22 @@ export const deleteAlert = (alertId) => {
   };
 };
 
+export const deleteAllAlerts = () => {
+  return async (dispatch: AppDispatch) => {
+    try {
+      const { code } = await makeRequest.post(`/api/alerts/deleteAll`, {});
+
+      if (code === 200) {
+        dispatch(alertActions.deleteAllAlertsSuccess());
+      } else {
+        dispatch(alertActions.deleteAllAlertsFailure());
+      }
+    } catch (error) {
+      dispatch(alertActions.deleteAllAlertsFailure());
+    }
+  };
+};
+
 // Hooks
 export const useAlert = () => {
   const alerts = useSelector(alertsSelector);
@@ -199,10 +203,13 @@ export const useAlert = () => {
   return {
     alerts,
     alertsPaging,
-    fetchAlerts: (payload: any = {}) => dispatch(fetchAlerts(payload)),
-    createAlert: (payload: any = {}) => dispatch(createAlert(payload)),
-    updateAlert: (alertId, payload: any = {}) =>
+    fetchAlerts: (payload: Record<string, unknown> = {}) =>
+      dispatch(fetchAlerts(payload)),
+    createAlert: (payload: Record<string, unknown> = {}) =>
+      dispatch(createAlert(payload)),
+    updateAlert: (alertId, payload: Record<string, unknown> = {}) =>
       dispatch(updateAlert(alertId, payload)),
-    deleteAlert: (alertId, payload: any = {}) => dispatch(deleteAlert(alertId)),
+    deleteAlert: (alertId) => dispatch(deleteAlert(alertId)),
+    deleteAllAlerts: () => dispatch(deleteAllAlerts()),
   };
 };

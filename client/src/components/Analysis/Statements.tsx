@@ -32,6 +32,9 @@ const Statements = ({
                 <InputAdornment position="start"></InputAdornment>
               ),
             }}
+            sx={{
+              minWidth: "300px",
+            }}
             placeholder="Search or select a statement..."
           />
         )}
@@ -40,7 +43,9 @@ const Statements = ({
         isOptionEqualToValue={(option, value) => {
           return value === null || option.statement === value.statement;
         }}
-        sx={{ minWidth: "300px" }}
+        sx={{
+          minWidth: "300px",
+        }}
       />
     </Box>
   );

@@ -2,8 +2,8 @@
 import React, { useState, useEffect } from "react";
 import { useSelector } from "react-redux";
 import { Link, useLocation, useNavigate } from "react-router-dom";
-import queryString from "query-string";
 
+import queryString from "query-string";
 import { DataGrid, GridCellParams } from "@mui/x-data-grid";
 import {
   Select,
@@ -14,11 +14,12 @@ import {
   Grid,
   Switch,
   Button,
+  Box,
   Tooltip,
   Typography,
 } from "@mui/material";
-
 import SearchIcon from "@mui/icons-material/Search";
+import ArrowOutwardIcon from "@mui/icons-material/ArrowOutward";
 import dayjs from "dayjs";
 
 import { sessionUserSelector } from "src/store/auth";
@@ -32,7 +33,6 @@ import Pagination from "src/components/Pagination";
 import Loader from "src/components/Loader";
 import ColumnHeader from "src/components/ColumnHeader";
 
-import "./NotebooksPage.scss";
 import DeleteNotebook from "./DeleteNotebook";
 
 const NotebooksPage = () => {
@@ -103,8 +103,22 @@ const NotebooksPage = () => {
       renderHeader,
       renderCell: (params: GridCellParams) => (
         <Tooltip title="View Notebook">
-          <Link to={`/notebooks/${params.row.id}`} className="ms-2">
-            {params.row.title}
+          <Link to={`/notebooks/${params.row.id}`}>
+            <Box
+              sx={{
+                marginLeft: (theme) => theme.spacing(1),
+                textTransform: "capitalize",
+                color: (theme) => theme.palette.primary.dark,
+                fontWeight: "bold",
+                fontSize: "16px",
+                display: "flex",
+                alignItems: "center",
+                textDecoration: "underline",
+              }}
+            >
+              {params.row.title}
+              <ArrowOutwardIcon sx={{ fontSize: "16px", marginLeft: "4px" }} />
+            </Box>
           </Link>
         </Tooltip>
       ),
@@ -219,12 +233,12 @@ const NotebooksPage = () => {
             renderCell: (params: GridCellParams) => {
               const canDelete = params.row.userId === user.id || isAdmin;
               return (
-                <div style={{ paddingLeft: "5px" }}>
+                <Box sx={{ paddingLeft: "5px" }}>
                   <DeleteNotebook
                     notebookId={params.row.id}
                     disabled={!canDelete}
                   />
-                </div>
+                </Box>
               );
             },
             renderHeader,
@@ -245,15 +259,15 @@ const NotebooksPage = () => {
             marginTop: "60px",
           }}
         >
-          <Link to="/notebooks/new" className="text-white text-decoration-none">
+          <Link to="/notebooks/new">
             <Button color="primary" variant="contained">
               Create Notebook
             </Button>
           </Link>
         </Grid>
 
-        <div
-          style={{
+        <Box
+          sx={{
             width: "100%",
             paddingBottom: "80px",
             marginTop: "24px",
@@ -330,11 +344,12 @@ const NotebooksPage = () => {
             hideFooterPagination
             rowCount={notebooks?.length}
             checkboxSelection={false}
-            className="bg-white"
+            sx={{ background: "white" }}
             autoHeight
+            rowHeight={64}
             paginationMode="server"
           />
-        </div>
+        </Box>
       </>
     </Loader>
   );

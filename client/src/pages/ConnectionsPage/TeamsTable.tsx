@@ -14,6 +14,7 @@ import {
 } from "@mui/material";
 import ArrowDropDownIcon from "@mui/icons-material/ArrowDropDown";
 import DeleteOutlineIcon from "@mui/icons-material/DeleteOutline";
+import { Launch } from "@mui/icons-material";
 import { useTheme } from "@mui/material/styles";
 
 import useWindowSize from "src/hooks/useWindowSize";
@@ -26,7 +27,7 @@ import { useConnection } from "src/store/connection";
 import DeleteUserModal from "./DeleteUserModal";
 import DeleteTeamModal from "./DeleteTeamModal";
 import NewTeamModal from "./NewTeamModal";
-import { Launch } from "@mui/icons-material";
+import ConnectionLookup from "./ConnectionLookup";
 
 const TeamsTable = () => {
   const theme = useTheme();
@@ -225,6 +226,7 @@ const TeamsTable = () => {
                                 color: "#333",
                                 display: "flex",
                                 alignItems: "center",
+                                textTransform: "capitalize",
                               }}
                             >
                               {renderName({ user: user, sessionUser })}
@@ -319,55 +321,11 @@ const TeamsTable = () => {
                             justifyContent: "space-between",
                           }}
                         >
-                          <Typography
-                            sx={{ padding: "0 12px", color: "GrayText" }}
-                          >
-                            Add contact to team...
-                          </Typography>
-                          <Select
-                            variant="outlined"
-                            onChange={(event) => {
-                              updateTeam(team.id, {
-                                userIdToAdd: event.target.value as number,
-                              });
-                            }}
-                            sx={{
-                              background: "white",
-                              minWidth: "140px",
-                              height: "32px",
-                            }}
-                            MenuProps={{
-                              disableScrollLock: true,
-                            }}
-                          >
-                            {availableTeamMembers.length ? (
-                              availableTeamMembers.map((connection) => {
-                                return (
-                                  <MenuItem
-                                    key={connection.id}
-                                    value={connection.id}
-                                  >
-                                    <Typography
-                                      sx={{
-                                        textTransform: "capitalize",
-                                      }}
-                                    >
-                                      {`${connection.firstName} ${connection.lastName}`}
-                                    </Typography>
-                                  </MenuItem>
-                                );
-                              })
-                            ) : (
-                              <Typography
-                                sx={{
-                                  textTransform: "capitalize",
-                                  padding: "12px",
-                                }}
-                              >
-                                No connections available to assign
-                              </Typography>
-                            )}
-                          </Select>
+                          <ConnectionLookup
+                            team={team}
+                            availableTeamMembers={availableTeamMembers}
+                            updateTeam={updateTeam}
+                          />
                         </Box>
                         <Box
                           sx={{

@@ -116,7 +116,7 @@ const AdminUsersPages = () => {
       renderCell: (params: GridCellParams) => (
         <Tooltip title={params.row.createdAt}>
           <Typography noWrap variant="body2">
-            <div>{dayjs(params.row.createdAt).format("MM/DD/YYYY")}</div>
+            {dayjs(params.row.createdAt).format("MM/DD/YYYY")}
           </Typography>
         </Tooltip>
       ),
@@ -199,8 +199,8 @@ const AdminUsersPages = () => {
       {!isAdmin ? (
         <NotAuthorized />
       ) : (
-        <div
-          style={{
+        <Box
+          sx={{
             minHeight: "300px",
             width: "100%",
             margin: "0 auto",
@@ -246,10 +246,13 @@ const AdminUsersPages = () => {
             hideFooter
             hideFooterPagination
             checkboxSelection={false}
-            className="bg-white p-0"
+            sx={{
+              bgcolor: "white",
+              padding: 0,
+            }}
             autoHeight
           />
-        </div>
+        </Box>
       )}
     </Box>
   );
