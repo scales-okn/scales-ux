@@ -12,8 +12,6 @@ import { renderName } from "src/helpers/renderName";
 
 import useWindowSize from "src/hooks/useWindowSize";
 
-import ContentCopyIcon from "@mui/icons-material/ContentCopy";
-import IosShareIcon from "@mui/icons-material/IosShare";
 import {
   Grid,
   TextField,
@@ -139,7 +137,6 @@ const Notebook = () => {
   return (
     <Loader isVisible={loadingNotebook && !isNewNotebook}>
       <Grid
-        container
         sx={{
           borderRadius: "6px",
           background: "white",

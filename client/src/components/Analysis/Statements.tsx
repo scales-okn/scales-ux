@@ -31,11 +31,6 @@ const Statements = ({
               startAdornment: (
                 <InputAdornment position="start"></InputAdornment>
               ),
-              sx: {
-                "*": {
-                  fontWeight: 600,
-                },
-              },
             }}
             sx={{
               minWidth: "300px",

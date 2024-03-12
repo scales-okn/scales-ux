@@ -152,12 +152,21 @@ const Panel = ({ panelId, defaultCollapsed, sessionUserCanEdit }: PanelT) => {
               target="_blank"
               rel="noopener noreferrer"
             >
-              <Box sx={{ display: "flex", alignItems: "center" }}>
+              <Box
+                sx={{
+                  display: "flex",
+                  alignItems: "center",
+                  color: (theme) => theme.palette.primary.dark,
+                  fontWeight: "bold",
+                }}
+              >
                 {item.row.case_id}
                 <OpenInNewIcon
                   sx={{
                     fontSize: "16px",
                     marginLeft: "8px",
+                    color: (theme) => theme.palette.primary.dark,
+                    fontWeight: "bold",
                   }}
                 />
               </Box>

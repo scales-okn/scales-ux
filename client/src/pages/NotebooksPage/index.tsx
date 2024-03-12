@@ -2,8 +2,8 @@
 import React, { useState, useEffect } from "react";
 import { useSelector } from "react-redux";
 import { Link, useLocation, useNavigate } from "react-router-dom";
-import queryString from "query-string";
 
+import queryString from "query-string";
 import { DataGrid, GridCellParams } from "@mui/x-data-grid";
 import {
   Select,
@@ -18,7 +18,6 @@ import {
   Tooltip,
   Typography,
 } from "@mui/material";
-
 import SearchIcon from "@mui/icons-material/Search";
 import dayjs from "dayjs";
 
@@ -106,7 +105,13 @@ const NotebooksPage = () => {
           <Link to={`/notebooks/${params.row.id}`}>
             <Box
               sx={{
-                marginLeft: (theme) => theme.spacing(2),
+                marginLeft: (theme) => theme.spacing(1),
+                textTransform: "capitalize",
+                color: (theme) => theme.palette.primary.dark,
+                fontWeight: "bold",
+                fontSize: "16px",
+                display: "flex",
+                alignItems: "center",
               }}
             >
               {params.row.title}
