@@ -31,7 +31,6 @@ import ColumnHeader from "src/components/ColumnHeader";
 import DeleteButton from "../Buttons/DeleteButton";
 import DownloadButton from "../Buttons/DownloadButton";
 import { useEffectOnce } from "react-use";
-import colorVars from "src/styles/colorVars";
 
 type PanelT = {
   panelId: string;
@@ -125,7 +124,17 @@ const Panel = ({ panelId, defaultCollapsed, sessionUserCanEdit }: PanelT) => {
               value = dayjs(value).format("MMM D, YYYY");
             }
             return (
-              <Tooltip title={value}>
+              <Tooltip
+                title={value}
+                componentsProps={{
+                  tooltip: {
+                    sx: {
+                      fontSize: "14px",
+                      lineHeight: "24px",
+                    },
+                  },
+                }}
+              >
                 <Typography
                   sx={{
                     overflow: "hidden",
@@ -148,7 +157,17 @@ const Panel = ({ panelId, defaultCollapsed, sessionUserCanEdit }: PanelT) => {
       flex: 1,
       renderCell: (item) => {
         return (
-          <Tooltip title="Open Docket in New Tab">
+          <Tooltip
+            title="Open Docket in New Tab"
+            componentsProps={{
+              tooltip: {
+                sx: {
+                  fontSize: "14px",
+                  lineHeight: "24px",
+                },
+              },
+            }}
+          >
             <Link
               to={`/document/${ring.rid}/${ring.version}/Case/${item.row.__uniqueId.ucid}`}
               target="_blank"
@@ -305,7 +324,7 @@ const Panel = ({ panelId, defaultCollapsed, sessionUserCanEdit }: PanelT) => {
                 }
               }}
               sx={{
-                background: colorVars.lightGrey,
+                background: "#F8F9FA",
                 height: "56px",
                 "& fieldset": {
                   borderRadius: "0",
@@ -324,6 +343,12 @@ const Panel = ({ panelId, defaultCollapsed, sessionUserCanEdit }: PanelT) => {
               bgcolor: "background.paper",
               borderTop: 1,
               borderColor: "divider",
+              borderRadius: "0px",
+              "& .MuiPaper-root": {
+                borderRadius: "0px",
+                borderBottom: "1px solid rgba(0, 0, 0, 0.3)",
+                boxShadow: "none",
+              },
             }}
           >
             <Loader
@@ -351,6 +376,8 @@ const Panel = ({ panelId, defaultCollapsed, sessionUserCanEdit }: PanelT) => {
                                 getPanelResults({ page });
                                 updatePanel({ page });
                               }}
+                              noShadow
+                              noBorderRadius
                             />
                             <DataGrid
                               rows={rows}
@@ -370,6 +397,7 @@ const Panel = ({ panelId, defaultCollapsed, sessionUserCanEdit }: PanelT) => {
                               disableColumnMenu
                               hideFooterPagination
                               hideFooter
+                              rowHeight={60}
                               onColumnHeaderClick={handleColumnHeaderClick}
                               pageSizeOptions={[10]}
                               columns={columns}

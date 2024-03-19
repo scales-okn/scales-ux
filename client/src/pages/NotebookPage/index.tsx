@@ -142,7 +142,7 @@ const Notebook = () => {
           background: "white",
           padding: "16px 24px 24px 24px",
           marginBottom: "36px",
-          boxShadow: "0px 2px 4px rgba(0, 0, 0, 0.1)",
+          boxShadow: "0px 2px 4px rgba(0, 0, 0, 0.2)",
 
           "*": {
             transition: ".2s all",

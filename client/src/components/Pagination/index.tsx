@@ -12,6 +12,8 @@ type PaginationT = {
   fetchData: (arg: Record<string, unknown>) => void;
   leftContent?: JSX.Element;
   zeroIndex?: boolean;
+  noShadow?: boolean;
+  noBorderRadius?: boolean;
 };
 
 const Pagination = ({
@@ -19,6 +21,8 @@ const Pagination = ({
   fetchData,
   leftContent = <></>,
   zeroIndex = false,
+  noShadow = false,
+  noBorderRadius = false,
 }: PaginationT) => {
   const theme = useTheme();
   const { width } = useWindowSize();
@@ -85,8 +89,9 @@ const Pagination = ({
         alignItems: "center",
         justifyContent: "space-between",
         padding: "12px 18px",
-        borderRadius: "4px",
-        boxShadow: "2px 2px 4px rgba(0, 0, 0, 0.05)",
+        borderRadius: noBorderRadius ? "0px" : "4px",
+        borderBottom: "1px solid rgba(0, 0, 0, 0.1)",
+        boxShadow: noShadow ? "none" : "0px 2px 4px rgba(0, 0, 0, 0.05)",
       }}
     >
       <Box>{leftContent}</Box>

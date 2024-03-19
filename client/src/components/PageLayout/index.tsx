@@ -9,7 +9,6 @@ import AppBar from "@mui/material/AppBar";
 import Box from "@mui/material/Box";
 import Toolbar from "@mui/material/Toolbar";
 import MenuIcon from "@mui/icons-material/Menu";
-import Container from "@mui/material/Container";
 
 import FeedbackWidget from "./FeedbackWidget";
 import MobileMenu from "./MobileMenu";
@@ -18,9 +17,7 @@ import Logout from "./LogoutMenu";
 import Alerts from "./Alerts";
 
 import { styles } from "./styles";
-import { Button } from "@mui/material";
-
-import colorVars from "src/styles/colorVars";
+import { Button, useTheme } from "@mui/material";
 
 type PageLayoutT = {
   pageTitle?: string;
@@ -46,6 +43,7 @@ const PageLayout = ({ id = "", children, pageTitle }: PageLayoutT) => {
     return null;
   };
 
+  const theme = useTheme();
   const location = useLocation();
   const isSignInView = location.pathname.includes("sign-in");
   const isAdminView = location.pathname.includes("admin");
@@ -71,7 +69,7 @@ const PageLayout = ({ id = "", children, pageTitle }: PageLayoutT) => {
           <AppBar
             position="static"
             sx={{
-              background: `linear-gradient(to right, ${colorVars.mainPurple}, ${colorVars.mainPurpleLight})`,
+              background: `linear-gradient(to right, ${theme.palette.info.dark}, ${theme.palette.info.main})`,
               display: "flex",
               flexDirection: "row",
               justifyContent: "space-between",

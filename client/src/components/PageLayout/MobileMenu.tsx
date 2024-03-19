@@ -1,13 +1,17 @@
 import * as React from "react";
-import Box from "@mui/material/Box";
-import SwipeableDrawer from "@mui/material/SwipeableDrawer";
-import List from "@mui/material/List";
-import Divider from "@mui/material/Divider";
-import ListItem from "@mui/material/ListItem";
-import ListItemButton from "@mui/material/ListItemButton";
-import ListItemText from "@mui/material/ListItemText";
+
+import {
+  Box,
+  SwipeableDrawer,
+  List,
+  Divider,
+  ListItem,
+  ListItemButton,
+  ListItemText,
+  useTheme,
+} from "@mui/material";
+
 import NavItem from "./NavItem";
-import colorVars from "src/styles/colorVars";
 
 type MobileMenuT = {
   drawerOpen: boolean;
@@ -16,6 +20,7 @@ type MobileMenuT = {
 };
 
 const MobileMenu = ({ drawerOpen, toggleDrawer, isAdmin }: MobileMenuT) => {
+  const theme = useTheme();
   return (
     <div>
       <>
@@ -28,7 +33,7 @@ const MobileMenu = ({ drawerOpen, toggleDrawer, isAdmin }: MobileMenuT) => {
           <Box
             sx={{
               width: 250,
-              backgroundColor: colorVars.mainPurple,
+              backgroundColor: theme.palette.info.dark,
               height: "100%",
             }}
             role="presentation"

@@ -19,8 +19,6 @@ import { pick } from "lodash";
 
 import useWindowSize from "src/hooks/useWindowSize";
 
-import colorVars from "src/styles/colorVars";
-
 import Loader from "src/components/Loader";
 import { useRing } from "src/store/rings";
 import ConfirmModal from "src/components/Modals/ConfirmModal";
@@ -362,7 +360,7 @@ const Ring = () => {
                       height: "100%",
                       width: "2px",
                       borderRadius: "2px",
-                      background: colorVars.grey,
+                      background: "#999999",
                     }}
                   />
                   <Typography mb={2} sx={{ fontSize: "18px" }}>
@@ -370,7 +368,7 @@ const Ring = () => {
                   </Typography>
                   <Box
                     sx={{
-                      backgroundColor: colorVars.grey,
+                      backgroundColor: "#999999",
                       padding: "12px",
                     }}
                   >
@@ -435,7 +433,7 @@ const Ring = () => {
                       height: "100%",
                       width: "2px",
                       borderRadius: "2px",
-                      background: colorVars.grey,
+                      background: "#999999",
                     }}
                   />
                   <Typography mb={2} sx={{ fontSize: "18px" }}>
@@ -443,7 +441,7 @@ const Ring = () => {
                   </Typography>
                   <Box
                     sx={{
-                      backgroundColor: colorVars.grey,
+                      backgroundColor: "#999999",
                       padding: "12px",
                     }}
                   >
