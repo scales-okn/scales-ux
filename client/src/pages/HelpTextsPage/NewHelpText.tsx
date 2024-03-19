@@ -6,7 +6,6 @@ import * as yup from "yup";
 
 import ModalContainer from "src/components/Modals/ModalContainer";
 import { useHelpTexts } from "src/store/helpTexts";
-import colorVars from "src/styles/colorVars";
 
 type HelpTextFields = {
   slug: string;

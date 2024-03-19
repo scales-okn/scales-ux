@@ -3,7 +3,7 @@ import React from "react";
 import { usePanels } from "src/store/panels";
 import { useNotebook } from "src/store/notebook";
 
-import { Button } from "@mui/material";
+import { Button, Box } from "@mui/material";
 
 type AddPanelProps = {
   notebookId: string | null;
@@ -15,21 +15,29 @@ const AddPanel = ({ notebookId, sessionUserCanEdit }: AddPanelProps) => {
   const { createPanel } = usePanels(notebookId);
 
   return (
-    <Button
+    <Box
       sx={{
-        marginBottom: "80px",
-        marginTop: "24px",
         width: "100%",
-        border: "1px dashed grey",
+        display: "flex",
+        justifyContent: "center",
+        marginBottom: "80px",
       }}
-      size="large"
-      color="primary"
-      variant="outlined"
-      disabled={!notebook || !sessionUserCanEdit}
-      onClick={() => createPanel()}
     >
-      Add Panel
-    </Button>
+      <Button
+        sx={{
+          margin: "24px 0 80px 0",
+          width: "100%",
+          border: "1px dashed grey",
+        }}
+        size="large"
+        color="primary"
+        variant="outlined"
+        disabled={!notebook || !sessionUserCanEdit}
+        onClick={() => createPanel()}
+      >
+        Add Panel
+      </Button>
+    </Box>
   );
 };
 

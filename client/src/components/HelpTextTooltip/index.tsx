@@ -4,11 +4,10 @@ import { Link } from "react-router-dom";
 
 import Tooltip, { TooltipProps, tooltipClasses } from "@mui/material/Tooltip";
 import { styled } from "@mui/material/styles";
+import { Box, useTheme } from "@mui/material";
 import VisibilityIcon from "@mui/icons-material/Visibility";
 
 import { sessionUserSelector } from "src/store/auth";
-
-import { tooltipTitleStyles } from "../Filters/styles";
 
 export const CustomTooltip = styled(({ className, ...props }: TooltipProps) => (
   <Tooltip {...props} classes={{ popper: className }} />
@@ -19,7 +18,7 @@ export const CustomTooltip = styled(({ className, ...props }: TooltipProps) => (
     maxWidth: 400,
     border: "1px solid #dadde9",
     boxShadow: theme.shadows[3],
-    padding: "24px",
+    padding: "12px 24px",
     maxHeight: "500px",
     overflowY: "auto",
   },
@@ -36,6 +35,8 @@ const FilterTooltip = ({
 }: FilterTooltipT) => {
   const { role } = useSelector(sessionUserSelector);
   const isAdmin = role === "admin";
+
+  const theme = useTheme();
 
   const {
     slug,
@@ -80,7 +81,28 @@ const FilterTooltip = ({
   };
 
   const title = (
-    <div className={`tooltip-title ${tooltipTitleStyles}`}>
+    <Box
+      sx={{
+        "& h5": {
+          color: theme.palette.info.dark,
+          fontWeight: 700,
+          marginBottom: "12px",
+          fontSize: "16px",
+        },
+        "& p": {
+          fontSize: "14px",
+        },
+        "& ul": {
+          paddingLeft: "10px",
+        },
+        "& .optionLink": {
+          marginLeft: "-10px",
+        },
+        "& section:not(:last-child)": {
+          marginBottom: "32px",
+        },
+      }}
+    >
       {isAdmin && (
         <section>
           <h5>Slug:</h5>
@@ -111,7 +133,7 @@ const FilterTooltip = ({
           {formatMultiple(links, true)}
         </section>
       )}
-    </div>
+    </Box>
   );
 
   return (

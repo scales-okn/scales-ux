@@ -3,21 +3,28 @@ import { useHelpTexts } from "src/store/helpTexts";
 
 import * as yup from "yup";
 import { useFormik } from "formik";
-import { TextField, Button, Typography, Box } from "@mui/material";
+import {
+  TextField,
+  Button,
+  Typography,
+  Box,
+  useTheme,
+  Grid,
+} from "@mui/material";
 
 import ModalContainer from "src/components/Modals/ModalContainer";
 
-import colorVars from "src/styles/colorVars";
-
-type FeedbackDetailModalT = {
+type HelpTextDetailModalT = {
   feedbackDetail: Record<string, unknown>;
   closeModal: () => void;
 };
 
-const FeedbackDetailModal: FunctionComponent<FeedbackDetailModalT> = ({
+const HelpTextDetailModal: FunctionComponent<HelpTextDetailModalT> = ({
   closeModal,
   feedbackDetail,
 }) => {
+  const theme = useTheme();
+
   const [confirmVisible, setConfirmVisible] = useState(false);
   const { updateHelpText, deleteHelpText } = useHelpTexts();
   const {
@@ -77,100 +84,93 @@ const FeedbackDetailModal: FunctionComponent<FeedbackDetailModalT> = ({
   if (!slug) return null;
 
   return (
-    <ModalContainer open onClose={closeModal}>
-      <Box
-        sx={{
-          minWidth: "200px",
-          "& p": {
-            fontSize: "14px",
-          },
-
-          "& section": {
-            marginBottom: "24px",
-          },
-        }}
-      >
-        <section>
+    <ModalContainer
+      open
+      onClose={closeModal}
+      title={`${slug} Details`}
+      paperStyles={{ width: "90vw" }}
+    >
+      <Grid container sx={{}}>
+        <Grid
+          xs={6}
+          sx={{ paddingRight: "12px", minWidth: "300px", marginBottom: "24px" }}
+        >
           <Typography
             variant="h5"
-            sx={{ color: colorVars.mainPurple, marginBottom: "12px" }}
-          >
-            Slug:
-          </Typography>
-          <p>{slug}</p>
-        </section>
-
-        <section>
-          <Typography
-            variant="h5"
-            sx={{ color: colorVars.mainPurple, marginBottom: "12px" }}
+            sx={{ color: theme.palette.primary.dark, marginBottom: "12px" }}
           >
             Description:
           </Typography>
           <TextField
             fullWidth
             multiline
+            rows={4}
             name="description"
             value={formik.values.description}
             onChange={formik.handleChange}
             error={formik.touched.description && !!formik.errors.description}
             helperText={formik.touched.description && formik.errors.description}
           />
-        </section>
-
-        <section>
+        </Grid>
+        <Grid xs={6} sx={{ marginBottom: "24px" }}>
           <Typography
             variant="h5"
-            sx={{ color: colorVars.mainPurple, marginBottom: "12px" }}
+            sx={{ color: theme.palette.primary.dark, marginBottom: "12px" }}
           >
             Examples:
           </Typography>
           <TextField
             fullWidth
             multiline
+            rows={4}
             name="examples"
             value={formik.values.examples}
             onChange={formik.handleChange}
             error={formik.touched.examples && !!formik.errors.examples}
             helperText={"* Separate by !!"}
           />
-        </section>
+        </Grid>
 
-        <section>
+        <Grid
+          xs={6}
+          sx={{ paddingRight: "12px", minWidth: "300px", marginBottom: "24px" }}
+        >
           <Typography
             variant="h5"
-            sx={{ color: colorVars.mainPurple, marginBottom: "12px" }}
+            sx={{ color: theme.palette.primary.dark, marginBottom: "12px" }}
           >
             Options:
           </Typography>
           <TextField
             fullWidth
             multiline
+            rows={4}
             name="options"
             value={formik.values.options}
             onChange={formik.handleChange}
             error={formik.touched.options && !!formik.errors.options}
             helperText={"* Separate by !!"}
           />
-        </section>
+        </Grid>
 
-        <section>
+        <Grid xs={6}>
           <Typography
             variant="h5"
-            sx={{ color: colorVars.mainPurple, marginBottom: "12px" }}
+            sx={{ color: theme.palette.primary.dark, marginBottom: "12px" }}
           >
             Links:
           </Typography>
           <TextField
             fullWidth
             multiline
+            rows={4}
             name="links"
             value={formik.values.links}
             onChange={formik.handleChange}
             error={formik.touched.links && !!formik.errors.links}
             helperText={"* Separate by !!"}
           />
-        </section>
+        </Grid>
         <Box
           sx={{
             width: "100%",
@@ -194,9 +194,9 @@ const FeedbackDetailModal: FunctionComponent<FeedbackDetailModalT> = ({
             Update
           </Button>
         </Box>
-      </Box>
+      </Grid>
     </ModalContainer>
   );
 };
 
-export default FeedbackDetailModal;
+export default HelpTextDetailModal;

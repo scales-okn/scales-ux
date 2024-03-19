@@ -110,14 +110,13 @@ const NotebooksPage = () => {
                 textTransform: "capitalize",
                 color: (theme) => theme.palette.primary.dark,
                 fontWeight: "bold",
-                fontSize: "16px",
+                fontSize: "18px",
                 display: "flex",
                 alignItems: "center",
-                textDecoration: "underline",
               }}
             >
               {params.row.title}
-              <ArrowOutwardIcon sx={{ fontSize: "16px", marginLeft: "4px" }} />
+              <ArrowOutwardIcon sx={{ fontSize: "18px", marginLeft: "6px" }} />
             </Box>
           </Link>
         </Tooltip>

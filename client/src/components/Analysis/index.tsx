@@ -4,7 +4,7 @@ import React, { useEffect, useState } from "react";
 import { usePanel } from "src/store/panels";
 import { useRing } from "src/store/rings";
 
-import { Grid, Paper, Button, Box, Typography } from "@mui/material";
+import { Grid, Paper, Button, Box, Typography, useTheme } from "@mui/material";
 import AddIcon from "@mui/icons-material/Add";
 import PlayCircleFilledIcon from "@mui/icons-material/PlayCircleFilled";
 import uniqid from "uniqid";
@@ -23,7 +23,6 @@ import Statements from "./Statements";
 import { queryBuilder } from "./queryBuilder";
 
 import "./style.scss";
-import colorVars from "src/styles/colorVars";
 
 type AnalysisT = {
   panelId: string;
@@ -34,6 +33,8 @@ const Analysis = ({ panelId, sessionUserCanEdit }: AnalysisT) => {
   const { panel, analysis, updatePanel, filters } = usePanel(panelId);
 
   const { ring, info } = useRing(panel?.ringRid);
+
+  const theme = useTheme();
 
   const { width } = useWindowSize();
   const isTablet = width < 660;
@@ -187,15 +188,19 @@ const Analysis = ({ panelId, sessionUserCanEdit }: AnalysisT) => {
   });
 
   return (
-    <div className="analysis">
+    <Box>
       {Object.keys(analysis).map((id) => {
         return (
-          <Grid key={id} container sx={{ padding: "24px 2px" }}>
+          <Grid
+            key={id}
+            container
+            sx={{ padding: "48px 2px", borderBottom: "1px solid lightgrey" }}
+          >
             <Grid
               item
               sx={{
                 display: "flex",
-                alignItems: "flex-start",
+                alignItems: "center",
                 justifyContent: "space-between",
                 width: "100%",
                 padding: 0,
@@ -246,44 +251,50 @@ const Analysis = ({ panelId, sessionUserCanEdit }: AnalysisT) => {
               </Grid>
               <Box
                 sx={{
-                  display: "flex",
-                  alignItems: "center",
-                  ...(isTablet ? { flexDirection: "column" } : {}),
-                  marginTop: "16px",
+                  height: "100%",
+                  marginTop: "24px",
                 }}
               >
-                <Button
-                  variant="contained"
-                  disabled={
-                    Object.values(answersLoading).some(
-                      (value) => value === true,
-                    ) || !analysis[id]?.statement
-                  }
-                  onClick={() => getAnswers(id)}
-                  sx={
-                    isTablet
-                      ? {
-                          height: "36px",
-                          width: "36px",
-                          minWidth: "36px",
-                          padding: 0,
-                          marginBottom: "12px",
-                          marginLeft: "12px",
-                        }
-                      : {}
-                  }
-                >
-                  {isTablet ? <PlayCircleFilledIcon /> : "Run Analysis"}
-                </Button>
-                <DeleteButton
-                  onClick={() => handleRemoveAnalysis(id)}
-                  disabled={!sessionUserCanEdit}
+                <Box
                   sx={{
-                    marginLeft: "12px",
+                    display: "flex",
+                    alignItems: "center",
+                    ...(isTablet ? { flexDirection: "column" } : {}),
                   }}
-                  variant="outlined"
-                  titleAddon="Analysis"
-                />
+                >
+                  <Button
+                    variant="contained"
+                    disabled={
+                      Object.values(answersLoading).some(
+                        (value) => value === true,
+                      ) || !analysis[id]?.statement
+                    }
+                    onClick={() => getAnswers(id)}
+                    sx={
+                      isTablet
+                        ? {
+                            height: "36px",
+                            width: "36px",
+                            minWidth: "36px",
+                            padding: 0,
+                            marginBottom: "12px",
+                            marginLeft: "12px",
+                          }
+                        : {}
+                    }
+                  >
+                    {isTablet ? <PlayCircleFilledIcon /> : "Run Analysis"}
+                  </Button>
+                  <DeleteButton
+                    onClick={() => handleRemoveAnalysis(id)}
+                    disabled={!sessionUserCanEdit}
+                    sx={{
+                      marginLeft: "12px",
+                    }}
+                    variant="outlined"
+                    titleAddon="Analysis"
+                  />
+                </Box>
               </Box>
             </Grid>
             <Answers
@@ -302,7 +313,7 @@ const Analysis = ({ panelId, sessionUserCanEdit }: AnalysisT) => {
         sx={{
           paddingLeft: "8px",
           boxShadow: "none",
-          marginTop: "32px",
+          marginTop: "48px",
           display: "flex",
           alignItems: "center",
         }}
@@ -335,7 +346,7 @@ const Analysis = ({ panelId, sessionUserCanEdit }: AnalysisT) => {
             },
             "&:hover": {
               "*": {
-                color: colorVars.detailsBlue,
+                color: theme.palette.primary.main,
               },
             },
           }}
@@ -351,7 +362,7 @@ const Analysis = ({ panelId, sessionUserCanEdit }: AnalysisT) => {
           <Typography>Add Analysis</Typography>
         </Button>
       </Paper>
-    </div>
+    </Box>
   );
 };
 

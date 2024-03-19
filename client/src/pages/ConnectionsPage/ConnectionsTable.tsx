@@ -84,6 +84,7 @@ const ConnectionsTable = () => {
                 color: theme.palette.primary.dark,
                 fontWeight: "bold",
                 overflow: "ellipses",
+                textTransform: "capitalize",
               }}
             >
               {userToDisplay?.firstName} {userToDisplay?.lastName}

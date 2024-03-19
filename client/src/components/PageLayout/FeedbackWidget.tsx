@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { TextField, Typography, Box, Button } from "@mui/material";
+import { TextField, Typography, Box, Button, useTheme } from "@mui/material";
 import ErrorOutlineIcon from "@mui/icons-material/ErrorOutline";
 import { useFormik } from "formik";
 import * as yup from "yup";
@@ -10,7 +10,6 @@ import { useNotify } from "src/components/Notifications";
 
 import { styles } from "./styles";
 
-import colorVars from "src/styles/colorVars";
 import ModalContainer from "../Modals/ModalContainer";
 
 const FeedbackWidget = () => {
@@ -21,6 +20,7 @@ const FeedbackWidget = () => {
     body: yup.string().required("Comment is required for submission"),
   });
 
+  const theme = useTheme();
   const { notify } = useNotify();
   const formik = useFormik({
     initialValues: {
@@ -59,7 +59,7 @@ const FeedbackWidget = () => {
           left: "8px",
           height: "32px",
           width: isHovered ? "120px" : "32px",
-          background: colorVars.mainPurpleLight,
+          background: theme.palette.info.main,
           color: "white",
           borderRadius: "6px",
           cursor: "pointer",
@@ -106,7 +106,7 @@ const FeedbackWidget = () => {
               <Typography color="error">{formik.errors.body}</Typography>
             )}
 
-            <Box sx={{ padding: "0px 18px 24px 0px" }} textAlign="right">
+            <Box sx={{ padding: "0px 18px 6px 0px" }} textAlign="right">
               <Button color="info" variant="contained" type="submit">
                 Submit
               </Button>

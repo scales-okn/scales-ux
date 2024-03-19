@@ -5,11 +5,9 @@ import uniqid from "uniqid";
 
 import { usePanel } from "src/store/panels";
 
-import colorVars from "src/styles/colorVars";
-
 import useWindowSize from "src/hooks/useWindowSize";
 
-import { Box, Button, Typography } from "@mui/material";
+import { Box, Button, Typography, useTheme } from "@mui/material";
 import Filter from "./Filter";
 
 import { filterContainerStyles } from "./styles";
@@ -27,6 +25,8 @@ const Filters = ({ panelId, sessionUserCanEdit }: FiltersProps) => {
     updatePanel,
     panel,
   } = usePanel(panelId);
+
+  const theme = useTheme();
 
   const { width } = useWindowSize();
   const isTablet = width < 768;
@@ -101,7 +101,7 @@ const Filters = ({ panelId, sessionUserCanEdit }: FiltersProps) => {
               minWidth: 0,
               "&:hover": {
                 "*": {
-                  color: colorVars.detailsBlue,
+                  color: theme.palette.primary.main,
                 },
               },
             }}

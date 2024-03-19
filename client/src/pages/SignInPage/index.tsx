@@ -18,7 +18,6 @@ import queryString from "query-string";
 import { authSelector, login } from "src/store/auth";
 
 import { useTheme } from "@mui/material/styles";
-import colorVars from "src/styles/colorVars";
 
 export interface UserSignInFields {
   email: string;
@@ -173,7 +172,7 @@ const SignInPage = () => {
                 variant="body2"
                 component="a"
                 href="/forgot-password"
-                sx={{ color: colorVars.detailsBlue }}
+                sx={{ color: theme.palette.primary.main }}
               >
                 Forgot password?
               </Typography>
@@ -183,7 +182,7 @@ const SignInPage = () => {
                 variant="body2"
                 component="a"
                 href="/sign-up"
-                sx={{ color: colorVars.detailsBlue }}
+                sx={{ color: theme.palette.primary.main }}
               >
                 {`Don't have an account? Sign Up`}
               </Typography>
