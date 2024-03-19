@@ -1,9 +1,9 @@
 import React from "react";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
-import { Box } from "@mui/material";
-import colorVars from "src/styles/colorVars";
+import { Box, useTheme } from "@mui/material";
 
 const BackButton = ({ onClick }) => {
+  const theme = useTheme();
   return (
     <Box
       onClick={onClick}
@@ -12,7 +12,7 @@ const BackButton = ({ onClick }) => {
         alignItems: "center",
         cursor: "pointer",
         color: "white",
-        background: colorVars.mainPurple,
+        background: theme.palette.info.dark,
         padding: "8px",
         borderRadius: "0 4px 4px 0",
         position: "absolute",

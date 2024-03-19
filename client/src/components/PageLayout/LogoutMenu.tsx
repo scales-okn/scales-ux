@@ -7,7 +7,7 @@ import Popover from "@mui/material/Popover";
 import ProfileModal from "./ProfileModal";
 import PasswordModal from "./PasswordModal";
 import EmailSettingsModal from "./EmailSettingsModal";
-import colorVars from "src/styles/colorVars";
+import { useTheme } from "@mui/material/styles";
 
 import { logoutMenuStyles } from "./styles";
 
@@ -20,6 +20,8 @@ const LogoutMenu = () => {
   const [passwordModalVisible, setPasswordModalVisible] = useState(false);
   const [emailSettingsModalVisible, setEmailSettingsModalVisible] =
     useState(false);
+
+  const theme = useTheme();
 
   const handleClick = (event) => {
     setAnchorEl(event.currentTarget);
@@ -65,7 +67,7 @@ const LogoutMenu = () => {
               fontSize: "18px",
 
               "&:hover": {
-                background: colorVars.mainPurpleLightest,
+                background: theme.palette.info.light,
               },
             },
           }}

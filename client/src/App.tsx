@@ -27,8 +27,9 @@ const theme = createTheme({
       dark: hexToRgb("#9c1323"),
     },
     info: {
-      main: hexToRgb("#7e56b9"),
-      dark: hexToRgb("#6d4b9f"),
+      main: hexToRgb("#915edd"),
+      dark: hexToRgb("#4e2a84"),
+      light: hexToRgb("#e6d5ff"),
     },
   },
 });

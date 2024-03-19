@@ -10,10 +10,10 @@ import {
   Button,
   Grid,
   Link,
+  useTheme,
 } from "@mui/material";
 import { useNotify } from "src/components/Notifications";
 import { makeRequest } from "src/helpers/makeRequest";
-import colorVars from "src/styles/colorVars";
 
 interface ForgotPasswordFields {
   email: string;
@@ -29,6 +29,8 @@ const ForgotPasswordValidationSchema = yup.object({
 const ForgotPassword = () => {
   const navigate = useNavigate();
   const { notify } = useNotify();
+
+  const theme = useTheme();
 
   const formik = useFormik({
     initialValues: {
@@ -97,7 +99,7 @@ const ForgotPassword = () => {
               <Link
                 href="/sign-in"
                 className="small"
-                style={{ color: colorVars.detailsBlue }}
+                style={{ color: theme.palette.primary.main }}
               >
                 Already have an account? Sign in
               </Link>

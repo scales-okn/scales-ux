@@ -4,7 +4,8 @@ import { useRings } from "src/store/rings";
 
 import { useEffectOnce } from "react-use";
 import { DataGrid, GridCellParams, GridColDef } from "@mui/x-data-grid";
-import { Button, Box, Typography } from "@mui/material";
+import ArrowOutwardIcon from "@mui/icons-material/ArrowOutward";
+import { Button, Box, Typography, Tooltip } from "@mui/material";
 import dayjs from "dayjs";
 
 import ColumnHeader from "src/components/ColumnHeader";
@@ -34,7 +35,24 @@ const RingsPage = () => {
       minWidth: 150,
       flex: 1,
       renderCell: (params: GridCellParams) => (
-        <Link to={`/admin/rings/${params.row.rid}`}>{params.row.name}</Link>
+        <Tooltip title="View Notebook">
+          <Link to={`/admin/rings/${params.row.rid}`}>
+            <Box
+              sx={{
+                marginLeft: (theme) => theme.spacing(1),
+                textTransform: "capitalize",
+                color: (theme) => theme.palette.primary.dark,
+                fontWeight: "bold",
+                fontSize: "16px",
+                display: "flex",
+                alignItems: "center",
+              }}
+            >
+              {params.row.name}
+              <ArrowOutwardIcon sx={{ fontSize: "18px", marginLeft: "6px" }} />
+            </Box>
+          </Link>
+        </Tooltip>
       ),
       renderHeader,
     },

@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 
-import { Box, Typography, Button } from "@mui/material";
+import { Box, Typography, Button, useTheme } from "@mui/material";
 import DeleteOutlineIcon from "@mui/icons-material/DeleteOutline";
 import PersonAddIcon from "@mui/icons-material/PersonAdd";
 import CheckCircleOutlineIcon from "@mui/icons-material/CheckCircleOutline";
@@ -14,12 +14,11 @@ import PlaylistRemoveIcon from "@mui/icons-material/PlaylistRemove";
 
 import { useAlert } from "src/store/alerts";
 
-import colorVars from "src/styles/colorVars";
-
 const AlertRow = ({ alert, setModalAlert }) => {
   const { deleteAlert } = useAlert();
 
   const [isHovered, setIsHovered] = useState(false);
+  const theme = useTheme();
 
   const alertTemplate = ({ title, targetName, iconUnviewed }) => {
     return (
@@ -158,7 +157,7 @@ const AlertRow = ({ alert, setModalAlert }) => {
           cursor: "default",
 
           "&:hover": {
-            background: colorVars.mainPurpleLightest,
+            background: theme.palette.info.light,
           },
         }}
       >

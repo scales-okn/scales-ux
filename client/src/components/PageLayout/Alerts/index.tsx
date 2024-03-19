@@ -8,14 +8,10 @@ import { useAlert } from "src/store/alerts";
 import { useSessionUser } from "src/store/auth";
 
 import NotificationsIcon from "@mui/icons-material/Notifications";
-import { Box, Button, Typography } from "@mui/material";
-import Popover from "@mui/material/Popover";
-import { useTheme } from "@mui/material/styles";
+import { Box, Button, Typography, useTheme, Popover } from "@mui/material";
 
 import AlertRow from "./AlertRow";
 import ModalAlertElement from "./modals";
-
-import colorVars from "src/styles/colorVars";
 
 const NotificationsBell = () => {
   const [anchorEl, setAnchorEl] = React.useState<HTMLButtonElement | null>(
@@ -100,7 +96,7 @@ const NotificationsBell = () => {
               fontSize: "18px",
 
               "&:hover": {
-                background: colorVars.mainPurpleLightest,
+                background: theme.palette.info.light,
               },
             },
           }}

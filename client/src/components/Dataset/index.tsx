@@ -55,10 +55,14 @@ const Dataset = ({ panelId, sessionUserCanEdit }: DatasetProps) => {
     <Loader isVisible={loadingRings}>
       <Box
         sx={{
-          padding: "3rem",
+          padding: "32px",
           background: "white",
+          margin: "0 auto",
           marginBottom: "1.5rem",
-          marginTop: "24px",
+          marginTop: "48px",
+          width: "460px",
+          borderRadius: "4px",
+          boxShadow: "0px 2px 4px rgba(0, 0, 0, 0.3)",
 
           "*": {
             transition: ".2s all",

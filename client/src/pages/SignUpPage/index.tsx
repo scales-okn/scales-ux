@@ -4,7 +4,6 @@ import { useNavigate } from "react-router-dom";
 import { useFormik } from "formik";
 
 import {
-  Container,
   Typography,
   TextField,
   Grid,
@@ -12,8 +11,8 @@ import {
   Checkbox,
   Box,
   Button,
+  useTheme,
 } from "@mui/material";
-import { useTheme } from "@mui/material/styles";
 
 import useEscapeKeyListener from "src/hooks/useEscapeKeyListener";
 import { makeRequest } from "src/helpers/makeRequest";
@@ -21,7 +20,6 @@ import { makeRequest } from "src/helpers/makeRequest";
 import Loader from "src/components/Loader";
 import { UserSignInFields } from "../SignInPage";
 import { UserSignUpValidationSchema } from "./schema";
-import colorVars from "src/styles/colorVars";
 
 interface UserSignUpFields extends UserSignInFields {
   firstName: string;
@@ -289,7 +287,10 @@ const SignUpPage = () => {
               </Box>
 
               <Typography variant="body2" sx={{ marginTop: "44px" }}>
-                <a href="/sign-in" style={{ color: colorVars.detailsBlue }}>
+                <a
+                  href="/sign-in"
+                  style={{ color: theme.palette.primary.main }}
+                >
                   Already have an account? Sign in
                 </a>
               </Typography>

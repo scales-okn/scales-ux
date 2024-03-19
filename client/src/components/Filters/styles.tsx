@@ -1,5 +1,4 @@
 import { css } from "@emotion/css";
-import colorVars from "src/styles/colorVars";
 
 export const filterContainerStyles = css`
   background-color: white;
@@ -65,29 +64,5 @@ export const filterStyles = css`
       padding: 10px;
       border: 1px solid lightgrey;
     }
-  }
-`;
-
-export const tooltipTitleStyles = css`
-  h5 {
-    color: ${colorVars.mainPurple};
-    font-weight: 700;
-    margin-bottom: 12px;
-  }
-
-  p {
-    font-size: 14px;
-  }
-
-  ul {
-    padding-left: 10px;
-  }
-
-  .optionLink {
-    margin-left: -10px;
-  }
-
-  section:not(:last-child) {
-    margin-bottom: 32px;
   }
 `;
