@@ -1,4 +1,4 @@
-import React, { memo, useMemo, useRef, useEffect } from "react";
+import React, { useRef, useEffect } from "react";
 import * as Plot from "@observablehq/plot";
 import legalAlbers from "./legal-albers-10m.json";
 import * as topojson from "topojson-client";
@@ -6,7 +6,7 @@ import * as topojson from "topojson-client";
 export default function GeoMapPlot({ resultsMap, geoLevel, units }) {
   const containerRef = useRef(null);
   const nation = topojson.feature(legalAlbers, legalAlbers.objects.nation);
-  const states = topojson.feature(legalAlbers, legalAlbers.objects.nation);
+  const states = topojson.feature(legalAlbers, legalAlbers.objects.states);
 
   let borders = nation;
   if (geoLevel === 'circuit_abbrev') {
@@ -19,15 +19,11 @@ export default function GeoMapPlot({ resultsMap, geoLevel, units }) {
     borders = topojson.feature(legalAlbers, legalAlbers.objects.counties);
   }
 
-  console.log(geoLevel, borders)
-
-  const channels = {};
-  channels[units[0][0]] = feature => feature.properties.name || feature.id;
-
-  console.log(units, channels)
-
   useEffect(() => {
     if (resultsMap === undefined) return;
+    const channels = {};
+    channels[units[0][0]] = feature => feature.properties.name || feature.id;
+
     const plot = Plot.plot({
       label: units[1][1],
       projection: "albers-usa",
@@ -58,7 +54,7 @@ export default function GeoMapPlot({ resultsMap, geoLevel, units }) {
     });
     containerRef.current.append(plot);
     return () => plot.remove();
-  }, [resultsMap]);
+  }, [resultsMap, geoLevel, units]);
 
   return <div ref={containerRef}></div>;
 }
