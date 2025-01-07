@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import React, { memo, useMemo, useRef, useEffect } from "react";
+import React, { memo } from "react";
 import { Box, Typography } from "@mui/material";
 import GeoMapPlot from "./GeoMapPlot";
 
