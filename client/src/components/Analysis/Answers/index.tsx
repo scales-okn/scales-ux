@@ -15,6 +15,7 @@ import Loader from "src/components/Loader";
 import MultilineChartDisplay from "./MultilineChartDisplay";
 import LineChartDisplay from "./LineChartDisplay";
 import BarChartDisplay from "./BarChartDisplay";
+import GeoMapDisplay from "./GeoMapDisplay";
 
 const Answers = ({
   panelId,
@@ -102,6 +103,7 @@ const Answers = ({
     data?.length > 0 &&
     data?.results?.[0]?.length === 2 &&
     answerType === "bar";
+  const isGeoMap = data?.length > 0 && answerType === "geoMap";
   const isLineChart = data?.length > 0 && answerType === "line";
   const isMultilineChart = data?.length > 0 && answerType === "multiline";
   const plainTextAnswer = !isBarChart && !isLineChart && !isMultilineChart;
@@ -179,6 +181,16 @@ const Answers = ({
                 <Typography>{plainTextAnswer ? answerText : null}</Typography>
                 {isBarChart && (
                   <BarChartDisplay
+                    data={data}
+                    chartWidth={chartWidth}
+                    chartMargins={chartMargins}
+                    panelId={panelId}
+                    answerText={answerText}
+                  />
+                )}
+
+                {isGeoMap && (
+                  <GeoMapDisplay
                     data={data}
                     chartWidth={chartWidth}
                     chartMargins={chartMargins}
