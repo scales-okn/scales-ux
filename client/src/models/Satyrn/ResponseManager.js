@@ -185,6 +185,15 @@ class ResponseManager {
       return "line";
     }
     if (formattedResults[0].series) return "groupedBar";
+    if (plan.groupBy.some(({field}) => 
+      field === 'court_abbrev'
+      || field === 'state_abbrev'
+      || field === 'circuit_abbrev'
+      || field === 'county_code')
+    ) {
+      console.log('geoMap visType')
+      return "geoMap";
+    }
     return "bar";
   };
 }

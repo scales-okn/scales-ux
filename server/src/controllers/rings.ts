@@ -1,5 +1,7 @@
 import { Request, Response } from "express";
 import { sequelize } from "../database";
+const Sequelize = require("sequelize");
+const Op = Sequelize.Op;
 import { notifyAdminsOfRingChange, createRingDiff } from "../models/Ring";
 
 // Resources validations are made with validateResources middleware and validations schemas
@@ -19,17 +21,14 @@ export const create = async (req: Request, res: Response) => {
       });
       newVersionNum = existingRingVersions?.length + 1;
     } else {
-      // Add one to the highest existing RID
+      // Find the maximum 'rid' and add 1 to it for the new record
       const allRings = await sequelize.models.Ring.findAll({
-        attributes: [
-          [sequelize.fn("max", sequelize.cast(sequelize.col("rid"), "integer")), "max_rid"], // Calculate the maximum 'rid' and alias it as 'max_rid'
-        ],
-        raw: true, // To get raw data (an array of objects) instead of instances
+        attributes: [[sequelize.fn("max", sequelize.col("rid")), "max_rid"]],
+        raw: true,
       });
 
-      const maxRid = allRings[0]?.max_rid || 0;
-      const maxNum = parseInt(maxRid, 10);
-      ridToSave = maxNum + 1;
+      const maxRid = allRings[0]?.max_rid || 0; // Use the maximum 'rid' found or default to 0 if none found
+      ridToSave = maxRid + 1; // Increment to get the new 'rid'
     }
 
     const newVersion = await sequelize.models.Ring.create({
@@ -47,13 +46,20 @@ export const create = async (req: Request, res: Response) => {
     // only created diff if this is a new version to an existing ring
     if (rid) {
       const lastVersion = await sequelize.models.Ring.findOne({
-        where: { rid, version: newVersionNum - 1 },
+        where: {
+          rid,
+          version: {
+            [Op.lt]: newVersionNum, // Less than newVersionNum
+          },
+        },
+        order: [["version", "DESC"]],
+        limit: 1,
       });
       const updatedRingVersion = await createRingDiff({ lastVersion, newVersion });
 
-      // if (process.env.NODE_ENV === "production") {
-      notifyAdminsOfRingChange({ ringVersion: updatedRingVersion, initiatorUserId: userId });
-      // }
+      if (process.env.NODE_ENV === "production") {
+        notifyAdminsOfRingChange({ ringVersion: updatedRingVersion, initiatorUserId: userId });
+      }
     }
 
     const versions = await sequelize.models.Ring.findAll({
