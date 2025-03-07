@@ -331,7 +331,6 @@ const Analysis = ({ panelId, sessionUserCanEdit }: AnalysisT) => {
           disabled={!sessionUserCanEdit}
           sx={{
             border: "1px solid black",
-            color: "black",
             marginRight: "12px",
             height: "36px",
             minWidth: 0,
