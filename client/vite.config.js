@@ -23,6 +23,13 @@ export default defineConfig(() => {
       }),
       pluginRewriteAll(),
     ],
+    define: {
+      // This provides the necessary process.env for GraphQL
+      'process.env': {},
+      'process.env.NODE_ENV': JSON.stringify(process.env.NODE_ENV || 'development'),
+      // Add this line to fix the specific error
+      'process': { env: {} }
+    },
     resolve: {
       alias: {
         src: "/src",
