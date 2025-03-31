@@ -89,24 +89,30 @@ export function parseRDFSchema(filePath: string): Ontology {
                 classDef.subclasses.forEach(subclass => {
                     const subclassUriObject = store.sym(subclass.iri);
                     const propertyStatements = store.statementsMatching(null, RDFS('domain'), subclassUriObject);
+                    propertyStatements.push(...propertyStatements);
                 });
-                propertyStatements.push(...propertyStatements);
             }
 
             propertyStatements.forEach(stmt => {
                 const propertyUri = stmt.subject.value;
                 const propertyName = propertyUri.split('#').pop() || '';
+                // extract the last alapha value from the propertyUri using regex
 
                 // Get property range
                 const rangeStmt = store.any(stmt.subject, RDFS('range'), null);
                 const range = rangeStmt ? rangeStmt.value : '';
+                const typeId = rangeStmt.value.match(/[a-zA-Z]+$/)?.[0] || '';
+
+                const labelStmt = store.any(stmt.subject, RDFS('label'), null);
+                const label = labelStmt ? labelStmt.value : propertyName;
 
                 // Check if this is an object property or data property
                 const isObjectProperty = store.any(stmt.subject, RDF('type'), OWL('ObjectProperty'));
 
                 const property: PropertyInfo = {
-                    name: propertyName,
-                    type: isObjectProperty ? 'object' : 'data',
+                    iri: propertyUri,
+                    name: label,
+                    type: typeId,
                     range: range,
                     domain: classUri
                 };

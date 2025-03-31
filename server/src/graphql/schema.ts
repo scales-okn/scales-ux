@@ -2,29 +2,39 @@ import { gql } from "@apollo/client"
 
 export const typeDefs = gql`
   type CourtCase {
-    caseId: ID!
+    caseDocketId: ID!
+    caseGeneralCategory: String
+    jurisdiction: String
     caseStatus: String
     filingDate: String
-    terminatingDate: String
+    filingDateStart: String
+    filingDateEnd: String
     natureSuit: String
     cause: String
+    terminatingDate: String
+    ontologlyLabel: String
+    charges: [Charge!]
+    judge: Judge
+    court: Court
   }
 
   type Charge {
     chargeId: ID!
-    caseId: ID
     chargeDescription: String
-    chargeSeverity: String
     chargeStatus: String
-    filingDate: String
-    dispositionDate: String
+    chargeType: String
     disposition: String
+    filingDate: String
   }
 
-  enum JurisdictionLevel {
-    FEDERAL
-    STATE
-    LOCAL
+  type Judge {
+    judgeId: ID!
+    name: String
+  }
+
+  type Court {
+    courtId: ID!
+    name: String
   }
 
   type CourtCasePaginatedList {
@@ -46,21 +56,58 @@ export const typeDefs = gql`
   type PropertyInfo {
     name: String!
     type: String!
-    range: String!
-    domain: String!
+    field: String!
+  }
+
+  type Filter {
+    label: String!
+    type: String!
+    field: String!
+    values: [String!]
   }
   
   type Query {
     case(id: ID!): CourtCase
-    cases(first: Int = 10, offset: Int = 0, sortBy: String, sortDirection: String = "ASC"): CourtCasePaginatedList!
-    searchCases(caseStatus: String, filingDateStart: String, filingDateEnd: String, natureSuit: String, first: Int = 5, offset: Int = 0, sortBy: String, sortDirection: String = "ASC"): CourtCasePaginatedList!
+    cases(
+      first: Int = 10, 
+      offset: Int = 0, 
+      sortBy: String, 
+      sortDirection: String = "ASC"
+    ): CourtCasePaginatedList!
+    
+    searchCases(
+      caseStatus: String, 
+      filingDateStart: String, 
+      filingDateEnd: String, 
+      natureSuit: String, 
+      first: Int = 5, 
+      offset: Int = 0, 
+      sortBy: String, 
+      sortDirection: String = "ASC"
+    ): CourtCasePaginatedList!
     
     charge(id: ID!): Charge
-    charges(first: Int = 10, offset: Int = 0, sortBy: String, sortDirection: String = "ASC"): ChargePaginatedList!
-    searchCharges(chargeDescription: String, chargeSeverity: String, chargeStatus: String, filingDateStart: String, filingDateEnd: String, disposition: String, first: Int = 5, offset: Int = 0, sortBy: String, sortDirection: String = "ASC"): ChargePaginatedList!
+    charges(
+      first: Int = 10, 
+      offset: Int = 0, 
+      sortBy: String, 
+      sortDirection: String = "ASC"
+    ): ChargePaginatedList!
     
-    getFiltersForEntity(entity: String!): [PropertyInfo!]!
+    searchCharges(
+      chargeDescription: String, 
+      chargeStatus: String, 
+      chargeType: String,
+      disposition: String, 
+      filingDateStart: String, 
+      filingDateEnd: String, 
+      first: Int = 5, 
+      offset: Int = 0, 
+      sortBy: String, 
+      sortDirection: String = "ASC"
+    ): ChargePaginatedList!
     
+    getFiltersForEntity(entity: String!): [Filter!]!
     getAutoCompleteData(field: String, value: String): [String!]!
   }
 `

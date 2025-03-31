@@ -15,81 +15,10 @@ import { rdfParser } from "rdf-parse";
 import fs from "fs";
 import { PropertyInfo } from "types/rdf";
 import { parseRDFSchema } from "../services/rdfs";
+import { reverseContextMap } from "../services/json-ld";
+import { Filter } from "types/filter";
 const myEngine = new QueryEngine();
 
-function getSourceFromResolveInfo(resolveInfo: GraphQLResolveInfo) {
-  return resolveInfo.operation.loc.source.body;
-}
-
-function replaceSecondOccurrence(str, find, replace) {
-  const firstIndex = str.indexOf(find);
-  if (firstIndex === -1) return str;
-
-  const secondIndex = str.indexOf(find, firstIndex + 1);
-  if (secondIndex === -1) return str;
-
-  return str.substring(0, secondIndex) + replace + str.substring(secondIndex + find.length);
-}
-
-function secondIndexOf(str, find) {
-  const firstIndex = str.indexOf(find);
-  if (firstIndex === -1) return -1;
-
-  return str.indexOf(find, firstIndex + 1);
-}
-
-function extractFieldsFromQuery(query: string): string[] {
-  const ast = parse(query);
-  const fields: string[] = [];
-
-  visit(ast, {
-    Field(node) {
-      // Look for fields inside the nodes object
-      if (node.name.value === "nodes" && node.selectionSet) {
-        node.selectionSet.selections.forEach((selection) => {
-          if (selection.kind === Kind.FIELD) {
-            fields.push(selection.name.value);
-          }
-        });
-      }
-    },
-  });
-
-  return fields;
-}
-
-function getFieldValue(query: string, fieldName: string): any {
-  const ast = parse(query);
-  let fieldValue = null;
-
-  visit(ast, {
-    Argument(node) {
-      // Check if this argument has the name we're looking for
-      if (node.name.value === fieldName) {
-        // Extract the value based on its kind
-        switch (node.value.kind) {
-          case Kind.INT:
-          case Kind.FLOAT:
-          case Kind.STRING:
-          case Kind.BOOLEAN:
-            fieldValue = node.value.value;
-            break;
-          case Kind.VARIABLE:
-            fieldValue = `$${node.value.name.value}`;
-            break;
-          case Kind.LIST:
-          case Kind.OBJECT:
-            // For complex values, you might need more processing
-            fieldValue = node.value;
-            break;
-        }
-      }
-    },
-  });
-
-  return fieldValue;
-}
-// In resolvers.ts
 export const queryResolvers = {
   Query: {
     case: async (_: any, { caseId }: { caseId: string }, context, info) => {
@@ -152,10 +81,21 @@ export const queryResolvers = {
       console.log(queryWithArgs);
       return [];
     },
-    getFiltersForEntity: async (_: any, { entity }: { entity: string }, context, info) => {
-      const properties = parseRDFSchema('/home/engineer/Data/ontologies/scales-2.rdf');
-      console.log(properties);
-      return properties.classes.find(c => c.name === entity)?.properties;
+    getFiltersForEntity: async (_: any, { entity }: { entity: string }, context, info): Promise<Filter[]> => {
+      const schema = parseRDFSchema('/home/engineer/Data/ontologies/scales-2.rdf');
+      const predMap = reverseContextMap(courtCase["@context"]);
+      console.log(predMap);
+      const classProps = schema.classes.find(c => c.name === entity)?.properties || [];
+      const props = classProps.map(p => {
+        console.log("iri", p.iri);
+        return {
+          label: p.name,
+          type: p.type,
+          field: predMap[p.iri] || 'missing json-ld field',
+          values: []
+        }
+      })
+      return props;
     },
 
     getAutoCompleteData: async (_: any, { field, value }: { field: string; value: string }, context, info) => {

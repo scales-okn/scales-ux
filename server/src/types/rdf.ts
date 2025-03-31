@@ -2,10 +2,12 @@
  * Represents information about a property in an RDF schema
  */
 export interface PropertyInfo {
+    /** The iri of the property */
+    iri: string;
     /** The name of the property */
     name: string;
     /** The type of property - either an object property (relationship to another class) or data property (literal value) */
-    type: 'object' | 'data';
+    type: string;
     /** The range of the property (what type of values it can have) */
     range: string;
     /** The domain of the property (which class it belongs to) */
@@ -21,6 +23,7 @@ export interface ClassDefinition {
     /** The name of the class */
     name: string;
     /** Array of IRIs names that inherit from this class */
+    // use a set for subclasses
     subclasses: ClassDefinition[];
     /** Array of properties that belong to this class */
     properties: PropertyInfo[];
