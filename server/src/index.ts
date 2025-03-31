@@ -1,23 +1,28 @@
-import express, { Request, Response } from "express";
-import path from "path";
-import responser from "responser";
+import { ApolloServer } from "@apollo/server";
+import { startStandaloneServer } from "@apollo/server/standalone";
 import cors from "cors";
+import express from "express";
+import rateLimit from "express-rate-limit";
 import helmet from "helmet";
 import hpp from "hpp";
-import rateLimit from "express-rate-limit";
 import passport from "passport";
-import { jwtLogin } from "./services/passport";
+import path from "path";
+import responser from "responser";
 import database from "./database";
+import { queryResolvers } from "./graphql/resolvers";
+import { typeDefs } from "./graphql/schema";
 import proxyRouter from "./proxy";
-import usersRouter from "./routes/users";
-import ringsRouter from "./routes/rings";
-import panelsRouter from "./routes/panels";
-import notebooksRouter from "./routes/notebooks";
-import feedbackRouter from "./routes/feedback";
-import connectionsRouter from "./routes/connections";
 import alertsRouter from "./routes/alerts";
-import teamsRouter from "./routes/teams";
+import connectionsRouter from "./routes/connections";
+import feedbackRouter from "./routes/feedback";
 import helpTextsRouter from "./routes/helpTexts";
+import notebooksRouter from "./routes/notebooks";
+import panelsRouter from "./routes/panels";
+import ringsRouter from "./routes/rings";
+import teamsRouter from "./routes/teams";
+import usersRouter from "./routes/users";
+import graphRouter from "./routes/graph";
+import { jwtLogin } from "./services/passport";
 
 const app = express();
 
@@ -87,6 +92,8 @@ app.use("/api/alerts", alertsRouter);
 // Teams Router
 app.use("/api/teams", teamsRouter);
 
+app.use("/api/graph", graphRouter);
+
 // Serve React App
 app.use(express.static(path.join(__dirname, "../build")));
 
@@ -95,8 +102,17 @@ app.get("*", (req, res) => {
   res.sendFile(path.join(__dirname, "../build", "index.html"));
 });
 
-app.on("ready", () => {
+const server = new ApolloServer({
+  typeDefs,
+  resolvers: queryResolvers,
+});
+
+app.on("ready", async () => {
   // Create the Server
+  const { url } = await startStandaloneServer(server, {
+    listen: { port: 4000 },
+  });
+  console.log(`🚀  Server ready at: ${url}`);
   app.listen(process.env.UX_SERVER_PORT, () => {
     console.log(`Server is running on port ${process.env.UX_SERVER_PORT}!`);
   });
