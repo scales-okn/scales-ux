@@ -83,6 +83,7 @@ export const typeDefs = gql`
     ): CourtCasePaginatedList!
     
     searchCases(
+      caseDocketId: String,
       caseStatus: String, 
       filingDateStart: String, 
       filingDateEnd: String, 

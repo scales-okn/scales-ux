@@ -2,6 +2,7 @@ export const courtCase = {
   "@context": {
     case: "http://release.niem.gov/niem/domains/jxdm/7.2/#Case",
     entityType: "rdf:type",
+    caseDocketId: "http://release.niem.gov/niem/niem-core/5.0/CaseDocketID",
     caseCivil: "http://schemas.scales-okn.org/rdf/scales#CaseCivil",
     caseInitiatingAttorney: "http://release.niem.gov/niem/domains/jxdm/7.2/#CaseInitiatingAttorney",
     caseInitiatingParty: "http://release.niem.gov/niem/domains/jxdm/7.2/#CaseInitiatingParty",
@@ -23,7 +24,7 @@ export const courtCase = {
     filingDateStart: "http://release.niem.gov/niem/niem-core/5.0/StartDate",
     filingDateEnd: "http://release.niem.gov/niem/niem-core/5.0/EndDate",
     natureSuit: "http://release.niem.gov/niem/niem-core/5.0/CaseSubCategoryText",
-    cause: "http://release.niem.gov/niem/niem-core/5.0/StatuteKeywordText",
+    cause: "http://release.niem.gov/niem/domains/jxdm/7.2/#StatuteKeywordText",
     chargeStatus: "http://release.niem.gov/niem/niem-core/5.0/StatusDescriptionText",
     chargeType: "http://schemas.scales-okn.org/rdf/scales#hasChargeType",
     terminatingDate: "http://release.niem.gov/niem/niem-core/5.0/EndDate",
@@ -35,7 +36,7 @@ export const courtCase = {
     sortBy: "http://www.w3.org/ns/sparql-service-description#orderBy",
     sortDirection: "http://www.w3.org/ns/sparql-service-description#orderDirection",
     docketTable: "http://release.niem.gov/niem/domains/jxdm/7.2/#RegisterOfActions",
-    nodes: { "@id": "http://www.w3.org/ns/hydra/core#member", "@container": "@list" }
+    nodes: { "@id": "http://release.niem.gov/niem/domains/jxdm/7.2/#Case", "@container": "@list" }
   },
   "@type": "http://release.niem.gov/niem/domains/jxdm/7.2/#Case",
 };

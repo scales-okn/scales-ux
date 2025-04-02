@@ -1,5 +1,6 @@
 import { QueryEngine } from "@comunica/query-sparql";
 import { Converter } from "graphql-to-sparql";
+import { Converter as TreeConverter } from "sparqljson-to-tree";
 import { toSparql } from "sparqlalgebrajs";
 import { Filter } from "types/filter";
 import { courtCase } from "../jsonld/case";
@@ -21,7 +22,6 @@ export const queryResolvers = {
       const querySrc: string = info.operation.loc.source.body;
       // console.log(querySrc);
       const queryBase = querySrc.slice(querySrc.indexOf("{") + 1, querySrc.lastIndexOf("}"));
-      console.log(queryBase);
       const queryArgs = { ...args };
       const { sortBy, sortDirection } = queryArgs;
       delete queryArgs.sortBy;
@@ -45,7 +45,7 @@ export const queryResolvers = {
         }
 
       }
-      queryWithArgs = queryWithArgs.replace('nodes', 'nodes(first: 100, offset: 1)');
+      queryWithArgs = queryWithArgs.replace('nodes', 'nodes(first: 10, offset: 0)');
 
       // Clean up any trailing commas before closing parentheses
       queryWithArgs = queryWithArgs.replace(", {", ") {");
@@ -53,14 +53,40 @@ export const queryResolvers = {
       for (const field of optionalFields) {
         queryWithArgs = queryWithArgs.replace(field, `${field} @optional`);
       }
+      console.log("queryWithArgs in cases resolver\n", queryWithArgs);
       const algebra = await new Converter().graphqlToSparqlAlgebra(
         queryWithArgs,
         { "@context": courtCase["@context"] },
         { variablesDict: args }
       );
       const sparqlQuery = toSparql(algebra);
-      console.log("sparqlQuery in cases resolver", sparqlQuery);
-      return [];
+      console.log("sparqlQuery in cases resolver\n", sparqlQuery);
+      try {
+        const bindingsStream = await myEngine.queryBindings(sparqlQuery, {
+          sources: ["https://frink.apps.renci.org/federation/sparql"],
+        });
+        // const bindings = await bindingsStream.toArray();
+        // console.log("streamArray in cases resolver", streamArray);
+        // const results = await new TreeConverter().sparqlJsonResultsToTree(bindings);
+        const results = [];
+        for await (const binding of bindingsStream) {
+          // console.dir(binding.get("nodes_caseDocketId"), { depth: null, colors: true });
+          results.push({
+            caseDocketId: binding.get("nodes_caseDocketId")?.value || "null field",
+            caseStatus: binding.get("nodes_caseStatus")?.value || "null field",
+            filingDate: binding.get("nodes_filingDate")?.value || "null field",
+            terminatingDate: binding.get("nodes_terminatingDate")?.value || "null field",
+            natureSuit: binding.get("nodes_natureSuit")?.value || "null field",
+          });
+        }
+        // const treeResults = await new TreeConverter().sparqlJsonResultsToTree(bindingsStream);
+        // console.log("results in cases resolver", results);
+        console.log("results in cases resolver", results);
+        return { nodes: results, totalCount: results.length, offset: 0, first: 10, hasMore: false };
+      } catch (error) {
+        console.error("Error in cases resolver:", error);
+        return [];
+      }
     },
     getFiltersForEntity: async (_: any, { entity }: { entity: string }, context, info): Promise<Filter[]> => {
       return getFiltersForEntity(entity);
@@ -90,8 +116,6 @@ export const queryResolvers = {
       interface Args {
         [key: string]: any;
       }
-
-
       // Example usage
       //       const query = `searchCases(
       //     caseStatus: $caseStatus
@@ -122,9 +146,6 @@ export const queryResolvers = {
       const args2 = { first: 5, offset: 0, sortBy: "filingDate", sortDirection: "DESC" };
       // console.log(updateGraphQLQuery(query, args2));
       try {
-        // Extract the variables that are causing problem        // Remove them from args before conversion
-
-
         // Get the query source
         const querySrc = info.operation.loc.source.body;
         const singularizeVariables = {
@@ -230,7 +251,8 @@ export const queryResolvers = {
         }
 
         console.log(sparqlQuery);
-
+        console.log("results in searchCases resolver", results);
+        return results;
         // Execute query...
         // Rest of your implementation
       } catch (error) {
