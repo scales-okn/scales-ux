@@ -346,7 +346,7 @@ export function CollapsibleSidebar({ children }: CollapsibleSidebarProps) {
             </IconButton>
           </Box>
           <Divider />
-          {selectedEntity && <DynamicFilterPanel baseEntity={selectedEntity} onApplyFilters={handleApplyFilters} />}
+          {selectedEntity && <DynamicFilterPanel baseEntity={selectedEntity} onApplyFilters={handleApplyFilters} isSubFilter={false} />}
         </Box>
       )}
 

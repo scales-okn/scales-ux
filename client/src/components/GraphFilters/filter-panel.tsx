@@ -11,7 +11,7 @@ interface FilterPanelProps {
 
 export function FilterPanel({ entityType, onApplyFilters }: FilterPanelProps) {
   console.log(entityType)
-  return <DynamicFilterPanel baseEntity={entityType} onApplyFilters={onApplyFilters} />
+  return <DynamicFilterPanel baseEntity={entityType} onApplyFilters={onApplyFilters} isSubFilter={false} />
   // Return the appropriate filter panel based on entity type
   // switch (entityType) {
   //   case "Cases":

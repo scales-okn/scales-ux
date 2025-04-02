@@ -1,30 +1,30 @@
-import type React from "react"
-import { useState, useEffect } from "react"
-import { useQuery, useLazyQuery } from "@apollo/client"
-import { gql } from "@apollo/client"
+import { gql, useLazyQuery, useQuery } from "@apollo/client"
+import ClearIcon from "@mui/icons-material/Clear"
+import CloseIcon from "@mui/icons-material/Close"
+import ExpandMoreIcon from "@mui/icons-material/ExpandMore"
+import SearchIcon from "@mui/icons-material/Search"
 import {
   Accordion,
   AccordionDetails,
   AccordionSummary,
-  TextField,
-  Select,
-  MenuItem,
+  Autocomplete,
+  Box,
+  Button,
+  Chip,
+  CircularProgress,
+  Divider,
   FormControl,
   InputLabel,
-  Typography,
-  Chip,
-  Box,
+  MenuItem,
   Paper,
-  Button,
+  Select,
   Stack,
-  Autocomplete,
-  CircularProgress,
+  TextField,
+  Typography,
 } from "@mui/material"
-import ExpandMoreIcon from "@mui/icons-material/ExpandMore"
-import CloseIcon from "@mui/icons-material/Close"
-import SearchIcon from "@mui/icons-material/Search"
-import ClearIcon from "@mui/icons-material/Clear"
 import { debounce } from "lodash"
+import type React from "react"
+import { useEffect, useState } from "react"
 
 const GET_FILTERS = gql`
   query GetFilters($entity: String!) {
@@ -38,6 +38,10 @@ const GET_FILTERS = gql`
         type
         field
         value
+        autoComplete {
+          label
+          value
+        }
       }
       autoComplete {
         label
@@ -67,7 +71,7 @@ type Filter = {
   subFilters?: Filter[]
 }
 
-export const DynamicFilterPanel: React.FC<{ baseEntity: string; onApplyFilters: (filters: Filter[]) => void }> = ({ baseEntity, onApplyFilters }) => {
+export const DynamicFilterPanel: React.FC<{ baseEntity: string; onApplyFilters: (filters: Filter[], isSubFilter: boolean) => void, isSubFilter: boolean }> = ({ baseEntity, onApplyFilters, isSubFilter }) => {
   const [filters, setFilters] = useState<Filter[]>([])
   const [activeFilters, setActiveFilters] = useState<Filter[]>([])
   const [expandedFilters, setExpandedFilters] = useState<string[]>([])
@@ -130,13 +134,13 @@ export const DynamicFilterPanel: React.FC<{ baseEntity: string; onApplyFilters: 
 
   const handleApply = () => {
     setActiveFilters(pendingFilters)
-    onApplyFilters(pendingFilters)
+    onApplyFilters(pendingFilters, false)
   }
 
   const handleClear = () => {
     setPendingFilters([])
     setActiveFilters([])
-    onApplyFilters([])
+    onApplyFilters([], false)
   }
 
   const removeFilter = (field: string) => {
@@ -209,22 +213,28 @@ export const DynamicFilterPanel: React.FC<{ baseEntity: string; onApplyFilters: 
           </FormControl>
         )
       default:
-        return (
-          <FormControl fullWidth margin="normal">
+        if (!isSubFilter) {
+          return (
+            <FormControl fullWidth margin="normal">
+              <InputLabel id={`${filter.field}-label`}>{filter.label}</InputLabel>
+              <Select
+                labelId={`${filter.field}-label`}
+                label={filter.label}
+                onChange={(e) => handleFilterChange({ ...filter, value: e.target.value as string })}
+              >
+                {filter.autoComplete?.map(({ label, value }) => (
+                  <MenuItem key={value} value={value}>
+                    {label}
+                  </MenuItem>
+                ))}
+              </Select>
+            </FormControl>
+          )
+        } else {
+          return (
             <InputLabel id={`${filter.field}-label`}>{filter.label}</InputLabel>
-            <Select
-              labelId={`${filter.field}-label`}
-              label={filter.label}
-              onChange={(e) => handleFilterChange({ ...filter, value: e.target.value as string })}
-            >
-              {filter.autoComplete?.map(({ label, value }) => (
-                <MenuItem key={value} value={value}>
-                  {label}
-                </MenuItem>
-              ))}
-            </Select>
-          </FormControl>
-        )
+          )
+        }
     }
   }
 
@@ -232,23 +242,20 @@ export const DynamicFilterPanel: React.FC<{ baseEntity: string; onApplyFilters: 
     return (
       <Box>
         {subFilters.map((subFilter) => (
-          <Accordion
-            key={subFilter.field}
-            expanded={expandedFilters.includes(subFilter.field)}
-            onChange={() => toggleExpanded(subFilter.field)}
-          >
-            <AccordionSummary expandIcon={<ExpandMoreIcon />}>
-              <Typography>{subFilter.label}</Typography>
-            </AccordionSummary>
-            <AccordionDetails>
-              {expandedFilters.includes(subFilter.field) && (
-                <DynamicFilterPanel
-                  baseEntity={subFilter.field}
-                  onApplyFilters={onApplyFilters}
-                />
-              )}
-            </AccordionDetails>
-          </Accordion>
+          <FormControl fullWidth margin="normal" key={subFilter.field}>
+            <InputLabel id={`${subFilter.field}-label`}>{subFilter.label}</InputLabel>
+            <Select
+              labelId={`${subFilter.field}-label`}
+              label={subFilter.label}
+              onChange={(e) => handleFilterChange({ ...subFilter, value: e.target.value as string })}
+            >
+              {subFilter.autoComplete?.map(({ label, value }) => (
+                <MenuItem key={value} value={value}>
+                  {label}
+                </MenuItem>
+              ))}
+            </Select>
+          </FormControl>
         ))}
       </Box>
     )
@@ -258,50 +265,76 @@ export const DynamicFilterPanel: React.FC<{ baseEntity: string; onApplyFilters: 
   if (error) return <Typography color="error">Error loading filters: {error.message}</Typography>
 
   return (
-    <Paper elevation={3} sx={{ width: 300, p: 2 }}>
-      <Typography variant="h6" gutterBottom>
-        Filters
-      </Typography>
-      {filters.map((filter) => (
-        <Box key={filter.field} mb={2}>
-          {renderFilter(filter)}
-          {filter.subFilters && renderSubFilters(filter.subFilters)}
+    <>
+      {!isSubFilter ? (
+        <Paper elevation={3} sx={{ width: 300, p: 2 }}>
+          {!isSubFilter && (
+            <Typography variant="h6" gutterBottom>
+              Filters
+            </Typography>
+          )}
+          {filters.map((filter) => (
+            <Box key={filter.field} mb={2}>
+              {renderFilter(filter)}
+              {filter.subFilters && filter.subFilters.map((subFilter) => (
+                <Box key={subFilter.field}>
+                  <Accordion>
+                    <AccordionSummary expandIcon={<ExpandMoreIcon />}>
+                      <Typography>{subFilter.label}</Typography>
+                    </AccordionSummary>
+                    <AccordionDetails>
+                      <DynamicFilterPanel
+                        key={subFilter.field}
+                        baseEntity={subFilter.field}
+                        onApplyFilters={onApplyFilters}
+                        isSubFilter={true}
+                      />
+                    </AccordionDetails>
+                  </Accordion>
+                </Box>
+              ))}
+            </Box>
+          ))}
+          <Box mt={2}>
+            <Typography variant="subtitle1" gutterBottom>
+              Active Filters
+            </Typography>
+            {activeFilters.map(({ label, field, value }) => (
+              <Chip
+                key={field}
+                label={`${label}: ${Array.isArray(value) ? value.join(", ") : value}`}
+                onDelete={() => removeFilter(field)}
+                deleteIcon={<CloseIcon />}
+                sx={{ mr: 1, mb: 1 }}
+              />
+            ))}
+          </Box>
+          <Stack direction="row" spacing={1} sx={{ mt: 2 }}>
+            <Button
+              variant="contained"
+              startIcon={<SearchIcon />}
+              onClick={handleApply}
+              disabled={pendingFilters.length === 0}
+              fullWidth
+            >
+              Apply
+            </Button>
+            <Button
+              variant="outlined"
+              startIcon={<ClearIcon />}
+              onClick={handleClear}
+              disabled={activeFilters.length === 0}
+              fullWidth
+            >
+              Clear
+            </Button>
+          </Stack>
+        </Paper>
+      ) : (
+        <Box>
+          {renderSubFilters(filters)}
         </Box>
-      ))}
-      <Box mt={2}>
-        <Typography variant="subtitle1" gutterBottom>
-          Active Filters
-        </Typography>
-        {activeFilters.map(({ label, field, value }) => (
-          <Chip
-            key={field}
-            label={`${label}: ${Array.isArray(value) ? value.join(", ") : value}`}
-            onDelete={() => removeFilter(field)}
-            deleteIcon={<CloseIcon />}
-            sx={{ mr: 1, mb: 1 }}
-          />
-        ))}
-      </Box>
-      <Stack direction="row" spacing={1} sx={{ mt: 2 }}>
-        <Button
-          variant="contained"
-          startIcon={<SearchIcon />}
-          onClick={handleApply}
-          disabled={pendingFilters.length === 0}
-          fullWidth
-        >
-          Apply
-        </Button>
-        <Button
-          variant="outlined"
-          startIcon={<ClearIcon />}
-          onClick={handleClear}
-          disabled={activeFilters.length === 0}
-          fullWidth
-        >
-          Clear
-        </Button>
-      </Stack>
-    </Paper>
+      )}
+    </>
   )
 }
