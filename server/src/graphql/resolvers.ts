@@ -3,8 +3,7 @@ import { Converter } from "graphql-to-sparql";
 import { toSparql } from "sparqlalgebrajs";
 import { Filter } from "types/filter";
 import { courtCase } from "../jsonld/case";
-import { reverseMap } from "../services/json-ld";
-import { parseRDFSchema, buildFilters, getFiltersForEntity } from "../services/rdfs";
+import { getFiltersForEntity } from "../services/rdfs";
 import { testCourtCases } from "./test-cases";
 const myEngine = new QueryEngine();
 
@@ -54,37 +53,14 @@ export const queryResolvers = {
       for (const field of optionalFields) {
         queryWithArgs = queryWithArgs.replace(field, `${field} @optional`);
       }
-
-      console.log("before", queryWithArgs);
-
-
-      console.log("after", queryWithArgs);
       const algebra = await new Converter().graphqlToSparqlAlgebra(
         queryWithArgs,
         { "@context": courtCase["@context"] },
         { variablesDict: args }
       );
       const sparqlQuery = toSparql(algebra);
-      console.log(sparqlQuery);
+      console.log("sparqlQuery in cases resolver", sparqlQuery);
       return [];
-
-      //   cases(first: 100, offset: 0, sortBy: , sortDirection: ) {
-      // nodes {
-      //       caseDocketId
-      //       caseGeneralCategory
-      //       caseStatus
-      //       cause
-      //   charges {
-      //         chargeId
-      //         chargeStatus
-      //         chargeType
-      //         disposition
-      //         filingDate
-      //       }
-      //       filingDate
-      //     }
-      //   }
-
     },
     getFiltersForEntity: async (_: any, { entity }: { entity: string }, context, info): Promise<Filter[]> => {
       return getFiltersForEntity(entity);
@@ -107,10 +83,8 @@ export const queryResolvers = {
       for await (const binding of bindingsStream) {
         results.push(binding.get(field).value);
       }
-      // bindingsStream.on("data", (binding) => {
-      //   results.push(binding.get(field).value);
-      // });
-      return { autoCompleteData: results };
+      console.log(`results for ${field}:${value} in getAutoCompleteData`, results);
+      return results;
     },
     searchCases: async (_: any, args: any, context, info) => {
       interface Args {

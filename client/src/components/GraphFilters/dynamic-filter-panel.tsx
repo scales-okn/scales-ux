@@ -123,20 +123,56 @@ export const DynamicFilterPanel: React.FC<{
     }
   }, 300), [dispatch, baseEntity, getAutocompleteData])
 
-  // Load autocomplete data for all string filters on initialization
+  // Modified function to properly handle multiple filter fields
   const loadInitialAutocompleteData = useCallback(async (filtersToLoad: Filter[]) => {
     const stringFilters = filtersToLoad.filter(filter => filter.type === "string")
-    for (const filter of stringFilters) {
-      // Only load if we don't already have data for this field
-      if (!storedAutocompleteOptions[filter.field] ||
-        storedAutocompleteOptions[filter.field].length === 0) {
-        fetchAutocompleteData(filter.field, '')
+
+    // Use a non-debounced immediate fetch for initial loading
+    const fetchImmediate = async (field: string, value: string) => {
+      dispatch(setLoadingState({ entity: baseEntity, field, isLoading: true }))
+      try {
+        const { data } = await getAutocompleteData({
+          variables: { field, value },
+        })
+
+        // Transform the data to match AutoComplete format
+        let options: AutoComplete[] = [];
+
+        if (Array.isArray(data.getAutoCompleteData)) {
+          options = data.getAutoCompleteData.map((item: any) => {
+            if (item && typeof item === 'object' && 'label' in item && 'value' in item) {
+              return item as AutoComplete;
+            }
+            const stringValue = String(item);
+            return { label: stringValue, value: stringValue };
+          });
+        }
+
+        dispatch(setAutocompleteOptions({
+          entity: baseEntity,
+          field,
+          options
+        }))
+      } finally {
+        dispatch(setLoadingState({ entity: baseEntity, field, isLoading: false }))
       }
     }
-  }, [fetchAutocompleteData, storedAutocompleteOptions])
+
+    // Process each filter independently using Promise.all for parallel execution
+    await Promise.all(
+      stringFilters.map(filter => {
+        // Only load if we don't already have data for this field
+        if (!storedAutocompleteOptions[filter.field] ||
+          storedAutocompleteOptions[filter.field].length === 0) {
+          return fetchImmediate(filter.field, '');
+        }
+        return Promise.resolve();
+      })
+    );
+  }, [dispatch, baseEntity, getAutocompleteData, storedAutocompleteOptions])
 
   useEffect(() => {
-    if (data) {
+    if (data && data.getFiltersForEntity) {
       const newFilters = data.getFiltersForEntity
       setFilters(newFilters)
 
@@ -145,10 +181,10 @@ export const DynamicFilterPanel: React.FC<{
         setPendingFilters(storedFilters)
       }
 
-      // Load initial autocomplete data
+      // Load initial autocomplete data - only on first render or when data changes
       loadInitialAutocompleteData(newFilters)
     }
-  }, [data, loadInitialAutocompleteData, storedFilters, pendingFilters.length])
+  }, [data]) // Only depend on data changing, not on loadInitialAutocompleteData
 
   const handleFilterChange = async (filter: Filter) => {
     if (filter.type === 'type') {
@@ -215,7 +251,13 @@ export const DynamicFilterPanel: React.FC<{
           <Autocomplete
             fullWidth
             options={getOptionsForField(filter.field)}
-            value={pendingFilters.find(f => f.field === filter.field)?.value || null}
+            value={(() => {
+              const foundValue = pendingFilters.find(f => f.field === filter.field)?.value;
+              if (!foundValue) return null;
+              const options = getOptionsForField(filter.field);
+              const matchingOption = options.find(opt => opt.value === foundValue);
+              return matchingOption || { label: String(foundValue), value: String(foundValue) };
+            })()}
             onChange={(_, newValue) => {
               let filterValue = '';
               if (typeof newValue === 'string') {
@@ -247,7 +289,7 @@ export const DynamicFilterPanel: React.FC<{
             )}
           />
         )
-      case "date":
+      case "datetime":
         return (
           <TextField
             fullWidth
@@ -351,12 +393,13 @@ export const DynamicFilterPanel: React.FC<{
                       <Typography>{subFilter.label}</Typography>
                     </AccordionSummary>
                     <AccordionDetails>
-                      <DynamicFilterPanel
-                        key={subFilter.field}
-                        baseEntity={subFilter.field}
-                        onApplyFilters={onApplyFilters}
-                        isSubFilter={true}
-                      />
+                      {expandedFilters.includes(subFilter.field) && (
+                        <DynamicFilterPanel
+                          baseEntity={subFilter.field}
+                          onApplyFilters={onApplyFilters}
+                          isSubFilter={true}
+                        />
+                      )}
                     </AccordionDetails>
                   </Accordion>
                 </Box>
