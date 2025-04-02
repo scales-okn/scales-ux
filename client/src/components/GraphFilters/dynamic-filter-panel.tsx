@@ -24,7 +24,16 @@ import {
 } from "@mui/material"
 import { debounce } from "lodash"
 import type React from "react"
-import { useEffect, useState } from "react"
+import { useCallback, useEffect, useState } from "react"
+import { useAppDispatch, useAppSelector } from "../../store"
+import {
+  setFiltersForEntity,
+  clearFiltersForEntity,
+  setAutocompleteOptions,
+  setLoadingState,
+  AutoComplete,
+  Filter
+} from "../../store/filters"
 
 const GET_FILTERS = gql`
   query GetFilters($entity: String!) {
@@ -57,27 +66,23 @@ const GET_AUTOCOMPLETE = gql`
   }
 `
 
-type AutoComplete = {
-  label: string
-  value: string
-}
+export const DynamicFilterPanel: React.FC<{
+  baseEntity: string;
+  onApplyFilters: (filters: Filter[], isSubFilter: boolean) => void,
+  isSubFilter: boolean
+}> = ({ baseEntity, onApplyFilters, isSubFilter }) => {
+  const dispatch = useAppDispatch()
+  const storedFilters = useAppSelector(state => state.filters.activeFilters[baseEntity] || [])
+  const storedAutocompleteOptions = useAppSelector(state =>
+    state.filters.autocompleteOptions[baseEntity] || {}
+  )
+  const storedLoadingStates = useAppSelector(state =>
+    state.filters.loadingStates[baseEntity] || {}
+  )
 
-type Filter = {
-  label: string
-  type: string
-  field: string
-  value: string
-  autoComplete?: AutoComplete[]
-  subFilters?: Filter[]
-}
-
-export const DynamicFilterPanel: React.FC<{ baseEntity: string; onApplyFilters: (filters: Filter[], isSubFilter: boolean) => void, isSubFilter: boolean }> = ({ baseEntity, onApplyFilters, isSubFilter }) => {
   const [filters, setFilters] = useState<Filter[]>([])
-  const [activeFilters, setActiveFilters] = useState<Filter[]>([])
   const [expandedFilters, setExpandedFilters] = useState<string[]>([])
-  const [pendingFilters, setPendingFilters] = useState<Filter[]>([])
-  const [autocompleteOptions, setAutocompleteOptions] = useState<Record<string, string[]>>({})
-  const [autocompleteLoading, setAutocompleteLoading] = useState<Record<string, boolean>>({})
+  const [pendingFilters, setPendingFilters] = useState<Filter[]>(storedFilters)
 
   const { data, loading, error, refetch } = useQuery(GET_FILTERS, {
     variables: { entity: baseEntity },
@@ -86,70 +91,121 @@ export const DynamicFilterPanel: React.FC<{ baseEntity: string; onApplyFilters: 
   const [getAutocompleteData] = useLazyQuery(GET_AUTOCOMPLETE)
 
   // Create debounced fetch function for autocomplete
-  const fetchAutocompleteData = debounce(async (field: string, value: string) => {
-    setAutocompleteLoading(prev => ({ ...prev, [field]: true }))
+  const fetchAutocompleteData = useCallback(debounce(async (field: string, value: string) => {
+    dispatch(setLoadingState({ entity: baseEntity, field, isLoading: true }))
     try {
       const { data } = await getAutocompleteData({
         variables: { field, value },
       })
-      setAutocompleteOptions(prev => ({ ...prev, [field]: data.getAutoCompleteData }))
+
+      // Transform the data to match AutoComplete format
+      let options: AutoComplete[] = [];
+
+      if (Array.isArray(data.getAutoCompleteData)) {
+        options = data.getAutoCompleteData.map((item: any) => {
+          // If the item already has the right structure
+          if (item && typeof item === 'object' && 'label' in item && 'value' in item) {
+            return item as AutoComplete;
+          }
+          // If it's a string or anything else, create a proper AutoComplete object
+          const stringValue = String(item);
+          return { label: stringValue, value: stringValue };
+        });
+      }
+
+      dispatch(setAutocompleteOptions({
+        entity: baseEntity,
+        field,
+        options
+      }))
     } finally {
-      setAutocompleteLoading(prev => ({ ...prev, [field]: false }))
+      dispatch(setLoadingState({ entity: baseEntity, field, isLoading: false }))
     }
-  }, 300)
+  }, 300), [dispatch, baseEntity, getAutocompleteData])
+
+  // Load autocomplete data for all string filters on initialization
+  const loadInitialAutocompleteData = useCallback(async (filtersToLoad: Filter[]) => {
+    const stringFilters = filtersToLoad.filter(filter => filter.type === "string")
+    for (const filter of stringFilters) {
+      // Only load if we don't already have data for this field
+      if (!storedAutocompleteOptions[filter.field] ||
+        storedAutocompleteOptions[filter.field].length === 0) {
+        fetchAutocompleteData(filter.field, '')
+      }
+    }
+  }, [fetchAutocompleteData, storedAutocompleteOptions])
 
   useEffect(() => {
     if (data) {
+      const newFilters = data.getFiltersForEntity
+      setFilters(newFilters)
 
-      setFilters(data.getFiltersForEntity)
-      // Initialize autocomplete options for string fields
-      data.getFiltersForEntity.forEach(filter => {
-        console.log(filter)
-        // fetchAutocompleteData(filter.field, '')
-      })
+      // Initialize with pending filters from stored state if available
+      if (storedFilters.length > 0 && pendingFilters.length === 0) {
+        setPendingFilters(storedFilters)
+      }
+
+      // Load initial autocomplete data
+      loadInitialAutocompleteData(newFilters)
     }
-  }, [data])
+  }, [data, loadInitialAutocompleteData, storedFilters, pendingFilters.length])
 
   const handleFilterChange = async (filter: Filter) => {
     if (filter.type === 'type') {
       const value = filter.value
       refetch({ entity: value })
-      // const entityTypeIndex = filters.findIndex((f) => f.type === 'type')
-      // const entityTypeFilter = filters[entityTypeIndex]
-      // const newFilters = [entityTypeFilter, ...data.getFiltersForEntity]
-      // console.log("entityTypeFilter", newFilters)
-      // setFilters(newFilters)
     } else {
       setPendingFilters((prev) => {
         const existingIndex = prev.findIndex((f) => f.field === filter.field)
         if (existingIndex > -1) {
           const newFilters = [...prev]
-          newFilters[existingIndex] = { label: filter.label, field: filter.field, value: filter.value ?? '', type: filter.type }
+          newFilters[existingIndex] = {
+            label: filter.label,
+            field: filter.field,
+            value: filter.value ?? '',
+            type: filter.type
+          }
           return newFilters
         }
-        return [...prev, { label: filter.label, field: filter.field, value: filter.value ?? '', type: filter.type }]
+        return [...prev, {
+          label: filter.label,
+          field: filter.field,
+          value: filter.value ?? '',
+          type: filter.type
+        }]
       })
     }
   }
 
   const handleApply = () => {
-    setActiveFilters(pendingFilters)
+    // Store filters in redux
+    dispatch(setFiltersForEntity({ entity: baseEntity, filters: pendingFilters }))
+    // Call the parent component's callback
     onApplyFilters(pendingFilters, false)
   }
 
   const handleClear = () => {
     setPendingFilters([])
-    setActiveFilters([])
+    dispatch(clearFiltersForEntity(baseEntity))
     onApplyFilters([], false)
   }
 
   const removeFilter = (field: string) => {
-    setActiveFilters((prev) => prev.filter((f) => f.field !== field))
-    setFilters((prev) => prev.filter((f) => f.field !== field))
+    setPendingFilters((prev) => prev.filter((f) => f.field !== field))
   }
 
   const toggleExpanded = (field: string) => {
-    setExpandedFilters((prev) => (prev.includes(field) ? prev.filter((f) => f !== field) : [...prev, field]))
+    setExpandedFilters((prev) => (
+      prev.includes(field) ? prev.filter((f) => f !== field) : [...prev, field]
+    ))
+  }
+
+  const getOptionsForField = (field: string) => {
+    return storedAutocompleteOptions[field] || []
+  }
+
+  const isFieldLoading = (field: string) => {
+    return storedLoadingStates[field] || false
   }
 
   const renderFilter = (filter: Filter) => {
@@ -158,9 +214,17 @@ export const DynamicFilterPanel: React.FC<{ baseEntity: string; onApplyFilters: 
         return (
           <Autocomplete
             fullWidth
-            options={autocompleteOptions[filter.field] || []}
-            value={filter.value || null}
-            onChange={(_, newValue) => handleFilterChange({ ...filter, value: newValue as string })}
+            options={getOptionsForField(filter.field)}
+            value={pendingFilters.find(f => f.field === filter.field)?.value || null}
+            onChange={(_, newValue) => {
+              let filterValue = '';
+              if (typeof newValue === 'string') {
+                filterValue = newValue;
+              } else if (newValue && typeof newValue === 'object') {
+                filterValue = (newValue as AutoComplete).value;
+              }
+              handleFilterChange({ ...filter, value: filterValue });
+            }}
             onInputChange={(_, newInputValue) => {
               fetchAutocompleteData(filter.field, newInputValue)
             }}
@@ -174,7 +238,7 @@ export const DynamicFilterPanel: React.FC<{ baseEntity: string; onApplyFilters: 
                   ...params.InputProps,
                   endAdornment: (
                     <>
-                      {autocompleteLoading[filter.field] ? <CircularProgress color="inherit" size={20} /> : null}
+                      {isFieldLoading(filter.field) ? <CircularProgress color="inherit" size={20} /> : null}
                       {params.InputProps.endAdornment}
                     </>
                   ),
@@ -190,6 +254,7 @@ export const DynamicFilterPanel: React.FC<{ baseEntity: string; onApplyFilters: 
             label={filter.label}
             type="date"
             variant="outlined"
+            value={pendingFilters.find(f => f.field === filter.field)?.value || ''}
             InputLabelProps={{ shrink: true }}
             onChange={(e) => handleFilterChange({ ...filter, value: e.target.value as string })}
             margin="normal"
@@ -202,6 +267,7 @@ export const DynamicFilterPanel: React.FC<{ baseEntity: string; onApplyFilters: 
             <Select
               labelId={`${filter.field}-label`}
               label={filter.label}
+              value={pendingFilters.find(f => f.field === filter.field)?.value || ''}
               onChange={(e) => handleFilterChange({ ...filter, value: e.target.value as string })}
             >
               {filter.autoComplete?.map(({ label, value }) => (
@@ -220,6 +286,7 @@ export const DynamicFilterPanel: React.FC<{ baseEntity: string; onApplyFilters: 
               <Select
                 labelId={`${filter.field}-label`}
                 label={filter.label}
+                value={pendingFilters.find(f => f.field === filter.field)?.value || ''}
                 onChange={(e) => handleFilterChange({ ...filter, value: e.target.value as string })}
               >
                 {filter.autoComplete?.map(({ label, value }) => (
@@ -247,6 +314,7 @@ export const DynamicFilterPanel: React.FC<{ baseEntity: string; onApplyFilters: 
             <Select
               labelId={`${subFilter.field}-label`}
               label={subFilter.label}
+              value={pendingFilters.find(f => f.field === subFilter.field)?.value || ''}
               onChange={(e) => handleFilterChange({ ...subFilter, value: e.target.value as string })}
             >
               {subFilter.autoComplete?.map(({ label, value }) => (
@@ -299,7 +367,7 @@ export const DynamicFilterPanel: React.FC<{ baseEntity: string; onApplyFilters: 
             <Typography variant="subtitle1" gutterBottom>
               Active Filters
             </Typography>
-            {activeFilters.map(({ label, field, value }) => (
+            {pendingFilters.map(({ label, field, value }) => (
               <Chip
                 key={field}
                 label={`${label}: ${Array.isArray(value) ? value.join(", ") : value}`}
@@ -323,7 +391,7 @@ export const DynamicFilterPanel: React.FC<{ baseEntity: string; onApplyFilters: 
               variant="outlined"
               startIcon={<ClearIcon />}
               onClick={handleClear}
-              disabled={activeFilters.length === 0}
+              disabled={pendingFilters.length === 0}
               fullWidth
             >
               Clear

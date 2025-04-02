@@ -1,5 +1,5 @@
 import React from "react"
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { ChevronLeft, Menu, Gavel, LocalPolice, LockClock, Check, FilterList, SquareSharp, Pending, PendingTwoTone, PendingActions } from "@mui/icons-material"
 import {
   Box,
@@ -18,6 +18,8 @@ import {
   Tooltip,
 } from "@mui/material"
 import { DynamicFilterPanel } from "./dynamic-filter-panel"
+import { useAppSelector } from "../../store"
+import { Filter } from "../../store/filters"
 
 interface NavItem {
   title: string
@@ -67,7 +69,7 @@ const ontologyItems: NavItem[] = [
 
 // Interface for components that can receive filters
 interface WithFiltersProps {
-  filters: any;
+  filters: Record<string, Filter[]>;
 }
 
 interface CollapsibleSidebarProps {
@@ -75,14 +77,25 @@ interface CollapsibleSidebarProps {
 }
 
 export function CollapsibleSidebar({ children }: CollapsibleSidebarProps) {
-
-
   const [expanded, setExpanded] = useState(false)
   const [openSubMenu, setOpenSubMenu] = useState<string | null>(null)
-  const [selectedEntity, setSelectedEntity] = useState<string | null>("Case")
+  const [selectedEntity, setSelectedEntity] = useState<string | null>("case")
   const [showFilters, setShowFilters] = useState(false)
-  const [activeFilters, setActiveFilters] = useState<Record<string, number>>({})
-  const [filters, setFilters] = useState<any>({})
+
+  // Get all active filters from Redux store
+  const allFilters = useAppSelector(state => state.filters.activeFilters)
+
+  // Calculate filter counts for badges
+  const [activeFilterCounts, setActiveFilterCounts] = useState<Record<string, number>>({})
+
+  // Update filter counts when the store changes
+  useEffect(() => {
+    const newCounts: Record<string, number> = {}
+    Object.entries(allFilters).forEach(([entity, filters]) => {
+      newCounts[entity] = filters.length
+    })
+    setActiveFilterCounts(newCounts)
+  }, [allFilters])
 
   const theme = useTheme()
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"))
@@ -110,7 +123,6 @@ export function CollapsibleSidebar({ children }: CollapsibleSidebarProps) {
   }
 
   const handleEntitySelect = (title: string) => {
-
     setSelectedEntity(title)
     if (!expanded) {
       setExpanded(true)
@@ -118,21 +130,9 @@ export function CollapsibleSidebar({ children }: CollapsibleSidebarProps) {
     setShowFilters(true)
   }
 
-  const handleApplyFilters = (newFilters: any) => {
-    // Count non-empty filters
-    const filterCount = Object.keys(newFilters).filter((key) => {
-      const value = newFilters[key]
-      return value !== null && value !== "" && value !== false
-    }).length
-
-    // Update active filters count for the selected entity
-    setActiveFilters({
-      ...activeFilters,
-      [selectedEntity as string]: filterCount,
-    })
-
-    // Store the filters to pass to the content panels
-    setFilters(newFilters)
+  const handleApplyFilters = (newFilters: Filter[], isSubFilter: boolean) => {
+    // The actual storing of filters is now handled in the DynamicFilterPanel component
+    // via Redux. We only need to handle UI state changes here.
 
     // Close the filter panel on mobile
     if (isMobile) {
@@ -185,8 +185,8 @@ export function CollapsibleSidebar({ children }: CollapsibleSidebarProps) {
                       color: selectedEntity === item.field ? "primary.main" : "inherit",
                     }}
                   >
-                    {activeFilters[item.field] ? (
-                      <Badge badgeContent={activeFilters[item.field]} color="primary">
+                    {activeFilterCounts[item.field] ? (
+                      <Badge badgeContent={activeFilterCounts[item.field]} color="primary">
                         {item.icon}
                       </Badge>
                     ) : (
@@ -210,7 +210,7 @@ export function CollapsibleSidebar({ children }: CollapsibleSidebarProps) {
                         setShowFilters(!showFilters)
                       }}
                     >
-                      <FilterList color={activeFilters[item.field] ? "primary" : "inherit"} />
+                      <FilterList color={activeFilterCounts[item.field] ? "primary" : "inherit"} />
                     </IconButton>
                   )}
                 </ListItemButton>
@@ -246,15 +246,18 @@ export function CollapsibleSidebar({ children }: CollapsibleSidebarProps) {
       return null;
     }
 
+    // Get all filter data from the Redux store
+    const filterData = allFilters;
+
     // Handle different types of children
     if (React.isValidElement(children)) {
       // If it's a single element, clone it with the filters prop
-      return React.cloneElement(children, { filters } as Partial<WithFiltersProps>);
+      return React.cloneElement(children, { filters: filterData } as Partial<WithFiltersProps>);
     } else if (Array.isArray(children)) {
       // If it's an array of elements, map through and clone each one
       return React.Children.map(children, child => {
         if (React.isValidElement(child)) {
-          return React.cloneElement(child, { filters } as Partial<WithFiltersProps>);
+          return React.cloneElement(child, { filters: filterData } as Partial<WithFiltersProps>);
         }
         return child;
       });

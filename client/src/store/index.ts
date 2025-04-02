@@ -16,6 +16,7 @@ import user from "./user";
 import connections from "./connection";
 import teams from "./team";
 import alerts from "./alerts";
+import filters from "./filters";
 
 // Create a separate reducer for the auth slice
 const authPersistConfig = {
@@ -24,8 +25,16 @@ const authPersistConfig = {
   blacklist: [], // You can blacklist any keys within the auth slice that you don't want to persist
 };
 
+// Persist config for filters
+const filtersPersistConfig = {
+  key: "filters",
+  storage,
+  blacklist: ["loadingStates"], // Don't persist loading states
+};
+
 // Use persistReducer for the auth slice
 const persistedAuthReducer = persistReducer(authPersistConfig, auth);
+const persistedFiltersReducer = persistReducer(filtersPersistConfig, filters);
 
 // Store
 const store = configureStore({
@@ -39,6 +48,7 @@ const store = configureStore({
     connections,
     teams,
     alerts,
+    filters: persistedFiltersReducer,
     notifications: notificationsReducer(),
   }),
   // @ts-ignore
