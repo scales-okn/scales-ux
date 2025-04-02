@@ -4,7 +4,7 @@ import { authorizationHeader } from "src/helpers/authorizationHeader";
 import store from "src/store";
 import streamSaver from "streamsaver";
 
-const baseURL = "http://localhost:8080";
+const baseURL = "http://localhost:8082";
 
 // host stream saver service worker locally
 streamSaver.mitm = "/streamsaver/mitm.html";

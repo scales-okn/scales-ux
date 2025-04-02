@@ -1,4 +1,4 @@
-import { gql } from "@apollo/client"
+import { gql } from "apollo-server-express"
 
 export const typeDefs = gql`
   type CourtCase {
@@ -59,11 +59,18 @@ export const typeDefs = gql`
     field: String!
   }
 
+  type AutoComplete {
+    label: String!
+    value: String!
+  }
+
   type Filter {
     label: String!
     type: String!
     field: String!
-    values: [String!]
+    value: String!
+    subFilters: [Filter!]
+    autoComplete: [AutoComplete!]
   }
   
   type Query {

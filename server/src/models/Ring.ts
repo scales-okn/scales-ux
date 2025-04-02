@@ -6,6 +6,8 @@ import { sequelize } from "../database";
 
 export const ringVisibilityValues = ["public", "private"];
 
+export const ringTypeValues = ["relational", "graph"];
+
 export default (sequelize, options) => {
   const Ring = sequelize.define(
     "Ring",
@@ -55,6 +57,11 @@ export default (sequelize, options) => {
       ontologyDiff: {
         type: DataTypes.TEXT,
         allowNull: true,
+      },
+      type: {
+        type: DataTypes.ENUM,
+        values: ringTypeValues,
+        defaultValue: "relational",
       },
     },
     options

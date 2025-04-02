@@ -1,0 +1,67 @@
+export const testCourtCases = [
+  {
+    caseId: "FED-2024-12345",
+    caseStatus: "ACTIVE",
+    filingDate: "2024-05-15T09:30:00Z",
+    terminatingDate: null,
+    natureSuit: "Civil Rights",
+    cause: "Title VII Discrimination",
+    jurisdiction: {
+      id: "USDC-SDNY",
+      name: "U.S. District Court, Southern District of New York",
+      level: "FEDERAL",
+    },
+  },
+  {
+    caseId: "STATE-NY-2024-67890",
+    caseStatus: "CLOSED",
+    filingDate: "2023-11-02T14:45:00Z",
+    terminatingDate: "2024-08-22T16:15:00Z",
+    natureSuit: "Contract Dispute",
+    cause: "Breach of Contract",
+    jurisdiction: {
+      id: "NY-SUPREME",
+      name: "New York Supreme Court",
+      level: "STATE",
+    },
+  },
+  {
+    caseId: "FED-2024-54321",
+    caseStatus: "PENDING",
+    filingDate: "2024-07-28T11:20:00Z",
+    terminatingDate: null,
+    natureSuit: "Intellectual Property",
+    cause: "Patent Infringement",
+    jurisdiction: {
+      id: "USDC-NDCA",
+      name: "U.S. District Court, Northern District of California",
+      level: "FEDERAL",
+    },
+  },
+  {
+    caseId: "LOCAL-SF-2024-98765",
+    caseStatus: "ACTIVE",
+    filingDate: "2024-02-10T10:00:00Z",
+    terminatingDate: null,
+    natureSuit: "Small Claims",
+    cause: "Property Damage",
+    jurisdiction: {
+      id: "SFC-SMALL",
+      name: "San Francisco Small Claims Court",
+      level: "LOCAL",
+    },
+  },
+  {
+    caseId: "STATE-TX-2023-13579",
+    caseStatus: "APPEALED",
+    filingDate: "2023-09-05T08:15:00Z",
+    terminatingDate: "2024-06-12T15:30:00Z",
+    natureSuit: "Personal Injury",
+    cause: "Negligence",
+    jurisdiction: {
+      id: "TX-DISTRICT",
+      name: "Texas District Court",
+      level: "STATE",
+    },
+  },
+];

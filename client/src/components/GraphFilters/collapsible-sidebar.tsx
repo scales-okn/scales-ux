@@ -1,6 +1,6 @@
-import * as React from "react"
+import React from "react"
 import { useState } from "react"
-import { ChevronLeft, Menu, Gavel, LocalPolice, LockClock, Check, FilterList } from "@mui/icons-material"
+import { ChevronLeft, Menu, Gavel, LocalPolice, LockClock, Check, FilterList, SquareSharp, Pending, PendingTwoTone, PendingActions } from "@mui/icons-material"
 import {
   Box,
   Drawer,
@@ -17,12 +17,13 @@ import {
   Badge,
   Tooltip,
 } from "@mui/material"
-import { FilterPanel } from "./filter-panel"
+import { DynamicFilterPanel } from "./dynamic-filter-panel"
 
 interface NavItem {
   title: string
   icon: React.ReactNode
   path: string
+  field: string
   children?: NavItem[]
   isActive?: boolean
 }
@@ -31,36 +32,57 @@ const navItems: NavItem[] = [
   {
     title: "Court Cases",
     icon: <Gavel />,
-    path: "/cases",
+    path: "/",
     isActive: true,
+    field: "case",
   },
   {
     title: "Charges",
-    icon: <Check />,
-    path: "/domain",
+    icon: <PendingActions />,
+    path: "/charges",
+    field: "charge",
   },
   {
     title: "Jail Bookings",
     icon: <LockClock />,
-    path: "/website",
+    path: "/jail-bookings",
+    field: "booking",
   },
   {
     title: "Arrests",
     icon: <LocalPolice />,
-    path: "/conversations",
+    path: "/arrests",
+    field: "arrest",
   },
 ]
+
+const ontologyItems: NavItem[] = [
+  {
+    title: "Event Labels",
+    icon: <Gavel />,
+    path: "/ontology",
+    field: "eventLabel",
+  },
+]
+
+// Interface for components that can receive filters
+interface WithFiltersProps {
+  filters: any;
+}
 
 interface CollapsibleSidebarProps {
   children?: React.ReactNode
 }
 
 export function CollapsibleSidebar({ children }: CollapsibleSidebarProps) {
+
+
   const [expanded, setExpanded] = useState(false)
   const [openSubMenu, setOpenSubMenu] = useState<string | null>(null)
-  const [selectedEntity, setSelectedEntity] = useState<string | null>("Court Cases")
+  const [selectedEntity, setSelectedEntity] = useState<string | null>("Case")
   const [showFilters, setShowFilters] = useState(false)
   const [activeFilters, setActiveFilters] = useState<Record<string, number>>({})
+  const [filters, setFilters] = useState<any>({})
 
   const theme = useTheme()
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"))
@@ -88,6 +110,7 @@ export function CollapsibleSidebar({ children }: CollapsibleSidebarProps) {
   }
 
   const handleEntitySelect = (title: string) => {
+
     setSelectedEntity(title)
     if (!expanded) {
       setExpanded(true)
@@ -95,10 +118,10 @@ export function CollapsibleSidebar({ children }: CollapsibleSidebarProps) {
     setShowFilters(true)
   }
 
-  const handleApplyFilters = (filters: any) => {
+  const handleApplyFilters = (newFilters: any) => {
     // Count non-empty filters
-    const filterCount = Object.keys(filters).filter((key) => {
-      const value = filters[key]
+    const filterCount = Object.keys(newFilters).filter((key) => {
+      const value = newFilters[key]
       return value !== null && value !== "" && value !== false
     }).length
 
@@ -108,8 +131,13 @@ export function CollapsibleSidebar({ children }: CollapsibleSidebarProps) {
       [selectedEntity as string]: filterCount,
     })
 
-    // Here you would typically also update your data based on the filters
-    console.log(`Applied ${filterCount} filters for ${selectedEntity}:`, filters)
+    // Store the filters to pass to the content panels
+    setFilters(newFilters)
+
+    // Close the filter panel on mobile
+    if (isMobile) {
+      setShowFilters(false)
+    }
   }
 
   const drawer = (
@@ -126,8 +154,8 @@ export function CollapsibleSidebar({ children }: CollapsibleSidebarProps) {
         {expanded && (
           <Box sx={{ display: "flex", alignItems: "center" }}>
             {expanded && (
-              <Box component="span" sx={{ ml: 1, fontWeight: "bold" }}>
-                SCALES
+              <Box component="span" sx={{ mx: 2, fontWeight: "bold", fontSize: "1.2rem", textAlign: "right" }}>
+                IJP Entities
               </Box>
             )}
           </Box>
@@ -137,7 +165,7 @@ export function CollapsibleSidebar({ children }: CollapsibleSidebarProps) {
       <Divider />
       <List>
         {navItems.map((item) => (
-          <React.Fragment key={item.title}>
+          <React.Fragment key={item.field}>
             <ListItem disablePadding sx={{ display: "block" }}>
               <Tooltip title={expanded ? "" : item.title} placement="right">
                 <ListItemButton
@@ -145,20 +173,20 @@ export function CollapsibleSidebar({ children }: CollapsibleSidebarProps) {
                     minHeight: 48,
                     justifyContent: expanded ? "initial" : "center",
                     px: 2.5,
-                    backgroundColor: selectedEntity === item.title ? "rgba(0, 0, 0, 0.08)" : "transparent",
+                    backgroundColor: selectedEntity === item.field ? "rgba(0, 0, 0, 0.08)" : "transparent",
                   }}
-                  onClick={() => handleEntitySelect(item.title)}
+                  onClick={() => handleEntitySelect(item.field)}
                 >
                   <ListItemIcon
                     sx={{
                       minWidth: 0,
                       mr: expanded ? 2 : "auto",
                       justifyContent: "center",
-                      color: selectedEntity === item.title ? "primary.main" : "inherit",
+                      color: selectedEntity === item.field ? "primary.main" : "inherit",
                     }}
                   >
-                    {activeFilters[item.title] ? (
-                      <Badge badgeContent={activeFilters[item.title]} color="primary">
+                    {activeFilters[item.field] ? (
+                      <Badge badgeContent={activeFilters[item.field]} color="primary">
                         {item.icon}
                       </Badge>
                     ) : (
@@ -170,7 +198,7 @@ export function CollapsibleSidebar({ children }: CollapsibleSidebarProps) {
                       primary={item.title}
                       sx={{
                         opacity: expanded ? 1 : 0,
-                        color: selectedEntity === item.title ? "primary.main" : "inherit",
+                        color: selectedEntity === item.field ? "primary.main" : "inherit",
                       }}
                     />
                   )}
@@ -182,14 +210,14 @@ export function CollapsibleSidebar({ children }: CollapsibleSidebarProps) {
                         setShowFilters(!showFilters)
                       }}
                     >
-                      <FilterList color={activeFilters[item.title] ? "primary" : "inherit"} />
+                      <FilterList color={activeFilters[item.field] ? "primary" : "inherit"} />
                     </IconButton>
                   )}
                 </ListItemButton>
               </Tooltip>
             </ListItem>
             {expanded && item.children && (
-              <Collapse in={openSubMenu === item.title} timeout="auto" unmountOnExit>
+              <Collapse in={openSubMenu === item.field} timeout="auto" unmountOnExit>
                 <List component="div" disablePadding>
                   {item.children.map((child) => (
                     <ListItemButton key={child.title} sx={{ pl: 4 }}>
@@ -201,39 +229,57 @@ export function CollapsibleSidebar({ children }: CollapsibleSidebarProps) {
             )}
           </React.Fragment>
         ))}
+        <Divider />  <List>
+          <ListItemButton>
+            <ListItemText primary="IJP Ontologies" />
+          </ListItemButton>
+        </List>
+
       </List>
     </div>
   )
 
-  const filterDrawer = (
-    <Box
-      sx={{
-        position: "fixed",
-        left: drawerWidth,
-        top: 0,
-        height: "100%",
-        width: filterDrawerWidth,
-        zIndex: 1099,
-        backgroundColor: "background.paper",
-        borderRight: "1px solid rgba(0, 0, 0, 0.12)",
-        display: showFilters ? "block" : "none",
-        boxShadow: "1px 0px 10px rgba(0, 0, 0, 0.08)",
-        overflow: "auto",
-      }}
-    >
-      <Box sx={{ display: "flex", justifyContent: "flex-end", p: 1 }}>
-        <IconButton onClick={() => setShowFilters(false)}>
-          <ChevronLeft />
-        </IconButton>
-      </Box>
-      <Divider />
-      {selectedEntity && <FilterPanel entityType={selectedEntity} onApplyFilters={handleApplyFilters} />}
-    </Box>
-  )
+  // Create a function to render children with props
+  const renderChildrenWithProps = () => {
+    // If no children, return null
+    if (!children) {
+      return null;
+    }
+
+    // Handle different types of children
+    if (React.isValidElement(children)) {
+      // If it's a single element, clone it with the filters prop
+      return React.cloneElement(children, { filters } as Partial<WithFiltersProps>);
+    } else if (Array.isArray(children)) {
+      // If it's an array of elements, map through and clone each one
+      return React.Children.map(children, child => {
+        if (React.isValidElement(child)) {
+          return React.cloneElement(child, { filters } as Partial<WithFiltersProps>);
+        }
+        return child;
+      });
+    }
+
+    // If it's neither a valid element nor an array, return as is
+    return children;
+  };
 
   return (
-    <Box sx={{ display: "flex" }}>
-      <Box component="nav" sx={{ width: { sm: drawerWidth }, flexShrink: { sm: 0 } }}>
+    <Box sx={{ display: "flex", position: "relative" }}>
+      <Box
+        component="nav"
+        sx={{
+          position: "fixed",
+          top: 0,
+          left: 0,
+          height: "100vh",
+          zIndex: 1200,
+          transition: theme.transitions.create("width", {
+            easing: theme.transitions.easing.sharp,
+            duration: theme.transitions.duration.enteringScreen,
+          }),
+        }}
+      >
         {isMobile ? (
           <Drawer
             variant="temporary"
@@ -267,7 +313,7 @@ export function CollapsibleSidebar({ children }: CollapsibleSidebarProps) {
                   duration: theme.transitions.duration.enteringScreen,
                 }),
                 overflowX: "hidden",
-                zIndex: 1100,
+                zIndex: 1200,
               },
             }}
             open
@@ -277,29 +323,49 @@ export function CollapsibleSidebar({ children }: CollapsibleSidebarProps) {
         )}
       </Box>
 
-      {/* Filter Panel Drawer */}
-      {!isMobile && filterDrawer}
+      {/* Filter Panel */}
+      {!isMobile && (
+        <Box
+          sx={{
+            position: "fixed",
+            left: drawerWidth,
+            top: 0,
+            height: "100%",
+            width: filterDrawerWidth,
+            zIndex: 1199,
+            backgroundColor: "background.paper",
+            borderRight: "1px solid rgba(0, 0, 0, 0.12)",
+            display: showFilters ? "block" : "none",
+            boxShadow: "1px 0px 10px rgba(0, 0, 0, 0.08)",
+            overflow: "auto",
+          }}
+        >
+          <Box sx={{ display: "flex", justifyContent: "flex-end", p: 1 }}>
+            <IconButton onClick={() => setShowFilters(false)}>
+              <ChevronLeft />
+            </IconButton>
+          </Box>
+          <Divider />
+          {selectedEntity && <DynamicFilterPanel baseEntity={selectedEntity} onApplyFilters={handleApplyFilters} />}
+        </Box>
+      )}
 
+      {/* Main Content */}
       <Box
         component="main"
         sx={{
           flexGrow: 1,
           p: 3,
-          width: {
-            sm: `calc(100% - ${drawerWidth}px${showFilters ? ` - ${filterDrawerWidth}px` : ""})`,
-          },
-          marginLeft: {
-            sm: showFilters ? `${drawerWidth + filterDrawerWidth}px` : `${drawerWidth}px`,
-          },
-          transition: theme.transitions.create(["margin", "width"], {
+          width: "100%",
+          ml: { xs: 0, sm: `${drawerWidth}px` }, // Use the dynamic drawerWidth
+          transition: theme.transitions.create(["margin"], {
             easing: theme.transitions.easing.sharp,
             duration: theme.transitions.duration.enteringScreen,
           }),
         }}
       >
-        {children}
+        {renderChildrenWithProps()}
       </Box>
     </Box>
   )
 }
-

@@ -1,0 +1,47 @@
+services:
+
+    api:
+        image: registry.digitalocean.com/scales-okn/satyrn-api:latest
+        container_name: satyrn-api
+        pull_policy: always
+        networks:
+            - satyrn_network
+        expose:
+            - "5000"
+        ports:
+            - 5000:5000
+        env_file: .env
+        volumes:
+          - "./cases.csv:/app/satyrn-api/cases.csv"
+    ux:
+        image: registry.digitalocean.com/scales-okn/scales-ux-server:latest
+        container_name: scales-ux-server
+        pull_policy: always
+        networks:
+            - satyrn_network
+        expose:
+            - "8080"
+        ports:
+            - 8080:8080
+        env_file: .env
+    db:
+        image: postgres:latest
+        container_name: scales-ux-db
+        networks:
+            - satyrn_network
+        expose:
+            - "5432"
+        ports:
+            - 5432:5432
+        environment:
+            - POSTGRES_USER=root
+            - POSTGRES_PASSWORD=$DB_PASSWORD
+        volumes:
+            - "dbdata:/var/lib/postgresql/data"
+            - "./create_user_asset_db.sql:/docker-entrypoint-initdb.d/create_user_asset_db.sql"
+
+networks:
+    satyrn_network:
+
+volumes:
+    dbdata:

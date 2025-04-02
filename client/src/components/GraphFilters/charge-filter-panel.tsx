@@ -1,120 +1,147 @@
-import React from "react";
-import { useState, useEffect } from "react";
-import {
-  Box,
-  Typography,
-  TextField,
-  Autocomplete,
-  Button,
-  Stack,
-  Divider,
-  CircularProgress,
-} from "@mui/material";
-import { DatePicker } from "@mui/x-date-pickers/DatePicker";
-import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
-import { AdapterDateFns } from "@mui/x-date-pickers/AdapterDateFns";
-import { useLazyQuery } from "@apollo/client";
-import { GET_AUTOCOMPLETE_DATA } from "../../graphql/queries";
-import { debounce } from "lodash";
+import React, { useState, useEffect } from "react"
+import { Box, Typography, TextField, Autocomplete, Button, Stack, Divider, CircularProgress } from "@mui/material"
+import { DatePicker } from "@mui/x-date-pickers/DatePicker"
+import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider"
+import { AdapterDateFns } from "@mui/x-date-pickers/AdapterDateFns"
+import { useLazyQuery } from "@apollo/client"
+import { GET_AUTOCOMPLETE_DATA } from "../../graphql/queries"
+import { debounce } from "lodash"
 
-interface ChargeFilterPanelProps {
-  onApplyFilters: (filters: any) => void;
+interface AutoCompleteData {
+  getAutoCompleteData: string[]
 }
 
-export function ChargeFilterPanel({ onApplyFilters }: ChargeFilterPanelProps) {
+interface AutoCompleteVariables {
+  field: string
+  value: string
+}
+
+interface ChargeFilterPanelProps {
+  onApplyFilters: (filters: any) => void
+}
+
+type FilterField = "chargeDescription" | "chargeType" | "chargeStatus" | "disposition"
+
+export function ChargeFilterPanel({ onApplyFilters }: ChargeFilterPanelProps): React.ReactElement {
   const [filters, setFilters] = useState<{
-    chargeDescription: string | null;
-    chargeSeverity: string | null;
-    chargeStatus: string | null;
-    filingDateStart: Date | null;
-    filingDateEnd: Date | null;
-    disposition: string | null;
-    chargeType: string | null;
+    chargeDescription: string | null
+    chargeType: string | null
+    chargeStatus: string | null
+    filingDateStart: Date | null
+    filingDateEnd: Date | null
+    disposition: string | null
   }>({
     chargeDescription: null,
-    chargeSeverity: null,
+    chargeType: null,
     chargeStatus: null,
     filingDateStart: null,
     filingDateEnd: null,
     disposition: null,
-    chargeType: null,
-  });
+  })
 
-  const [chargeDescriptionOptions, setChargeDescriptionOptions] = useState<
-    string[]
-  >([]);
-  const [chargeSeverityOptions, setChargeSeverityOptions] = useState<string[]>(
-    [],
-  );
-  const [chargeStatusOptions, setChargeStatusOptions] = useState<string[]>([]);
-  const [dispositionOptions, setDispositionOptions] = useState<string[]>([]);
-  const [chargeTypeOptions, setChargeTypeOptions] = useState<string[]>([]);
+  const [options, setOptions] = useState<{
+    chargeDescription: string[]
+    chargeType: string[]
+    chargeStatus: string[]
+    disposition: string[]
+  }>({
+    chargeDescription: [],
+    chargeType: [],
+    chargeStatus: [],
+    disposition: [],
+  })
 
-  const [getAutocompleteData, { loading: autocompleteLoading }] = useLazyQuery(
-    GET_AUTOCOMPLETE_DATA,
-  );
+  const [loadingField, setLoadingField] = useState<FilterField | null>(null)
 
-  // Debounced function to fetch autocomplete data
-  const fetchAutocompleteData = debounce((field: string, value: string) => {
-    getAutocompleteData({
-      variables: { field, value },
-      onCompleted: (data) => {
-        switch (field) {
-          case "chargeDescription":
-            setChargeDescriptionOptions(data.getAutoCompleteData);
-            break;
-          case "chargeSeverity":
-            setChargeSeverityOptions(data.getAutoCompleteData);
-            break;
-          case "chargeStatus":
-            setChargeStatusOptions(data.getAutoCompleteData);
-            break;
-          case "disposition":
-            setDispositionOptions(data.getAutoCompleteData);
-            break;
+  const [getAutocompleteData] = useLazyQuery<AutoCompleteData, AutoCompleteVariables>(
+    GET_AUTOCOMPLETE_DATA
+  )
+
+  // Single debounced function for all fields
+  const fetchAutocompleteData = React.useCallback(
+    debounce(async (field: FilterField, value: string) => {
+      setLoadingField(field)
+      try {
+        const result = await getAutocompleteData({
+          variables: { field, value },
+        })
+        if (result.data) {
+          setOptions(prev => ({
+            ...prev,
+            [field]: result.data?.getAutoCompleteData || [],
+          }))
         }
-      },
-    });
-  }, 300);
+      } catch (error) {
+        console.error(`Error fetching ${field} data:`, error)
+      } finally {
+        setLoadingField(null)
+      }
+    }, 300),
+    [getAutocompleteData]
+  )
 
-  const handleAutocompleteChange = (field: string, value: string | null) => {
+  const handleAutocompleteChange = (field: FilterField, value: string | null) => {
     setFilters({
       ...filters,
       [field]: value,
-    });
-  };
+    })
+  }
 
   const handleDateChange = (name: string, date: Date | null) => {
     setFilters({
       ...filters,
       [name]: date,
-    });
-  };
+    })
+  }
 
-  const handleApplyFilters = () => {
-    onApplyFilters(filters);
-  };
+  const handleApplyFilters = (): void => {
+    onApplyFilters(filters)
+  }
 
   const handleClearFilters = () => {
     setFilters({
       chargeDescription: null,
-      chargeSeverity: null,
+      chargeType: null,
       chargeStatus: null,
       filingDateStart: null,
       filingDateEnd: null,
       disposition: null,
-      chargeType: null,
-    });
-  };
+    })
+  }
 
-  // Load initial autocomplete options on mount
   useEffect(() => {
-    fetchAutocompleteData("chargeDescription", "");
-    fetchAutocompleteData("chargeSeverity", "");
-    fetchAutocompleteData("chargeStatus", "");
-    fetchAutocompleteData("disposition", "");
-    fetchAutocompleteData("chargeType", "");
-  }, []);
+    // Load initial data for all fields with a single call
+    const fields: FilterField[] = [
+      "chargeDescription",
+      "chargeType",
+      "chargeStatus",
+      "disposition",
+    ]
+
+    // Use Promise.all to load all data in parallel
+    Promise.all(
+      fields.map(field =>
+        getAutocompleteData({
+          variables: { field, value: "" },
+        })
+      )
+    )
+      .then(results => {
+        const newOptions = { ...options }
+
+        results.forEach((result, index) => {
+          if (result.data) {
+            const field = fields[index]
+            newOptions[field] = result.data.getAutoCompleteData
+          }
+        })
+
+        setOptions(newOptions)
+      })
+      .catch(error => {
+        console.error("Error fetching initial data:", error)
+      })
+  }, []) // Empty dependency array ensures this runs only once on mount
 
   return (
     <Box sx={{ p: 2 }}>
@@ -129,13 +156,11 @@ export function ChargeFilterPanel({ onApplyFilters }: ChargeFilterPanelProps) {
 
       <Autocomplete
         fullWidth
-        options={chargeDescriptionOptions}
+        options={options.chargeDescription}
         value={filters.chargeDescription}
-        onChange={(_, value) =>
-          handleAutocompleteChange("chargeDescription", value)
-        }
+        onChange={(_, value) => handleAutocompleteChange("chargeDescription", value)}
         onInputChange={(_, newInputValue) => {
-          fetchAutocompleteData("chargeDescription", newInputValue);
+          fetchAutocompleteData("chargeDescription", newInputValue)
         }}
         renderInput={(params) => (
           <TextField
@@ -147,9 +172,7 @@ export function ChargeFilterPanel({ onApplyFilters }: ChargeFilterPanelProps) {
               ...params.InputProps,
               endAdornment: (
                 <>
-                  {autocompleteLoading ? (
-                    <CircularProgress color="inherit" size={20} />
-                  ) : null}
+                  {loadingField === "chargeDescription" ? <CircularProgress color="inherit" size={20} /> : null}
                   {params.InputProps.endAdornment}
                 </>
               ),
@@ -160,27 +183,23 @@ export function ChargeFilterPanel({ onApplyFilters }: ChargeFilterPanelProps) {
 
       <Autocomplete
         fullWidth
-        options={chargeSeverityOptions}
-        value={filters.chargeSeverity}
-        onChange={(_, value) =>
-          handleAutocompleteChange("chargeSeverity", value)
-        }
+        options={options.chargeType}
+        value={filters.chargeType}
+        onChange={(_, value) => handleAutocompleteChange("chargeType", value)}
         onInputChange={(_, newInputValue) => {
-          fetchAutocompleteData("chargeSeverity", newInputValue);
+          fetchAutocompleteData("chargeType", newInputValue)
         }}
         renderInput={(params) => (
           <TextField
             {...params}
-            label="Severity"
+            label="Charge Type"
             margin="normal"
             size="small"
             InputProps={{
               ...params.InputProps,
               endAdornment: (
                 <>
-                  {autocompleteLoading ? (
-                    <CircularProgress color="inherit" size={20} />
-                  ) : null}
+                  {loadingField === "chargeType" ? <CircularProgress color="inherit" size={20} /> : null}
                   {params.InputProps.endAdornment}
                 </>
               ),
@@ -191,11 +210,11 @@ export function ChargeFilterPanel({ onApplyFilters }: ChargeFilterPanelProps) {
 
       <Autocomplete
         fullWidth
-        options={chargeStatusOptions}
+        options={options.chargeStatus}
         value={filters.chargeStatus}
         onChange={(_, value) => handleAutocompleteChange("chargeStatus", value)}
         onInputChange={(_, newInputValue) => {
-          fetchAutocompleteData("chargeStatus", newInputValue);
+          fetchAutocompleteData("chargeStatus", newInputValue)
         }}
         renderInput={(params) => (
           <TextField
@@ -207,9 +226,7 @@ export function ChargeFilterPanel({ onApplyFilters }: ChargeFilterPanelProps) {
               ...params.InputProps,
               endAdornment: (
                 <>
-                  {autocompleteLoading ? (
-                    <CircularProgress color="inherit" size={20} />
-                  ) : null}
+                  {loadingField === "chargeStatus" ? <CircularProgress color="inherit" size={20} /> : null}
                   {params.InputProps.endAdornment}
                 </>
               ),
@@ -228,17 +245,13 @@ export function ChargeFilterPanel({ onApplyFilters }: ChargeFilterPanelProps) {
           label="Filed After"
           value={filters.filingDateStart}
           onChange={(date) => handleDateChange("filingDateStart", date)}
-          slotProps={{
-            textField: { size: "small", fullWidth: true, margin: "normal" },
-          }}
+          slotProps={{ textField: { size: "small", fullWidth: true, margin: "normal" } }}
         />
         <DatePicker
           label="Filed Before"
           value={filters.filingDateEnd}
           onChange={(date) => handleDateChange("filingDateEnd", date)}
-          slotProps={{
-            textField: { size: "small", fullWidth: true, margin: "normal" },
-          }}
+          slotProps={{ textField: { size: "small", fullWidth: true, margin: "normal" } }}
         />
       </LocalizationProvider>
 
@@ -249,25 +262,23 @@ export function ChargeFilterPanel({ onApplyFilters }: ChargeFilterPanelProps) {
 
       <Autocomplete
         fullWidth
-        options={chargeTypeOptions}
-        value={filters.chargeType}
-        onChange={(_, value) => handleAutocompleteChange("chargeType", value)}
+        options={options.disposition}
+        value={filters.disposition}
+        onChange={(_, value) => handleAutocompleteChange("disposition", value)}
         onInputChange={(_, newInputValue) => {
-          fetchAutocompleteData("chargeType", newInputValue);
+          fetchAutocompleteData("disposition", newInputValue)
         }}
         renderInput={(params) => (
           <TextField
             {...params}
-            label="Charge Type"
+            label="Disposition"
             margin="normal"
             size="small"
             InputProps={{
               ...params.InputProps,
               endAdornment: (
                 <>
-                  {autocompleteLoading ? (
-                    <CircularProgress color="inherit" size={20} />
-                  ) : null}
+                  {loadingField === "disposition" ? <CircularProgress color="inherit" size={20} /> : null}
                   {params.InputProps.endAdornment}
                 </>
               ),
@@ -277,23 +288,13 @@ export function ChargeFilterPanel({ onApplyFilters }: ChargeFilterPanelProps) {
       />
 
       <Stack direction="row" spacing={2} sx={{ mt: 3 }}>
-        <Button
-          variant="contained"
-          color="primary"
-          fullWidth
-          onClick={handleApplyFilters}
-        >
+        <Button variant="contained" color="primary" fullWidth onClick={handleApplyFilters}>
           Apply Filters
         </Button>
-        <Button
-          variant="outlined"
-          color="secondary"
-          fullWidth
-          onClick={handleClearFilters}
-        >
+        <Button variant="outlined" color="secondary" fullWidth onClick={handleClearFilters}>
           Clear
         </Button>
       </Stack>
     </Box>
-  );
+  )
 }

@@ -1,0 +1,963 @@
+<?xml version="1.0"?>
+<rdf:RDF xmlns="http://schemas.scales-okn.org/rdf/scales#"
+     xml:base="http://schemas.scales-okn.org/rdf/scales#"
+     xmlns:j="http://release.niem.gov/niem/domains/jxdm/7.2/#"
+     xmlns:dc="http://purl.org/dc/elements/1.1/"
+     xmlns:nc="http://release.niem.gov/niem/niem-core/5.0/"
+     xmlns:owl="http://www.w3.org/2002/07/owl#"
+     xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+     xmlns:xml="http://www.w3.org/XML/1998/namespace"
+     xmlns:xsd="http://www.w3.org/2001/XMLSchema#"
+     xmlns:fips="http://release.niem.gov/niem/codes/fips/5.0/"
+     xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#">
+    <owl:Ontology rdf:about="http://schemas.scales-okn.org/rdf/scales#">
+        <owl:versionIRI rdf:resource="http://schemas.scales-okn.org/rdf/scales#/1.0"/>
+    </owl:Ontology>
+    
+
+
+    <!-- 
+    ///////////////////////////////////////////////////////////////////////////////////////
+    //
+    // Annotation properties
+    //
+    ///////////////////////////////////////////////////////////////////////////////////////
+     -->
+
+    
+
+
+    <!-- http://purl.org/dc/elements/1.1/creator -->
+
+    <owl:AnnotationProperty rdf:about="http://purl.org/dc/elements/1.1/creator"/>
+    
+
+
+    <!-- http://purl.org/dc/elements/1.1/date -->
+
+    <owl:AnnotationProperty rdf:about="http://purl.org/dc/elements/1.1/date"/>
+    
+
+
+    <!-- 
+    ///////////////////////////////////////////////////////////////////////////////////////
+    //
+    // Object Properties
+    //
+    ///////////////////////////////////////////////////////////////////////////////////////
+     -->
+
+    
+
+
+    <!-- http://release.niem.gov/niem/domains/jxdm/7.2/#ArrestCharge -->
+
+    <owl:ObjectProperty rdf:about="http://release.niem.gov/niem/domains/jxdm/7.2/#ArrestCharge">
+        <rdfs:domain rdf:resource="http://release.niem.gov/niem/domains/jxdm/7.2/#Arrest"/>
+        <rdfs:range rdf:resource="http://release.niem.gov/niem/domains/jxdm/7.2/#Charge"/>
+        <rdfs:label xml:lang="en">Arrest Charge</rdfs:label>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://release.niem.gov/niem/domains/jxdm/7.2/#ArrestIncident -->
+
+    <owl:ObjectProperty rdf:about="http://release.niem.gov/niem/domains/jxdm/7.2/#ArrestIncident">
+        <rdfs:domain rdf:resource="http://release.niem.gov/niem/domains/jxdm/7.2/#Arrest"/>
+        <rdfs:range rdf:resource="http://release.niem.gov/niem/niem-core/5.0/Incident"/>
+        <rdfs:label xml:lang="en">Arrest Incident</rdfs:label>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://release.niem.gov/niem/domains/jxdm/7.2/#ArrestRelease -->
+
+    <owl:ObjectProperty rdf:about="http://release.niem.gov/niem/domains/jxdm/7.2/#ArrestRelease">
+        <rdfs:domain rdf:resource="http://release.niem.gov/niem/domains/jxdm/7.2/#Arrest"/>
+        <rdfs:range rdf:resource="http://release.niem.gov/niem/niem-core/5.0/Release"/>
+        <rdfs:label xml:lang="en">Arrest Release</rdfs:label>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://release.niem.gov/niem/domains/jxdm/7.2/#ArrestSubject -->
+
+    <owl:ObjectProperty rdf:about="http://release.niem.gov/niem/domains/jxdm/7.2/#ArrestSubject">
+        <rdfs:domain rdf:resource="http://release.niem.gov/niem/domains/jxdm/7.2/#Arrest"/>
+        <rdfs:range rdf:resource="http://release.niem.gov/niem/niem-core/5.0/Person"/>
+        <rdfs:label xml:lang="en">Arrest Subject</rdfs:label>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://release.niem.gov/niem/domains/jxdm/7.2/#ArrestingAgency -->
+
+    <owl:ObjectProperty rdf:about="http://release.niem.gov/niem/domains/jxdm/7.2/#ArrestingAgency">
+        <rdfs:domain rdf:resource="http://release.niem.gov/niem/domains/jxdm/7.2/#Arrest"/>
+        <rdfs:range rdf:resource="http://release.niem.gov/niem/niem-core/5.0/Organization"/>
+        <rdfs:label xml:lang="en">Arresting Agency</rdfs:label>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://release.niem.gov/niem/domains/jxdm/7.2/#BailSetAmount -->
+
+    <owl:ObjectProperty rdf:about="http://release.niem.gov/niem/domains/jxdm/7.2/#BailSetAmount">
+        <rdfs:domain rdf:resource="http://release.niem.gov/niem/domains/jxdm/7.2/#Bail"/>
+        <rdfs:range rdf:resource="http://release.niem.gov/niem/niem-core/5.0/Amount"/>
+        <rdfs:label xml:lang="en">Set Bail Amount</rdfs:label>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://release.niem.gov/niem/domains/jxdm/7.2/#Booking -->
+
+    <owl:ObjectProperty rdf:about="http://release.niem.gov/niem/domains/jxdm/7.2/#Booking">
+        <rdfs:domain rdf:resource="http://release.niem.gov/niem/domains/jxdm/7.2/#Arrest"/>
+        <rdfs:range rdf:resource="http://release.niem.gov/niem/domains/jxdm/7.2/#Booking"/>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://release.niem.gov/niem/domains/jxdm/7.2/#BookingRelease -->
+
+    <owl:ObjectProperty rdf:about="http://release.niem.gov/niem/domains/jxdm/7.2/#BookingRelease">
+        <rdfs:domain rdf:resource="http://release.niem.gov/niem/domains/jxdm/7.2/#Booking"/>
+        <rdfs:range rdf:resource="http://release.niem.gov/niem/niem-core/5.0/Release"/>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://release.niem.gov/niem/domains/jxdm/7.2/#CaseCharge -->
+
+    <owl:ObjectProperty rdf:about="http://release.niem.gov/niem/domains/jxdm/7.2/#CaseCharge">
+        <rdfs:domain rdf:resource="http://release.niem.gov/niem/domains/jxdm/7.2/#Case"/>
+        <rdfs:range rdf:resource="http://release.niem.gov/niem/domains/jxdm/7.2/#Charge"/>
+        <rdfs:label xml:lang="en">Case Charge</rdfs:label>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://release.niem.gov/niem/domains/jxdm/7.2/#CaseCourt -->
+
+    <owl:ObjectProperty rdf:about="http://release.niem.gov/niem/domains/jxdm/7.2/#CaseCourt">
+        <rdfs:domain rdf:resource="http://release.niem.gov/niem/domains/jxdm/7.2/#Case"/>
+        <rdfs:range rdf:resource="http://release.niem.gov/niem/domains/jxdm/7.2/#Court"/>
+        <rdfs:label xml:lang="en">Case Court</rdfs:label>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://release.niem.gov/niem/domains/jxdm/7.2/#CaseDefendantParty -->
+
+    <owl:ObjectProperty rdf:about="http://release.niem.gov/niem/domains/jxdm/7.2/#CaseDefendantParty">
+        <rdfs:domain rdf:resource="http://schemas.scales-okn.org/rdf/scales#CaseCriminal"/>
+        <rdfs:range rdf:resource="http://schemas.scales-okn.org/rdf/scales#Party"/>
+        <rdfs:label xml:lang="en">Defendant</rdfs:label>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://release.niem.gov/niem/domains/jxdm/7.2/#CaseDefenseAttorney -->
+
+    <owl:ObjectProperty rdf:about="http://release.niem.gov/niem/domains/jxdm/7.2/#CaseDefenseAttorney">
+        <rdfs:domain rdf:resource="http://schemas.scales-okn.org/rdf/scales#CaseCriminal"/>
+        <rdfs:range rdf:resource="http://release.niem.gov/niem/domains/jxdm/7.2/#Attorney"/>
+        <rdfs:label xml:lang="en">Defense Attorney</rdfs:label>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://release.niem.gov/niem/domains/jxdm/7.2/#CaseInitiatingAttorney -->
+
+    <owl:ObjectProperty rdf:about="http://release.niem.gov/niem/domains/jxdm/7.2/#CaseInitiatingAttorney">
+        <rdfs:domain rdf:resource="http://schemas.scales-okn.org/rdf/scales#CaseCivil"/>
+        <rdfs:range rdf:resource="http://release.niem.gov/niem/domains/jxdm/7.2/#Attorney"/>
+        <rdfs:label xml:lang="en">Initiating Attorney</rdfs:label>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://release.niem.gov/niem/domains/jxdm/7.2/#CaseInitiatingParty -->
+
+    <owl:ObjectProperty rdf:about="http://release.niem.gov/niem/domains/jxdm/7.2/#CaseInitiatingParty">
+        <rdfs:domain rdf:resource="http://schemas.scales-okn.org/rdf/scales#CaseCivil"/>
+        <rdfs:range rdf:resource="http://schemas.scales-okn.org/rdf/scales#Party"/>
+        <rdfs:label xml:lang="en">Initiating Party</rdfs:label>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://release.niem.gov/niem/domains/jxdm/7.2/#CaseJudge -->
+
+    <owl:ObjectProperty rdf:about="http://release.niem.gov/niem/domains/jxdm/7.2/#CaseJudge">
+        <rdfs:domain rdf:resource="http://release.niem.gov/niem/domains/jxdm/7.2/#Case"/>
+        <rdfs:range rdf:resource="http://release.niem.gov/niem/domains/jxdm/7.2/#Judge"/>
+        <rdfs:label xml:lang="en">Case Judge</rdfs:label>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://release.niem.gov/niem/domains/jxdm/7.2/#CaseProsecutingAttorney -->
+
+    <owl:ObjectProperty rdf:about="http://release.niem.gov/niem/domains/jxdm/7.2/#CaseProsecutingAttorney">
+        <rdfs:domain rdf:resource="http://schemas.scales-okn.org/rdf/scales#CaseCriminal"/>
+        <rdfs:range rdf:resource="http://release.niem.gov/niem/domains/jxdm/7.2/#Attorney"/>
+        <rdfs:label xml:lang="en">Prosecuting Attorney</rdfs:label>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://release.niem.gov/niem/domains/jxdm/7.2/#CaseRespondentParty -->
+
+    <owl:ObjectProperty rdf:about="http://release.niem.gov/niem/domains/jxdm/7.2/#CaseRespondentParty">
+        <rdfs:domain rdf:resource="http://schemas.scales-okn.org/rdf/scales#CaseCivil"/>
+        <rdfs:range rdf:resource="http://schemas.scales-okn.org/rdf/scales#Party"/>
+        <rdfs:label xml:lang="en">Respondent</rdfs:label>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://release.niem.gov/niem/domains/jxdm/7.2/#ChargeSentence -->
+
+    <owl:ObjectProperty rdf:about="http://release.niem.gov/niem/domains/jxdm/7.2/#ChargeSentence">
+        <rdfs:domain rdf:resource="http://release.niem.gov/niem/domains/jxdm/7.2/#Charge"/>
+        <rdfs:range rdf:resource="http://release.niem.gov/niem/domains/jxdm/7.2/#Sentence"/>
+        <rdfs:label xml:lang="en">Charge Sentence</rdfs:label>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://release.niem.gov/niem/domains/jxdm/7.2/#JudicialOfficialFirm -->
+
+    <owl:ObjectProperty rdf:about="http://release.niem.gov/niem/domains/jxdm/7.2/#JudicialOfficialFirm">
+        <rdfs:domain rdf:resource="http://release.niem.gov/niem/domains/jxdm/7.2/#Attorney"/>
+        <rdfs:range rdf:resource="http://release.niem.gov/niem/domains/jxdm/7.2/#JudicialOfficialFirm"/>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://release.niem.gov/niem/domains/jxdm/7.2/#PersonCharge -->
+
+    <owl:ObjectProperty rdf:about="http://release.niem.gov/niem/domains/jxdm/7.2/#PersonCharge">
+        <rdfs:domain rdf:resource="http://release.niem.gov/niem/niem-core/5.0/Person"/>
+        <rdfs:range rdf:resource="http://release.niem.gov/niem/domains/jxdm/7.2/#Charge"/>
+        <rdfs:label xml:lang="en">Person Charge</rdfs:label>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://release.niem.gov/niem/domains/jxdm/7.2/#RegisterAction -->
+
+    <owl:ObjectProperty rdf:about="http://release.niem.gov/niem/domains/jxdm/7.2/#RegisterAction">
+        <rdfs:domain rdf:resource="http://release.niem.gov/niem/domains/jxdm/7.2/#RegisterOfActions"/>
+        <rdfs:range rdf:resource="http://release.niem.gov/niem/domains/jxdm/7.2/#RegisterAction"/>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://release.niem.gov/niem/domains/jxdm/7.2/#RegisterOfActions -->
+
+    <owl:ObjectProperty rdf:about="http://release.niem.gov/niem/domains/jxdm/7.2/#RegisterOfActions">
+        <rdfs:domain rdf:resource="http://release.niem.gov/niem/domains/jxdm/7.2/#Case"/>
+        <rdfs:range rdf:resource="http://release.niem.gov/niem/domains/jxdm/7.2/#RegisterOfActions"/>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://release.niem.gov/niem/domains/jxdm/7.2/#SentenceCharge -->
+
+    <owl:ObjectProperty rdf:about="http://release.niem.gov/niem/domains/jxdm/7.2/#SentenceCharge">
+        <rdfs:domain rdf:resource="http://release.niem.gov/niem/domains/jxdm/7.2/#Sentence"/>
+        <rdfs:range rdf:resource="http://release.niem.gov/niem/domains/jxdm/7.2/#Charge"/>
+        <rdfs:label>Sentence Charge</rdfs:label>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://release.niem.gov/niem/domains/jxdm/7.2/#SentenceFineAmount -->
+
+    <owl:ObjectProperty rdf:about="http://release.niem.gov/niem/domains/jxdm/7.2/#SentenceFineAmount">
+        <rdfs:domain rdf:resource="http://release.niem.gov/niem/domains/jxdm/7.2/#Sentence"/>
+        <rdfs:range rdf:resource="http://release.niem.gov/niem/niem-core/5.0/Amount"/>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://release.niem.gov/niem/domains/jxdm/7.2/#SentenceSubject -->
+
+    <owl:ObjectProperty rdf:about="http://release.niem.gov/niem/domains/jxdm/7.2/#SentenceSubject">
+        <rdfs:domain rdf:resource="http://release.niem.gov/niem/domains/jxdm/7.2/#Sentence"/>
+        <rdfs:range rdf:resource="http://release.niem.gov/niem/niem-core/5.0/Person"/>
+        <rdfs:label>Sentence Subject</rdfs:label>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://release.niem.gov/niem/domains/jxdm/7.2/#SubjectBooking -->
+
+    <owl:ObjectProperty rdf:about="http://release.niem.gov/niem/domains/jxdm/7.2/#SubjectBooking">
+        <rdfs:domain rdf:resource="http://release.niem.gov/niem/niem-core/5.0/Person"/>
+        <rdfs:range rdf:resource="http://release.niem.gov/niem/domains/jxdm/7.2/#Booking"/>
+        <rdfs:label xml:lang="en">Subject Booking</rdfs:label>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://release.niem.gov/niem/niem-core/5.0/Location -->
+
+    <owl:ObjectProperty rdf:about="http://release.niem.gov/niem/niem-core/5.0/Location">
+        <rdfs:domain rdf:resource="http://release.niem.gov/niem/domains/jxdm/7.2/#Arrest"/>
+        <rdfs:domain rdf:resource="http://release.niem.gov/niem/domains/jxdm/7.2/#Court"/>
+        <rdfs:domain rdf:resource="http://release.niem.gov/niem/niem-core/5.0/Entity"/>
+        <rdfs:domain rdf:resource="http://release.niem.gov/niem/niem-core/5.0/Incident"/>
+        <rdfs:range rdf:resource="http://release.niem.gov/niem/niem-core/5.0/Location"/>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://schemas.scales-okn.org/rdf/scales#appointedByParty -->
+
+    <owl:ObjectProperty rdf:about="http://schemas.scales-okn.org/rdf/scales#appointedByParty">
+        <rdfs:domain rdf:resource="http://release.niem.gov/niem/domains/jxdm/7.2/#Judge"/>
+        <rdfs:range rdf:resource="http://schemas.scales-okn.org/rdf/scales#Party"/>
+        <rdfs:label xml:lang="en">Appointed By Party</rdfs:label>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://schemas.scales-okn.org/rdf/scales#hasIfpJudgeAttribution -->
+
+    <owl:ObjectProperty rdf:about="http://schemas.scales-okn.org/rdf/scales#hasIfpJudgeAttribution">
+        <rdfs:domain rdf:resource="http://release.niem.gov/niem/domains/jxdm/7.2/#RegisterAction"/>
+        <rdfs:range rdf:resource="http://release.niem.gov/niem/domains/jxdm/7.2/#Judge"/>
+        <rdfs:label>Judge Attribution</rdfs:label>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://schemas.scales-okn.org/rdf/scales#hasJudgeReference -->
+
+    <owl:ObjectProperty rdf:about="http://schemas.scales-okn.org/rdf/scales#hasJudgeReference">
+        <rdfs:domain rdf:resource="http://release.niem.gov/niem/domains/jxdm/7.2/#RegisterAction"/>
+        <rdfs:range rdf:resource="http://release.niem.gov/niem/domains/jxdm/7.2/#Judge"/>
+        <rdfs:label xml:lang="en">Judge Reference</rdfs:label>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://schemas.scales-okn.org/rdf/scales#hasReferenceToOtherEntry -->
+
+    <owl:ObjectProperty rdf:about="http://schemas.scales-okn.org/rdf/scales#hasReferenceToOtherEntry">
+        <rdfs:domain rdf:resource="http://release.niem.gov/niem/domains/jxdm/7.2/#RegisterAction"/>
+        <rdfs:range rdf:resource="http://release.niem.gov/niem/domains/jxdm/7.2/#RegisterAction"/>
+        <rdfs:label xml:lang="en">Refrences Entity</rdfs:label>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://schemas.scales-okn.org/rdf/scales#isInstanceOfEntity -->
+
+    <owl:ObjectProperty rdf:about="http://schemas.scales-okn.org/rdf/scales#isInstanceOfEntity">
+        <rdfs:domain rdf:resource="http://release.niem.gov/niem/niem-core/5.0/Person"/>
+        <rdfs:range rdf:resource="http://release.niem.gov/niem/niem-core/5.0/Person"/>
+        <rdfs:label xml:lang="en">Instance of Entity</rdfs:label>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- 
+    ///////////////////////////////////////////////////////////////////////////////////////
+    //
+    // Data properties
+    //
+    ///////////////////////////////////////////////////////////////////////////////////////
+     -->
+
+    
+
+
+    <!-- http://release.niem.gov/niem/codes/fips/5.0/CountryCode -->
+
+    <owl:DatatypeProperty rdf:about="http://release.niem.gov/niem/codes/fips/5.0/CountryCode">
+        <rdfs:domain rdf:resource="http://release.niem.gov/niem/niem-core/5.0/Entity"/>
+        <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
+        <rdfs:label>Country Code</rdfs:label>
+    </owl:DatatypeProperty>
+    
+
+
+    <!-- http://release.niem.gov/niem/domains/jxdm/7.2/#CaseOfficialRoleText -->
+
+    <owl:DatatypeProperty rdf:about="http://release.niem.gov/niem/domains/jxdm/7.2/#CaseOfficialRoleText">
+        <rdfs:domain rdf:resource="http://schemas.scales-okn.org/rdf/scales#Party"/>
+        <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
+        <rdfs:label xml:lang="en">Case Role</rdfs:label>
+    </owl:DatatypeProperty>
+    
+
+
+    <!-- http://release.niem.gov/niem/domains/jxdm/7.2/#ChargeDisposition -->
+
+    <owl:DatatypeProperty rdf:about="http://release.niem.gov/niem/domains/jxdm/7.2/#ChargeDisposition">
+        <rdfs:domain rdf:resource="http://release.niem.gov/niem/domains/jxdm/7.2/#Charge"/>
+        <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
+        <rdfs:label xml:lang="en">Charge Disposition</rdfs:label>
+    </owl:DatatypeProperty>
+    
+
+
+    <!-- http://release.niem.gov/niem/domains/jxdm/7.2/#ChargeSequenceID -->
+
+    <owl:DatatypeProperty rdf:about="http://release.niem.gov/niem/domains/jxdm/7.2/#ChargeSequenceID">
+        <rdfs:domain rdf:resource="http://release.niem.gov/niem/domains/jxdm/7.2/#Charge"/>
+        <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
+        <rdfs:label xml:lang="en">Charge Sequence Id</rdfs:label>
+    </owl:DatatypeProperty>
+    
+
+
+    <!-- http://release.niem.gov/niem/domains/jxdm/7.2/#ChargeText -->
+
+    <owl:DatatypeProperty rdf:about="http://release.niem.gov/niem/domains/jxdm/7.2/#ChargeText">
+        <rdfs:domain rdf:resource="http://release.niem.gov/niem/domains/jxdm/7.2/#Charge"/>
+        <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
+        <rdfs:label xml:lang="en">Charge</rdfs:label>
+    </owl:DatatypeProperty>
+    
+
+
+    <!-- http://release.niem.gov/niem/domains/jxdm/7.2/#CourtCategoryCode -->
+
+    <owl:DatatypeProperty rdf:about="http://release.niem.gov/niem/domains/jxdm/7.2/#CourtCategoryCode">
+        <rdfs:domain rdf:resource="http://release.niem.gov/niem/domains/jxdm/7.2/#Charge"/>
+        <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
+        <rdfs:label xml:lang="en">Court Category Code</rdfs:label>
+    </owl:DatatypeProperty>
+    
+
+
+    <!-- http://release.niem.gov/niem/domains/jxdm/7.2/#CourtName -->
+
+    <owl:DatatypeProperty rdf:about="http://release.niem.gov/niem/domains/jxdm/7.2/#CourtName">
+        <rdfs:domain rdf:resource="http://release.niem.gov/niem/domains/jxdm/7.2/#Court"/>
+        <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
+        <rdfs:label xml:lang="en">Court Name</rdfs:label>
+    </owl:DatatypeProperty>
+    
+
+
+    <!-- http://release.niem.gov/niem/domains/jxdm/7.2/#JudicialOfficialCategoryText -->
+
+    <owl:DatatypeProperty rdf:about="http://release.niem.gov/niem/domains/jxdm/7.2/#JudicialOfficialCategoryText">
+        <rdfs:domain rdf:resource="http://release.niem.gov/niem/domains/jxdm/7.2/#Judge"/>
+        <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
+        <rdfs:label xml:lang="en">Judicial Official Category</rdfs:label>
+    </owl:DatatypeProperty>
+    
+
+
+    <!-- http://release.niem.gov/niem/domains/jxdm/7.2/#ParticipantRoleCategoryText -->
+
+    <owl:DatatypeProperty rdf:about="http://release.niem.gov/niem/domains/jxdm/7.2/#ParticipantRoleCategoryText">
+        <rdfs:domain rdf:resource="http://schemas.scales-okn.org/rdf/scales#Party"/>
+        <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
+        <rdfs:label xml:lang="en">Participant Role Category</rdfs:label>
+    </owl:DatatypeProperty>
+    
+
+
+    <!-- http://release.niem.gov/niem/domains/jxdm/7.2/#RegisterActionDate -->
+
+    <owl:DatatypeProperty rdf:about="http://release.niem.gov/niem/domains/jxdm/7.2/#RegisterActionDate">
+        <rdfs:domain rdf:resource="http://release.niem.gov/niem/domains/jxdm/7.2/#RegisterAction"/>
+        <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#dateTime"/>
+        <rdfs:label xml:lang="en">Register Action Date</rdfs:label>
+    </owl:DatatypeProperty>
+    
+
+
+    <!-- http://release.niem.gov/niem/domains/jxdm/7.2/#RegisterActionDescriptionText -->
+
+    <owl:DatatypeProperty rdf:about="http://release.niem.gov/niem/domains/jxdm/7.2/#RegisterActionDescriptionText">
+        <rdfs:domain rdf:resource="http://release.niem.gov/niem/domains/jxdm/7.2/#RegisterAction"/>
+        <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
+        <rdfs:label xml:lang="en">Register Action Description</rdfs:label>
+    </owl:DatatypeProperty>
+    
+
+
+    <!-- http://release.niem.gov/niem/domains/jxdm/7.2/#SentenceFineAmount -->
+
+    <owl:DatatypeProperty rdf:about="http://release.niem.gov/niem/domains/jxdm/7.2/#SentenceFineAmount">
+        <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#decimal"/>
+    </owl:DatatypeProperty>
+    
+
+
+    <!-- http://release.niem.gov/niem/domains/jxdm/7.2/#SentenceImposedText -->
+
+    <owl:DatatypeProperty rdf:about="http://release.niem.gov/niem/domains/jxdm/7.2/#SentenceImposedText">
+        <rdfs:domain rdf:resource="http://release.niem.gov/niem/domains/jxdm/7.2/#Sentence"/>
+        <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
+        <rdfs:label>Sentence Imposed Text</rdfs:label>
+    </owl:DatatypeProperty>
+    
+
+
+    <!-- http://release.niem.gov/niem/niem-core/5.0/AddressPostalCode -->
+
+    <owl:DatatypeProperty rdf:about="http://release.niem.gov/niem/niem-core/5.0/AddressPostalCode">
+        <rdfs:domain rdf:resource="http://release.niem.gov/niem/niem-core/5.0/Entity"/>
+        <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#dateTime"/>
+        <rdfs:label xml:lang="en">Postal Code</rdfs:label>
+    </owl:DatatypeProperty>
+    
+
+
+    <!-- http://release.niem.gov/niem/niem-core/5.0/AdministrativeID -->
+
+    <owl:DatatypeProperty rdf:about="http://release.niem.gov/niem/niem-core/5.0/AdministrativeID">
+        <rdfs:domain rdf:resource="http://release.niem.gov/niem/domains/jxdm/7.2/#RegisterAction"/>
+        <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
+        <rdfs:label>Administrative Id</rdfs:label>
+    </owl:DatatypeProperty>
+    
+
+
+    <!-- http://release.niem.gov/niem/niem-core/5.0/CaseDocketId -->
+
+    <owl:DatatypeProperty rdf:about="http://release.niem.gov/niem/niem-core/5.0/CaseDocketId">
+        <rdfs:domain rdf:resource="http://release.niem.gov/niem/domains/jxdm/7.2/#Case"/>
+        <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
+        <rdfs:label xml:lang="en">Case Docket Id</rdfs:label>
+    </owl:DatatypeProperty>
+    
+
+
+    <!-- http://release.niem.gov/niem/niem-core/5.0/CaseGeneralCategoryText -->
+
+    <owl:DatatypeProperty rdf:about="http://release.niem.gov/niem/niem-core/5.0/CaseGeneralCategoryText">
+        <rdfs:domain rdf:resource="http://release.niem.gov/niem/domains/jxdm/7.2/#Case"/>
+        <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
+        <rdfs:label xml:lang="en">Case General Category</rdfs:label>
+    </owl:DatatypeProperty>
+    
+
+
+    <!-- http://release.niem.gov/niem/niem-core/5.0/CaseSubCategoryText -->
+
+    <owl:DatatypeProperty rdf:about="http://release.niem.gov/niem/niem-core/5.0/CaseSubCategoryText">
+        <rdfs:domain rdf:resource="http://release.niem.gov/niem/domains/jxdm/7.2/#Case"/>
+        <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
+        <rdfs:label xml:lang="en">Case Sub Category</rdfs:label>
+    </owl:DatatypeProperty>
+    
+
+
+    <!-- http://release.niem.gov/niem/niem-core/5.0/ContactMailingAddress -->
+
+    <owl:DatatypeProperty rdf:about="http://release.niem.gov/niem/niem-core/5.0/ContactMailingAddress">
+        <rdfs:domain rdf:resource="http://release.niem.gov/niem/niem-core/5.0/Entity"/>
+        <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
+        <rdfs:label>Mailing Address</rdfs:label>
+    </owl:DatatypeProperty>
+    
+
+
+    <!-- http://release.niem.gov/niem/niem-core/5.0/EndDate -->
+
+    <owl:DatatypeProperty rdf:about="http://release.niem.gov/niem/niem-core/5.0/EndDate">
+        <rdfs:domain rdf:resource="http://release.niem.gov/niem/domains/jxdm/7.2/#Case"/>
+        <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#dateTime"/>
+        <rdfs:label>End Date</rdfs:label>
+    </owl:DatatypeProperty>
+    
+
+
+    <!-- http://release.niem.gov/niem/niem-core/5.0/JurisdictionText -->
+
+    <owl:DatatypeProperty rdf:about="http://release.niem.gov/niem/niem-core/5.0/JurisdictionText">
+        <rdfs:domain rdf:resource="http://release.niem.gov/niem/domains/jxdm/7.2/#Case"/>
+        <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
+        <rdfs:label xml:lang="en">Jurisdiction</rdfs:label>
+    </owl:DatatypeProperty>
+    
+
+
+    <!-- http://release.niem.gov/niem/niem-core/5.0/OrganizationName -->
+
+    <owl:DatatypeProperty rdf:about="http://release.niem.gov/niem/niem-core/5.0/OrganizationName">
+        <rdfs:domain rdf:resource="http://release.niem.gov/niem/niem-core/5.0/Organization"/>
+        <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
+        <rdfs:label xml:lang="en">Organization Name</rdfs:label>
+    </owl:DatatypeProperty>
+    
+
+
+    <!-- http://release.niem.gov/niem/niem-core/5.0/PersonFullName -->
+
+    <owl:DatatypeProperty rdf:about="http://release.niem.gov/niem/niem-core/5.0/PersonFullName">
+        <rdfs:domain rdf:resource="http://release.niem.gov/niem/niem-core/5.0/Person"/>
+        <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
+        <rdfs:label xml:lang="en">Full Name</rdfs:label>
+    </owl:DatatypeProperty>
+    
+
+
+    <!-- http://release.niem.gov/niem/niem-core/5.0/PersonRaceText -->
+
+    <owl:DatatypeProperty rdf:about="http://release.niem.gov/niem/niem-core/5.0/PersonRaceText">
+        <rdfs:domain rdf:resource="http://release.niem.gov/niem/niem-core/5.0/Person"/>
+        <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
+        <rdfs:label xml:lang="en">Race</rdfs:label>
+    </owl:DatatypeProperty>
+    
+
+
+    <!-- http://release.niem.gov/niem/niem-core/5.0/PersonSexText -->
+
+    <owl:DatatypeProperty rdf:about="http://release.niem.gov/niem/niem-core/5.0/PersonSexText">
+        <rdfs:domain rdf:resource="http://release.niem.gov/niem/niem-core/5.0/Person"/>
+        <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
+        <rdfs:label xml:lang="en">Sex</rdfs:label>
+    </owl:DatatypeProperty>
+    
+
+
+    <!-- http://release.niem.gov/niem/niem-core/5.0/StartDate -->
+
+    <owl:DatatypeProperty rdf:about="http://release.niem.gov/niem/niem-core/5.0/StartDate">
+        <rdfs:domain rdf:resource="http://release.niem.gov/niem/domains/jxdm/7.2/#Case"/>
+        <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#dateTime"/>
+        <rdfs:label>Start Date</rdfs:label>
+    </owl:DatatypeProperty>
+    
+
+
+    <!-- http://release.niem.gov/niem/niem-core/5.0/StatusDescriptionText -->
+
+    <owl:DatatypeProperty rdf:about="http://release.niem.gov/niem/niem-core/5.0/StatusDescriptionText">
+        <rdfs:domain rdf:resource="http://release.niem.gov/niem/domains/jxdm/7.2/#Case"/>
+        <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
+        <rdfs:label xml:lang="en">Status Description</rdfs:label>
+    </owl:DatatypeProperty>
+    
+
+
+    <!-- http://release.niem.gov/niem/niem-core/5.0/StatuteKeywordText -->
+
+    <owl:DatatypeProperty rdf:about="http://release.niem.gov/niem/niem-core/5.0/StatuteKeywordText">
+        <rdfs:domain rdf:resource="http://release.niem.gov/niem/domains/jxdm/7.2/#Case"/>
+        <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
+        <rdfs:label xml:lang="en">Statute Keyword</rdfs:label>
+    </owl:DatatypeProperty>
+    
+
+
+    <!-- http://schemas.scales-okn.org/rdf/scales#hasChargeType -->
+
+    <owl:DatatypeProperty rdf:about="http://schemas.scales-okn.org/rdf/scales#hasChargeType">
+        <rdfs:domain rdf:resource="http://release.niem.gov/niem/domains/jxdm/7.2/#Charge"/>
+        <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
+        <rdfs:label xml:lang="en">Charge Type</rdfs:label>
+    </owl:DatatypeProperty>
+    
+
+
+    <!-- http://schemas.scales-okn.org/rdf/scales#hasCommissionDate -->
+
+    <owl:DatatypeProperty rdf:about="http://schemas.scales-okn.org/rdf/scales#hasCommissionDate">
+        <rdfs:domain rdf:resource="http://release.niem.gov/niem/domains/jxdm/7.2/#Judge"/>
+        <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#dateTime"/>
+        <rdfs:label xml:lang="en">Commission Date</rdfs:label>
+    </owl:DatatypeProperty>
+    
+
+
+    <!-- http://schemas.scales-okn.org/rdf/scales#hasHighestOffenseLevelOpening -->
+
+    <owl:DatatypeProperty rdf:about="http://schemas.scales-okn.org/rdf/scales#hasHighestOffenseLevelOpening">
+        <rdfs:domain rdf:resource="http://schemas.scales-okn.org/rdf/scales#Party"/>
+        <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
+        <rdfs:label xml:lang="en">Highest Offense Level Opening</rdfs:label>
+    </owl:DatatypeProperty>
+    
+
+
+    <!-- http://schemas.scales-okn.org/rdf/scales#hasHighestOffenseLevelTerminated -->
+
+    <owl:DatatypeProperty rdf:about="http://schemas.scales-okn.org/rdf/scales#hasHighestOffenseLevelTerminated">
+        <rdfs:domain rdf:resource="http://schemas.scales-okn.org/rdf/scales#Party"/>
+        <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
+        <rdfs:label xml:lang="en">Highest Opening Level Offense</rdfs:label>
+    </owl:DatatypeProperty>
+    
+
+
+    <!-- http://schemas.scales-okn.org/rdf/scales#hasOntologyLabel -->
+
+    <owl:DatatypeProperty rdf:about="http://schemas.scales-okn.org/rdf/scales#hasOntologyLabel">
+        <rdfs:domain rdf:resource="http://release.niem.gov/niem/domains/jxdm/7.2/#RegisterAction"/>
+        <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
+        <rdfs:label xml:lang="en">Ontology Label</rdfs:label>
+    </owl:DatatypeProperty>
+    
+
+
+    <!-- http://schemas.scales-okn.org/rdf/scales#hasPartyReferenceInExtraInfo -->
+
+    <owl:DatatypeProperty rdf:about="http://schemas.scales-okn.org/rdf/scales#hasPartyReferenceInExtraInfo">
+        <rdfs:domain rdf:resource="http://schemas.scales-okn.org/rdf/scales#Party"/>
+        <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
+        <rdfs:label xml:lang="en">Extra Information</rdfs:label>
+    </owl:DatatypeProperty>
+    
+
+
+    <!-- http://schemas.scales-okn.org/rdf/scales#isInCircuit -->
+
+    <owl:DatatypeProperty rdf:about="http://schemas.scales-okn.org/rdf/scales#isInCircuit">
+        <rdfs:domain rdf:resource="http://release.niem.gov/niem/domains/jxdm/7.2/#Court"/>
+        <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
+        <rdfs:label xml:lang="en">Circuit</rdfs:label>
+    </owl:DatatypeProperty>
+    
+
+
+    <!-- 
+    ///////////////////////////////////////////////////////////////////////////////////////
+    //
+    // Classes
+    //
+    ///////////////////////////////////////////////////////////////////////////////////////
+     -->
+
+    
+
+
+    <!-- http://release.niem.gov/niem/domains/jxdm/7.2/#Arrest -->
+
+    <owl:Class rdf:about="http://release.niem.gov/niem/domains/jxdm/7.2/#Arrest">
+        <rdfs:label xml:lang="en">Arrest</rdfs:label>
+    </owl:Class>
+    
+
+
+    <!-- http://release.niem.gov/niem/domains/jxdm/7.2/#Attorney -->
+
+    <owl:Class rdf:about="http://release.niem.gov/niem/domains/jxdm/7.2/#Attorney">
+        <rdfs:subClassOf rdf:resource="http://schemas.scales-okn.org/rdf/scales#Party"/>
+        <rdfs:label xml:lang="en">Attorney</rdfs:label>
+    </owl:Class>
+    
+
+
+    <!-- http://release.niem.gov/niem/domains/jxdm/7.2/#Bail -->
+
+    <owl:Class rdf:about="http://release.niem.gov/niem/domains/jxdm/7.2/#Bail">
+        <rdfs:label xml:lang="en">Bail</rdfs:label>
+    </owl:Class>
+    
+
+
+    <!-- http://release.niem.gov/niem/domains/jxdm/7.2/#Booking -->
+
+    <owl:Class rdf:about="http://release.niem.gov/niem/domains/jxdm/7.2/#Booking"/>
+    
+
+
+    <!-- http://release.niem.gov/niem/domains/jxdm/7.2/#Case -->
+
+    <owl:Class rdf:about="http://release.niem.gov/niem/domains/jxdm/7.2/#Case">
+        <rdfs:label xml:lang="en">Case</rdfs:label>
+    </owl:Class>
+    
+
+
+    <!-- http://release.niem.gov/niem/domains/jxdm/7.2/#Charge -->
+
+    <owl:Class rdf:about="http://release.niem.gov/niem/domains/jxdm/7.2/#Charge">
+        <rdfs:label xml:lang="en">Charge</rdfs:label>
+    </owl:Class>
+    
+
+
+    <!-- http://release.niem.gov/niem/domains/jxdm/7.2/#Court -->
+
+    <owl:Class rdf:about="http://release.niem.gov/niem/domains/jxdm/7.2/#Court">
+        <rdfs:subClassOf rdf:resource="http://release.niem.gov/niem/niem-core/5.0/Organization"/>
+        <rdfs:label xml:lang="en">Court</rdfs:label>
+    </owl:Class>
+    
+
+
+    <!-- http://release.niem.gov/niem/domains/jxdm/7.2/#Felony -->
+
+    <owl:Class rdf:about="http://release.niem.gov/niem/domains/jxdm/7.2/#Felony">
+        <rdfs:subClassOf rdf:resource="http://release.niem.gov/niem/niem-core/5.0/Incident"/>
+        <rdfs:label xml:lang="en">Felony</rdfs:label>
+    </owl:Class>
+    
+
+
+    <!-- http://release.niem.gov/niem/domains/jxdm/7.2/#Judge -->
+
+    <owl:Class rdf:about="http://release.niem.gov/niem/domains/jxdm/7.2/#Judge">
+        <rdfs:subClassOf rdf:resource="http://schemas.scales-okn.org/rdf/scales#Party"/>
+        <rdfs:label xml:lang="en">Judge</rdfs:label>
+    </owl:Class>
+    
+
+
+    <!-- http://release.niem.gov/niem/domains/jxdm/7.2/#JudicialOfficialFirm -->
+
+    <owl:Class rdf:about="http://release.niem.gov/niem/domains/jxdm/7.2/#JudicialOfficialFirm">
+        <rdfs:subClassOf rdf:resource="http://release.niem.gov/niem/niem-core/5.0/Organization"/>
+    </owl:Class>
+    
+
+
+    <!-- http://release.niem.gov/niem/domains/jxdm/7.2/#Misdemeanor -->
+
+    <owl:Class rdf:about="http://release.niem.gov/niem/domains/jxdm/7.2/#Misdemeanor">
+        <rdfs:subClassOf rdf:resource="http://release.niem.gov/niem/niem-core/5.0/Incident"/>
+        <rdfs:label xml:lang="en">Misodemeanor</rdfs:label>
+    </owl:Class>
+    
+
+
+    <!-- http://release.niem.gov/niem/domains/jxdm/7.2/#RegisterAction -->
+
+    <owl:Class rdf:about="http://release.niem.gov/niem/domains/jxdm/7.2/#RegisterAction"/>
+    
+
+
+    <!-- http://release.niem.gov/niem/domains/jxdm/7.2/#RegisterOfActions -->
+
+    <owl:Class rdf:about="http://release.niem.gov/niem/domains/jxdm/7.2/#RegisterOfActions"/>
+    
+
+
+    <!-- http://release.niem.gov/niem/domains/jxdm/7.2/#Sentence -->
+
+    <owl:Class rdf:about="http://release.niem.gov/niem/domains/jxdm/7.2/#Sentence">
+        <rdfs:label xml:lang="en">Sentence</rdfs:label>
+    </owl:Class>
+    
+
+
+    <!-- http://release.niem.gov/niem/niem-core/5.0/Amount -->
+
+    <owl:Class rdf:about="http://release.niem.gov/niem/niem-core/5.0/Amount">
+        <rdfs:isDefinedBy xml:lang="en">SCALES-Data-Set-Hash-1</rdfs:isDefinedBy>
+        <rdfs:isDefinedBy xml:lang="en">SCALES-Data-Set-Hash-2</rdfs:isDefinedBy>
+        <rdfs:label xml:lang="en">Amount</rdfs:label>
+    </owl:Class>
+    
+
+
+    <!-- http://release.niem.gov/niem/niem-core/5.0/Entity -->
+
+    <owl:Class rdf:about="http://release.niem.gov/niem/niem-core/5.0/Entity">
+        <rdfs:label>Entity</rdfs:label>
+    </owl:Class>
+    
+
+
+    <!-- http://release.niem.gov/niem/niem-core/5.0/Incident -->
+
+    <owl:Class rdf:about="http://release.niem.gov/niem/niem-core/5.0/Incident">
+        <rdfs:label xml:lang="en">Incident</rdfs:label>
+    </owl:Class>
+    
+
+
+    <!-- http://release.niem.gov/niem/niem-core/5.0/Location -->
+
+    <owl:Class rdf:about="http://release.niem.gov/niem/niem-core/5.0/Location">
+        <rdfs:label xml:lang="en">Location</rdfs:label>
+    </owl:Class>
+    
+
+
+    <!-- http://release.niem.gov/niem/niem-core/5.0/Organization -->
+
+    <owl:Class rdf:about="http://release.niem.gov/niem/niem-core/5.0/Organization">
+        <rdfs:subClassOf rdf:resource="http://release.niem.gov/niem/niem-core/5.0/Entity"/>
+        <rdfs:label xml:lang="en">Organization</rdfs:label>
+    </owl:Class>
+    
+
+
+    <!-- http://release.niem.gov/niem/niem-core/5.0/Person -->
+
+    <owl:Class rdf:about="http://release.niem.gov/niem/niem-core/5.0/Person">
+        <rdfs:subClassOf rdf:resource="http://release.niem.gov/niem/niem-core/5.0/Entity"/>
+        <rdfs:label xml:lang="en">Person</rdfs:label>
+    </owl:Class>
+    
+
+
+    <!-- http://release.niem.gov/niem/niem-core/5.0/Release -->
+
+    <owl:Class rdf:about="http://release.niem.gov/niem/niem-core/5.0/Release">
+        <rdfs:label xml:lang="en">Release</rdfs:label>
+    </owl:Class>
+    
+
+
+    <!-- http://schemas.scales-okn.org/rdf/scales#CaseCivil -->
+
+    <owl:Class rdf:about="http://schemas.scales-okn.org/rdf/scales#CaseCivil">
+        <rdfs:subClassOf rdf:resource="http://release.niem.gov/niem/domains/jxdm/7.2/#Case"/>
+        <rdfs:label xml:lang="en">Civil Case</rdfs:label>
+    </owl:Class>
+    
+
+
+    <!-- http://schemas.scales-okn.org/rdf/scales#CaseCriminal -->
+
+    <owl:Class rdf:about="http://schemas.scales-okn.org/rdf/scales#CaseCriminal">
+        <rdfs:subClassOf rdf:resource="http://release.niem.gov/niem/domains/jxdm/7.2/#Case"/>
+        <rdfs:label xml:lang="en">Criminal Case</rdfs:label>
+    </owl:Class>
+    
+
+
+    <!-- http://schemas.scales-okn.org/rdf/scales#Party -->
+
+    <owl:Class rdf:about="http://schemas.scales-okn.org/rdf/scales#Party">
+        <rdfs:subClassOf rdf:resource="http://release.niem.gov/niem/niem-core/5.0/Person"/>
+        <rdfs:label xml:lang="en">Party</rdfs:label>
+    </owl:Class>
+    
+
+
+    <!-- 
+    ///////////////////////////////////////////////////////////////////////////////////////
+    //
+    // Annotations
+    //
+    ///////////////////////////////////////////////////////////////////////////////////////
+     -->
+
+    <rdf:Description rdf:about="http://release.niem.gov/niem/domains/jxdm/7.2/#Booking">
+        <rdfs:label xml:lang="en">Booking</rdfs:label>
+    </rdf:Description>
+    <rdf:Description rdf:about="http://release.niem.gov/niem/domains/jxdm/7.2/#JudicialOfficialFirm">
+        <rdfs:label xml:lang="en">Law Firm</rdfs:label>
+    </rdf:Description>
+    <rdf:Description rdf:about="http://release.niem.gov/niem/domains/jxdm/7.2/#RegisterAction">
+        <rdfs:label xml:lang="en">Docket Entry</rdfs:label>
+    </rdf:Description>
+    <rdf:Description rdf:about="http://release.niem.gov/niem/domains/jxdm/7.2/#RegisterOfActions">
+        <rdfs:label xml:lang="en">Docket Table</rdfs:label>
+    </rdf:Description>
+    <rdf:Description rdf:about="http://release.niem.gov/niem/domains/jxdm/7.2/#SentenceFineAmount">
+        <rdfs:label xml:lang="en">Sentence Fine Amount</rdfs:label>
+    </rdf:Description>
+    <rdf:Description rdf:about="http://release.niem.gov/niem/niem-core/5.0/Location">
+        <rdfs:label xml:lang="en">Location</rdfs:label>
+    </rdf:Description>
+</rdf:RDF>

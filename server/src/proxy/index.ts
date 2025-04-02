@@ -25,7 +25,7 @@ router.all(
     }
 
     return requestProxy({
-      url: `${process.env.CORE_API_ENDPOINT}/*`,
+      url: `${process.env.CORE_API_ENDPOINT}*`,
       query: rewrittenParams,
       timeout: 300000,
       headers: {

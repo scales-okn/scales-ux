@@ -1,15 +1,122 @@
-import fs from 'fs';
+import fs from 'fs/promises'
 import { parse, graph, Namespace } from 'rdflib';
 import { Ontology, ClassDefinition, PropertyInfo } from '../types/rdf';
+import { Filter } from 'types/filter';
+import { reverseMap } from './json-ld';
+import { courtCase } from '../jsonld/case';
 
+export async function getFiltersForEntity(entity: string): Promise<Filter[]> {
+    const schema = await parseRDFSchema('/Users/engineer/Code/scales/scales-ux/server/config/rdf/scales-okn.rdf');
+    const entityCtx = courtCase["@context"][entity]
+    console.log("entityCtx", entityCtx);
+    if (!entityCtx) {
+        throw new TypeError(`${entity} does not exist in json-ld context`);
+    }
+    let entityIri;
+    if (typeof entityCtx === 'string') {
+        entityIri = entityCtx;
+    } else {
+        entityIri = entityCtx["@id"];
+    }
+
+    const entityClass = schema.classes.find(c => {
+        if (c.iri === entityIri) {
+            return c;
+        }
+        for (const prop of c.properties) {
+            if (prop.iri === entityIri) {
+                return prop;
+            }
+        }
+    });
+    if (!entityClass) {
+        throw new TypeError(`${entity} does not exist in ontology`);
+    }
+    return buildFilters(entityClass, entity);
+}
+
+const popStem = (iri: string) => {
+    // split the iri by the slash and pop the last value
+    return iri.split('/').pop() || iri.split('#').pop() || 'UNKNOWN';
+}
+
+// const normalizeType = (type: string | { '@id': string, '@type'?: string } ) : string => {
+//     // check to see if the type is an object with the @id property
+//     if (typeof type === 'object' && type !== null && '@id' in type) {
+//         return popStem(type['@id']);
+//     }
+//     return type;
+// }
+// /**
+//  * Recursively build filters for a given class property
+//  * @param classProps 
+//  */
+export function buildFilters(entityClass: ClassDefinition, entity: string): Filter[] {
+    const predMap = reverseMap(courtCase["@context"]);
+    const filters = [];
+    const { name, iri, properties, subclasses } = entityClass
+    if (subclasses.length > 0) {
+        // build a | seperated string of the subclasses
+        const value = subclasses.map(subClass => subClass.iri).join('|');
+        const filter: Filter = {
+            label: `${name} Type`,
+            // split and pop everything after the last non alpha value from the iri
+            type: 'type',
+            field: predMap[iri] || 'missing json-ld field',
+            value: "",
+            subFilters: [],
+            autoComplete: [],
+        };
+        for (const subclass of subclasses) {
+            const subFilter: Filter = {
+                label: subclass.name,
+                type: 'type',
+                field: predMap[subclass.iri] || 'missing json-ld field',
+                value: "",
+                subFilters: [],
+                autoComplete: [],
+            };
+
+            filter.subFilters.push(subFilter);
+            filter.autoComplete.push({ label: subclass.name, value: predMap[subclass.iri] || 'missing json-ld field' });
+        }
+        filters.push(filter);
+    }
+    for (const property of properties) {
+        const filter: Filter = {
+            label: property.name,
+            type: property.type,
+            field: predMap[property.iri] || 'missing json-ld field',
+            value: "",
+            subFilters: [],
+            autoComplete: [],
+        };
+        filters.push(filter);
+    }
+    // const filter: Filter = {
+    //     label: name,
+    //     type: 'string',
+    //     field: predMap[iri] || 'missing json-ld field',
+    //     values: [],
+    //     filters: []
+    // };
+    // if (subclasses.length > 0) {
+    //     for (const subclass of subclasses) {
+    //         filter.filters.concat(buildFilters([subclass], subclass.name));
+    //     }
+    // }
+    // filters.push(filter);
+    // }
+    return filters;
+}
 /**
  * Parse RDF/XML schema into a structured ontology object
  * @param filePath Path to the RDF/XML schema file
  * @returns Ontology object containing class definitions and namespace information
  */
-export function parseRDFSchema(filePath: string): Ontology {
+export async function parseRDFSchema(filePath: string): Promise<Ontology> {
     // Read file content
-    const rdfData = fs.readFileSync(filePath).toString();
+    const rdfData = (await fs.readFile(filePath)).toString();
 
     // Initialize RDF store
     const store = graph();

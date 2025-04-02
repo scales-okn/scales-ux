@@ -1,0 +1,1 @@
+CREATE DATABASE "satyrn-ux-local";

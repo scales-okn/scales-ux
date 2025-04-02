@@ -1,22 +1,11 @@
-import { findAll } from "./../controllers/alerts";
-import { courtCase } from "../jsonld/case";
-import { testCourtCases } from "./test-cases";
-import { parseResolveInfo, ResolveTree, simplifyParsedResolveInfoFragmentWithType } from "graphql-parse-resolve-info";
-import { Converter, ISingularizeVariables, IVariablesDictionary } from "graphql-to-sparql";
-import { toSparql } from "sparqlalgebrajs";
-import type { GraphQLResolveInfo } from "graphql";
-import { parse, GraphQLType, visit, Kind } from "graphql";
-import { Client } from "graphql-ld";
 import { QueryEngine } from "@comunica/query-sparql";
-import { QueryEngineComunica } from "graphql-ld-comunica";
-import { get } from "http";
-import { IConvertOptions } from "graphql-to-sparql/lib/IConvertOptions";
-import { rdfParser } from "rdf-parse";
-import fs from "fs";
-import { PropertyInfo } from "types/rdf";
-import { parseRDFSchema } from "../services/rdfs";
-import { reverseContextMap } from "../services/json-ld";
+import { Converter } from "graphql-to-sparql";
+import { toSparql } from "sparqlalgebrajs";
 import { Filter } from "types/filter";
+import { courtCase } from "../jsonld/case";
+import { reverseMap } from "../services/json-ld";
+import { parseRDFSchema, buildFilters, getFiltersForEntity } from "../services/rdfs";
+import { testCourtCases } from "./test-cases";
 const myEngine = new QueryEngine();
 
 export const queryResolvers = {
@@ -29,91 +18,99 @@ export const queryResolvers = {
       return {};
     },
     cases: async (_: any, args, context, info) => {
-      function reformatGraphQLQuery(query: string, args: { first: number, offset: number, sortBy: string, sortDirection: string }): string {
-        // Find all placeholder parameters
-        const paramRegex = /\s+(\w+):\s+\$(\w+)/g;
-        const matches = [...query.matchAll(paramRegex)];
-
-        // Keep only parameters that exist in args
-        const validParams = matches
-          .filter(([, , placeholder]) => placeholder in args)
-          .map(([fullMatch, paramName, placeholder]) => {
-            const value = typeof args[placeholder] === "string" ? `"${args[placeholder]}"` : args[placeholder];
-            return { fullMatch, paramName, value };
-          });
-
-        // Create a new query with only valid parameters
-        let updatedQuery = query;
-
-        // Remove all parameter lines first
-        for (const match of matches) {
-          updatedQuery = updatedQuery.replace(match[0], "");
-        }
-
-        // Insert valid parameters with commas
-        if (validParams.length > 0) {
-          const paramLines = validParams.map(({ paramName, value }) => `    ${paramName}: ${value}`).join(",\n");
-
-          // Insert after the function name and opening parenthesis
-          const funcNamePos = updatedQuery.indexOf("cases(") + "cases(".length;
-          updatedQuery = updatedQuery.slice(0, funcNamePos) + "\n" + paramLines + "\n" + updatedQuery.slice(funcNamePos);
-        }
-
-        // Clean up any empty lines
-        updatedQuery = updatedQuery.replace(/\n\s*\n/g, "\n");
-
-        return updatedQuery;
-      }
-      const { first = 5, offset = 0, sortBy = "filingDate", sortDirection = "ASC" } = args;
-      const querySrc = info.operation.loc.source.body;
-
+      const optionalFields = new Set(["terminatingDate", "cause", "natureSuit", "caseCharge", "charges", "caseGeneralCategory"]);
+      const querySrc: string = info.operation.loc.source.body;
+      // console.log(querySrc);
+      const queryBase = querySrc.slice(querySrc.indexOf("{") + 1, querySrc.lastIndexOf("}"));
+      console.log(queryBase);
       const queryArgs = { ...args };
+      const { sortBy, sortDirection } = queryArgs;
       delete queryArgs.sortBy;
       delete queryArgs.sortDirection;
-      delete queryArgs.caseStatus;
+
+      let queryWithArgs = queryBase.replace("cases", "query cases");
+      for (const key in args) {
+        // test to see if the value is a string. if so surround it with quotes
+        if (typeof args[key] === 'string') {
+          queryWithArgs = queryWithArgs.replace(`$${key}`, `"${args[key]}"`);
+        } else {
+          queryWithArgs = queryWithArgs.replace(`$${key}`, `${args[key]}`);
+        }
+      }
+      for (const key in args) {
+        if (key in queryArgs) {
+          queryWithArgs = queryWithArgs.replace(`${key}: ${args[key]}`, `$${key}: ${key} = ${args[key]}`);
+        } else {
+          // use regex to remove all occurrences of the key from the query, including possible trailing commas
+          queryWithArgs = queryWithArgs.replace(new RegExp(`${key}:[^,)]*[,)]?\\s*`, 'g'), '');
+        }
+
+      }
+      queryWithArgs = queryWithArgs.replace('nodes', 'nodes(first: 100, offset: 1)');
+
+      // Clean up any trailing commas before closing parentheses
+      queryWithArgs = queryWithArgs.replace(", {", ") {");
+
+      for (const field of optionalFields) {
+        queryWithArgs = queryWithArgs.replace(field, `${field} @optional`);
+      }
+
+      console.log("before", queryWithArgs);
 
 
-      const optionalFields = new Set(["terminatingDate", "cause", "natureSuit"]);
-      const queryBase = querySrc.slice(querySrc.indexOf("searchCases"));
-
-
-      let queryWithArgs = reformatGraphQLQuery(queryBase, queryArgs);
-      console.log(queryWithArgs);
+      console.log("after", queryWithArgs);
+      const algebra = await new Converter().graphqlToSparqlAlgebra(
+        queryWithArgs,
+        { "@context": courtCase["@context"] },
+        { variablesDict: args }
+      );
+      const sparqlQuery = toSparql(algebra);
+      console.log(sparqlQuery);
       return [];
+
+      //   cases(first: 100, offset: 0, sortBy: , sortDirection: ) {
+      // nodes {
+      //       caseDocketId
+      //       caseGeneralCategory
+      //       caseStatus
+      //       cause
+      //   charges {
+      //         chargeId
+      //         chargeStatus
+      //         chargeType
+      //         disposition
+      //         filingDate
+      //       }
+      //       filingDate
+      //     }
+      //   }
+
     },
     getFiltersForEntity: async (_: any, { entity }: { entity: string }, context, info): Promise<Filter[]> => {
-      const schema = parseRDFSchema('/home/engineer/Data/ontologies/scales-2.rdf');
-      const predMap = reverseContextMap(courtCase["@context"]);
-      console.log(predMap);
-      const classProps = schema.classes.find(c => c.name === entity)?.properties || [];
-      const props = classProps.map(p => {
-        console.log("iri", p.iri);
-        return {
-          label: p.name,
-          type: p.type,
-          field: predMap[p.iri] || 'missing json-ld field',
-          values: []
-        }
-      })
-      return props;
+      return getFiltersForEntity(entity);
     },
 
     getAutoCompleteData: async (_: any, { field, value }: { field: string; value: string }, context, info) => {
+      console.log("getAutoCompleteData", field, value);
       const querySrc = info.operation.loc.source.body;
       const pred = courtCase["@context"][field];
-      const query = `SELECT DISTINCT ?${field} WHERE { ?s <${pred}> ?${field} .\n FILTER (CONTAINS(LCASE(?${field}), "${value.toLowerCase()}")) } LIMIT 20`;
+      const results = [];
+      let filter = "";
+      if (value && value.length > 0) {
+        filter = `FILTER (CONTAINS(LCASE(?${field}), "${value.toLowerCase()}"))`;
+      }
+      const query = `SELECT DISTINCT ?${field} WHERE { ?s <${pred}> ?${field} .\n ${filter} } LIMIT 20`;
       console.log(query);
       const bindingsStream = await myEngine.queryBindings(query, {
         sources: ["https://frink.apps.renci.org/federation/sparql"],
       });
-      const results = [];
       for await (const binding of bindingsStream) {
         results.push(binding.get(field).value);
       }
       // bindingsStream.on("data", (binding) => {
       //   results.push(binding.get(field).value);
       // });
-      return results;
+      return { autoCompleteData: results };
     },
     searchCases: async (_: any, args: any, context, info) => {
       interface Args {
@@ -152,12 +149,7 @@ export const queryResolvers = {
       // console.log(updateGraphQLQuery(query, args2));
       try {
         // Extract the variables that are causing problem        // Remove them from args before conversion
-        const queryArgs = { ...args };
-        delete queryArgs.first;
-        delete queryArgs.offset;
-        delete queryArgs.sortBy;
-        delete queryArgs.sortDirection;
-        delete queryArgs.caseStatus;
+
 
         // Get the query source
         const querySrc = info.operation.loc.source.body;

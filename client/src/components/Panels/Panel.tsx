@@ -31,6 +31,7 @@ import ColumnHeader from "src/components/ColumnHeader";
 import DeleteButton from "../Buttons/DeleteButton";
 import DownloadButton from "../Buttons/DownloadButton";
 import { useEffectOnce } from "react-use";
+import { CollapsibleSidebar } from "../GraphFilters/collapsible-sidebar";
 
 type PanelT = {
   panelId: string;
@@ -169,7 +170,7 @@ const Panel = ({ panelId, defaultCollapsed, sessionUserCanEdit }: PanelT) => {
             }}
           >
             <Link
-              to={`/document/${ring.rid}/${ring.version}/Case/${item.row.__uniqueId.ucid}`}
+              to={`/document/${ring.rid}/${ring.version}/Case/${"ucid"}`}
               target="_blank"
               rel="noopener noreferrer"
             >
@@ -233,258 +234,260 @@ const Panel = ({ panelId, defaultCollapsed, sessionUserCanEdit }: PanelT) => {
     );
 
   return (
-    <Accordion expanded={!collapsed} sx={{ marginBottom: "1.5rem" }}>
-      <Box
-        sx={{
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "space-between",
-          background: "white",
-          border: "1px solid #e5e5e5",
-          borderRadius: "4px 4px 0 0",
-          boxShadow: "0px 1px 8px rgba(0, 0, 0, 0.06)",
-          padding: "1rem",
-          position: "relative",
-          width: "100%",
-          zIndex: 1,
-          height: "80px",
-          marginTop: "24px",
-          ".buttonRow": {
+    <CollapsibleSidebar>
+      <Accordion expanded={!collapsed} sx={{ marginBottom: "1.5rem" }}>
+        <Box
+          sx={{
             display: "flex",
             alignItems: "center",
-          },
-        }}
-      >
-        <Tooltip title="Dataset Name">
-          <Typography
-            sx={{
-              fontSize: "1.1rem",
-              fontStyle: "italic",
-              cursor: "default",
-            }}
-          >
-            {ring?.name}
-          </Typography>
-        </Tooltip>
-        <div className="buttonRow">
-          <DeleteButton
-            onClick={() => {
-              setConfirmVisible(true);
-            }}
-            sx={{ height: "30.75px", width: "30.75px" }}
-            variant="outlined"
-            titleAddon="Panel"
-            disabled={!sessionUserCanEdit}
-          />
-          <DownloadButton
-            onClick={() => downloadCsv()}
-            downloading={downloadingCsv}
-            variant="outlined"
-            sx={{ marginLeft: "8px", height: "30.75px", width: "30.75px" }}
-          />
-          <Tooltip title={collapsed ? "Expand Panel" : "Collapse Panel"}>
-            <Button
-              variant="outlined"
-              onClick={() => setPanelCollapsed(!collapsed)}
-              sx={{
-                marginLeft: "8px",
-                width: "52px",
-                height: "30.75px",
-                minWidth: "0",
-              }}
-            >
-              {collapsed ? <UnfoldMore /> : <UnfoldLess />}
-            </Button>
-          </Tooltip>
-        </div>
-      </Box>
-
-      <AccordionDetails sx={{ padding: 0 }}>
-        <CardContent
-          sx={{
-            padding: 0,
-            marginX: 0,
+            justifyContent: "space-between",
+            background: "white",
+            border: "1px solid #e5e5e5",
+            borderRadius: "4px 4px 0 0",
+            boxShadow: "0px 1px 8px rgba(0, 0, 0, 0.06)",
+            padding: "1rem",
+            position: "relative",
+            width: "100%",
+            zIndex: 1,
+            height: "80px",
+            marginTop: "24px",
+            ".buttonRow": {
+              display: "flex",
+              alignItems: "center",
+            },
           }}
         >
-          <FormControl sx={{ width: "100%" }}>
-            <TextField
-              onClick={(event) => {
-                event.stopPropagation();
-              }}
-              placeholder="Enter Panel Description"
-              onChange={(event) => {
-                setPanelDescription(event.target.value);
-              }}
-              value={panel?.description || ""}
-              className="description"
-              onBlur={() => {
-                if (panel?.description !== description) {
-                  updatePanel({ description: panel?.description });
-                  setDescription(panel?.description);
-                }
-              }}
+          <Tooltip title="Dataset Name">
+            <Typography
               sx={{
-                background: "#F8F9FA",
-                height: "56px",
-                "& fieldset": {
-                  borderRadius: "0",
-                  borderTop: "none",
-                  borderLeft: "none",
-                  borderRight: "none",
-                  fontSize: "0.9rem",
+                fontSize: "1.1rem",
+                fontStyle: "italic",
+                cursor: "default",
+              }}
+            >
+              {ring?.name}
+            </Typography>
+          </Tooltip>
+          <div className="buttonRow">
+            <DeleteButton
+              onClick={() => {
+                setConfirmVisible(true);
+              }}
+              sx={{ height: "30.75px", width: "30.75px" }}
+              variant="outlined"
+              titleAddon="Panel"
+              disabled={!sessionUserCanEdit}
+            />
+            <DownloadButton
+              onClick={() => downloadCsv()}
+              downloading={downloadingCsv}
+              variant="outlined"
+              sx={{ marginLeft: "8px", height: "30.75px", width: "30.75px" }}
+            />
+            <Tooltip title={collapsed ? "Expand Panel" : "Collapse Panel"}>
+              <Button
+                variant="outlined"
+                onClick={() => setPanelCollapsed(!collapsed)}
+                sx={{
+                  marginLeft: "8px",
+                  width: "52px",
+                  height: "30.75px",
+                  minWidth: "0",
+                }}
+              >
+                {collapsed ? <UnfoldMore /> : <UnfoldLess />}
+              </Button>
+            </Tooltip>
+          </div>
+        </Box>
+
+        <AccordionDetails sx={{ padding: 0 }}>
+          <CardContent
+            sx={{
+              padding: 0,
+              marginX: 0,
+            }}
+          >
+            <FormControl sx={{ width: "100%" }}>
+              <TextField
+                onClick={(event) => {
+                  event.stopPropagation();
+                }}
+                placeholder="Enter Panel Description"
+                onChange={(event) => {
+                  setPanelDescription(event.target.value);
+                }}
+                value={panel?.description || ""}
+                className="description"
+                onBlur={() => {
+                  if (panel?.description !== description) {
+                    updatePanel({ description: panel?.description });
+                    setDescription(panel?.description);
+                  }
+                }}
+                sx={{
+                  background: "#F8F9FA",
+                  height: "56px",
+                  "& fieldset": {
+                    borderRadius: "0",
+                    borderTop: "none",
+                    borderLeft: "none",
+                    borderRight: "none",
+                    fontSize: "0.9rem",
+                  },
+                }}
+              />
+            </FormControl>
+            <Filters panelId={panel.id} sessionUserCanEdit={sessionUserCanEdit} />
+            <Box
+              sx={{
+                p: 0,
+                bgcolor: "background.paper",
+                borderTop: 1,
+                borderColor: "divider",
+                borderRadius: "0px",
+                "& .MuiPaper-root": {
+                  borderRadius: "0px",
+                  borderBottom: "1px solid rgba(0, 0, 0, 0.3)",
+                  boxShadow: "none",
                 },
               }}
-            />
-          </FormControl>
-          <Filters panelId={panel.id} sessionUserCanEdit={sessionUserCanEdit} />
-          <Box
-            sx={{
-              p: 0,
-              bgcolor: "background.paper",
-              borderTop: 1,
-              borderColor: "divider",
-              borderRadius: "0px",
-              "& .MuiPaper-root": {
-                borderRadius: "0px",
-                borderBottom: "1px solid rgba(0, 0, 0, 0.3)",
-                boxShadow: "none",
-              },
-            }}
-          >
-            <Loader
-              contentHeight={resultsCollapsed ? "60px" : "400px"}
-              isVisible={
-                loadingPanelResults || (!results && !loadingPanelResults)
-              }
             >
-              {results && (
-                <Accordion expanded={resultsCollapsed === true}>
-                  <AccordionDetails sx={{ padding: "0px" }}>
-                    <>
-                      <Box
-                        sx={{
-                          width: "100%",
-                          overflowX: "hidden",
-                        }}
-                      >
-                        {!resultsCollapsed && (
-                          <>
-                            <Pagination
-                              paging={paging}
-                              zeroIndex
-                              fetchData={({ page }) => {
-                                getPanelResults({ page });
-                                updatePanel({ page });
-                              }}
-                              noShadow
-                              noBorderRadius
-                            />
-                            <DataGrid
-                              rows={rows}
-                              onPaginationModelChange={(model) => {
-                                getPanelResults({ page: model.page });
-                              }}
-                              paginationModel={{
-                                page: results?.page,
-                                pageSize: results?.batchSize,
-                              }}
-                              initialState={{
-                                sorting: {
-                                  sortModel: [panel.sort],
-                                },
-                              }}
-                              sortingOrder={["desc", "asc", null]}
-                              disableColumnMenu
-                              hideFooterPagination
-                              hideFooter
-                              rowHeight={60}
-                              onColumnHeaderClick={handleColumnHeaderClick}
-                              pageSizeOptions={[10]}
-                              columns={columns}
-                              rowCount={results?.totalCount}
-                              checkboxSelection={false}
-                              sortingMode="server"
-                              paginationMode="server"
-                              sx={{
-                                border: "none",
-                                paddingTop: "24px",
-                                "& .MuiDataGrid-virtualScroller": {
-                                  minHeight: "400px",
-                                },
-                              }}
-                            />
-                          </>
-                        )}
-                      </Box>
-                      <Box
-                        sx={{
-                          padding: "18px",
-                          display: "flex",
-                          justifyContent: "flex-end",
-                          alignItems: "center",
-                        }}
-                      >
-                        <Typography sx={{ fontSize: "16px", fontWeight: 600 }}>
-                          {results?.totalCount?.toLocaleString()}
-                        </Typography>
-                        <Typography sx={{ margin: "12px 6px" }}>
-                          Dockets Found
-                        </Typography>
-                        <Tooltip
-                          title={
-                            collapsed ? "Expand Results" : "Collapse Results"
-                          }
+              <Loader
+                contentHeight={resultsCollapsed ? "60px" : "400px"}
+                isVisible={
+                  loadingPanelResults || (!results && !loadingPanelResults)
+                }
+              >
+                {results && (
+                  <Accordion expanded={resultsCollapsed === true}>
+                    <AccordionDetails sx={{ padding: "0px" }}>
+                      <>
+                        <Box
+                          sx={{
+                            width: "100%",
+                            overflowX: "hidden",
+                          }}
                         >
-                          <Button
-                            variant="outlined"
-                            onClick={() =>
-                              setPanelResultsCollapsed(!resultsCollapsed)
+                          {!resultsCollapsed && (
+                            <>
+                              <Pagination
+                                paging={paging}
+                                zeroIndex
+                                fetchData={({ page }) => {
+                                  getPanelResults({ page });
+                                  updatePanel({ page });
+                                }}
+                                noShadow
+                                noBorderRadius
+                              />
+                              <DataGrid
+                                rows={rows}
+                                onPaginationModelChange={(model) => {
+                                  getPanelResults({ page: model.page });
+                                }}
+                                paginationModel={{
+                                  page: results?.page,
+                                  pageSize: results?.batchSize,
+                                }}
+                                initialState={{
+                                  sorting: {
+                                    sortModel: [panel.sort],
+                                  },
+                                }}
+                                sortingOrder={["desc", "asc", null]}
+                                disableColumnMenu
+                                hideFooterPagination
+                                hideFooter
+                                rowHeight={60}
+                                onColumnHeaderClick={handleColumnHeaderClick}
+                                pageSizeOptions={[10]}
+                                columns={columns}
+                                rowCount={results?.totalCount}
+                                checkboxSelection={false}
+                                sortingMode="server"
+                                paginationMode="server"
+                                sx={{
+                                  border: "none",
+                                  paddingTop: "24px",
+                                  "& .MuiDataGrid-virtualScroller": {
+                                    minHeight: "400px",
+                                  },
+                                }}
+                              />
+                            </>
+                          )}
+                        </Box>
+                        <Box
+                          sx={{
+                            padding: "18px",
+                            display: "flex",
+                            justifyContent: "flex-end",
+                            alignItems: "center",
+                          }}
+                        >
+                          <Typography sx={{ fontSize: "16px", fontWeight: 600 }}>
+                            {results?.totalCount?.toLocaleString()}
+                          </Typography>
+                          <Typography sx={{ margin: "12px 6px" }}>
+                            Dockets Found
+                          </Typography>
+                          <Tooltip
+                            title={
+                              collapsed ? "Expand Results" : "Collapse Results"
                             }
-                            sx={{
-                              marginLeft: "8px",
-                              width: "32px",
-                              height: "24px",
-                              minWidth: "0",
-                            }}
                           >
-                            {resultsCollapsed ? (
-                              <UnfoldMore sx={{ height: "20px" }} />
-                            ) : (
-                              <UnfoldLess sx={{ height: "20px" }} />
-                            )}
-                          </Button>
-                        </Tooltip>
-                      </Box>
-                    </>
-                  </AccordionDetails>
-                </Accordion>
-              )}
-            </Loader>
-          </Box>
+                            <Button
+                              variant="outlined"
+                              onClick={() =>
+                                setPanelResultsCollapsed(!resultsCollapsed)
+                              }
+                              sx={{
+                                marginLeft: "8px",
+                                width: "32px",
+                                height: "24px",
+                                minWidth: "0",
+                              }}
+                            >
+                              {resultsCollapsed ? (
+                                <UnfoldMore sx={{ height: "20px" }} />
+                              ) : (
+                                <UnfoldLess sx={{ height: "20px" }} />
+                              )}
+                            </Button>
+                          </Tooltip>
+                        </Box>
+                      </>
+                    </AccordionDetails>
+                  </Accordion>
+                )}
+              </Loader>
+            </Box>
 
-          <Box
-            sx={{
-              bgcolor: "white",
-              p: 3,
-            }}
-          >
-            <Grid>
-              <Analysis
-                panelId={panelId}
-                sessionUserCanEdit={sessionUserCanEdit}
-              />
-            </Grid>
-          </Box>
-        </CardContent>
-      </AccordionDetails>
+            <Box
+              sx={{
+                bgcolor: "white",
+                p: 3,
+              }}
+            >
+              <Grid>
+                <Analysis
+                  panelId={panelId}
+                  sessionUserCanEdit={sessionUserCanEdit}
+                />
+              </Grid>
+            </Box>
+          </CardContent>
+        </AccordionDetails>
 
-      <ConfirmModal
-        itemName="panel"
-        open={confirmVisible}
-        setOpen={setConfirmVisible}
-        onConfirm={deletePanel}
-      />
-    </Accordion>
+        <ConfirmModal
+          itemName="panel"
+          open={confirmVisible}
+          setOpen={setConfirmVisible}
+          onConfirm={deletePanel}
+        />
+      </Accordion>
+    </CollapsibleSidebar>
   );
 };
 

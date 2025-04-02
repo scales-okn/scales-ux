@@ -15,7 +15,7 @@ import ResetPasswordPage from "src/pages/ResetPasswordPage";
 import Ring from "src/pages/RingsPage/Ring";
 import Admin from "src/pages/AdminPage";
 import GraphExplorer from "src/components/GraphFilters/CourtCaseFilter";
-import Dashboard from "src/components/GraphFilters/dashboard";
+import { Dashboard } from "src/components/GraphFilters/dashboard";
 import { useGoogleAnalytics } from "./hooks/useGAPageView";
 
 const AppRoutes = () => {

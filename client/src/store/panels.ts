@@ -91,11 +91,11 @@ const panelsSlice = createSlice({
       panels: state.panels.map((panel) =>
         panel.id === payload.id
           ? {
-              ...panel,
-              ...payload,
-              updatingPanel: false,
-              results: panel.results,
-            }
+            ...panel,
+            ...payload,
+            updatingPanel: false,
+            results: panel.results,
+          }
           : panel,
       ),
       hasErrors: false,
@@ -144,11 +144,11 @@ const panelsSlice = createSlice({
       panels: state.panels.map((panel) => {
         return panel.id === payload.panelId
           ? {
-              ...panel,
-              results: payload.results,
-              loadingPanelResults: false,
-              hasErrors: false,
-            }
+            ...panel,
+            results: payload.results,
+            loadingPanelResults: false,
+            hasErrors: false,
+          }
           : panel;
       }),
     }),
@@ -157,10 +157,10 @@ const panelsSlice = createSlice({
       panels: state.panels.map((panel) =>
         panel.id === payload.panelId
           ? {
-              ...panel,
-              loadingPanelResults: false,
-              hasErrors: true,
-            }
+            ...panel,
+            loadingPanelResults: false,
+            hasErrors: true,
+          }
           : panel,
       ),
     }),
@@ -288,51 +288,51 @@ export const getPanels = (notebookId) => {
 
 export const createPanel =
   (payload: any = {}) =>
-  async (dispatch: AppDispatch, getState) => {
-    try {
-      const { user } = authSelector(getState());
-      const { notebook } = notebookSelector(getState());
+    async (dispatch: AppDispatch, getState) => {
+      try {
+        const { user } = authSelector(getState());
+        const { notebook } = notebookSelector(getState());
 
-      dispatch(panelsActions.createPanel());
+        dispatch(panelsActions.createPanel());
 
-      const { data, message, code } = await makeRequest.post(`/api/panels`, {
-        ...payload,
-        notebookId: notebook.id,
-        userId: user.id,
-      });
+        const { data, message, code } = await makeRequest.post(`/api/panels`, {
+          ...payload,
+          notebookId: notebook.id,
+          userId: user.id,
+        });
 
-      if (code === 200) {
-        dispatch(panelsActions.createPanelSuccess(data.panel));
-      } else {
-        dispatch(notify(message, "error"));
+        if (code === 200) {
+          dispatch(panelsActions.createPanelSuccess(data.panel));
+        } else {
+          dispatch(notify(message, "error"));
+          dispatch(panelsActions.createPanelFailure());
+        }
+      } catch (error) {
         dispatch(panelsActions.createPanelFailure());
       }
-    } catch (error) {
-      dispatch(panelsActions.createPanelFailure());
-    }
-  };
+    };
 
 export const updatePanel =
   (panelId, payload: any = {}) =>
-  async (dispatch: AppDispatch, getState) => {
-    try {
-      dispatch(panelsActions.updatePanel({ panelId }));
+    async (dispatch: AppDispatch, getState) => {
+      try {
+        dispatch(panelsActions.updatePanel({ panelId }));
 
-      const { data, message, code } = await makeRequest.put(
-        `/api/panels/${panelId}`,
-        payload,
-      );
+        const { data, message, code } = await makeRequest.put(
+          `/api/panels/${panelId}`,
+          payload,
+        );
 
-      if (code === 200) {
-        dispatch(panelsActions.updatePanelSuccess(data.panel));
-      } else {
-        dispatch(notify(message, "error"));
+        if (code === 200) {
+          dispatch(panelsActions.updatePanelSuccess(data.panel));
+        } else {
+          dispatch(notify(message, "error"));
+          dispatch(panelsActions.updatePanelFailure({ panelId }));
+        }
+      } catch (error) {
         dispatch(panelsActions.updatePanelFailure({ panelId }));
       }
-    } catch (error) {
-      dispatch(panelsActions.updatePanelFailure({ panelId }));
-    }
-  };
+    };
 
 export const deletePanel =
   (panelId) => async (dispatch: AppDispatch, getState) => {
@@ -357,58 +357,58 @@ export const deletePanel =
 
 export const getPanelResults =
   (panelId, { page = 0, batchSize = 10, sortOverride = null }) =>
-  async (dispatch: AppDispatch, getState) => {
-    // sort override is to account for async when updating panel and fetching results simultaneously. Somewhat hacky.
-    try {
-      const panel = panelSelector(getState(), panelId);
-      const { filters, ringRid, sort } = panel;
+    async (dispatch: AppDispatch, getState) => {
+      // sort override is to account for async when updating panel and fetching results simultaneously. Somewhat hacky.
+      try {
+        const panel = panelSelector(getState(), panelId);
+        const { filters, ringRid, sort } = panel;
 
-      // @ts-ignore
-      const { rid, info, version } = ringSelector(getState(), ringRid);
-      dispatch(panelsActions.getPanelResults({ panelId }));
+        // @ts-ignore
+        const { rid, info, version } = ringSelector(getState(), ringRid);
+        dispatch(panelsActions.getPanelResults({ panelId }));
 
-      const filterParams = filters
-        ?.map((filter) => {
-          if (!filter.value) return null;
-          if (
-            filter.type === "filing_date" ||
-            filter.type === "terminating_date"
-          ) {
-            return `${filter.type}=${filter.value}`;
-          }
+        const filterParams = filters
+          ?.map((filter) => {
+            if (!filter.value) return null;
+            if (
+              filter.type === "filing_date" ||
+              filter.type === "terminating_date"
+            ) {
+              return `${filter.type}=${filter.value}`;
+            }
 
-          return `${filter.type}=${encodeURIComponent(filter.value)}`;
-        })
-        .join("&");
+            return `${filter.type}=${encodeURIComponent(filter.value)}`;
+          })
+          .join("&");
 
-      const currentSort = sortOverride || sort;
-      const sortString = `sortBy=${currentSort.field}&sortDirection=${currentSort.sort}`;
+        const currentSort = sortOverride || sort;
+        const sortString = `sortBy=${currentSort.field}&sortDirection=${currentSort.sort}`;
 
-      const response = await makeRequest.get(
-        appendQuery(
-          `/proxy/results/${rid}/${version}/${info.defaultEntity}?page=${page}&batchSize=${batchSize}&${sortString}`,
-          filterParams,
-          { encodeComponents: false },
-        ),
-      );
-
-      if (response) {
-        dispatch(
-          panelsActions.getPanelResultsSuccess({
-            panelId,
-            results: response,
-          }),
+        const response = await makeRequest.get(
+          appendQuery(
+            `/proxy/results/${rid}/${version}/${info.defaultEntity}?page=${page}&batchSize=${batchSize}&${sortString}`,
+            filterParams,
+            { encodeComponents: false },
+          ),
         );
-      } else {
+
+        if (response) {
+          dispatch(
+            panelsActions.getPanelResultsSuccess({
+              panelId,
+              results: response,
+            }),
+          );
+        } else {
+          dispatch(notify("Error fetching results", "error"));
+          dispatch(panelsActions.getPanelResultsFailure({ panelId }));
+        }
+      } catch (error) {
+        console.warn(error); // eslint-disable-line no-console
         dispatch(notify("Error fetching results", "error"));
         dispatch(panelsActions.getPanelResultsFailure({ panelId }));
       }
-    } catch (error) {
-      console.warn(error); // eslint-disable-line no-console
-      dispatch(notify("Error fetching results", "error"));
-      dispatch(panelsActions.getPanelResultsFailure({ panelId }));
-    }
-  };
+    };
 
 export const downloadCsv =
   (panelId) => async (dispatch: AppDispatch, getState) => {

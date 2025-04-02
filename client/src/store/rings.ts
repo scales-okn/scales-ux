@@ -204,9 +204,13 @@ export const getRingInfo = (rid: string, version: number) => {
     try {
       dispatch(ringsActions.getRingInfo());
       const response = await makeRequest.get(`/proxy/rings/${rid}/${version}`);
-
       if (response) {
-        dispatch(ringsActions.getRingInfoSuccess({ rid, info: response }));
+        dispatch(
+          ringsActions.getRingInfoSuccess({
+            rid,
+            info: response,
+          }),
+        );
       } else {
         failedToGetRingInfoNotification("Failed to get ring info!");
         dispatch(ringsActions.getRingInfoFailure());
