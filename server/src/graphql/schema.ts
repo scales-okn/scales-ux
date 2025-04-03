@@ -79,7 +79,7 @@ export const typeDefs = gql`
       first: Int = 10, 
       offset: Int = 0, 
       sortBy: String, 
-      sortDirection: String = "ASC"
+      sortDirection: String = "Desc"
     ): CourtCasePaginatedList!
     
     searchCases(

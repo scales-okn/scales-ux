@@ -1,8 +1,10 @@
 export const courtCase = {
   "@context": {
     case: "http://release.niem.gov/niem/domains/jxdm/7.2/#Case",
+    searchCases: { "@id": "http://release.niem.gov/niem/domains/jxdm/7.2/#Case", "@container": "@list" },
+    cases: { "@id": "http://release.niem.gov/niem/domains/jxdm/7.2/#Case", "@container": "@list" },
     entityType: "rdf:type",
-    caseDocketId: "http://release.niem.gov/niem/niem-core/5.0/CaseDocketID",
+    caseDocketId: { "@id": "http://release.niem.gov/niem/niem-core/5.0/CaseDocketID" },
     caseCivil: "http://schemas.scales-okn.org/rdf/scales#CaseCivil",
     caseInitiatingAttorney: "http://release.niem.gov/niem/domains/jxdm/7.2/#CaseInitiatingAttorney",
     caseInitiatingParty: "http://release.niem.gov/niem/domains/jxdm/7.2/#CaseInitiatingParty",
@@ -12,10 +14,8 @@ export const courtCase = {
     caseCharge: "http://release.niem.gov/niem/domains/jxdm/7.2/#CaseCharge",
     chargeSentence: "http://release.niem.gov/niem/domains/jxdm/7.2/#ChargeSentence",
     caseJudge: "http://release.niem.gov/niem/domains/jxdm/7.2/#CaseJudge",
-    docketId: "http://release.niem.gov/niem/niem-core/5.0/CaseDocketId",
     caseGeneralCategory: "http://release.niem.gov/niem/niem-core/5.0/CaseGeneralCategoryText",
     jurisdiction: "http://release.niem.gov/niem/niem-core/5.0/JurisdictionText",
-    caseId: { "@id": "http://release.niem.gov/niem/niem-core/5.0/CaseDocketID" },
     charge: "http://release.niem.gov/niem/domains/jxdm/7.2/#Charge",
     charges: { "@id": "http://release.niem.gov/niem/domains/jxdm/7.2/#Charge", "@container": "@list" },
     judge: "http://release.niem.gov/niem/domains/jxdm/7.2/#Judge",
