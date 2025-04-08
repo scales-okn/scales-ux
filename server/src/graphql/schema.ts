@@ -7,8 +7,6 @@ export const typeDefs = gql`
     jurisdiction: String
     caseStatus: String
     filingDate: String
-    filingDateStart: String
-    filingDateEnd: String
     natureSuit: String
     cause: String
     terminatingDate: String
