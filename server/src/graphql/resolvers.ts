@@ -8,6 +8,37 @@ import { getFiltersForEntity } from "../services/rdfs";
 import { testCourtCases } from "./test-cases";
 const myEngine = new QueryEngine();
 
+const transformGraphQLQuery = (query: string, args: any, optionalFields: Set<string>) => {
+  const { sortBy, sortDirection } = args;
+  delete args.sortBy;
+  delete args.sortDirection;
+  const queryBase = query.slice(query.indexOf("{") + 1, query.lastIndexOf("}"));
+  let queryWithArgs = queryBase.replace("cases", "query cases");
+  for (const key in args) {
+    // test to see if the value is a string. if so surround it with quotes
+    if (typeof args[key] === 'string') {
+      queryWithArgs = queryWithArgs.replace(`$${key}`, `"${args[key]}"`);
+    } else {
+      queryWithArgs = queryWithArgs.replace(`$${key}`, `${args[key]}`);
+    }
+  }
+  for (const key in args) {
+    if (key in args) {
+      queryWithArgs = queryWithArgs.replace(`${key}: ${args[key]}`, `$${key}: ${key} = ${args[key]}`);
+    } else {
+      // use regex to remove all occurrences of the key from the query, including possible trailing commas
+      queryWithArgs = queryWithArgs.replace(new RegExp(`${key}:[^,)]*[,)]?\\s*`, 'g'), '');
+    }
+
+  }
+  queryWithArgs = queryWithArgs.replace('nodes', 'nodes(first: 10, offset: 0)');
+  queryWithArgs = queryWithArgs.replace(", {", ") {");
+  for (const field of optionalFields) {
+    queryWithArgs = queryWithArgs.replace(field, `${field} @optional`);
+  }
+  return queryWithArgs;
+}
+
 export const queryResolvers = {
   Query: {
     case: async (_: any, { caseId }: { caseId: string }, context, info) => {
@@ -20,39 +51,7 @@ export const queryResolvers = {
     cases: async (_: any, args, context, info) => {
       const optionalFields = new Set(["terminatingDate", "cause", "natureSuit", "caseCharge", "charges", "caseGeneralCategory"]);
       const querySrc: string = info.operation.loc.source.body;
-      // console.log(querySrc);
-      const queryBase = querySrc.slice(querySrc.indexOf("{") + 1, querySrc.lastIndexOf("}"));
-      const queryArgs = { ...args };
-      const { sortBy, sortDirection } = queryArgs;
-      delete queryArgs.sortBy;
-      delete queryArgs.sortDirection;
-
-      let queryWithArgs = queryBase.replace("cases", "query cases");
-      for (const key in args) {
-        // test to see if the value is a string. if so surround it with quotes
-        if (typeof args[key] === 'string') {
-          queryWithArgs = queryWithArgs.replace(`$${key}`, `"${args[key]}"`);
-        } else {
-          queryWithArgs = queryWithArgs.replace(`$${key}`, `${args[key]}`);
-        }
-      }
-      for (const key in args) {
-        if (key in queryArgs) {
-          queryWithArgs = queryWithArgs.replace(`${key}: ${args[key]}`, `$${key}: ${key} = ${args[key]}`);
-        } else {
-          // use regex to remove all occurrences of the key from the query, including possible trailing commas
-          queryWithArgs = queryWithArgs.replace(new RegExp(`${key}:[^,)]*[,)]?\\s*`, 'g'), '');
-        }
-
-      }
-      queryWithArgs = queryWithArgs.replace('nodes', 'nodes(first: 10, offset: 0)');
-
-      // Clean up any trailing commas before closing parentheses
-      queryWithArgs = queryWithArgs.replace(", {", ") {");
-
-      for (const field of optionalFields) {
-        queryWithArgs = queryWithArgs.replace(field, `${field} @optional`);
-      }
+      const queryWithArgs = transformGraphQLQuery(querySrc, args, optionalFields);
       console.log("queryWithArgs in cases resolver\n", queryWithArgs);
       const algebra = await new Converter().graphqlToSparqlAlgebra(
         queryWithArgs,
@@ -65,12 +64,8 @@ export const queryResolvers = {
         const bindingsStream = await myEngine.queryBindings(sparqlQuery, {
           sources: ["https://frink.apps.renci.org/federation/sparql"],
         });
-        // const bindings = await bindingsStream.toArray();
-        // console.log("streamArray in cases resolver", streamArray);
-        // const results = await new TreeConverter().sparqlJsonResultsToTree(bindings);
         const results = [];
         for await (const binding of bindingsStream) {
-          // console.dir(binding.get("nodes_caseDocketId"), { depth: null, colors: true });
           results.push({
             caseDocketId: binding.get("nodes_caseDocketId")?.value || "null field",
             caseStatus: binding.get("nodes_caseStatus")?.value || "null field",
