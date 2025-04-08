@@ -49,7 +49,7 @@ export const queryResolvers = {
       return {};
     },
     cases: async (_: any, args, context, info) => {
-      const optionalFields = new Set(["terminatingDate", "cause", "natureSuit", "caseCharge", "charges", "caseGeneralCategory"]);
+
       const querySrc: string = info.operation.loc.source.body;
       const queryWithArgs = transformGraphQLQuery(querySrc, args, optionalFields);
       console.log("queryWithArgs in cases resolver\n", queryWithArgs);
@@ -108,148 +108,42 @@ export const queryResolvers = {
       return results;
     },
     searchCases: async (_: any, args: any, context, info) => {
-      interface Args {
-        [key: string]: any;
-      }
-      // Example usage
-      //       const query = `searchCases(
-      //     caseStatus: $caseStatus
-      //     filingDateStart: $filingDateStart
-      //     filingDateEnd: $filingDateEnd
-      //     natureSuit: $natureSuit
-      //     first: $first
-      //     offset: $offset
-      //     sortBy: $sortBy
-      //     sortDirection: $sortDirection
-      //   ) {
-      //     nodes {
-      //       caseId
-      //       caseStatus
-      //       filingDate
-      //       terminatingDate
-      //       natureSuit
-      //       cause
-      //       __typename
-      //     }
-      //     offset
-      //     first
-      //     hasMore
-      //     __typename
-      //   }
-      // }`;
+      const querySrc: string = info.operation.loc.source.body;
+      let queryWithArgs = transformGraphQLQuery(querySrc, args, optionalFields).replace("searchCases", "query searchCases");
+      queryWithArgs = queryWithArgs.replace("nodes", "query searchCases");
 
-      const args2 = { first: 5, offset: 0, sortBy: "filingDate", sortDirection: "DESC" };
-      // console.log(updateGraphQLQuery(query, args2));
+      console.log("queryWithArgs in cases resolver\n", queryWithArgs);
       try {
-        // Get the query source
-        const querySrc = info.operation.loc.source.body;
-        const singularizeVariables = {
-          caseId: true,
-          caseStatus: true,
-          cause: true,
-          filingDate: true,
-          natureSuit: true,
-          terminatingDate: true,
-        };
-
-        const testQuery = `
-          query @plural {
-            case (first: 50, offset: 0){
-              __typename
-              caseStatus
-              caseId
-              filingDate
-              terminatingDate
-              natureSuit
-              caseName @optional
-            }
-          }
-        `;
-
-        function transformGraphQLQuery(query) {
-          // Regular expression to match the @plural directive and its arguments
-          const pluralRegex = /@plural\s*\(\s*([\s\S]*?)\s*\)\s*{/;
-
-          // Extract the arguments from @plural
-          const match = query.match(pluralRegex);
-          if (!match) return query; // Return original if no match
-
-          const args = match[1];
-
-          // Remove the @plural directive and its arguments
-          let newQuery = query.replace(pluralRegex, "{");
-
-          // Add the arguments to "case"
-          newQuery = newQuery.replace(/case\s*{/, `case(${args}) {`);
-
-          return newQuery;
-        }
-
-        const optionalFields = new Set(["terminatingDate", "cause", "natureSuit"]);
-        const formattedQuery = querySrc.slice(querySrc.indexOf("searchCases"));
-        let queryWithArgs = updateGraphQLQuery(formattedQuery, args);
-        // for (const field of optionalFields) {
-        //   queryWithArgs = queryWithArgs.replace(field, `${field} @optional`);
-        // }
-        // let finalQuery = queryWithArgs
-        //   .replace("searchCases", "query @plural")
-        //   .replace("nodes", "case")
-        //   .replace("caseStatus", "")
-        //   .replace(/__typename/g, "")
-        //   .slice(0, -1);
-        // finalQuery = transformGraphQLQuery(finalQuery);
-        // console.log(finalQuery);
-        // console.log(querySrc.slice(querySrc.indexOf("searchCases")));
-        // args["first"] = "50";
-        // console.log(args);
-        const masterQuery = `
-        SELECT ?case_caseId ?case_caseStatus ?case_filingDate ?case_terminatingDate ?case_natureSuit ?case_cause WHERE {
-          ?df_3_0 <http://release.niem.gov/niem/domains/jxdm/7.2/#Case> ?case.
-          ?case <http://release.niem.gov/niem/niem-core/5.0/CaseDocketID> ?case_caseId;
-            <http://release.niem.gov/niem/niem-core/5.0/StartDate> ?case_filingDate.
-          OPTIONAL { ?case <http://release.niem.gov/niem/niem-core/5.0/StatusDescriptionText> ?case_caseStatus. }
-          OPTIONAL { ?case <http://release.niem.gov/niem/niem-core/5.0/EndDate> ?case_terminatingDate. }
-          OPTIONAL { ?case <http://release.niem.gov/niem/niem-core/5.0/CaseSubCategoryText> ?case_natureSuit. }
-          OPTIONAL { ?case <http://release.niem.gov/niem/niem-core/5.0/StatuteKeywordText> ?case_cause. }
-        }
-        LIMIT 50
-        `;
         const algebra = await new Converter().graphqlToSparqlAlgebra(
-          masterQuery,
-          {
-            "@context": {
-              case: "http://release.niem.gov/niem/domains/jxdm/7.2/#Case",
-              caseId: { "@id": "http://release.niem.gov/niem/niem-core/5.0/CaseDocketID" },
-              caseStatus: "http://release.niem.gov/niem/niem-core/5.0/StatusDescriptionText",
-              filingDate: "http://release.niem.gov/niem/niem-core/5.0/StartDate",
-              filingStartDate: "http://release.niem.gov/niem/niem-core/5.0/StartDate",
-              terminatingDate: "http://release.niem.gov/niem/niem-core/5.0/EndDate",
-              cause: "http://release.niem.gov/niem/niem-core/5.0/StatuteKeywordText",
-              natureSuit: "http://release.niem.gov/niem/niem-core/5.0/CaseSubCategoryText",
-              caseName: "http://release.niem.gov/niem/niem-core/5.0/StatuteKeywordText",
-              // nodes: { "@id": "http://www.w3.org/ns/hydra/core#member", "@container": "@list" },
-            },
-          },
+          queryWithArgs,
+          courtCase,
           { singularizeVariables: singularizeVariables }
         );
 
         // Add pagination manually to the SPARQL query
         // This is a basic approach - you may need to adjust based on the SPARQL algebra structure
         const sparqlQuery = toSparql(algebra);
+        console.log("sparqlQuery in searchCases resolver\n", sparqlQuery);
+        const finalSparql = addPaginationToSparql(sparqlQuery, args.first, args.offset, args.sortBy, args.sortDirection);
         // const finalSparql = addPaginationToSparql(sparqlQuery, first, offset, sortBy, sortDirection);
-        const bindingsStream = await myEngine.queryBindings(sparqlQuery, {
+        const bindingsStream = await myEngine.queryBindings(finalSparql, {
           sources: ["https://frink.apps.renci.org/federation/sparql"],
         });
         const results = [];
         for await (const binding of bindingsStream) {
-          results.push(binding);
+          const caseResult = convertBindingsToCourtCase(binding);
+          results.push(caseResult);
         }
 
-        console.log(sparqlQuery);
         console.log("results in searchCases resolver", results);
-        return results;
         // Execute query...
-        // Rest of your implementation
+        return {
+          nodes: results,
+          totalCount: results.length,
+          offset: args.offset || 0,
+          first: args.first || 50,
+          hasMore: false,
+        };
       } catch (error) {
         console.error("Error in searchCases resolver:", error);
         // Fall back to test data
@@ -257,7 +151,7 @@ export const queryResolvers = {
           nodes: testCourtCases,
           totalCount: testCourtCases.length,
           offset: args.offset || 0,
-          first: args.first || 5,
+          first: args.first || 50,
           hasMore: false,
         };
       }
@@ -292,7 +186,7 @@ function addPaginationToSparql(sparql, first, offset, sortBy, sortDirection) {
 
 // Helper function to convert SPARQL bindings to a CourtCase object
 interface CourtCase {
-  caseId?: string;
+  caseDocketId?: string;
   caseStatus?: string;
   filingDate?: string;
   terminatingDate?: string;
@@ -303,12 +197,11 @@ interface CourtCase {
 function convertBindingsToCourtCase(binding): CourtCase {
   const courtCase: CourtCase = {};
 
-  if (binding.has("caseId")) courtCase.caseId = binding.get("caseId").value;
-  if (binding.has("caseStatus")) courtCase.caseStatus = binding.get("caseStatus").value;
-  if (binding.has("filingDate")) courtCase.filingDate = binding.get("filingDate").value;
-  if (binding.has("terminatingDate")) courtCase.terminatingDate = binding.get("terminatingDate").value;
-  if (binding.has("natureSuit")) courtCase.natureSuit = binding.get("natureSuit").value;
-  if (binding.has("cause")) courtCase.cause = binding.get("cause").value;
+  if (binding.has("nodes_caseDocketId")) courtCase.caseDocketId = binding.get("nodes_caseDocketId").value;
+  if (binding.has("nodes_caseStatus")) courtCase.caseStatus = binding.get("nodes_caseStatus").value;
+  if (binding.has("nodes_filingDate")) courtCase.filingDate = binding.get("nodes_filingDate").value;
+  if (binding.has("nodes_terminatingDate")) courtCase.terminatingDate = binding.get("nodes_terminatingDate").value;
+  if (binding.has("nodes_natureSuit")) courtCase.natureSuit = binding.get("nodes_natureSuit").value;
 
   return courtCase;
 }
