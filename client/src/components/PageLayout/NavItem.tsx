@@ -1,6 +1,6 @@
 import * as React from "react";
 import { useLocation, Link } from "react-router-dom";
-import { Box } from "@mui/material";
+import { Box, useTheme } from "@mui/material";
 // import { navItemStyles } from "./styles";
 import { css } from "@emotion/css";
 
@@ -12,6 +12,7 @@ type NavItemT = {
 };
 
 const NavItem = ({ linkName, route, isMobile, disableUnderline }: NavItemT) => {
+  const theme = useTheme();
   const location = useLocation();
   const { pathname } = location;
   const isActive = () => {
@@ -29,10 +30,9 @@ const NavItem = ({ linkName, route, isMobile, disableUnderline }: NavItemT) => {
         marginRight: "50px",
         cursor: "pointer",
         position: "relative",
-        fontFamily: "Poppins",
 
         "*": {
-          color: "white",
+          color: theme.palette.info.main,
           fontSize: isMobile ? "20px" : "16px",
           textTransform: "uppercase",
           letterSpacing: "0.09em",

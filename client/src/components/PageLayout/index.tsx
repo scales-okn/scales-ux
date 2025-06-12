@@ -69,7 +69,8 @@ const PageLayout = ({ id = "", children, pageTitle }: PageLayoutT) => {
           <AppBar
             position="static"
             sx={{
-              background: `linear-gradient(to right, ${theme.palette.info.dark}, ${theme.palette.info.main})`,
+              background: theme.palette.info.dark,
+              color: theme.palette.info.main,
               display: "flex",
               flexDirection: "row",
               justifyContent: "space-between",
@@ -79,15 +80,11 @@ const PageLayout = ({ id = "", children, pageTitle }: PageLayoutT) => {
               zIndex: "9001",
             }}
           >
-            <Button
-              aria-label="menu"
-              sx={{ width: isTablet ? "40px" : "160px", marginTop: "6px" }}
-            >
               {isTablet ? (
                 <MenuIcon
                   onClick={toggleDrawer}
                   fontSize="large"
-                  sx={{ marginLeft: "-24px" }}
+                  sx={{ marginLeft: "-24px", marginTop: "6px", width: "40px" }}
                 />
               ) : (
                 <Link to="/">
@@ -99,7 +96,6 @@ const PageLayout = ({ id = "", children, pageTitle }: PageLayoutT) => {
                   />
                 </Link>
               )}
-            </Button>
             {!isTablet && (
               <Toolbar
                 sx={{
