@@ -84,7 +84,7 @@ const PageLayout = ({ id = "", children, pageTitle }: PageLayoutT) => {
                 <MenuIcon
                   onClick={toggleDrawer}
                   fontSize="large"
-                  sx={{ marginLeft: "-24px", marginTop: "6px", width: "40px" }}
+                  sx={{ marginTop: "6px", width: "40px" }}
                 />
               ) : (
                 <Link to="/">
