@@ -3,7 +3,8 @@ import { usePanel } from "src/store/panels";
 
 import dayjs from "dayjs";
 import { isEmpty } from "lodash";
-import { Button, Tooltip, Box, Typography } from "@mui/material";
+import { Button, Tooltip, Box, Typography, Tab } from "@mui/material";
+import { TabContext, TabList, TabPanel } from "@mui/lab";
 import { CameraAlt, UnfoldLess, UnfoldMore } from "@mui/icons-material";
 import * as htmlToImage from "html-to-image";
 import download from "downloadjs";
@@ -15,6 +16,7 @@ import Loader from "src/components/Loader";
 import MultilineChartDisplay from "./MultilineChartDisplay";
 import LineChartDisplay from "./LineChartDisplay";
 import BarChartDisplay from "./BarChartDisplay";
+import GeoMapDisplay from "./GeoMapDisplay";
 
 const Answers = ({
   panelId,
@@ -25,6 +27,7 @@ const Answers = ({
   plan,
 }) => {
   const [answerType, setAnswerType] = useState("bar");
+  const [viewType, setViewType] = useState("geoMap");
   const [answer, setAnswer] = useState(null);
   const [expanded, setExpanded] = useState(true);
 
@@ -102,6 +105,7 @@ const Answers = ({
     data?.length > 0 &&
     data?.results?.[0]?.length === 2 &&
     answerType === "bar";
+  const isGeoMap = data?.length > 0 && answerType === "geoMap";
   const isLineChart = data?.length > 0 && answerType === "line";
   const isMultilineChart = data?.length > 0 && answerType === "multiline";
   const plainTextAnswer = !isBarChart && !isLineChart && !isMultilineChart;
@@ -185,6 +189,35 @@ const Answers = ({
                     panelId={panelId}
                     answerText={answerText}
                   />
+                )}
+
+                {isGeoMap && (
+                  <TabContext value={viewType}>
+                    <Box>
+                      <TabList onChange={(e, value) => setViewType(value)}>
+                        <Tab label="Choropleth Map" value="geoMap" />
+                        <Tab label="Bar Chart" value="bar" />
+                      </TabList>
+                    </Box>
+                    <TabPanel value="geoMap">
+                      <GeoMapDisplay
+                        data={data}
+                        chartWidth={containerWidth}
+                        chartMargins={chartMargins}
+                        panelId={panelId}
+                        answerText={answerText}
+                        />
+                    </TabPanel>
+                    <TabPanel value="bar">
+                      <BarChartDisplay
+                        data={data}
+                        chartWidth={chartWidth}
+                        chartMargins={chartMargins}
+                        panelId={panelId}
+                        answerText={answerText}
+                        />
+                    </TabPanel>
+                  </TabContext>
                 )}
 
                 {isLineChart && (
