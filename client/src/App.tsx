@@ -15,16 +15,20 @@ import Notifications from "src/components/Notifications";
 const theme = createTheme({
   palette: {
     primary: {
-      main: hexToRgb("#4e77cf"),
-      dark: hexToRgb("#1e3c7e"),
+      main: hexToRgb("#29d4c0"),
+      dark: hexToRgb("#1a8679"),
+    },
+    secondary: {
+      main: hexToRgb("#96497e"),
+      dark: hexToRgb("#582b4a"),
     },
     success: {
-      main: hexToRgb("#1e9722"),
-      dark: hexToRgb("#1a7f1d"),
+      main: hexToRgb("#98bf20"),
+      dark: hexToRgb("#25740c"),
     },
     error: {
-      main: hexToRgb("#c0462e"),
-      dark: hexToRgb("#9c1323"),
+      main: hexToRgb("#ff7000"),
+      dark: hexToRgb("#bf5400"),
     },
     info: {
       main: hexToRgb("#29d4c0"),
