@@ -3,6 +3,7 @@ import { css } from "@emotion/css";
 export const styles = css`
   .logo {
     max-height: 75px;
+    display: flex;
   }
 
   .divider {

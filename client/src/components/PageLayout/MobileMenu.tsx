@@ -35,6 +35,7 @@ const MobileMenu = ({ drawerOpen, toggleDrawer, isAdmin }: MobileMenuT) => {
               width: 250,
               backgroundColor: theme.palette.info.dark,
               height: "100%",
+              marginTop: "64px",
             }}
             role="presentation"
             onClick={toggleDrawer}
